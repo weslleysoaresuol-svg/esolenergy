@@ -49,7 +49,6 @@ function PerfilPage() {
             <div><Label>Nome completo *</Label><Input value={form.nome || ""} onChange={(e) => set("nome", e.target.value)} required /></div>
             <div><Label>Telefone / WhatsApp *</Label><Input value={form.telefone || ""} onChange={(e) => set("telefone", e.target.value)} required /></div>
             <div><Label>CPF / CNPJ</Label><Input value={form.cpf_cnpj || ""} onChange={(e) => set("cpf_cnpj", e.target.value)} /></div>
-            <div><Label>CRECI / Registro</Label><Input value={form.creci || ""} onChange={(e) => set("creci", e.target.value)} /></div>
             <div><Label>Cidade</Label><Input value={form.cidade || ""} onChange={(e) => set("cidade", e.target.value)} /></div>
             <div><Label>Estado</Label><Input value={form.estado || ""} onChange={(e) => set("estado", e.target.value)} maxLength={2} /></div>
           </div>
