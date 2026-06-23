@@ -61,7 +61,7 @@ function AdminDashboard() {
     <div className="space-y-6 max-w-7xl">
       <div>
         <h1 className="text-3xl font-bold text-navy">Dashboard</h1>
-        <p className="text-muted-foreground">Visão geral da operação — {stats.corretores} corretores parceiros ativos</p>
+        <p className="text-muted-foreground">Visão geral da operação — {stats.corretores} parceiros ativos</p>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((c) => (
