@@ -38,7 +38,7 @@ function AppShell() {
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes" },
-    { to: "/app/corretores", icon: UserCog, label: "Corretores" },
+    { to: "/app/corretores", icon: UserCog, label: "Parceiros" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu perfil" },
   ];
   const corretorNav = [
