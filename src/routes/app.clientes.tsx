@@ -51,7 +51,7 @@ function AdminClientes() {
       <Card className="border-0 shadow-md overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
-            <tr><th className="p-3">Nome</th><th className="p-3">Telefone</th><th className="p-3">Cidade</th><th className="p-3">Corretor</th><th className="p-3">Status</th><th className="p-3">Valor</th></tr>
+            <tr><th className="p-3">Nome</th><th className="p-3">Telefone</th><th className="p-3">Cidade</th><th className="p-3">Parceiro</th><th className="p-3">Status</th><th className="p-3">Valor</th></tr>
           </thead>
           <tbody>
             {filtered.map((c) => (
