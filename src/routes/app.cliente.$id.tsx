@@ -87,7 +87,7 @@ function ClienteDetail() {
         <div>
           <h1 className="text-3xl font-bold text-navy">{cliente.nome}</h1>
           <p className="text-muted-foreground">{cliente.telefone} {cliente.email && `· ${cliente.email}`}</p>
-          {role === "admin" && cliente.profiles && <p className="text-xs text-muted-foreground mt-1">Corretor: {cliente.profiles.nome}</p>}
+          {role === "admin" && cliente.profiles && <p className="text-xs text-muted-foreground mt-1">Parceiro: {cliente.profiles.nome}</p>}
         </div>
         <div className="flex gap-2">
           {whatsapp && <a href={whatsapp} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-600"><MessageCircle className="w-4 h-4" />WhatsApp</a>}
