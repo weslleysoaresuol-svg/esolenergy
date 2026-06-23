@@ -14,16 +14,232 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clientes: {
+        Row: {
+          area_telhado: number | null
+          cep: string | null
+          cidade: string | null
+          concessionaria: string | null
+          consumo_kwh: number | null
+          corretor_id: string | null
+          cpf_cnpj: string | null
+          created_at: string
+          data_nascimento: string | null
+          email: string | null
+          endereco: string | null
+          estado: string | null
+          forma_pagamento: string | null
+          id: string
+          imovel_tipo: Database["public"]["Enums"]["imovel_tipo"] | null
+          nome: string
+          numero_uc: string | null
+          observacoes: string | null
+          origem: string | null
+          payback_anos: number | null
+          potencia_kwp: number | null
+          status: Database["public"]["Enums"]["cliente_status"]
+          telefone: string
+          tipo_telhado: string | null
+          updated_at: string
+          valor_estimado: number | null
+          valor_fatura: number | null
+        }
+        Insert: {
+          area_telhado?: number | null
+          cep?: string | null
+          cidade?: string | null
+          concessionaria?: string | null
+          consumo_kwh?: number | null
+          corretor_id?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          data_nascimento?: string | null
+          email?: string | null
+          endereco?: string | null
+          estado?: string | null
+          forma_pagamento?: string | null
+          id?: string
+          imovel_tipo?: Database["public"]["Enums"]["imovel_tipo"] | null
+          nome: string
+          numero_uc?: string | null
+          observacoes?: string | null
+          origem?: string | null
+          payback_anos?: number | null
+          potencia_kwp?: number | null
+          status?: Database["public"]["Enums"]["cliente_status"]
+          telefone: string
+          tipo_telhado?: string | null
+          updated_at?: string
+          valor_estimado?: number | null
+          valor_fatura?: number | null
+        }
+        Update: {
+          area_telhado?: number | null
+          cep?: string | null
+          cidade?: string | null
+          concessionaria?: string | null
+          consumo_kwh?: number | null
+          corretor_id?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          data_nascimento?: string | null
+          email?: string | null
+          endereco?: string | null
+          estado?: string | null
+          forma_pagamento?: string | null
+          id?: string
+          imovel_tipo?: Database["public"]["Enums"]["imovel_tipo"] | null
+          nome?: string
+          numero_uc?: string | null
+          observacoes?: string | null
+          origem?: string | null
+          payback_anos?: number | null
+          potencia_kwp?: number | null
+          status?: Database["public"]["Enums"]["cliente_status"]
+          telefone?: string
+          tipo_telhado?: string | null
+          updated_at?: string
+          valor_estimado?: number | null
+          valor_fatura?: number | null
+        }
+        Relationships: []
+      }
+      interacoes: {
+        Row: {
+          autor_id: string | null
+          cliente_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          tipo: string
+        }
+        Insert: {
+          autor_id?: string | null
+          cliente_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          tipo: string
+        }
+        Update: {
+          autor_id?: string | null
+          cliente_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interacoes_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          ativo: boolean
+          avatar_url: string | null
+          bio: string | null
+          cidade: string | null
+          comissao_percent: number | null
+          cpf_cnpj: string | null
+          created_at: string
+          creci: string | null
+          email: string | null
+          estado: string | null
+          id: string
+          nome: string | null
+          onboarding_completo: boolean
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          avatar_url?: string | null
+          bio?: string | null
+          cidade?: string | null
+          comissao_percent?: number | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          creci?: string | null
+          email?: string | null
+          estado?: string | null
+          id: string
+          nome?: string | null
+          onboarding_completo?: boolean
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          avatar_url?: string | null
+          bio?: string | null
+          cidade?: string | null
+          comissao_percent?: number | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          creci?: string | null
+          email?: string | null
+          estado?: string | null
+          id?: string
+          nome?: string | null
+          onboarding_completo?: boolean
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "corretor"
+      cliente_status:
+        | "novo"
+        | "contato"
+        | "visita_agendada"
+        | "proposta_enviada"
+        | "negociacao"
+        | "contrato_assinado"
+        | "instalacao"
+        | "concluido"
+        | "perdido"
+      imovel_tipo: "residencial" | "comercial" | "industrial" | "rural"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +366,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "corretor"],
+      cliente_status: [
+        "novo",
+        "contato",
+        "visita_agendada",
+        "proposta_enviada",
+        "negociacao",
+        "contrato_assinado",
+        "instalacao",
+        "concluido",
+        "perdido",
+      ],
+      imovel_tipo: ["residencial", "comercial", "industrial", "rural"],
+    },
   },
 } as const
