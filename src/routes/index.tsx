@@ -84,13 +84,22 @@ function Nav() {
           <a href="#portfolio" className="hover:text-sun-deep transition-colors">Projetos</a>
           <a href="#faq" className="hover:text-sun-deep transition-colors">FAQ</a>
         </div>
-        <a
-          href="#orcamento"
-          className="group inline-flex items-center gap-2 rounded-full bg-navy px-5 py-2.5 text-sm font-semibold text-white shadow-deep hover:bg-navy-deep transition-all"
-        >
-          Orçamento grátis
-          <span className="transition-transform group-hover:translate-x-0.5">→</span>
-        </a>
+        <div className="flex items-center gap-3">
+          <a
+            href="/auth"
+            className="hidden sm:inline-flex items-center gap-2 rounded-full border border-navy/20 px-4 py-2 text-sm font-semibold text-navy hover:bg-navy hover:text-white transition-all"
+          >
+            Acesso
+          </a>
+          <a
+            href="#orcamento"
+            className="group inline-flex items-center gap-2 rounded-full bg-navy px-5 py-2.5 text-sm font-semibold text-white shadow-deep hover:bg-navy-deep transition-all"
+          >
+            Orçamento grátis
+            <span className="transition-transform group-hover:translate-x-0.5">→</span>
+          </a>
+        </div>
+
       </div>
     </nav>
   );
