@@ -5,7 +5,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
-import { TrendingUp, Users, Target, DollarSign, ArrowRight } from "lucide-react";
+import { TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
   component: DashboardOrList,
@@ -31,13 +31,15 @@ function DashboardOrList() {
 }
 
 function AdminDashboard() {
-  const [stats, setStats] = useState({ total: 0, novos: 0, negociacao: 0, fechados: 0, valor: 0, corretores: 0 });
+  const [stats, setStats] = useState({ total: 0, novos: 0, negociacao: 0, fechados: 0, valor: 0, corretores: 0, leadsSite: 0 });
   const [recent, setRecent] = useState<any[]>([]);
+  const [siteLeads, setSiteLeads] = useState<any[]>([]);
   useEffect(() => {
     (async () => {
       const { data: clientes } = await supabase.from("clientes").select("*, profiles:corretor_id(nome)").order("created_at", { ascending: false });
       const { count: corretoresCount } = await supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "corretor");
       const list = clientes || [];
+      const leads = list.filter((c) => c.origem === "landing" && !c.corretor_id);
       setStats({
         total: list.length,
         novos: list.filter((c) => c.status === "novo").length,
@@ -45,17 +47,21 @@ function AdminDashboard() {
         fechados: list.filter((c) => ["contrato_assinado","instalacao","concluido"].includes(c.status)).length,
         valor: list.filter((c) => ["contrato_assinado","instalacao","concluido"].includes(c.status)).reduce((s, c) => s + Number(c.valor_estimado || 0), 0),
         corretores: corretoresCount || 0,
+        leadsSite: leads.length,
       });
+      setSiteLeads(leads);
       setRecent(list.slice(0, 8));
     })();
   }, []);
 
   const cards = [
+    { label: "Leads do site", value: stats.leadsSite, icon: Globe, color: "from-sun to-amber-500" },
     { label: "Leads totais", value: stats.total, icon: Users, color: "from-blue-500 to-cyan-500" },
-    { label: "Novos", value: stats.novos, icon: Target, color: "from-amber-500 to-orange-500" },
     { label: "Em negociação", value: stats.negociacao, icon: TrendingUp, color: "from-purple-500 to-pink-500" },
     { label: "Faturamento previsto", value: stats.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }), icon: DollarSign, color: "from-emerald-500 to-green-500" },
   ];
+
+  const fmtDate = (d: string) => new Date(d).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -80,6 +86,42 @@ function AdminDashboard() {
         ))}
       </div>
 
+      <Card className="border-0 shadow-md border-l-4 border-l-sun-deep">
+        <div className="flex items-center justify-between p-5 border-b">
+          <div className="flex items-center gap-2">
+            <Inbox className="w-5 h-5 text-sun-deep" />
+            <h2 className="font-bold text-navy">Novos leads do site</h2>
+            {siteLeads.length > 0 && (
+              <Badge className="bg-sun text-navy">{siteLeads.length} aguardando</Badge>
+            )}
+          </div>
+          <Link to="/app/clientes" className="text-sm text-sun-deep hover:underline flex items-center gap-1">Ver todos <ArrowRight className="w-3 h-3" /></Link>
+        </div>
+        <div className="divide-y">
+          {siteLeads.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground text-sm">Nenhum lead novo do site. Quando alguém preencher o formulário da página inicial, aparecerá aqui.</div>
+          ) : (
+            siteLeads.slice(0, 6).map((c) => (
+              <Link key={c.id} to="/app/cliente/$id" params={{ id: c.id }} className="block p-4 hover:bg-sun/5 transition">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="font-semibold text-navy flex items-center gap-2">
+                      {c.nome}
+                      <Badge variant="outline" className="text-[10px] border-sun-deep text-sun-deep">Site</Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {c.telefone}{c.email ? ` · ${c.email}` : ""}{c.cep ? ` · CEP ${c.cep}` : ""}
+                    </div>
+                    {c.observacoes && <div className="text-xs text-navy/70 mt-1 truncate">{c.observacoes}</div>}
+                  </div>
+                  <div className="text-xs text-muted-foreground whitespace-nowrap">{fmtDate(c.created_at)}</div>
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      </Card>
+
       <Card className="border-0 shadow-md">
         <div className="flex items-center justify-between p-5 border-b">
           <h2 className="font-bold text-navy">Clientes recentes</h2>
@@ -88,13 +130,18 @@ function AdminDashboard() {
         <div className="divide-y">
           {recent.length === 0 && <div className="p-8 text-center text-muted-foreground">Nenhum cliente cadastrado ainda.</div>}
           {recent.map((c) => (
-            <div key={c.id} className="p-4 flex items-center justify-between hover:bg-slate-50">
-              <div>
-                <div className="font-semibold text-navy">{c.nome}</div>
-                <div className="text-xs text-muted-foreground">{c.telefone} · {c.cidade || "—"} · Parceiro: {c.profiles?.nome || "—"}</div>
+            <Link key={c.id} to="/app/cliente/$id" params={{ id: c.id }} className="block p-4 hover:bg-slate-50">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-semibold text-navy flex items-center gap-2">
+                    {c.nome}
+                    {c.origem === "landing" && <Badge variant="outline" className="text-[10px] border-sun-deep text-sun-deep">Site</Badge>}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{c.telefone} · {c.cidade || "—"} · Parceiro: {c.profiles?.nome || "Não atribuído"}</div>
+                </div>
+                <Badge className={STATUS_COLOR[c.status]}>{STATUS_LABEL[c.status]}</Badge>
               </div>
-              <Badge className={STATUS_COLOR[c.status]}>{STATUS_LABEL[c.status]}</Badge>
-            </div>
+            </Link>
           ))}
         </div>
       </Card>

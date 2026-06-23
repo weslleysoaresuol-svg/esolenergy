@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import logo from "@/assets/esol-logo.png";
 import heroHouse from "@/assets/hero-house.jpg";
 import portfolioResidential from "@/assets/portfolio-residential.jpg";
@@ -685,6 +687,43 @@ function FAQ() {
 /* ============================ FINAL CTA / FORM ============================ */
 function FinalCTA() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    nome: "",
+    email: "",
+    telefone: "",
+    cep: "",
+    faixa: "Até R$ 500",
+  });
+
+  const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.nome.trim() || !form.telefone.trim()) {
+      toast.error("Nome e WhatsApp são obrigatórios");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.from("clientes").insert({
+      nome: form.nome.trim(),
+      email: form.email.trim() || null,
+      telefone: form.telefone.trim(),
+      cep: form.cep.trim() || null,
+      observacoes: `Lead do site — conta mensal: ${form.faixa}`,
+      origem: "landing",
+      status: "novo",
+      corretor_id: null,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Não foi possível enviar. Tente novamente.");
+      return;
+    }
+    toast.success("Recebemos seu pedido!");
+    setSent(true);
+  };
+
   return (
     <section id="orcamento" className="py-28 px-6 bg-paper">
       <div className="mx-auto max-w-6xl">
@@ -724,13 +763,7 @@ function FinalCTA() {
               </ul>
             </div>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSent(true);
-              }}
-              className="rounded-3xl bg-white p-8 text-ink shadow-2xl"
-            >
+            <form onSubmit={onSubmit} className="rounded-3xl bg-white p-8 text-ink shadow-2xl">
               {sent ? (
                 <div className="text-center py-10">
                   <div className="mx-auto size-16 rounded-full bg-sun grid place-items-center text-navy text-3xl font-extrabold">
@@ -745,19 +778,21 @@ function FinalCTA() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <Field label="Nome completo" placeholder="Ex: João Silva" />
+                  <Field label="Nome completo" placeholder="Ex: João Silva" value={form.nome} onChange={(v) => update("nome", v)} />
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <Field label="E-mail" type="email" placeholder="voce@email.com" />
-                    <Field label="WhatsApp" type="tel" placeholder="(11) 99999-9999" />
+                    <Field label="E-mail" type="email" placeholder="voce@email.com" value={form.email} onChange={(v) => update("email", v)} required={false} />
+                    <Field label="WhatsApp" type="tel" placeholder="(11) 99999-9999" value={form.telefone} onChange={(v) => update("telefone", v)} />
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <Field label="CEP da instalação" placeholder="00000-000" />
+                    <Field label="CEP da instalação" placeholder="00000-000" value={form.cep} onChange={(v) => update("cep", v)} required={false} />
                     <div>
                       <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50">
                         Conta mensal
                       </label>
                       <select
                         required
+                        value={form.faixa}
+                        onChange={(e) => update("faixa", e.target.value)}
                         className="mt-1 w-full rounded-xl bg-secondary px-4 py-3 text-navy outline-none focus:ring-2 focus:ring-sun transition-all"
                       >
                         <option>Até R$ 500</option>
@@ -769,9 +804,10 @@ function FinalCTA() {
                   </div>
                   <button
                     type="submit"
-                    className="mt-2 w-full rounded-xl bg-sun py-4 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow"
+                    disabled={loading}
+                    className="mt-2 w-full rounded-xl bg-sun py-4 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow disabled:opacity-60"
                   >
-                    Solicitar estudo técnico grátis →
+                    {loading ? "Enviando…" : "Solicitar estudo técnico grátis →"}
                   </button>
                   <p className="text-[11px] text-ink/40 text-center">
                     Ao enviar, você concorda com nossa política de privacidade.
@@ -789,18 +825,26 @@ function Field({
   label,
   type = "text",
   placeholder,
+  value,
+  onChange,
+  required = true,
 }: {
   label: string;
   type?: string;
   placeholder?: string;
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
 }) {
   return (
     <div>
       <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50">{label}</label>
       <input
-        required
+        required={required}
         type={type}
         placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className="mt-1 w-full rounded-xl bg-secondary px-4 py-3 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all"
       />
     </div>
