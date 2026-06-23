@@ -30,7 +30,7 @@ function AdminCorretores() {
 
   const toggle = async (id: string, ativo: boolean) => {
     await supabase.from("profiles").update({ ativo: !ativo }).eq("id", id);
-    toast.success(!ativo ? "Corretor ativado" : "Corretor desativado");
+    toast.success(!ativo ? "Parceiro ativado" : "Parceiro desativado");
     load();
   };
   const setComissao = async (id: string, v: string) => {
@@ -41,12 +41,12 @@ function AdminCorretores() {
   return (
     <div className="space-y-6 max-w-6xl">
       <div>
-        <h1 className="text-3xl font-bold text-navy">Corretores parceiros</h1>
-        <p className="text-muted-foreground">{list.length} corretor(es) cadastrado(s)</p>
+        <h1 className="text-3xl font-bold text-navy">Parceiros</h1>
+        <p className="text-muted-foreground">{list.length} parceiro(s) cadastrado(s)</p>
       </div>
       {list.length === 0 ? (
         <Card className="p-10 text-center border-dashed">
-          <p className="text-muted-foreground">Nenhum corretor cadastrado ainda.</p>
+          <p className="text-muted-foreground">Nenhum parceiro cadastrado ainda.</p>
           <p className="text-sm mt-2">Compartilhe o link <code>/auth</code> com seus parceiros para começarem.</p>
         </Card>
       ) : (

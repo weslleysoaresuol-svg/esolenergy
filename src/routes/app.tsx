@@ -38,7 +38,7 @@ function AppShell() {
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes" },
-    { to: "/app/corretores", icon: UserCog, label: "Corretores" },
+    { to: "/app/corretores", icon: UserCog, label: "Parceiros" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu perfil" },
   ];
   const corretorNav = [
@@ -53,7 +53,7 @@ function AppShell() {
       <aside className="hidden md:flex w-64 flex-col bg-navy text-white p-5">
         <Link to="/" className="mb-8"><img src={logo} alt="ESOL" className="h-10 w-auto brightness-0 invert" /></Link>
         <div className="mb-6 px-2">
-          <div className="text-xs uppercase tracking-wider text-white/50">{role === "admin" ? "Administrador" : "Corretor"}</div>
+          <div className="text-xs uppercase tracking-wider text-white/50">{role === "admin" ? "Administrador" : "Parceiro"}</div>
           <div className="font-semibold truncate">{profile?.nome || user.email}</div>
         </div>
         <nav className="space-y-1 flex-1">
