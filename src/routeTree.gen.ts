@@ -17,7 +17,10 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppNovoRouteImport } from './routes/app.novo'
 import { Route as AppCorretoresRouteImport } from './routes/app.corretores'
+import { Route as AppContratosRouteImport } from './routes/app.contratos'
+import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
+import { Route as AppContratoIdRouteImport } from './routes/app.contrato.$id'
 import { Route as AppClienteIdRouteImport } from './routes/app.cliente.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -60,10 +63,25 @@ const AppCorretoresRoute = AppCorretoresRouteImport.update({
   path: '/corretores',
   getParentRoute: () => AppRoute,
 } as any)
+const AppContratosRoute = AppContratosRouteImport.update({
+  id: '/contratos',
+  path: '/contratos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContratoRoute = AppContratoRouteImport.update({
+  id: '/contrato',
+  path: '/contrato',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClientesRoute = AppClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
   getParentRoute: () => AppRoute,
+} as any)
+const AppContratoIdRoute = AppContratoIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppContratoRoute,
 } as any)
 const AppClienteIdRoute = AppClienteIdRouteImport.update({
   id: '/cliente/$id',
@@ -77,22 +95,28 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/contrato': typeof AppContratoRouteWithChildren
+  '/app/contratos': typeof AppContratosRoute
   '/app/corretores': typeof AppCorretoresRoute
   '/app/novo': typeof AppNovoRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
+  '/app/contrato/$id': typeof AppContratoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/contrato': typeof AppContratoRouteWithChildren
+  '/app/contratos': typeof AppContratosRoute
   '/app/corretores': typeof AppCorretoresRoute
   '/app/novo': typeof AppNovoRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
+  '/app/contrato/$id': typeof AppContratoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,11 +125,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/contrato': typeof AppContratoRouteWithChildren
+  '/app/contratos': typeof AppContratosRoute
   '/app/corretores': typeof AppCorretoresRoute
   '/app/novo': typeof AppNovoRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
+  '/app/contrato/$id': typeof AppContratoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -115,22 +142,28 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/app/clientes'
+    | '/app/contrato'
+    | '/app/contratos'
     | '/app/corretores'
     | '/app/novo'
     | '/app/perfil'
     | '/app/'
     | '/app/cliente/$id'
+    | '/app/contrato/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/sitemap.xml'
     | '/app/clientes'
+    | '/app/contrato'
+    | '/app/contratos'
     | '/app/corretores'
     | '/app/novo'
     | '/app/perfil'
     | '/app'
     | '/app/cliente/$id'
+    | '/app/contrato/$id'
   id:
     | '__root__'
     | '/'
@@ -138,11 +171,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/app/clientes'
+    | '/app/contrato'
+    | '/app/contratos'
     | '/app/corretores'
     | '/app/novo'
     | '/app/perfil'
     | '/app/'
     | '/app/cliente/$id'
+    | '/app/contrato/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,12 +246,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCorretoresRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/contratos': {
+      id: '/app/contratos'
+      path: '/contratos'
+      fullPath: '/app/contratos'
+      preLoaderRoute: typeof AppContratosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/contrato': {
+      id: '/app/contrato'
+      path: '/contrato'
+      fullPath: '/app/contrato'
+      preLoaderRoute: typeof AppContratoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/clientes': {
       id: '/app/clientes'
       path: '/clientes'
       fullPath: '/app/clientes'
       preLoaderRoute: typeof AppClientesRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/app/contrato/$id': {
+      id: '/app/contrato/$id'
+      path: '/$id'
+      fullPath: '/app/contrato/$id'
+      preLoaderRoute: typeof AppContratoIdRouteImport
+      parentRoute: typeof AppContratoRoute
     }
     '/app/cliente/$id': {
       id: '/app/cliente/$id'
@@ -227,8 +284,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppContratoRouteChildren {
+  AppContratoIdRoute: typeof AppContratoIdRoute
+}
+
+const AppContratoRouteChildren: AppContratoRouteChildren = {
+  AppContratoIdRoute: AppContratoIdRoute,
+}
+
+const AppContratoRouteWithChildren = AppContratoRoute._addFileChildren(
+  AppContratoRouteChildren,
+)
+
 interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
+  AppContratoRoute: typeof AppContratoRouteWithChildren
+  AppContratosRoute: typeof AppContratosRoute
   AppCorretoresRoute: typeof AppCorretoresRoute
   AppNovoRoute: typeof AppNovoRoute
   AppPerfilRoute: typeof AppPerfilRoute
@@ -238,6 +309,8 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppClientesRoute: AppClientesRoute,
+  AppContratoRoute: AppContratoRouteWithChildren,
+  AppContratosRoute: AppContratosRoute,
   AppCorretoresRoute: AppCorretoresRoute,
   AppNovoRoute: AppNovoRoute,
   AppPerfilRoute: AppPerfilRoute,

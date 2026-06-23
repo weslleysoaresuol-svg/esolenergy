@@ -104,6 +104,51 @@ export type Database = {
         }
         Relationships: []
       }
+      contratos_parceria: {
+        Row: {
+          aceite_termos: boolean
+          assinado_em: string
+          assinatura_url: string | null
+          conteudo: string
+          cpf: string
+          created_at: string
+          id: string
+          ip_assinatura: string | null
+          nome_completo: string
+          user_agent: string | null
+          user_id: string
+          versao: string
+        }
+        Insert: {
+          aceite_termos?: boolean
+          assinado_em?: string
+          assinatura_url?: string | null
+          conteudo: string
+          cpf: string
+          created_at?: string
+          id?: string
+          ip_assinatura?: string | null
+          nome_completo: string
+          user_agent?: string | null
+          user_id: string
+          versao: string
+        }
+        Update: {
+          aceite_termos?: boolean
+          assinado_em?: string
+          assinatura_url?: string | null
+          conteudo?: string
+          cpf?: string
+          created_at?: string
+          id?: string
+          ip_assinatura?: string | null
+          nome_completo?: string
+          user_agent?: string | null
+          user_id?: string
+          versao?: string
+        }
+        Relationships: []
+      }
       interacoes: {
         Row: {
           autor_id: string | null
@@ -146,6 +191,7 @@ export type Database = {
           bio: string | null
           cidade: string | null
           comissao_percent: number | null
+          contrato_assinado: boolean
           cpf_cnpj: string | null
           created_at: string
           creci: string | null
@@ -163,6 +209,7 @@ export type Database = {
           bio?: string | null
           cidade?: string | null
           comissao_percent?: number | null
+          contrato_assinado?: boolean
           cpf_cnpj?: string | null
           created_at?: string
           creci?: string | null
@@ -180,6 +227,7 @@ export type Database = {
           bio?: string | null
           cidade?: string | null
           comissao_percent?: number | null
+          contrato_assinado?: boolean
           cpf_cnpj?: string | null
           created_at?: string
           creci?: string | null

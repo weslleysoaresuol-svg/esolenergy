@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog, Plus } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog, Plus, FileText } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
 export const Route = createFileRoute("/app")({
@@ -23,8 +23,16 @@ function AppShell() {
   useEffect(() => {
     if (!loading && user && profile && !profile.onboarding_completo && pathname !== "/app/perfil") {
       navigate({ to: "/app/perfil" });
+      return;
     }
-  }, [loading, user, profile, pathname, navigate]);
+    if (
+      !loading && user && profile && profile.onboarding_completo &&
+      role && role !== "admin" && !profile.contrato_assinado &&
+      pathname !== "/app/contrato" && pathname !== "/app/perfil"
+    ) {
+      navigate({ to: "/app/contrato" });
+    }
+  }, [loading, user, profile, role, pathname, navigate]);
 
   if (loading || !user) {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Carregando…</div>;
@@ -40,6 +48,7 @@ function AppShell() {
     { to: "/app/clientes", icon: Users, label: "Clientes" },
     { to: "/app/novo", icon: Plus, label: "Novo cliente" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros" },
+    { to: "/app/contratos", icon: FileText, label: "Contratos" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu perfil" },
   ];
   const corretorNav = [
