@@ -53,7 +53,7 @@ function AppShell() {
       <aside className="hidden md:flex w-64 flex-col bg-navy text-white p-5">
         <Link to="/" className="mb-8"><img src={logo} alt="ESOL" className="h-10 w-auto brightness-0 invert" /></Link>
         <div className="mb-6 px-2">
-          <div className="text-xs uppercase tracking-wider text-white/50">{role === "admin" ? "Administrador" : "Corretor"}</div>
+          <div className="text-xs uppercase tracking-wider text-white/50">{role === "admin" ? "Administrador" : "Parceiro"}</div>
           <div className="font-semibold truncate">{profile?.nome || user.email}</div>
         </div>
         <nav className="space-y-1 flex-1">
