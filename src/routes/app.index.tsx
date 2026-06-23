@@ -86,7 +86,7 @@ function AdminDashboard() {
             <div key={c.id} className="p-4 flex items-center justify-between hover:bg-slate-50">
               <div>
                 <div className="font-semibold text-navy">{c.nome}</div>
-                <div className="text-xs text-muted-foreground">{c.telefone} · {c.cidade || "—"} · Corretor: {c.profiles?.nome || "—"}</div>
+                <div className="text-xs text-muted-foreground">{c.telefone} · {c.cidade || "—"} · Parceiro: {c.profiles?.nome || "—"}</div>
               </div>
               <Badge className={STATUS_COLOR[c.status]}>{STATUS_LABEL[c.status]}</Badge>
             </div>
