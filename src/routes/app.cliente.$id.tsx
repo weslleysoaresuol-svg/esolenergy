@@ -44,7 +44,7 @@ function ClienteDetail() {
   useEffect(() => { load(); }, [id]);
 
   const updateStatus = async (status: string) => {
-    await supabase.from("clientes").update({ status }).eq("id", id);
+    await supabase.from("clientes").update({ status: status as any }).eq("id", id);
     toast.success("Status atualizado");
     load();
   };
