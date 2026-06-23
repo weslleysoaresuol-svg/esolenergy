@@ -29,7 +29,7 @@ function PerfilPage() {
     setSaving(true);
     const { error } = await supabase.from("profiles").update({
       nome: form.nome, telefone: form.telefone, cpf_cnpj: form.cpf_cnpj,
-      creci: form.creci, cidade: form.cidade, estado: form.estado, bio: form.bio,
+      cidade: form.cidade, estado: form.estado, bio: form.bio,
       avatar_url: form.avatar_url, onboarding_completo: true,
     }).eq("id", user.id);
     setSaving(false);
