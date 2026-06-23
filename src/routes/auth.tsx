@@ -78,7 +78,7 @@ function AuthPage() {
         <Tabs defaultValue="login">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Entrar</TabsTrigger>
-            <TabsTrigger value="signup">Cadastrar corretor</TabsTrigger>
+            <TabsTrigger value="signup">Cadastrar parceiro</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-3 mt-3">
