@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog, Plus, FileText } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog, Plus, FileText, Link2 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
 export const Route = createFileRoute("/app")({
@@ -43,11 +43,27 @@ function AppShell() {
     navigate({ to: "/auth" });
   };
 
+  // Usuário autenticado mas sem papel atribuído (não veio por convite válido)
+  if (!loading && user && role === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+        <div className="max-w-md text-center bg-white rounded-2xl shadow p-8">
+          <h1 className="text-xl font-bold text-navy mb-2">Acesso pendente</h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            Sua conta foi criada, mas ainda não está vinculada à equipe ESOL Energy. Solicite um <strong>link de convite</strong> ao administrador para concluir seu cadastro como parceiro.
+          </p>
+          <Button onClick={signOut} variant="outline" className="w-full">Sair</Button>
+        </div>
+      </div>
+    );
+  }
+
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes" },
     { to: "/app/novo", icon: Plus, label: "Novo cliente" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros" },
+    { to: "/app/convites", icon: Link2, label: "Convites" },
     { to: "/app/contratos", icon: FileText, label: "Contratos" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu perfil" },
   ];

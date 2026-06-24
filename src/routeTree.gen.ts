@@ -14,9 +14,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppNovoRouteImport } from './routes/app.novo'
 import { Route as AppCorretoresRouteImport } from './routes/app.corretores'
+import { Route as AppConvitesRouteImport } from './routes/app.convites'
 import { Route as AppContratosRouteImport } from './routes/app.contratos'
 import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
@@ -48,6 +50,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const ConviteTokenRoute = ConviteTokenRouteImport.update({
+  id: '/convite/$token',
+  path: '/convite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppPerfilRoute = AppPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -61,6 +68,11 @@ const AppNovoRoute = AppNovoRouteImport.update({
 const AppCorretoresRoute = AppCorretoresRouteImport.update({
   id: '/corretores',
   path: '/corretores',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppConvitesRoute = AppConvitesRouteImport.update({
+  id: '/convites',
+  path: '/convites',
   getParentRoute: () => AppRoute,
 } as any)
 const AppContratosRoute = AppContratosRouteImport.update({
@@ -97,9 +109,11 @@ export interface FileRoutesByFullPath {
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/contratos': typeof AppContratosRoute
+  '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
   '/app/novo': typeof AppNovoRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/convite/$token': typeof ConviteTokenRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
@@ -111,9 +125,11 @@ export interface FileRoutesByTo {
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/contratos': typeof AppContratosRoute
+  '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
   '/app/novo': typeof AppNovoRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/convite/$token': typeof ConviteTokenRoute
   '/app': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
@@ -127,9 +143,11 @@ export interface FileRoutesById {
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/contratos': typeof AppContratosRoute
+  '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
   '/app/novo': typeof AppNovoRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/convite/$token': typeof ConviteTokenRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
@@ -144,9 +162,11 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contrato'
     | '/app/contratos'
+    | '/app/convites'
     | '/app/corretores'
     | '/app/novo'
     | '/app/perfil'
+    | '/convite/$token'
     | '/app/'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
@@ -158,9 +178,11 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contrato'
     | '/app/contratos'
+    | '/app/convites'
     | '/app/corretores'
     | '/app/novo'
     | '/app/perfil'
+    | '/convite/$token'
     | '/app'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
@@ -173,9 +195,11 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contrato'
     | '/app/contratos'
+    | '/app/convites'
     | '/app/corretores'
     | '/app/novo'
     | '/app/perfil'
+    | '/convite/$token'
     | '/app/'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
@@ -186,6 +210,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ConviteTokenRoute: typeof ConviteTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -225,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/convite/$token': {
+      id: '/convite/$token'
+      path: '/convite/$token'
+      fullPath: '/convite/$token'
+      preLoaderRoute: typeof ConviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/perfil': {
       id: '/app/perfil'
       path: '/perfil'
@@ -244,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/corretores'
       fullPath: '/app/corretores'
       preLoaderRoute: typeof AppCorretoresRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/convites': {
+      id: '/app/convites'
+      path: '/convites'
+      fullPath: '/app/convites'
+      preLoaderRoute: typeof AppConvitesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/contratos': {
@@ -300,6 +339,7 @@ interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
   AppContratoRoute: typeof AppContratoRouteWithChildren
   AppContratosRoute: typeof AppContratosRoute
+  AppConvitesRoute: typeof AppConvitesRoute
   AppCorretoresRoute: typeof AppCorretoresRoute
   AppNovoRoute: typeof AppNovoRoute
   AppPerfilRoute: typeof AppPerfilRoute
@@ -311,6 +351,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppClientesRoute: AppClientesRoute,
   AppContratoRoute: AppContratoRouteWithChildren,
   AppContratosRoute: AppContratosRoute,
+  AppConvitesRoute: AppConvitesRoute,
   AppCorretoresRoute: AppCorretoresRoute,
   AppNovoRoute: AppNovoRoute,
   AppPerfilRoute: AppPerfilRoute,
@@ -325,6 +366,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ConviteTokenRoute: ConviteTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
