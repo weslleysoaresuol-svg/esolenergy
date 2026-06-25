@@ -1,79 +1,116 @@
-## Visão geral
 
-Construir um sistema completo de CRM solar com dois perfis de acesso (Administrador e Corretor Parceiro), autenticação via Google + email/senha, e gestão de clientes/leads ao longo do funil de vendas. Referências: pipeline estilo Pipedrive/HubSpot + dashboards de Enphase/SunPower + UX simplificada para corretores em campo (mobile-first).
+# Sistema de Propostas Solares Esol Energy
 
-## 1. Autenticação e acesso
+Vou implementar um motor completo de propostas baseado em inteligência comercial do mercado solar brasileiro (Sun Brasil, Solfácil, Portal Solar, EDP, Aldo Solar).
 
-- Botão **"Acesso"** no header (canto superior direito) ao lado do CTA atual, levando para `/auth`.
-- Lovable Cloud habilitado com:
-  - Login Google (OAuth gerenciado)
-  - Login Email/Senha
-- Tabela `profiles` (criada automaticamente via trigger no signup) com: nome, telefone, foto, CPF/CNPJ, CRECI, cidade, bio, % comissão.
-- Tabela `user_roles` separada com enum `app_role` = `admin` | `corretor`.
-- Função `has_role()` security definer para evitar recursão RLS.
-- Primeiro usuário cadastrado vira admin automaticamente; demais entram como `corretor` (pendentes de aprovação).
-- Página `/perfil` para o corretor editar seus dados após cadastro (passo a passo: dados pessoais → dados profissionais → dados bancários/comissão → foto).
+## 1. Inteligência Comercial (parâmetros base do mercado BR 2025)
 
-## 2. Modelo de dados (clientes/leads)
+**Dimensionamento (HSP - Horas de Sol Pico por região):**
+- Norte: 4,8 / Nordeste: 5,5 / Centro-Oeste: 5,3 / Sudeste: 5,0 / Sul: 4,6
+- Fórmula: `kWp = (consumo_kWh_mês ÷ 30 ÷ HSP) ÷ 0,80` (perdas)
+- Área: ~6 m²/kWp (módulos 550W bifaciais)
 
-Tabela `clientes`:
-- Dados pessoais: nome, email, telefone (WhatsApp), CPF/CNPJ, data nascimento, endereço completo
-- Dados do imóvel: tipo (residencial/comercial/industrial/rural), área, tipo de telhado
-- Dados de consumo: concessionária, consumo médio kWh, valor médio fatura, número da UC
-- Dados do projeto: potência sugerida (kWp), valor estimado, payback estimado, forma de pagamento
-- **Status do funil** (enum): `novo` → `contato` → `visita_agendada` → `proposta_enviada` → `negociacao` → `contrato_assinado` → `instalacao` → `concluido` / `perdido`
-- Origem do lead, observações, anexos (conta de luz, RG, contrato)
-- `corretor_id` (FK para o corretor responsável)
-- `created_at`, `updated_at`
+**Preços de referência (R$/Wp - média mercado BR):**
+- Residencial até 5 kWp: R$ 4,50/Wp
+- Residencial 5-10 kWp: R$ 4,10/Wp
+- Comercial 10-30 kWp: R$ 3,70/Wp
+- Comercial 30-75 kWp: R$ 3,30/Wp
+- Industrial 75+ kWp: R$ 2,90/Wp
 
-Tabela `interacoes` (timeline): tipo (ligação, email, WhatsApp, visita, proposta), data, descrição, anexo, `cliente_id`, `autor_id`.
+**Economia/Payback:**
+- Geração mensal estimada: `kWp × HSP × 30 × 0,80`
+- Economia mensal: `geração × tarifa_kWh` (default R$ 0,95)
+- Payback: `investimento ÷ (economia × 12)`
+- Vida útil: 25 anos / Garantia inversor: 10 anos / Módulos: 12 anos defeito + 25 performance
 
-Tabela `propostas`: cliente_id, potência, equipamentos, valor total, condições, PDF gerado, status.
+**Estrutura de custos (motor admin):**
+- Equipamentos (módulos + inversor + estrutura + cabos): ~60% do custo
+- Mão de obra/instalação: ~12%
+- Frete: ~3% (variável por região)
+- Impostos (Simples ~6%, projeto ART): ~8%
+- Equipe comercial/comissão parceiro: ~7%
+- Margem alvo: ~14%
 
-### RLS
-- Admin: acesso total a tudo
-- Corretor: vê/edita SOMENTE os clientes onde `corretor_id = auth.uid()`
+## 2. Banco de Dados (nova migration)
 
-## 3. Painel do Administrador (`/admin`)
+**Tabelas novas:**
+- `propostas`: id, codigo_publico (token), parceiro_id, cliente_id (FK), titulo, status (rascunho/enviada/aceita/recusada/expirada), consumo_kwh, tarifa_kwh, estado, tipo_instalacao (residencial/comercial/industrial), kwp_sistema, geracao_mensal, economia_mensal, economia_25_anos, payback_meses, area_necessaria, qtd_modulos, potencia_modulo, qtd_inversores, potencia_inversor, preco_total, preco_por_wp, validade_dias, observacoes, aceita_em, recusada_em, visualizada_em, expires_at
+- `proposta_clientes`: associação N-N (proposta pode ir para múltiplos clientes)
+- `parametros_comerciais`: linha única editável pelo admin (HSP por região, R$/Wp por faixa, % custos, margem alvo, tarifa default)
+- `proposta_eventos`: log de visualização, aceite, recusa (com IP/user-agent)
 
-Visão de comando completo:
-- **Dashboard**: KPIs (leads novos, em negociação, fechados no mês, faturamento, comissões a pagar, conversão por etapa do funil), gráficos de evolução, top corretores.
-- **Clientes**: tabela com filtros (status, corretor, cidade, período), busca, edição, reatribuição de corretor, exportação CSV.
-- **Funil Kanban**: visão arrastar-e-soltar de todos os clientes por etapa.
-- **Corretores**: listar, aprovar cadastros pendentes, editar % comissão, ativar/desativar, ver desempenho individual.
-- **Propostas**: todas as propostas geradas, status.
-- **Configurações**: preços base por kWp, equipamentos disponíveis, modelos de proposta, integrações.
+**Grants + RLS:** parceiros veem só suas propostas; admin vê todas e edita; clientes acessam via token público (sem auth).
 
-## 4. Painel do Corretor (`/corretor`)
+## 3. Rotas e Fluxo
 
-Foco: simples, mobile-first, voltado ao processo de venda.
-- **Meus clientes** (cards/kanban por etapa do funil) — apenas os seus.
-- **Novo cliente** (wizard em etapas): Dados pessoais → Imóvel → Consumo → Foto da conta de luz → Status inicial.
-- **Detalhe do cliente**: ficha completa + timeline de interações + botão WhatsApp direto + botão "Gerar proposta" + upload de documentos + avançar status no funil.
-- **Minhas comissões**: clientes fechados, valores, status de pagamento.
-- **Meu perfil**: editar dados pessoais, profissionais, foto, senha.
+**Parceiro/Admin (autenticado):**
+- `/app/propostas` — lista de propostas com filtros (status, cliente, período)
+- `/app/propostas/nova` — wizard de 4 passos:
+  1. Selecionar cliente(s) já cadastrado(s) ou criar novo
+  2. Consumo (kWh/mês), estado, tarifa, tipo instalação
+  3. **Cálculo automático** (parceiro) ou **editável** (admin): kWp, equipamentos, preço
+  4. Revisão + observações + gerar link
+- `/app/propostas/$id` — detalhes, status, link público, botões WhatsApp/Email/PDF
+- `/app/metricas` (admin only) — dashboard com: propostas geradas/aceitas/conversão, ticket médio, custos vs. margem real, projeção mensal, breakdown por parceiro
+- `/app/parametros` (admin only) — editar tabela R$/Wp, HSP, % custos, margem alvo
 
-## 5. Fluxo público → captação
+**Cliente (público, sem login):**
+- `/proposta/$codigo` — página branded de alta conversão com:
+  - Hero co-branded (logo Esol + foto/nome do consultor)
+  - Cliente nome em destaque
+  - Resumo do sistema (kWp, módulos, área, geração)
+  - **Economia visual** (gráfico 25 anos, payback)
+  - Equipamentos detalhados
+  - Investimento + condições
+  - Botões grandes: ✅ Aceitar | ❌ Recusar | 📄 Baixar PDF | 💬 Falar com consultor (wa.me)
+  - Selos de confiança, garantias, FAQ
+  - Registra visualização ao abrir
 
-O formulário do site (já existente) cria lead automaticamente na tabela `clientes` com status `novo` e `corretor_id = null`, aparecendo no painel do admin para distribuição.
+## 4. PDF e Compartilhamento
+
+- PDF gerado client-side com `jspdf` + `html2canvas` (renderiza a própria página da proposta)
+- Botão **WhatsApp**: `wa.me/55<telefone>?text=` com mensagem pronta + link
+- Botão **Email**: abre cliente de email padrão (`mailto:`) por enquanto
+- Copiar link para área de transferência
+
+## 5. Dashboard de Métricas (Admin)
+
+Cards e gráficos:
+- Total propostas (mês/ano) + taxa de conversão
+- Receita projetada vs. realizada
+- Ticket médio por tipo (residencial/comercial)
+- Margem real por proposta (preço − custos parametrizados)
+- Top parceiros por conversão
+- Análise de capacidade: kWp vendidos vs. capacidade instaladores
+- Custos consolidados (frete, impostos, equipe) configuráveis
 
 ## Detalhes técnicos
 
-- Stack: TanStack Start + Lovable Cloud (Supabase) + shadcn/ui + Tailwind.
-- Rotas: `/auth`, `/_authenticated/admin/*`, `/_authenticated/corretor/*`, `/_authenticated/perfil`.
-- Layout autenticado com sidebar adaptativa por role.
-- Drag-and-drop kanban: `@dnd-kit/core`.
-- Componentes principais: `LeadCard`, `KanbanBoard`, `ClienteWizard`, `Timeline`, `StatCard`, `DataTable` (com TanStack Table).
-- Validação: Zod em todos os formulários.
-- Server functions com `requireSupabaseAuth` para todas as operações; admin opera com cliente autenticado + checagem `has_role('admin')`.
-- Header do site ganha botão "Acesso" → `/auth`; após login, redireciona para `/admin` ou `/corretor` conforme role.
+- Tudo em `createServerFn` autenticado para CRUD de propostas
+- Rota pública `/proposta/$codigo` consulta via server fn pública usando cliente publishable + RLS `TO anon` em `propostas` (só colunas seguras, filtrado por `codigo_publico` e `expires_at > now()`)
+- Componente `PropostaPublica` reutilizado para visualização autenticada e pública
+- Token: `gen_random_uuid()` no insert
+- Validade default: 15 dias (expires_at)
+- PDF gerado on-demand no clique (sem armazenamento)
+- Branding: cores Esol + foto do parceiro do `profiles.avatar_url`
 
-## Escopo desta primeira entrega
+## Arquivos a criar/editar
 
-Para não estourar uma única iteração gigante, proponho dividir:
+**Criar:**
+- `supabase/migrations/<ts>_propostas_system.sql`
+- `src/lib/proposta-calc.ts` (motor de cálculo)
+- `src/lib/propostas.functions.ts` (server fns)
+- `src/components/PropostaView.tsx` (visualização reutilizável)
+- `src/components/PropostaPDF.tsx` (export PDF)
+- `src/routes/app.propostas.tsx` (lista)
+- `src/routes/app.propostas.nova.tsx` (wizard)
+- `src/routes/app.propostas.$id.tsx` (detalhe)
+- `src/routes/app.metricas.tsx` (admin)
+- `src/routes/app.parametros.tsx` (admin)
+- `src/routes/proposta.$codigo.tsx` (público)
 
-**Fase 1 (esta)**: Cloud + Auth (Google + email) + roles + profiles + botão no header + páginas `/auth`, `/admin` (dashboard + clientes + corretores), `/corretor` (meus clientes + novo cliente wizard + detalhe) + tabela `clientes` + RLS + wizard de perfil do corretor.
+**Editar:**
+- `src/routes/app.tsx` — adicionar menus Propostas, Métricas, Parâmetros
+- `package.json` — adicionar `jspdf`, `html2canvas`, `recharts` (já pode estar)
 
-**Fase 2**: Kanban drag-and-drop, propostas com PDF, comissões, timeline rica, integração do formulário público com a tabela de leads, dashboards avançados.
-
-Posso seguir com a Fase 1 completa?
+Após aprovação, executo tudo em sequência: migration → libs de cálculo → server fns → componentes → rotas → integração no menu.

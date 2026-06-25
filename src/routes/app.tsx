@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog, Plus, FileText, Link2 } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog, Plus, FileText, Link2, FileSpreadsheet, BarChart3, Settings } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
 export const Route = createFileRoute("/app")({
@@ -60,8 +60,11 @@ function AppShell() {
 
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/clientes", icon: Users, label: "Clientes" },
     { to: "/app/novo", icon: Plus, label: "Novo cliente" },
+    { to: "/app/metricas", icon: BarChart3, label: "Métricas" },
+    { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros" },
     { to: "/app/convites", icon: Link2, label: "Convites" },
     { to: "/app/contratos", icon: FileText, label: "Contratos" },
@@ -69,6 +72,7 @@ function AppShell() {
   ];
   const corretorNav = [
     { to: "/app", icon: Briefcase, label: "Meus clientes", exact: true },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/novo", icon: Plus, label: "Novo cliente" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu perfil" },
   ];

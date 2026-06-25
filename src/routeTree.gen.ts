@@ -14,14 +14,20 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as PropostaCodigoRouteImport } from './routes/proposta.$codigo'
 import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
+import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
+import { Route as AppParametrosRouteImport } from './routes/app.parametros'
 import { Route as AppNovoRouteImport } from './routes/app.novo'
+import { Route as AppMetricasRouteImport } from './routes/app.metricas'
 import { Route as AppCorretoresRouteImport } from './routes/app.corretores'
 import { Route as AppConvitesRouteImport } from './routes/app.convites'
 import { Route as AppContratosRouteImport } from './routes/app.contratos'
 import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
+import { Route as AppPropostasNovaRouteImport } from './routes/app.propostas.nova'
+import { Route as AppPropostasIdRouteImport } from './routes/app.propostas.$id'
 import { Route as AppContratoIdRouteImport } from './routes/app.contrato.$id'
 import { Route as AppClienteIdRouteImport } from './routes/app.cliente.$id'
 
@@ -50,19 +56,39 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const PropostaCodigoRoute = PropostaCodigoRouteImport.update({
+  id: '/proposta/$codigo',
+  path: '/proposta/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConviteTokenRoute = ConviteTokenRouteImport.update({
   id: '/convite/$token',
   path: '/convite/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppPropostasRoute = AppPropostasRouteImport.update({
+  id: '/propostas',
+  path: '/propostas',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPerfilRoute = AppPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
   getParentRoute: () => AppRoute,
 } as any)
+const AppParametrosRoute = AppParametrosRouteImport.update({
+  id: '/parametros',
+  path: '/parametros',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppNovoRoute = AppNovoRouteImport.update({
   id: '/novo',
   path: '/novo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMetricasRoute = AppMetricasRouteImport.update({
+  id: '/metricas',
+  path: '/metricas',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCorretoresRoute = AppCorretoresRouteImport.update({
@@ -90,6 +116,16 @@ const AppClientesRoute = AppClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPropostasNovaRoute = AppPropostasNovaRouteImport.update({
+  id: '/nova',
+  path: '/nova',
+  getParentRoute: () => AppPropostasRoute,
+} as any)
+const AppPropostasIdRoute = AppPropostasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppPropostasRoute,
+} as any)
 const AppContratoIdRoute = AppContratoIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -111,12 +147,18 @@ export interface FileRoutesByFullPath {
   '/app/contratos': typeof AppContratosRoute
   '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
+  '/app/metricas': typeof AppMetricasRoute
   '/app/novo': typeof AppNovoRoute
+  '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/app/propostas': typeof AppPropostasRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
+  '/proposta/$codigo': typeof PropostaCodigoRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
+  '/app/propostas/$id': typeof AppPropostasIdRoute
+  '/app/propostas/nova': typeof AppPropostasNovaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -127,12 +169,18 @@ export interface FileRoutesByTo {
   '/app/contratos': typeof AppContratosRoute
   '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
+  '/app/metricas': typeof AppMetricasRoute
   '/app/novo': typeof AppNovoRoute
+  '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/app/propostas': typeof AppPropostasRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
+  '/proposta/$codigo': typeof PropostaCodigoRoute
   '/app': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
+  '/app/propostas/$id': typeof AppPropostasIdRoute
+  '/app/propostas/nova': typeof AppPropostasNovaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -145,12 +193,18 @@ export interface FileRoutesById {
   '/app/contratos': typeof AppContratosRoute
   '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
+  '/app/metricas': typeof AppMetricasRoute
   '/app/novo': typeof AppNovoRoute
+  '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/app/propostas': typeof AppPropostasRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
+  '/proposta/$codigo': typeof PropostaCodigoRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
+  '/app/propostas/$id': typeof AppPropostasIdRoute
+  '/app/propostas/nova': typeof AppPropostasNovaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -164,12 +218,18 @@ export interface FileRouteTypes {
     | '/app/contratos'
     | '/app/convites'
     | '/app/corretores'
+    | '/app/metricas'
     | '/app/novo'
+    | '/app/parametros'
     | '/app/perfil'
+    | '/app/propostas'
     | '/convite/$token'
+    | '/proposta/$codigo'
     | '/app/'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
+    | '/app/propostas/$id'
+    | '/app/propostas/nova'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -180,12 +240,18 @@ export interface FileRouteTypes {
     | '/app/contratos'
     | '/app/convites'
     | '/app/corretores'
+    | '/app/metricas'
     | '/app/novo'
+    | '/app/parametros'
     | '/app/perfil'
+    | '/app/propostas'
     | '/convite/$token'
+    | '/proposta/$codigo'
     | '/app'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
+    | '/app/propostas/$id'
+    | '/app/propostas/nova'
   id:
     | '__root__'
     | '/'
@@ -197,12 +263,18 @@ export interface FileRouteTypes {
     | '/app/contratos'
     | '/app/convites'
     | '/app/corretores'
+    | '/app/metricas'
     | '/app/novo'
+    | '/app/parametros'
     | '/app/perfil'
+    | '/app/propostas'
     | '/convite/$token'
+    | '/proposta/$codigo'
     | '/app/'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
+    | '/app/propostas/$id'
+    | '/app/propostas/nova'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -211,6 +283,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ConviteTokenRoute: typeof ConviteTokenRoute
+  PropostaCodigoRoute: typeof PropostaCodigoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -250,12 +323,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/proposta/$codigo': {
+      id: '/proposta/$codigo'
+      path: '/proposta/$codigo'
+      fullPath: '/proposta/$codigo'
+      preLoaderRoute: typeof PropostaCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/convite/$token': {
       id: '/convite/$token'
       path: '/convite/$token'
       fullPath: '/convite/$token'
       preLoaderRoute: typeof ConviteTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/propostas': {
+      id: '/app/propostas'
+      path: '/propostas'
+      fullPath: '/app/propostas'
+      preLoaderRoute: typeof AppPropostasRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/perfil': {
       id: '/app/perfil'
@@ -264,11 +351,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPerfilRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/parametros': {
+      id: '/app/parametros'
+      path: '/parametros'
+      fullPath: '/app/parametros'
+      preLoaderRoute: typeof AppParametrosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/novo': {
       id: '/app/novo'
       path: '/novo'
       fullPath: '/app/novo'
       preLoaderRoute: typeof AppNovoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/metricas': {
+      id: '/app/metricas'
+      path: '/metricas'
+      fullPath: '/app/metricas'
+      preLoaderRoute: typeof AppMetricasRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/corretores': {
@@ -306,6 +407,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/propostas/nova': {
+      id: '/app/propostas/nova'
+      path: '/nova'
+      fullPath: '/app/propostas/nova'
+      preLoaderRoute: typeof AppPropostasNovaRouteImport
+      parentRoute: typeof AppPropostasRoute
+    }
+    '/app/propostas/$id': {
+      id: '/app/propostas/$id'
+      path: '/$id'
+      fullPath: '/app/propostas/$id'
+      preLoaderRoute: typeof AppPropostasIdRouteImport
+      parentRoute: typeof AppPropostasRoute
+    }
     '/app/contrato/$id': {
       id: '/app/contrato/$id'
       path: '/$id'
@@ -335,14 +450,31 @@ const AppContratoRouteWithChildren = AppContratoRoute._addFileChildren(
   AppContratoRouteChildren,
 )
 
+interface AppPropostasRouteChildren {
+  AppPropostasIdRoute: typeof AppPropostasIdRoute
+  AppPropostasNovaRoute: typeof AppPropostasNovaRoute
+}
+
+const AppPropostasRouteChildren: AppPropostasRouteChildren = {
+  AppPropostasIdRoute: AppPropostasIdRoute,
+  AppPropostasNovaRoute: AppPropostasNovaRoute,
+}
+
+const AppPropostasRouteWithChildren = AppPropostasRoute._addFileChildren(
+  AppPropostasRouteChildren,
+)
+
 interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
   AppContratoRoute: typeof AppContratoRouteWithChildren
   AppContratosRoute: typeof AppContratosRoute
   AppConvitesRoute: typeof AppConvitesRoute
   AppCorretoresRoute: typeof AppCorretoresRoute
+  AppMetricasRoute: typeof AppMetricasRoute
   AppNovoRoute: typeof AppNovoRoute
+  AppParametrosRoute: typeof AppParametrosRoute
   AppPerfilRoute: typeof AppPerfilRoute
+  AppPropostasRoute: typeof AppPropostasRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppClienteIdRoute: typeof AppClienteIdRoute
 }
@@ -353,8 +485,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppContratosRoute: AppContratosRoute,
   AppConvitesRoute: AppConvitesRoute,
   AppCorretoresRoute: AppCorretoresRoute,
+  AppMetricasRoute: AppMetricasRoute,
   AppNovoRoute: AppNovoRoute,
+  AppParametrosRoute: AppParametrosRoute,
   AppPerfilRoute: AppPerfilRoute,
+  AppPropostasRoute: AppPropostasRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppClienteIdRoute: AppClienteIdRoute,
 }
@@ -367,17 +502,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ConviteTokenRoute: ConviteTokenRoute,
+  PropostaCodigoRoute: PropostaCodigoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
