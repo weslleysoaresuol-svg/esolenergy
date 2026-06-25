@@ -184,6 +184,96 @@ export type Database = {
           },
         ]
       }
+      parametros_comerciais: {
+        Row: {
+          area_por_modulo_m2: number
+          capacidade_instaladores_kwp_mes: number
+          created_at: string
+          custo_comissao_pct: number
+          custo_equipamentos_pct: number
+          custo_frete_pct: number
+          custo_impostos_pct: number
+          custo_instalacao_pct: number
+          hsp_centro_oeste: number
+          hsp_nordeste: number
+          hsp_norte: number
+          hsp_sudeste: number
+          hsp_sul: number
+          id: string
+          inflacao_energetica: number
+          margem_alvo_pct: number
+          perdas_sistema: number
+          potencia_modulo_w: number
+          preco_wp_comercial_grande: number
+          preco_wp_comercial_pequeno: number
+          preco_wp_industrial: number
+          preco_wp_residencial_grande: number
+          preco_wp_residencial_pequeno: number
+          tarifa_kwh_default: number
+          updated_at: string
+          validade_proposta_dias: number
+          vida_util_anos: number
+        }
+        Insert: {
+          area_por_modulo_m2?: number
+          capacidade_instaladores_kwp_mes?: number
+          created_at?: string
+          custo_comissao_pct?: number
+          custo_equipamentos_pct?: number
+          custo_frete_pct?: number
+          custo_impostos_pct?: number
+          custo_instalacao_pct?: number
+          hsp_centro_oeste?: number
+          hsp_nordeste?: number
+          hsp_norte?: number
+          hsp_sudeste?: number
+          hsp_sul?: number
+          id?: string
+          inflacao_energetica?: number
+          margem_alvo_pct?: number
+          perdas_sistema?: number
+          potencia_modulo_w?: number
+          preco_wp_comercial_grande?: number
+          preco_wp_comercial_pequeno?: number
+          preco_wp_industrial?: number
+          preco_wp_residencial_grande?: number
+          preco_wp_residencial_pequeno?: number
+          tarifa_kwh_default?: number
+          updated_at?: string
+          validade_proposta_dias?: number
+          vida_util_anos?: number
+        }
+        Update: {
+          area_por_modulo_m2?: number
+          capacidade_instaladores_kwp_mes?: number
+          created_at?: string
+          custo_comissao_pct?: number
+          custo_equipamentos_pct?: number
+          custo_frete_pct?: number
+          custo_impostos_pct?: number
+          custo_instalacao_pct?: number
+          hsp_centro_oeste?: number
+          hsp_nordeste?: number
+          hsp_norte?: number
+          hsp_sudeste?: number
+          hsp_sul?: number
+          id?: string
+          inflacao_energetica?: number
+          margem_alvo_pct?: number
+          perdas_sistema?: number
+          potencia_modulo_w?: number
+          preco_wp_comercial_grande?: number
+          preco_wp_comercial_pequeno?: number
+          preco_wp_industrial?: number
+          preco_wp_residencial_grande?: number
+          preco_wp_residencial_pequeno?: number
+          tarifa_kwh_default?: number
+          updated_at?: string
+          validade_proposta_dias?: number
+          vida_util_anos?: number
+        }
+        Relationships: []
+      }
       partner_invites: {
         Row: {
           created_at: string
@@ -274,6 +364,220 @@ export type Database = {
         }
         Relationships: []
       }
+      proposta_clientes: {
+        Row: {
+          cliente_id: string
+          created_at: string
+          enviado_em: string | null
+          enviado_email: boolean
+          enviado_whatsapp: boolean
+          id: string
+          proposta_id: string
+        }
+        Insert: {
+          cliente_id: string
+          created_at?: string
+          enviado_em?: string | null
+          enviado_email?: boolean
+          enviado_whatsapp?: boolean
+          id?: string
+          proposta_id: string
+        }
+        Update: {
+          cliente_id?: string
+          created_at?: string
+          enviado_em?: string | null
+          enviado_email?: boolean
+          enviado_whatsapp?: boolean
+          id?: string
+          proposta_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposta_clientes_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposta_clientes_proposta_id_fkey"
+            columns: ["proposta_id"]
+            isOneToOne: false
+            referencedRelation: "propostas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposta_eventos: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string | null
+          payload: Json | null
+          proposta_id: string
+          tipo: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          payload?: Json | null
+          proposta_id: string
+          tipo: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          payload?: Json | null
+          proposta_id?: string
+          tipo?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposta_eventos_proposta_id_fkey"
+            columns: ["proposta_id"]
+            isOneToOne: false
+            referencedRelation: "propostas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      propostas: {
+        Row: {
+          aceita_em: string | null
+          area_necessaria_m2: number
+          arvores_equivalentes: number
+          cidade: string | null
+          co2_evitado_ton: number
+          codigo_publico: string
+          condicoes_pagamento: string | null
+          consumo_kwh: number
+          created_at: string
+          economia_25_anos: number
+          economia_anual: number
+          economia_mensal: number
+          editada_pelo_admin: boolean
+          enviada_em: string | null
+          estado: string | null
+          expires_at: string
+          geracao_mensal_kwh: number
+          hsp: number
+          id: string
+          kwp_sistema: number
+          observacoes: string | null
+          parceiro_id: string
+          payback_meses: number
+          potencia_inversor_kw: number | null
+          potencia_modulo_w: number
+          preco_por_wp: number
+          preco_total: number
+          qtd_inversores: number
+          qtd_modulos: number
+          recusada_em: string | null
+          regiao: string | null
+          status: Database["public"]["Enums"]["proposta_status"]
+          tarifa_kwh: number
+          tipo_instalacao: Database["public"]["Enums"]["tipo_instalacao"]
+          titulo: string
+          updated_at: string
+          validade_dias: number
+          visualizada_em: string | null
+        }
+        Insert: {
+          aceita_em?: string | null
+          area_necessaria_m2: number
+          arvores_equivalentes?: number
+          cidade?: string | null
+          co2_evitado_ton?: number
+          codigo_publico?: string
+          condicoes_pagamento?: string | null
+          consumo_kwh: number
+          created_at?: string
+          economia_25_anos: number
+          economia_anual: number
+          economia_mensal: number
+          editada_pelo_admin?: boolean
+          enviada_em?: string | null
+          estado?: string | null
+          expires_at?: string
+          geracao_mensal_kwh: number
+          hsp: number
+          id?: string
+          kwp_sistema: number
+          observacoes?: string | null
+          parceiro_id: string
+          payback_meses: number
+          potencia_inversor_kw?: number | null
+          potencia_modulo_w: number
+          preco_por_wp: number
+          preco_total: number
+          qtd_inversores?: number
+          qtd_modulos: number
+          recusada_em?: string | null
+          regiao?: string | null
+          status?: Database["public"]["Enums"]["proposta_status"]
+          tarifa_kwh: number
+          tipo_instalacao?: Database["public"]["Enums"]["tipo_instalacao"]
+          titulo: string
+          updated_at?: string
+          validade_dias?: number
+          visualizada_em?: string | null
+        }
+        Update: {
+          aceita_em?: string | null
+          area_necessaria_m2?: number
+          arvores_equivalentes?: number
+          cidade?: string | null
+          co2_evitado_ton?: number
+          codigo_publico?: string
+          condicoes_pagamento?: string | null
+          consumo_kwh?: number
+          created_at?: string
+          economia_25_anos?: number
+          economia_anual?: number
+          economia_mensal?: number
+          editada_pelo_admin?: boolean
+          enviada_em?: string | null
+          estado?: string | null
+          expires_at?: string
+          geracao_mensal_kwh?: number
+          hsp?: number
+          id?: string
+          kwp_sistema?: number
+          observacoes?: string | null
+          parceiro_id?: string
+          payback_meses?: number
+          potencia_inversor_kw?: number | null
+          potencia_modulo_w?: number
+          preco_por_wp?: number
+          preco_total?: number
+          qtd_inversores?: number
+          qtd_modulos?: number
+          recusada_em?: string | null
+          regiao?: string | null
+          status?: Database["public"]["Enums"]["proposta_status"]
+          tarifa_kwh?: number
+          tipo_instalacao?: Database["public"]["Enums"]["tipo_instalacao"]
+          titulo?: string
+          updated_at?: string
+          validade_dias?: number
+          visualizada_em?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "propostas_parceiro_id_fkey"
+            columns: ["parceiro_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -308,6 +612,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      proposta_registrar_evento: {
+        Args: { _codigo: string; _ip?: string; _tipo: string; _ua?: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "corretor"
@@ -322,6 +630,14 @@ export type Database = {
         | "concluido"
         | "perdido"
       imovel_tipo: "residencial" | "comercial" | "industrial" | "rural"
+      proposta_status:
+        | "rascunho"
+        | "enviada"
+        | "visualizada"
+        | "aceita"
+        | "recusada"
+        | "expirada"
+      tipo_instalacao: "residencial" | "comercial" | "industrial" | "rural"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -462,6 +778,15 @@ export const Constants = {
         "perdido",
       ],
       imovel_tipo: ["residencial", "comercial", "industrial", "rural"],
+      proposta_status: [
+        "rascunho",
+        "enviada",
+        "visualizada",
+        "aceita",
+        "recusada",
+        "expirada",
+      ],
+      tipo_instalacao: ["residencial", "comercial", "industrial", "rural"],
     },
   },
 } as const
