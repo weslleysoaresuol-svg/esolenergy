@@ -28,6 +28,7 @@ export interface Parametros {
   custo_comissao_pct: number;
   margem_alvo_pct: number;
   validade_proposta_dias: number;
+  capacidade_instaladores_kwp_mes: number;
 }
 
 // Mapeamento estado → região

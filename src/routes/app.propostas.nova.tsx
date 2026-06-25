@@ -76,7 +76,7 @@ function NovaProposta() {
       const payload = {
         parceiro_id: user.id,
         titulo: titulo || `Proposta solar`,
-        status: enviar ? "enviada" : "rascunho",
+        status: (enviar ? "enviada" : "rascunho") as "enviada" | "rascunho",
         tipo_instalacao: tipo,
         consumo_kwh: consumo,
         tarifa_kwh: tarifa,
