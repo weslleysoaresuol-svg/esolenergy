@@ -24,10 +24,16 @@ export function useCurrentUser(): CurrentUser {
     setUser(u.user ?? null);
     if (u.user) {
       const [{ data: r }, { data: p }] = await Promise.all([
-        supabase.from("user_roles").select("role").eq("user_id", u.user.id).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", u.user.id),
         supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
       ]);
-      setRole((r?.role as AppRole) ?? null);
+      const roles = (r ?? []).map((row: any) => row.role as AppRole);
+      const resolved: AppRole | null = roles.includes("admin")
+        ? "admin"
+        : roles.includes("corretor")
+          ? "corretor"
+          : null;
+      setRole(resolved);
       setProfile(p ?? null);
     } else {
       setRole(null);

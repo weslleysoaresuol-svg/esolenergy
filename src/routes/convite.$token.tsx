@@ -48,6 +48,23 @@ function InvitePage() {
 
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
+        // Se o usuário já é admin (ou já é parceiro), não consome o convite — apenas avisa e direciona
+        const { data: existingRoles } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userData.user.id);
+        const roles = (existingRoles ?? []).map((r: any) => r.role);
+        if (roles.includes("admin")) {
+          toast.info("Você já é administrador. Use o link em outro navegador ou aba anônima para cadastrar o parceiro.");
+          try { localStorage.removeItem("pending_invite_token"); } catch {}
+          navigate({ to: "/app" });
+          return;
+        }
+        if (roles.includes("corretor")) {
+          try { localStorage.removeItem("pending_invite_token"); } catch {}
+          navigate({ to: "/app" });
+          return;
+        }
         const { error: rpcErr } = await supabase.rpc("consume_invite", { _token: token });
         if (!rpcErr) {
           try { localStorage.removeItem("pending_invite_token"); } catch {}
