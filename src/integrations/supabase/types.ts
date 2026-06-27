@@ -616,6 +616,14 @@ export type Database = {
         Args: { _codigo: string; _ip?: string; _tipo: string; _ua?: string }
         Returns: undefined
       }
+      validate_invite: {
+        Args: { _token: string }
+        Returns: {
+          expires_at: string
+          reason: string
+          valid: boolean
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "corretor"
