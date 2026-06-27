@@ -36,7 +36,7 @@ export function useNotificacoes() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(40);
-    const list = (data || []) as Notificacao[];
+    const list = ((data as any) || []) as Notificacao[];
     setNotificacoes(list);
     setNaoLidas(list.filter((n) => !n.lida).length);
   }, [user]);

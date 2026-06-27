@@ -1088,14 +1088,15 @@ function AcompanharModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     setSearched(false);
 
     try {
-      const { data, error } = await supabase.rpc("consultar_projeto_cliente", {
+      const { data, error } = await (supabase.rpc as any)("consultar_projeto_cliente", {
         _cpf_cnpj: cleanDoc,
       });
 
       if (error) throw error;
 
-      if (data && data.length > 0) {
-        const found = data[0];
+      const rows = (data as any[]) || [];
+      if (rows.length > 0) {
+        const found = rows[0];
         setProject(found);
         setLogs(found.recent_logs || []);
       } else {

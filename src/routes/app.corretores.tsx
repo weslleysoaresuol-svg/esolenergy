@@ -82,7 +82,7 @@ function AdminCorretores() {
   };
 
   const loadConvites = async () => {
-    const { data } = await supabase.from("convites").select("*").order("created_at", { ascending: false });
+    const { data } = await (supabase.from("convites" as any).select("*").order("created_at", { ascending: false }) as any);
     setConvites(data || []);
   };
 
@@ -117,11 +117,11 @@ function AdminCorretores() {
     setEnviandoConvite(true);
     const token = crypto.randomUUID();
     
-    const { error } = await supabase.from("convites").insert({
+    const { error } = await (supabase.from("convites" as any).insert({
       email: novoEmail.trim().toLowerCase(),
       token,
       status: "pendente",
-    });
+    } as any) as any);
 
     setEnviandoConvite(false);
     if (error) {
