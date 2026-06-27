@@ -55,7 +55,7 @@ function NovaProposta() {
     (async () => {
       // 1. Parâmetros Comerciais
       try {
-        const { data: pr } = await supabase.from("parametros_comerciais").select("*").limit(1).maybeSingle();
+        const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
         if (pr) {
           setParams(pr as any);
           setTarifa(Number((pr as any).tarifa_kwh_default));
