@@ -36,15 +36,12 @@ function InvitePage() {
   // Valida convite + se já está logado, consome direto
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase
-        .from("partner_invites")
-        .select("expires_at, used_at")
-        .eq("token", token)
-        .maybeSingle();
-      if (error || !data) return setState({ status: "invalid", reason: "Link de convite não encontrado." });
-      if (data.used_at) return setState({ status: "invalid", reason: "Este convite já foi utilizado." });
-      if (new Date(data.expires_at) < new Date()) return setState({ status: "invalid", reason: "Este convite expirou." });
-      setState({ status: "valid", expiresAt: data.expires_at });
+      const { data, error } = await supabase.rpc("validate_invite" as any, { _token: token });
+      const row = Array.isArray(data) ? data[0] : data;
+      if (error || !row) return setState({ status: "invalid", reason: "Link de convite não encontrado." });
+      if (!row.valid) return setState({ status: "invalid", reason: row.reason ?? "Convite inválido." });
+      setState({ status: "valid", expiresAt: row.expires_at });
+
 
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
