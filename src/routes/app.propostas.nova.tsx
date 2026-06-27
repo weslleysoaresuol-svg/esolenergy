@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { calcularProposta, type Parametros, type TipoInstalacao, BRL, NUM, regiaoFromEstado } from "@/lib/proposta-calc";
+import { KITS_FALLBACK, FINANCEIRAS_FALLBACK } from "@/lib/kits-fallback";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Sun, Zap, Wallet } from "lucide-react";
 
@@ -52,25 +53,60 @@ function NovaProposta() {
 
   useEffect(() => {
     (async () => {
-      const [
-        { data: pr },
-        { data: cs },
-        { data: ks },
-        { data: fs }
-      ] = await Promise.all([
-        supabase.from("parametros_comerciais").select("*").limit(1).maybeSingle(),
-        supabase.from("clientes").select("id, nome, telefone, email, cidade, estado, consumo_kwh, valor_fatura").order("nome"),
-        supabase.from("kits_solares" as any).select("*"),
-        supabase.from("financeiras_solar" as any).select("*").eq("ativo", true),
-      ]);
-      if (pr) setParams(pr as any);
-      if (cs) setClientes(cs);
-      if (pr) setTarifa(Number((pr as any).tarifa_kwh_default));
-      if (ks) setKits(ks);
-      if (fs) setFinanceiras(fs);
+      // 1. Parâmetros Comerciais
+      try {
+        const { data: pr } = await supabase.from("parametros_comerciais").select("*").limit(1).maybeSingle();
+        if (pr) {
+          setParams(pr as any);
+          setTarifa(Number((pr as any).tarifa_kwh_default));
+        }
+      } catch (err) {
+        console.warn("Erro ao buscar parâmetros comerciais:", err);
+      }
+
+      // 2. Clientes
+      let loadedClientes: any[] = [];
+      try {
+        const { data: cs } = await supabase.from("clientes").select("id, nome, telefone, email, cidade, estado, consumo_kwh, valor_fatura").order("nome");
+        if (cs) {
+          setClientes(cs);
+          loadedClientes = cs;
+        }
+      } catch (err) {
+        console.warn("Erro ao buscar clientes:", err);
+      }
+
+      // 3. Kits Solares
+      try {
+        const { data: ks, error } = await supabase.from("kits_solares" as any).select("*");
+        if (error || !ks || ks.length === 0) {
+          console.warn("Tabela kits_solares vazia ou inacessível. Usando fallback estático...");
+          setKits(KITS_FALLBACK);
+        } else {
+          setKits(ks);
+        }
+      } catch (err) {
+        console.warn("Falha de conexão com kits_solares. Usando fallback estático...", err);
+        setKits(KITS_FALLBACK);
+      }
+
+      // 4. Financeiras
+      try {
+        const { data: fs, error } = await supabase.from("financeiras_solar" as any).select("*").eq("ativo", true);
+        if (error || !fs || fs.length === 0) {
+          console.warn("Tabela financeiras_solar vazia ou inacessível. Usando fallback estático...");
+          setFinanceiras(FINANCEIRAS_FALLBACK);
+        } else {
+          setFinanceiras(fs);
+        }
+      } catch (err) {
+        console.warn("Falha de conexão com financeiras_solar. Usando fallback estático...", err);
+        setFinanceiras(FINANCEIRAS_FALLBACK);
+      }
+
       // Pré-seleciona cliente vindo da ficha
-      if (clienteIdPreSel && cs) {
-        const found = (cs as any[]).find((c: any) => c.id === clienteIdPreSel);
+      if (clienteIdPreSel && loadedClientes.length > 0) {
+        const found = loadedClientes.find((c: any) => c.id === clienteIdPreSel);
         if (found) {
           setSelecionados([found.id]);
           if (found.consumo_kwh) setConsumo(Number(found.consumo_kwh));
@@ -292,8 +328,36 @@ function NovaProposta() {
         kit_garantia_modulos_anos: selectedKit ? Number(selectedKit.garantia_modulos_anos) : null,
         kit_garantia_inversor_anos: selectedKit ? Number(selectedKit.garantia_inversor_anos) : null,
       };
-      const { data: prop, error } = await supabase.from("propostas").insert(payload).select().single();
-      if (error) throw error;
+      let prop: any = null;
+      try {
+        const { data, error } = await supabase.from("propostas").insert(payload).select().single();
+        if (error) {
+          // Código 42703: coluna não existe (indica que a migração SQL de kit ainda não rodou no Supabase remoto)
+          if (error.code === "42703" || error.message?.includes("column")) {
+            console.warn("Tabela 'propostas' não possui colunas de kit. Salvando sem detalhes do kit...");
+            const cleanPayload = { ...payload };
+            delete (cleanPayload as any).kit_id;
+            delete (cleanPayload as any).kit_nome;
+            delete (cleanPayload as any).kit_inversor;
+            delete (cleanPayload as any).kit_fabricante_modulos;
+            delete (cleanPayload as any).kit_imagem_url;
+            delete (cleanPayload as any).kit_tecnologia_modulo;
+            delete (cleanPayload as any).kit_garantia_modulos_anos;
+            delete (cleanPayload as any).kit_garantia_inversor_anos;
+
+            const { data: retryData, error: retryError } = await supabase.from("propostas").insert(cleanPayload).select().single();
+            if (retryError) throw retryError;
+            prop = retryData;
+          } else {
+            throw error;
+          }
+        } else {
+          prop = data;
+        }
+      } catch (insertErr: any) {
+        throw new Error(insertErr.message || "Falha ao gravar proposta no banco de dados.");
+      }
+
       // associa clientes
       const assoc = selecionados.map((cid) => ({ proposta_id: prop.id, cliente_id: cid }));
       const { error: assocError } = await supabase.from("proposta_clientes").insert(assoc);

@@ -14,6 +14,7 @@ import {
   Upload, RefreshCw, Link2, FileSpreadsheet, Eye, HelpCircle
 } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
+import { KITS_FALLBACK } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/app/kits")({ component: AdminKits });
 
@@ -82,8 +83,18 @@ function AdminKits() {
   const [fileLoaded, setFileLoaded] = useState(false);
 
   const load = async () => {
-    const { data } = await supabase.from("kits_solares" as any).select("*").order("potencia_kwp");
-    setKits(data || []);
+    try {
+      const { data, error } = await supabase.from("kits_solares" as any).select("*").order("potencia_kwp");
+      if (error || !data || data.length === 0) {
+        console.warn("Tabela kits_solares vazia ou inacessível. Usando fallback estático...");
+        setKits(KITS_FALLBACK);
+      } else {
+        setKits(data);
+      }
+    } catch (err) {
+      console.warn("Falha de conexão com kits_solares. Usando fallback estático...", err);
+      setKits(KITS_FALLBACK);
+    }
   };
 
   useEffect(() => { load(); }, []);
