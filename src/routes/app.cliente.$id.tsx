@@ -51,9 +51,16 @@ function ClienteDetail() {
   const [npsScore, setNpsScore] = useState<number | null>(null);
 
   const load = async () => {
-    const { data } = await supabase.from("clientes").select("*, profiles:corretor_id(nome,email)").eq("id", id).maybeSingle();
-    setCliente(data);
-    setEdit(data || {});
+    const { data, error } = await supabase.from("clientes").select("*, profiles:corretor_id(nome,email)").eq("id", id).maybeSingle();
+    if (error) {
+      console.error("Erro ao carregar detalhes do cliente (tentando fallback):", error);
+      const { data: fallbackData } = await supabase.from("clientes").select("*").eq("id", id).maybeSingle();
+      setCliente(fallbackData);
+      setEdit(fallbackData || {});
+    } else {
+      setCliente(data);
+      setEdit(data || {});
+    }
     const { data: ints } = await supabase.from("interacoes").select("*").eq("cliente_id", id).order("created_at", { ascending: false });
     setInteracoes(ints || []);
     setLoading(false);

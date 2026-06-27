@@ -58,24 +58,66 @@ function AdminDashboard() {
 
   useEffect(() => {
     (async () => {
-      const [
-        { data: list },
-        { data: ps },
-        { data: pr }
-      ] = await Promise.all([
-        supabase.from("clientes").select("*, profiles:corretor_id(nome)").order("updated_at", { ascending: false }),
-        supabase.from("propostas").select("*, parceiro:parceiro_id(nome)").order("created_at"),
-        (supabase.rpc as any)("get_parametros_publicos").then((r: any) => ({ data: r.data }))
-      ]);
+      try {
+        // Busca primária de clientes
+        const { data: list, error: errList } = await supabase
+          .from("clientes")
+          .select("*, profiles:corretor_id(nome)")
+          .order("updated_at", { ascending: false });
 
-      const all = list || [];
-      const leads = all.filter((c) => c.origem === "landing" && !c.corretor_id);
-      
-      setClientes(all);
-      setSiteLeads(leads);
-      setPropostas(ps || []);
-      if (pr) setParams(pr);
-      setLoading(false);
+        let all: any[] = [];
+        if (errList) {
+          console.error("Erro ao carregar clientes com join no dashboard (tentando fallback):", errList);
+          const { data: fallbackList, error: errFallback } = await supabase
+            .from("clientes")
+            .select("*")
+            .order("updated_at", { ascending: false });
+          
+          if (!errFallback && fallbackList) {
+            all = fallbackList;
+          }
+        } else if (list) {
+          all = list;
+        }
+
+        // Busca de propostas
+        const { data: ps, error: errPs } = await supabase
+          .from("propostas")
+          .select("*, parceiro:parceiro_id(nome)")
+          .order("created_at");
+
+        let finalPropostas: any[] = [];
+        if (errPs) {
+          console.error("Erro ao carregar propostas com join no dashboard (tentando fallback):", errPs);
+          const { data: fallbackPs } = await supabase
+            .from("propostas")
+            .select("*")
+            .order("created_at");
+          finalPropostas = fallbackPs || [];
+        } else {
+          finalPropostas = ps || [];
+        }
+
+        // Busca de parâmetros
+        let prData: any = null;
+        try {
+          const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
+          prData = pr;
+        } catch (errRpc) {
+          console.error("Erro na RPC get_parametros_publicos:", errRpc);
+        }
+
+        const leads = all.filter((c) => c.origem === "landing" && !c.corretor_id);
+        
+        setClientes(all);
+        setSiteLeads(leads);
+        setPropostas(finalPropostas);
+        if (prData) setParams(prData);
+      } catch (err) {
+        console.error("Erro grave ao iniciar dados do dashboard:", err);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 

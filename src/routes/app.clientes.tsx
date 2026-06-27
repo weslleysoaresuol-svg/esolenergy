@@ -22,8 +22,30 @@ function AdminClientes() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("clientes").select("*, profiles:corretor_id(nome)").order("created_at", { ascending: false });
-      setClientes(data || []);
+      const { data, error } = await supabase
+        .from("clientes")
+        .select("*, profiles:corretor_id(nome)")
+        .order("created_at", { ascending: false });
+      
+      if (error) {
+        console.error("Erro na busca primária de clientes (tentando fallback):", error);
+        // Fallback: busca sem join com profiles para garantir que os dados apareçam
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from("clientes")
+          .select("*")
+          .order("created_at", { ascending: false });
+        
+        if (fallbackError) {
+          console.error("Erro no fallback de clientes:", fallbackError);
+          setErrorMsg(`Falha no banco: ${fallbackError.message} (${fallbackError.code || "DB_ERROR"}). Verifique as políticas RLS.`);
+          setClientes([]);
+        } else {
+          setClientes(fallbackData || []);
+        }
+      } else {
+        setClientes(data || []);
+      }
+      setLoading(false);
     })();
   }, []);
 
@@ -34,10 +56,27 @@ function AdminClientes() {
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <div>
-        <h1 className="text-3xl font-bold text-navy">Clientes</h1>
-        <p className="text-muted-foreground">{filtered.length} de {clientes.length} cliente(s)</p>
+      <div className="flex justify-between items-center flex-wrap gap-2">
+        <div>
+          <h1 className="text-3xl font-bold text-navy">Clientes</h1>
+          <p className="text-muted-foreground">
+            {loading ? "Buscando clientes..." : `${filtered.length} de ${clientes.length} cliente(s) localizado(s)`}
+          </p>
+        </div>
+        <Link to="/app/novo" className="inline-flex items-center gap-2 bg-sun-deep text-navy px-5 py-2.5 rounded-full font-semibold hover:bg-sun text-sm shadow-sm transition-all">
+          + Novo Cliente
+        </Link>
       </div>
+
+      {errorMsg && (
+        <Card className="p-4 border-l-4 border-l-red-500 bg-red-50/40 text-red-800 text-xs flex gap-2 items-center">
+          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+          <div>
+            <span className="font-bold">Alerta do Banco de Dados:</span> {errorMsg}
+          </div>
+        </Card>
+      )}
+
       <Card className="p-4 border-0 shadow-md flex flex-wrap gap-3">
         <Input placeholder="Buscar por nome, telefone ou cidade…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-sm" />
         <Select value={status} onValueChange={setStatus}>
@@ -48,26 +87,50 @@ function AdminClientes() {
           </SelectContent>
         </Select>
       </Card>
-      <Card className="border-0 shadow-md overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
-            <tr><th className="p-3">Nome</th><th className="p-3">Telefone</th><th className="p-3">Cidade</th><th className="p-3">Parceiro</th><th className="p-3">Status</th><th className="p-3">Valor</th></tr>
-          </thead>
-          <tbody>
-            {filtered.map((c) => (
-              <tr key={c.id} className="border-t hover:bg-slate-50">
-                <td className="p-3"><Link to="/app/cliente/$id" params={{ id: c.id }} className="font-semibold text-navy hover:underline">{c.nome}</Link></td>
-                <td className="p-3">{c.telefone}</td>
-                <td className="p-3">{c.cidade || "—"}</td>
-                <td className="p-3">{c.profiles?.nome || <span className="text-muted-foreground">Não atribuído</span>}</td>
-                <td className="p-3"><Badge variant="outline">{STATUS_LABEL[c.status]}</Badge></td>
-                <td className="p-3">{c.valor_estimado ? `R$ ${Number(c.valor_estimado).toLocaleString("pt-BR")}` : "—"}</td>
+
+      {loading ? (
+        <div className="py-20 text-center text-muted-foreground flex flex-col items-center justify-center gap-2">
+          <Loader2 className="w-6 h-6 animate-spin text-navy" />
+          <span className="text-sm font-semibold">Carregando carteira de clientes...</span>
+        </div>
+      ) : (
+        <Card className="border-0 shadow-md overflow-x-auto bg-white">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="p-3">Nome</th>
+                <th className="p-3">Telefone</th>
+                <th className="p-3">Cidade</th>
+                <th className="p-3">Parceiro</th>
+                <th className="p-3">Status</th>
+                <th className="p-3">Valor</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {filtered.length === 0 && <div className="p-8 text-center text-muted-foreground">Nenhum cliente encontrado.</div>}
-      </Card>
+            </thead>
+            <tbody>
+              {filtered.map((c) => (
+                <tr key={c.id} className="border-t hover:bg-slate-50">
+                  <td className="p-3">
+                    <Link to="/app/cliente/$id" params={{ id: c.id }} className="font-semibold text-navy hover:underline">
+                      {c.nome}
+                    </Link>
+                  </td>
+                  <td className="p-3">{c.telefone}</td>
+                  <td className="p-3">{c.cidade || "—"}</td>
+                  <td className="p-3">{c.profiles?.nome || <span className="text-muted-foreground">Não atribuído</span>}</td>
+                  <td className="p-3"><Badge variant="outline">{STATUS_LABEL[c.status]}</Badge></td>
+                  <td className="p-3">{c.valor_estimado ? `R$ ${Number(c.valor_estimado).toLocaleString("pt-BR")}` : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {filtered.length === 0 && (
+            <div className="p-12 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
+              <Users className="w-8 h-8 opacity-40 text-slate-400" />
+              <span>Nenhum cliente cadastrado ou localizado com estes filtros.</span>
+            </div>
+          )}
+        </Card>
+      )}
     </div>
   );
 }
