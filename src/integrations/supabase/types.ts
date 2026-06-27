@@ -605,6 +605,8 @@ export type Database = {
     }
     Functions: {
       consume_invite: { Args: { _token: string }; Returns: boolean }
+      get_parametros_publicos: { Args: never; Returns: Json }
+      get_proposta_publica: { Args: { _codigo: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
