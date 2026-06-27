@@ -23,7 +23,7 @@ CREATE POLICY "Allow public read access to kits_solares" ON public.kits_solares
 
 CREATE POLICY "Allow admin all access to kits_solares" ON public.kits_solares
     FOR ALL TO authenticated USING (
-        public.has_role('admin', auth.uid())
+        public.has_role(auth.uid(), 'admin')
     );
 
 -- Create public.financeiras_solar table if not exists
@@ -46,5 +46,5 @@ CREATE POLICY "Allow public read access to financeiras_solar" ON public.financei
 
 CREATE POLICY "Allow admin all access to financeiras_solar" ON public.financeiras_solar
     FOR ALL TO authenticated USING (
-        public.has_role('admin', auth.uid())
+        public.has_role(auth.uid(), 'admin')
     );
