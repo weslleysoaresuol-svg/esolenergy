@@ -252,12 +252,11 @@ function ClienteDetail() {
             
             {/* Lista de passos da Timeline */}
             {[
-              { idx: 1, label: "Lead / Prospecção", status: "novo", active: ["novo", "contato"], completed: ["visita_agendada", "proposta_enviada", "negociacao", "contrato_assinado", "instalacao", "concluido"], icon: Inbox },
-              { idx: 2, label: "Visita Técnica", status: "visita_agendada", active: ["visita_agendada"], completed: ["proposta_enviada", "negociacao", "contrato_assinado", "instalacao", "concluido"], icon: Calendar },
-              { idx: 3, label: "Proposta Comercial", status: "proposta_enviada", active: ["proposta_enviada", "negociacao"], completed: ["contrato_assinado", "instalacao", "concluido"], icon: FileText },
-              { idx: 4, label: "Contrato Assinado", status: "contrato_assinado", active: ["contrato_assinado"], completed: ["instalacao", "concluido"], icon: FileSignature },
-              { idx: 5, label: "Instalação & Eng.", status: "instalacao", active: ["instalacao"], completed: ["concluido"], icon: Wrench },
-              { idx: 6, label: "Ativação & Ligação", status: "concluido", active: ["concluido"], completed: [], icon: Zap },
+              { idx: 1, label: "Lead / Prospecção", status: "novo", active: ["novo", "contato"], completed: ["proposta_enviada", "negociacao", "contrato_assinado", "visita_agendada", "instalacao", "concluido"], icon: Inbox },
+              { idx: 2, label: "Proposta Comercial", status: "proposta_enviada", active: ["proposta_enviada", "negociacao"], completed: ["contrato_assinado", "visita_agendada", "instalacao", "concluido"], icon: FileText },
+              { idx: 3, label: "Contrato Assinado", status: "contrato_assinado", active: ["contrato_assinado"], completed: ["visita_agendada", "instalacao", "concluido"], icon: FileSignature },
+              { idx: 4, label: "Vistoria & Engenharia", status: "instalacao", active: ["visita_agendada", "instalacao"], completed: ["concluido"], icon: Wrench },
+              { idx: 5, label: "Ativação & Ligação", status: "concluido", active: ["concluido"], completed: [], icon: Zap },
             ].map((step) => {
               const isCompleted = step.completed.includes(cliente.status);
               const isActive = step.active.includes(cliente.status);
