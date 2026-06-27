@@ -599,6 +599,87 @@ export type Database = {
         }
         Relationships: []
       }
+      kits_solares: {
+        Row: {
+          id: string
+          faixa: string
+          nome: string
+          potencia_kwp: number
+          quantidade_modulos: number
+          fabricante_modulos: string
+          inversor: string
+          preco: number
+          imagem_kit_url: string | null
+          imagem_componentes_url: string | null
+          documento_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          faixa: string
+          nome: string
+          potencia_kwp: number
+          quantidade_modulos: number
+          fabricante_modulos: string
+          inversor: string
+          preco: number
+          imagem_kit_url?: string | null
+          imagem_componentes_url?: string | null
+          documento_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          faixa?: string
+          nome?: string
+          potencia_kwp?: number
+          quantidade_modulos?: number
+          fabricante_modulos?: string
+          inversor?: string
+          preco?: number
+          imagem_kit_url?: string | null
+          imagem_componentes_url?: string | null
+          documento_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      financeiras_solar: {
+        Row: {
+          id: string
+          nome: string
+          taxa_juros_mes: number
+          prazo_maximo_meses: number
+          taxa_aprovacao_media: number
+          ativo: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          nome: string
+          taxa_juros_mes: number
+          prazo_maximo_meses: number
+          taxa_aprovacao_media: number
+          ativo?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          nome?: string
+          taxa_juros_mes?: number
+          prazo_maximo_meses?: number
+          taxa_aprovacao_media?: number
+          ativo?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

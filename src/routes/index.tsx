@@ -8,6 +8,7 @@ import portfolioResidential from "@/assets/portfolio-residential.jpg";
 import portfolioCommercial from "@/assets/portfolio-commercial.jpg";
 import portfolioIndustrial from "@/assets/portfolio-industrial.jpg";
 import portfolioRural from "@/assets/portfolio-rural.jpg";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,9 +42,10 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 });
 
 function Landing() {
+  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   return (
     <div className="min-h-screen bg-paper text-ink antialiased selection:bg-sun selection:text-navy">
-      <Nav />
+      <Nav onOpenTracking={() => setIsTrackingOpen(true)} />
       <Hero />
       <LogosStrip />
       <MetricsBar />
@@ -56,12 +58,13 @@ function Landing() {
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />
+      <AcompanharModal isOpen={isTrackingOpen} onClose={() => setIsTrackingOpen(false)} />
     </div>
   );
 }
 
 /* ============================ NAV ============================ */
-function Nav() {
+function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -87,6 +90,12 @@ function Nav() {
           <a href="#faq" className="hover:text-sun-deep transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={onOpenTracking}
+            className="inline-flex items-center gap-2 rounded-full border border-navy bg-sun text-navy hover:bg-sun-deep px-4 py-2 text-sm font-semibold transition-all cursor-pointer"
+          >
+            Acompanhar
+          </button>
           <a
             href="/auth"
             className="hidden sm:inline-flex items-center gap-2 rounded-full border border-navy/20 px-4 py-2 text-sm font-semibold text-navy hover:bg-navy hover:text-white transition-all"
@@ -271,10 +280,55 @@ function MetricsBar() {
   );
 }
 
-/* ============================ SIMULATOR ============================ */
+/* ============================ SIconst DEFAULT_FINANCEIRAS = [
+  { id: "1", nome: "Solfácil", taxa_juros_mes: 1.29, prazo_maximo_meses: 120, taxa_aprovacao_media: 85, ativo: true },
+  { id: "2", nome: "BV Financeira", taxa_juros_mes: 1.39, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
+  { id: "3", nome: "Santander", taxa_juros_mes: 1.49, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
+  { id: "4", nome: "Sicredi", taxa_juros_mes: 1.09, prazo_maximo_meses: 120, taxa_aprovacao_media: 70, ativo: true },
+  { id: "5", nome: "Banco do Brasil", taxa_juros_mes: 0.95, prazo_maximo_meses: 96, taxa_aprovacao_media: 65, ativo: true }
+];
+
 function Simulator() {
   const [bill, setBill] = useState(800);
   const [type, setType] = useState("residencial");
+  const [simulatorMode, setSimulatorMode] = useState<"economia" | "financiamento">("economia");
+  const [financeiras, setFinanceiras] = useState<any[]>(DEFAULT_FINANCEIRAS);
+  const [selectedBankId, setSelectedBankId] = useState("1");
+  const [selectedTerm, setSelectedTerm] = useState(60);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await supabase.from("financeiras_solar" as any).select("*").eq("ativo", true);
+        if (data && data.length > 0) {
+          setFinanceiras(data);
+          setSelectedBankId(data[0].id);
+        } else {
+          const local = localStorage.getItem("esol_financeiras");
+          if (local) {
+            const parsed = JSON.parse(local).filter((f: any) => f.ativo);
+            if (parsed.length > 0) {
+              setFinanceiras(parsed);
+              setSelectedBankId(parsed[0].id);
+            }
+          }
+        }
+      } catch (e) {
+        const local = localStorage.getItem("esol_financeiras");
+        if (local) {
+          const parsed = JSON.parse(local).filter((f: any) => f.ativo);
+          if (parsed.length > 0) {
+            setFinanceiras(parsed);
+            setSelectedBankId(parsed[0].id);
+          }
+        }
+      }
+    })();
+  }, []);
+
+  const selectedBank = useMemo(() => {
+    return financeiras.find(f => f.id === selectedBankId) || financeiras[0] || DEFAULT_FINANCEIRAS[0];
+  }, [financeiras, selectedBankId]);
 
   const result = useMemo(() => {
     const reduction = type === "industrial" ? 0.92 : type === "comercial" ? 0.93 : 0.95;
@@ -285,6 +339,23 @@ function Simulator() {
     const payback = Math.max(3, Math.round((systemKwp * 5500) / yearly * 10) / 10);
     return { monthly, yearly, tenYears, systemKwp, payback };
   }, [bill, type]);
+
+  // Preço total estimado do sistema para cálculo do financiamento
+  const precoTotal = useMemo(() => {
+    const pricePerWp = type === "industrial" ? 3.0 : type === "comercial" ? 3.8 : 4.8;
+    return result.systemKwp * 1000 * pricePerWp;
+  }, [result.systemKwp, type]);
+
+  const financeParcela = useMemo(() => {
+    if (!selectedBank) return 0;
+    const rate = selectedBank.taxa_juros_mes / 100;
+    const n = Math.min(selectedTerm, selectedBank.prazo_maximo_meses);
+    // Fórmula Price: P = PV * [i * (1+i)^n] / [(1+i)^n - 1]
+    const pmt = (precoTotal * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
+    return Math.round(pmt);
+  }, [precoTotal, selectedBank, selectedTerm]);
+
+  const isParcelaMenorQueConta = financeParcela > 0 && financeParcela < bill;
 
   return (
     <section id="simulador" className="py-28 px-6 bg-paper relative">
@@ -299,13 +370,13 @@ function Simulator() {
             </h2>
             <p className="mt-5 text-lg text-ink/70 max-w-md text-pretty">
               Ajuste o valor da sua conta e o tipo de imóvel. Mostramos a economia real, o tamanho
-              ideal do sistema e o tempo de retorno.
+              ideal do sistema e as melhores condições de parcelamento.
             </p>
             <ul className="mt-8 space-y-3">
               {[
                 "Cálculo baseado em irradiação solar real do seu estado",
-                "Considera bandeiras tarifárias e Lei 14.300/22",
-                "Proposta técnica enviada por especialista em até 24h",
+                "Opções de financiamento com parcelas menores que sua conta atual",
+                "Proposta técnica detalhada com kits de fabricantes líderes",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-3 text-ink/75">
                   <span className="mt-1 grid place-items-center size-5 rounded-full bg-sun text-navy text-[11px] font-extrabold shrink-0">
@@ -319,6 +390,26 @@ function Simulator() {
 
           <div className="rounded-3xl bg-white p-8 lg:p-10 shadow-deep border border-border">
             <div className="space-y-7">
+              {/* Tab Selector Modo */}
+              <div className="grid grid-cols-2 gap-2 p-1 bg-secondary rounded-xl">
+                <button
+                  onClick={() => setSimulatorMode("economia")}
+                  className={`py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                    simulatorMode === "economia" ? "bg-navy text-white shadow-sm" : "text-ink/50 hover:text-navy"
+                  }`}
+                >
+                  Economia Gerada
+                </button>
+                <button
+                  onClick={() => setSimulatorMode("financiamento")}
+                  className={`py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                    simulatorMode === "financiamento" ? "bg-navy text-white shadow-sm" : "text-ink/50 hover:text-navy"
+                  }`}
+                >
+                  Financiamento Solar
+                </button>
+              </div>
+
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-widest text-ink/50">
                   Tipo de imóvel
@@ -362,15 +453,69 @@ function Simulator() {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-navy text-white p-6 relative overflow-hidden">
-                <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
-                <div className="relative grid grid-cols-2 gap-5">
-                  <Stat label="Economia anual" value={BRL.format(result.yearly)} accent />
-                  <Stat label="Em 10 anos" value={BRL.format(result.tenYears)} />
-                  <Stat label="Sistema ideal" value={`${result.systemKwp} kWp`} />
-                  <Stat label="Payback" value={`${result.payback} anos`} />
+              {simulatorMode === "economia" ? (
+                <div className="rounded-2xl bg-navy text-white p-6 relative overflow-hidden">
+                  <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
+                  <div className="relative grid grid-cols-2 gap-5">
+                    <Stat label="Economia anual" value={BRL.format(result.yearly)} accent />
+                    <Stat label="Em 10 anos" value={BRL.format(result.tenYears)} />
+                    <Stat label="Sistema ideal" value={`${result.systemKwp} kWp`} />
+                    <Stat label="Payback" value={`${result.payback} anos`} />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Select Banco */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/50 block">Financeira</label>
+                      <select
+                        value={selectedBankId}
+                        onChange={(e) => setSelectedBankId(e.target.value)}
+                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-navy outline-none"
+                      >
+                        {financeiras.map((fin) => (
+                          <option key={fin.id} value={fin.id}>{fin.nome}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/50 block">Prazo (Meses)</label>
+                      <select
+                        value={selectedTerm}
+                        onChange={(e) => setSelectedTerm(Number(e.target.value))}
+                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-navy outline-none"
+                      >
+                        {[24, 36, 48, 60, 72, 84, 96, 120]
+                          .filter(t => t <= (selectedBank?.prazo_maximo_meses || 120))
+                          .map((t) => (
+                            <option key={t} value={t}>{t} parcelas</option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Parcela Box */}
+                  <div className="rounded-2xl bg-navy text-white p-6 relative overflow-hidden">
+                    <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
+                    <div className="relative space-y-4">
+                      <div className="flex justify-between items-center">
+                        <Stat label="Parcela Estimada" value={`${BRL.format(financeParcela)}/mês`} accent />
+                        {isParcelaMenorQueConta && (
+                          <span className="text-[9px] font-extrabold uppercase bg-sun text-navy px-2 py-1 rounded-md tracking-wider">
+                            ⚡ Menor que a conta!
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-3">
+                        <Stat label="Investimento" value={BRL.format(precoTotal)} />
+                        <Stat label="Aprovação Média" value={`${selectedBank?.taxa_aprovacao_media || 80}%`} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <a
                 href="#orcamento"
