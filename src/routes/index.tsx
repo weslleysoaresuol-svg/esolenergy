@@ -42,10 +42,9 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 });
 
 function Landing() {
-  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   return (
     <div className="min-h-screen bg-paper text-ink antialiased selection:bg-sun selection:text-navy">
-      <Nav onOpenTracking={() => setIsTrackingOpen(true)} />
+      <Nav onOpenTracking={() => {}} />
       <Hero />
       <LogosStrip />
       <MetricsBar />
@@ -58,10 +57,10 @@ function Landing() {
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />
-      <AcompanharModal isOpen={isTrackingOpen} onClose={() => setIsTrackingOpen(false)} />
     </div>
   );
 }
+
 
 /* ============================ NAV ============================ */
 function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
@@ -280,7 +279,8 @@ function MetricsBar() {
   );
 }
 
-/* ============================ SIconst DEFAULT_FINANCEIRAS = [
+/* ============================ SIMULADOR ============================ */
+const DEFAULT_FINANCEIRAS = [
   { id: "1", nome: "Solfácil", taxa_juros_mes: 1.29, prazo_maximo_meses: 120, taxa_aprovacao_media: 85, ativo: true },
   { id: "2", nome: "BV Financeira", taxa_juros_mes: 1.39, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
   { id: "3", nome: "Santander", taxa_juros_mes: 1.49, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
@@ -299,7 +299,7 @@ function Simulator() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await supabase.from("financeiras_solar" as any).select("*").eq("ativo", true);
+        const { data } = await (supabase.from("financeiras_solar" as any).select("*").eq("ativo", true) as any);
         if (data && data.length > 0) {
           setFinanceiras(data);
           setSelectedBankId(data[0].id);
