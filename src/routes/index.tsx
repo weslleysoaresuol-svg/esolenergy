@@ -42,9 +42,10 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 });
 
 function Landing() {
+  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   return (
     <div className="min-h-screen bg-paper text-ink antialiased selection:bg-sun selection:text-navy">
-      <Nav onOpenTracking={() => {}} />
+      <Nav onOpenTracking={() => setIsTrackingOpen(true)} />
       <Hero />
       <LogosStrip />
       <MetricsBar />
@@ -57,6 +58,7 @@ function Landing() {
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />
+      <AcompanharModal isOpen={isTrackingOpen} onClose={() => setIsTrackingOpen(false)} />
     </div>
   );
 }
@@ -1060,5 +1062,217 @@ function FloatingWhatsApp() {
         <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413z" />
       </svg>
     </a>
+  );
+}
+
+function AcompanharModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [doc, setDoc] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [project, setProject] = useState<any | null>(null);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [searched, setSearched] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanDoc = doc.replace(/\D/g, "");
+    if (!cleanDoc) {
+      toast.error("Por favor, digite um CPF ou CNPJ válido.");
+      return;
+    }
+
+    setLoading(true);
+    setProject(null);
+    setLogs([]);
+    setSearched(false);
+
+    try {
+      const { data, error } = await supabase.rpc("consultar_projeto_cliente", {
+        _cpf_cnpj: cleanDoc,
+      });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const found = data[0];
+        setProject(found);
+        setLogs(found.recent_logs || []);
+      } else {
+        // Fallback para simulação local se não houver registros
+        if (cleanDoc === "12345678900" || cleanDoc === "12345678000100") {
+          setProject({
+            nome: "Instalação Residencial Solar - Weslley Soares",
+            status: "instalacao",
+            cidade: "São Paulo",
+            estado: "SP",
+            concessionaria: "Enel SP",
+            potencia_kwp: 6.4,
+          });
+          setLogs([
+            { created_at: new Date(Date.now() - 3600000 * 24 * 3).toISOString(), descricao: "Painéis e inversores entregues no local da obra." },
+            { created_at: new Date(Date.now() - 3600000 * 24 * 7).toISOString(), descricao: "Homologação do projeto técnico aprovada pela Enel." },
+            { created_at: new Date(Date.now() - 3600000 * 24 * 10).toISOString(), descricao: "Vistoria técnica concluída e aprovada." }
+          ]);
+        } else {
+          toast.error("Nenhum projeto encontrado para este CPF/CNPJ.");
+        }
+      }
+      setSearched(true);
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Ocorreu um erro ao consultar o projeto. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Etapas do fluxo físico/burocrático
+  const steps = [
+    { key: "novo", label: "Estudo & Contrato", desc: "Análise técnica e assinatura" },
+    { key: "homologacao", label: "Homologação", desc: "Parecer de acesso com a concessionária" },
+    { key: "entrega", label: "Entrega de Equipamentos", desc: "Separação e envio dos kits" },
+    { key: "instalacao", label: "Instalação Física", desc: "Montagem de estrutura e placas" },
+    { key: "concluido", label: "Ativação & Conexão", desc: "Troca do medidor e ligação" }
+  ];
+
+  // Encontra o índice da etapa atual
+  const getActiveStepIndex = () => {
+    if (!project) return -1;
+    const currentStatus = project.status;
+    
+    // Mapeamento dos status do CRM para as 5 etapas visuais
+    if (["novo", "contato", "visita_agendada", "proposta_enviada", "negociacao"].includes(currentStatus)) return 0;
+    if (["contrato_assinado"].includes(currentStatus)) return 1;
+    if (currentStatus === "instalacao") return 3;
+    if (currentStatus === "concluido") return 4;
+    return 2; // padrão para transporte/entrega
+  };
+
+  const activeIndex = getActiveStepIndex();
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm animate-fade-in">
+      <div className="w-full max-w-3xl bg-white rounded-3xl shadow-deep overflow-hidden border border-border flex flex-col max-h-[90vh]">
+        <div className="p-6 bg-navy text-white flex justify-between items-center">
+          <div>
+            <h3 className="font-display font-extrabold text-xl md:text-2xl">Acompanhar Minha Instalação</h3>
+            <p className="text-xs text-white/60 mt-1">Consulte o status do seu sistema solar em tempo real</p>
+          </div>
+          <button onClick={onClose} className="size-10 rounded-full bg-white/10 hover:bg-white/20 text-white grid place-items-center font-bold text-sm transition-all">&times;</button>
+        </div>
+
+        <div className="p-8 overflow-y-auto space-y-6 flex-1">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 bg-secondary p-3 rounded-2xl border border-slate-100">
+            <input
+              type="text"
+              placeholder="Digite seu CPF ou CNPJ (apenas números)"
+              value={doc}
+              onChange={(e) => setDoc(e.target.value)}
+              className="flex-1 bg-transparent px-3 py-2 outline-none text-navy font-semibold placeholder:text-ink/30 text-sm"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-3 rounded-xl bg-sun hover:bg-sun-deep text-navy text-xs font-bold uppercase tracking-wider transition-all shadow-glow disabled:opacity-60 flex items-center justify-center gap-2"
+            >
+              {loading && <Loader2 className="size-3.5 animate-spin" />}
+              {loading ? "Buscando..." : "Consultar"}
+            </button>
+          </form>
+
+          {searched && project && (
+            <div className="space-y-8 animate-fade-up">
+              {/* Resumo do Projeto */}
+              <div className="bg-secondary rounded-2xl p-5 border border-slate-100 grid sm:grid-cols-2 gap-4">
+                <div>
+                  <div className="text-[10px] font-bold uppercase text-ink/40 tracking-wider">Cliente / Instalação</div>
+                  <div className="font-bold text-navy text-base mt-1">{project.nome}</div>
+                  <div className="text-xs text-ink/60 mt-1">{project.cidade} - {project.estado}</div>
+                </div>
+                <div className="sm:text-right">
+                  <div className="text-[10px] font-bold uppercase text-ink/40 tracking-wider">Potência do Sistema / Distribuidora</div>
+                  <div className="font-extrabold text-navy text-base mt-1">{project.potencia_kwp} kWp</div>
+                  <div className="text-xs text-ink/60 mt-1">{project.concessionaria}</div>
+                </div>
+              </div>
+
+              {/* Linha do Tempo Física */}
+              <div className="space-y-4">
+                <h4 className="text-xs uppercase font-extrabold tracking-widest text-navy/60">Etapa de Implantação</h4>
+                <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0 pt-4 pb-2">
+                  {/* Linha conectora no Desktop */}
+                  <div className="hidden md:block absolute left-4 right-4 top-[38px] h-1 bg-slate-200 -z-10 rounded-full">
+                    <div
+                      className="h-full bg-sun transition-all duration-500 rounded-full"
+                      style={{ width: `${(activeIndex / (steps.length - 1)) * 100}%` }}
+                    />
+                  </div>
+
+                  {steps.map((step, idx) => {
+                    const isDone = idx < activeIndex;
+                    const isActive = idx === activeIndex;
+
+                    return (
+                      <div key={step.key} className="flex md:flex-col items-center md:text-center flex-1 w-full relative">
+                        {/* Indicador visual / Círculo */}
+                        <div
+                          className={`size-10 rounded-full flex items-center justify-center font-extrabold text-sm z-10 transition-all duration-300 border-2 ${
+                            isDone
+                              ? "bg-sun border-sun text-navy shadow-glow scale-105"
+                              : isActive
+                              ? "bg-navy border-navy text-white shadow-glow scale-110 animate-pulse"
+                              : "bg-white border-slate-300 text-slate-400"
+                          }`}
+                        >
+                          {isDone ? "✓" : idx + 1}
+                        </div>
+
+                        {/* Textos */}
+                        <div className="ml-4 md:ml-0 md:mt-3 text-left md:text-center max-w-[140px]">
+                          <div className={`text-xs font-extrabold ${isActive ? "text-navy" : isDone ? "text-navy/80" : "text-slate-400"}`}>
+                            {step.label}
+                          </div>
+                          <div className="text-[10px] text-ink/50 mt-0.5 leading-tight md:mx-auto md:max-w-[120px]">
+                            {step.desc}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Histórico Recente */}
+              {logs.length > 0 && (
+                <div className="space-y-3 bg-secondary/50 rounded-2xl p-5 border border-slate-100/50">
+                  <h4 className="text-xs uppercase font-extrabold tracking-widest text-navy/60">Histórico de Atividades</h4>
+                  <div className="space-y-4 mt-2">
+                    {logs.map((log, index) => (
+                      <div key={index} className="flex gap-4 items-start text-xs text-ink/75 border-l-2 border-sun pl-4">
+                        <div className="min-w-[70px] text-[10px] text-ink/40 font-bold uppercase">
+                          {new Date(log.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
+                        </div>
+                        <div className="flex-1 font-medium">{log.descricao}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {searched && !project && (
+            <div className="text-center py-10 animate-fade-in flex flex-col items-center">
+              <AlertTriangle className="size-12 text-yellow-500 mb-4" />
+              <h4 className="font-display font-bold text-lg text-navy">Projeto Não Localizado</h4>
+              <p className="text-sm text-ink/60 mt-1 max-w-sm">
+                Não encontramos nenhuma instalação vinculada a este CPF ou CNPJ. Verifique se digitou corretamente ou contate seu corretor.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
