@@ -82,7 +82,7 @@ function AdminCorretores() {
   };
 
   const loadConvites = async () => {
-    const { data } = await supabase.from("convites").select("*").order("created_at", { ascending: false });
+    const { data } = await (supabase.from("convites" as any).select("*").order("created_at", { ascending: false }) as any);
     setConvites(data || []);
   };
 
