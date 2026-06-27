@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Zap, ArrowRight, Save, HelpCircle } from "lucide-react";
+import { Zap, ArrowRight, Save, Loader2 } from "lucide-react";
+import { calcularProposta } from "@/lib/proposta-calc";
+import { KITS_FALLBACK } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/app/novo")({
   head: () => ({ meta: [{ title: "Cadastro Expresso — ESOL Energy" }] }),
@@ -85,7 +87,8 @@ function NovoCliente() {
     
     setSaving(true);
     try {
-      const { data, error } = await supabase.from("clientes").insert({
+      // 1. Cadastra o cliente primeiro
+      const { data: clientData, error: clientError } = await supabase.from("clientes").insert({
         ...f,
         corretor_id: user.id,
         consumo_kwh: f.consumo_kwh ? Number(f.consumo_kwh) : null,
@@ -95,20 +98,105 @@ function NovoCliente() {
         area_telhado: f.area_telhado ? Number(f.area_telhado) : null,
       }).select().single();
 
-      if (error) {
-        toast.error("Erro ao salvar: " + error.message);
-      } else {
-        toast.success("Cliente cadastrado com sucesso!");
-        if (redirectDirectToProposal) {
-          // Redireciona diretamente para a criação de propostas com o ID do cliente
-          navigate({ to: "/app/propostas/nova", search: { cliente: data.id } as any });
-        } else {
-          // Redireciona para a ficha do cliente recém-criado
-          navigate({ to: "/app/cliente/$id", params: { id: data.id } });
+      if (clientError) {
+        toast.error("Erro ao salvar cliente: " + clientError.message);
+        setSaving(false);
+        return;
+      }
+
+      toast.success("Cliente cadastrado!");
+
+      // 2. Se a opção for ir direto para Proposta, criamos a proposta solar automaticamente
+      if (redirectDirectToProposal) {
+        // Carrega parâmetros comerciais padrão (ou do banco)
+        let paramsComerciais = {
+          hsp_norte: 4.5, hsp_nordeste: 5.0, hsp_centro_oeste: 4.8, hsp_sudeste: 4.5, hsp_sul: 4.0,
+          preco_wp_residencial_pequeno: 2.8, preco_wp_residencial_grande: 2.5,
+          preco_wp_comercial_pequeno: 2.2, preco_wp_comercial_grande: 2.0, preco_wp_industrial: 1.8,
+          tarifa_kwh_default: 0.95, perdas_sistema: 0.15, inflacao_energetica: 0.08, vida_util_anos: 25,
+          potencia_modulo_w: 550, area_por_modulo_m2: 2.5,
+          custo_equipamentos_pct: 0.5, custo_instalacao_pct: 0.15, custo_frete_pct: 0.05, custo_impostos_pct: 0.1, custo_comissao_pct: 0.05, margem_alvo_pct: 0.15,
+          validade_proposta_dias: 15
+        };
+        
+        try {
+          const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
+          if (pr) paramsComerciais = { ...paramsComerciais, ...pr };
+        } catch (e) {
+          console.warn("Usando parametros default na criacao automatica", e);
         }
+
+        const tarifaKwh = paramsComerciais.tarifa_kwh_default;
+        const consumoKwh = f.consumo_kwh ? Number(f.consumo_kwh) : (f.valor_fatura ? Math.round(Number(f.valor_fatura) / tarifaKwh) : 500);
+
+        // Roda o cálculo do dimensionamento comercial automático
+        const calculo = calcularProposta({
+          consumo_kwh: consumoKwh,
+          tarifa_kwh: tarifaKwh,
+          estado: f.estado || "SP",
+          tipo: f.imovel_tipo || "residencial"
+        }, paramsComerciais);
+
+        // Carrega Kits fotovoltaicos do Supabase (ou fallback)
+        let loadedKits = KITS_FALLBACK;
+        try {
+          const { data: dbKits } = await supabase.from("kits_solares" as any).select("*");
+          if (dbKits && dbKits.length > 0) loadedKits = dbKits;
+        } catch(e) {}
+
+        // Encontra o kit adequado mais econômico para o cliente
+        const adequados = loadedKits.filter((k) => k.potencia_kwp >= calculo.kwp_sistema);
+        const kitRecomendado = adequados.length > 0 
+          ? adequados.sort((a, b) => a.preco - b.preco)[0]
+          : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
+
+        const expDate = new Date();
+        expDate.setDate(expDate.getDate() + (paramsComerciais.validade_proposta_dias || 15));
+
+        // Cria a Proposta
+        const { data: prop, error: propError } = await supabase.from("propostas").insert({
+          titulo: `Proposta Solar - ${clientData.nome}`,
+          parceiro_id: user.id,
+          kwp_sistema: calculo.kwp_sistema,
+          preco_total: kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total,
+          custos_totais: calculo.custos_totais,
+          comissao_parceiro: calculo.custo_comissao,
+          margem_estimada: calculo.margem_real,
+          codigo_publico: crypto.randomUUID().slice(0, 8),
+          expires_at: expDate.toISOString(),
+          status: "enviada",
+          kit_id: kitRecomendado?.id || null,
+          tipo_conexao: "bifasico",
+          tipo_telhado: f.tipo_telhado || "ceramico",
+          tipo_instalacao: f.imovel_tipo || "residencial",
+          consumo_kwh: consumoKwh,
+          tarifa_kwh: tarifaKwh,
+          estado: f.estado || "SP",
+          cidade: f.cidade || "",
+          condicoes_pagamento: "À vista 5% desconto · Financiamento via parceiros bancários",
+          observacoes: f.observacoes || ""
+        }).select().single();
+
+        if (propError) {
+          console.error("Falha ao salvar proposta automatica, indo para a ficha:", propError);
+          navigate({ to: "/app/cliente/$id", params: { id: clientData.id } });
+        } else {
+          // Vincula o cliente à proposta
+          await supabase.from("proposta_clientes").insert({
+            proposta_id: prop.id,
+            cliente_id: clientData.id
+          });
+          
+          toast.success("Proposta gerada automaticamente!");
+          // Redireciona diretamente para a tela de compartilhamento e envio da proposta!
+          navigate({ to: "/app/propostas/$id", params: { id: prop.id } });
+        }
+      } else {
+        // Apenas redireciona para a ficha do cliente
+        navigate({ to: "/app/cliente/$id", params: { id: clientData.id } });
       }
     } catch (err) {
-      toast.error("Falha de conexão com o banco de dados.");
+      toast.error("Falha no processo de gravação.");
     } finally {
       setSaving(false);
     }
@@ -306,9 +394,9 @@ function NovoCliente() {
               variant="outline"
               disabled={saving || !f.nome || !f.telefone}
               onClick={() => save(false)}
-              className="h-11 text-xs font-semibold border-slate-300 text-slate-700 w-full sm:w-auto"
+              className="h-11 text-xs font-semibold border-slate-300 text-slate-700 w-full sm:w-auto hover:bg-slate-50"
             >
-              {saving ? "Salvando..." : "Apenas Salvar Lead"}
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : "Apenas Salvar Lead"}
             </Button>
 
             {/* Botão Principal: Salvar e ir DIRETO para dimensionar a Proposta */}
@@ -316,9 +404,9 @@ function NovoCliente() {
               type="button" 
               onClick={() => save(true)} 
               disabled={saving || !f.nome || !f.telefone} 
-              className="bg-sun hover:bg-sun-deep text-navy font-extrabold h-11 text-xs px-6 flex items-center justify-center gap-1.5 shadow-md w-full sm:w-auto"
+              className="bg-sun hover:bg-sun-deep text-navy font-extrabold h-11 text-xs px-6 flex items-center justify-center gap-1.5 shadow-md w-full sm:w-auto transition-all"
             >
-              {saving ? "Salvando..." : "Salvar & Gerar Proposta 🚀"}
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1 text-navy" /> : "Salvar & Gerar Proposta 🚀"}
             </Button>
           </div>
         </div>
