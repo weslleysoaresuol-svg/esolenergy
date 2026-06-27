@@ -55,7 +55,7 @@ function NovaProposta() {
     (async () => {
       // 1. Parâmetros Comerciais
       try {
-        const { data: pr } = await supabase.from("parametros_comerciais").select("*").limit(1).maybeSingle();
+        const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
         if (pr) {
           setParams(pr as any);
           setTarifa(Number((pr as any).tarifa_kwh_default));
@@ -330,7 +330,7 @@ function NovaProposta() {
       };
       let prop: any = null;
       try {
-        const { data, error } = await supabase.from("propostas").insert(payload).select().single();
+        const { data, error } = await supabase.from("propostas").insert(payload as any).select().single();
         if (error) {
           // Código 42703: coluna não existe (indica que a migração SQL de kit ainda não rodou no Supabase remoto)
           if (error.code === "42703" || error.message?.includes("column")) {
@@ -345,7 +345,7 @@ function NovaProposta() {
             delete (cleanPayload as any).kit_garantia_modulos_anos;
             delete (cleanPayload as any).kit_garantia_inversor_anos;
 
-            const { data: retryData, error: retryError } = await supabase.from("propostas").insert(cleanPayload).select().single();
+            const { data: retryData, error: retryError } = await supabase.from("propostas").insert(cleanPayload as any).select().single();
             if (retryError) throw retryError;
             prop = retryData;
           } else {

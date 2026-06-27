@@ -65,7 +65,7 @@ function AdminDashboard() {
       ] = await Promise.all([
         supabase.from("clientes").select("*, profiles:corretor_id(nome)").order("updated_at", { ascending: false }),
         supabase.from("propostas").select("*, parceiro:parceiro_id(nome)").order("created_at"),
-        supabase.from("parametros_comerciais").select("*").limit(1).maybeSingle()
+        (supabase.rpc as any)("get_parametros_publicos").then((r: any) => ({ data: r.data }))
       ]);
 
       const all = list || [];
@@ -507,9 +507,6 @@ function AdminDashboard() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
     </div>
   );
 }
