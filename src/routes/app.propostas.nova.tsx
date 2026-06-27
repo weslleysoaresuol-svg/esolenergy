@@ -330,7 +330,7 @@ function NovaProposta() {
       };
       let prop: any = null;
       try {
-        const { data, error } = await supabase.from("propostas").insert(payload).select().single();
+        const { data, error } = await supabase.from("propostas").insert(payload as any).select().single();
         if (error) {
           // Código 42703: coluna não existe (indica que a migração SQL de kit ainda não rodou no Supabase remoto)
           if (error.code === "42703" || error.message?.includes("column")) {
