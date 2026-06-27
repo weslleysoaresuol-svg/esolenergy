@@ -345,7 +345,7 @@ function NovaProposta() {
             delete (cleanPayload as any).kit_garantia_modulos_anos;
             delete (cleanPayload as any).kit_garantia_inversor_anos;
 
-            const { data: retryData, error: retryError } = await supabase.from("propostas").insert(cleanPayload).select().single();
+            const { data: retryData, error: retryError } = await supabase.from("propostas").insert(cleanPayload as any).select().single();
             if (retryError) throw retryError;
             prop = retryData;
           } else {
