@@ -117,11 +117,11 @@ function AdminCorretores() {
     setEnviandoConvite(true);
     const token = crypto.randomUUID();
     
-    const { error } = await supabase.from("convites").insert({
+    const { error } = await (supabase.from("convites" as any).insert({
       email: novoEmail.trim().toLowerCase(),
       token,
       status: "pendente",
-    });
+    } as any) as any);
 
     setEnviandoConvite(false);
     if (error) {
