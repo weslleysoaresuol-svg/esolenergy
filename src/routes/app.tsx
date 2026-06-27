@@ -216,22 +216,17 @@ function AppShell() {
 
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
-    { to: "/app/clientes", icon: Users, label: "Clientes" },
-    { to: "/app/novo", icon: Plus, label: "Novo cliente" },
-    { to: "/app/metricas", icon: BarChart3, label: "Métricas" },
-    { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
     { to: "/app/kits", icon: Sun, label: "Kits Solares" },
-    { to: "/app/corretores", icon: UserCog, label: "Parceiros" },
-    { to: "/app/convites", icon: Link2, label: "Convites" },
-    { to: "/app/contratos", icon: FileText, label: "Contratos" },
-    { to: "/app/perfil", icon: UserCircle, label: "Meu perfil" },
+    { to: "/app/corretores", icon: UserCog, label: "Parceiros & Convites" },
+    { to: "/app/parametros", icon: Settings, label: "Tarifas & Parâmetros" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const corretorNav = [
-    { to: "/app", icon: Briefcase, label: "Meus clientes", exact: true },
+    { to: "/app", icon: Briefcase, label: "Meus Clientes", exact: true },
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
-    { to: "/app/novo", icon: Plus, label: "Novo cliente" },
-    { to: "/app/perfil", icon: UserCircle, label: "Meu perfil" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const nav = role === "admin" ? adminNav : corretorNav;
 
