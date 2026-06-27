@@ -280,7 +280,8 @@ function MetricsBar() {
   );
 }
 
-/* ============================ SIconst DEFAULT_FINANCEIRAS = [
+/* ============================ SIMULADOR ============================ */
+const DEFAULT_FINANCEIRAS = [
   { id: "1", nome: "Solfácil", taxa_juros_mes: 1.29, prazo_maximo_meses: 120, taxa_aprovacao_media: 85, ativo: true },
   { id: "2", nome: "BV Financeira", taxa_juros_mes: 1.39, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
   { id: "3", nome: "Santander", taxa_juros_mes: 1.49, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
