@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog,
   Plus, FileText, Link2, FileSpreadsheet, BarChart3, Settings,
-  Bell, CheckCheck, X, ExternalLink,
+  Bell, CheckCheck, X, ExternalLink, Sun,
 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
@@ -221,6 +221,7 @@ function AppShell() {
     { to: "/app/novo", icon: Plus, label: "Novo cliente" },
     { to: "/app/metricas", icon: BarChart3, label: "Métricas" },
     { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
+    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros" },
     { to: "/app/convites", icon: Link2, label: "Convites" },
     { to: "/app/contratos", icon: FileText, label: "Contratos" },

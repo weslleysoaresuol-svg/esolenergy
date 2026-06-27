@@ -48,6 +48,7 @@ function NovaProposta() {
   const [tipoTelhado, setTipoTelhado] = useState("ceramico");
   const [selectedKitId, setSelectedKitId] = useState<string>("");
   const [selectedFinanceirasIds, setSelectedFinanceirasIds] = useState<string[]>([]);
+  const [usuarioAlterouKit, setUsuarioAlterouKit] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -81,6 +82,35 @@ function NovaProposta() {
     })();
   }, []);
 
+  // Quando o consumo ou outros parâmetros do dimensionamento mudam, permitimos nova sugestão automática
+  useEffect(() => {
+    setUsuarioAlterouKit(false);
+  }, [consumo, estado, tipo, tarifa]);
+
+  // Seleção automática do melhor kit com base no consumo inserido
+  useEffect(() => {
+    if (usuarioAlterouKit) return;
+    if (params && kits.length > 0) {
+      const baseResult = calcularProposta({ consumo_kwh: consumo, tarifa_kwh: tarifa, estado, tipo }, params);
+      const kwpIdeal = baseResult.kwp_sistema;
+      const kitsAtivos = kits.filter((k) => k.ativo);
+
+      if (kitsAtivos.length > 0) {
+        let melhorKit = kitsAtivos[0];
+        let menorDiferenca = Math.abs(Number(melhorKit.potencia_kwp) - kwpIdeal);
+
+        for (const kit of kitsAtivos) {
+          const diferenca = Math.abs(Number(kit.potencia_kwp) - kwpIdeal);
+          if (diferenca < menorDiferenca) {
+            menorDiferenca = diferenca;
+            melhorKit = kit;
+          }
+        }
+        setSelectedKitId(melhorKit.id);
+      }
+    }
+  }, [params, kits, consumo, estado, tipo, tarifa, usuarioAlterouKit]);
+
   // Preenche dados do primeiro cliente selecionado
   useEffect(() => {
     if (selecionados.length === 1) {
@@ -93,6 +123,29 @@ function NovaProposta() {
       }
     }
   }, [selecionados, clientes]);
+
+  const kitRecomendadoId = useMemo(() => {
+    if (params && kits.length > 0) {
+      const baseResult = calcularProposta({ consumo_kwh: consumo, tarifa_kwh: tarifa, estado, tipo }, params);
+      const kwpIdeal = baseResult.kwp_sistema;
+      const kitsAtivos = kits.filter((k) => k.ativo);
+
+      if (kitsAtivos.length > 0) {
+        let melhorKit = kitsAtivos[0];
+        let menorDiferenca = Math.abs(Number(melhorKit.potencia_kwp) - kwpIdeal);
+
+        for (const kit of kitsAtivos) {
+          const diferenca = Math.abs(Number(kit.potencia_kwp) - kwpIdeal);
+          if (diferenca < menorDiferenca) {
+            menorDiferenca = diferenca;
+            melhorKit = kit;
+          }
+        }
+        return melhorKit.id;
+      }
+    }
+    return null;
+  }, [params, kits, consumo, estado, tipo, tarifa]);
 
   const calculo = useMemo(() => {
     if (!params) return null;
@@ -358,29 +411,44 @@ function NovaProposta() {
 
       {step === 3 && calculo && (
         <Card className="p-6 border-0 shadow-md space-y-5">
-          <h2 className="font-semibold text-lg text-navy flex items-center gap-2"><Sun className="text-sun" />Escolha do Kit Fotovoltaico</h2>
-          <p className="text-xs text-muted-foreground">Sugerimos um kit de aproximadamente <strong>{NUM(calculo.kwp_sistema, 2)} kWp</strong> para atender o consumo.</p>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h2 className="font-semibold text-lg text-navy flex items-center gap-2"><Sun className="text-sun" />Escolha do Kit Fotovoltaico</h2>
+            {usuarioAlterouKit && (
+              <Button variant="outline" size="sm" onClick={() => setUsuarioAlterouKit(false)} className="text-xs text-navy border-navy/20 hover:bg-navy/5">
+                Restaurar Sugestão Automática
+              </Button>
+            )}
+          </div>
+          
+          <p className="text-xs text-muted-foreground">
+            O sistema pré-selecionou o kit mais adequado para a potência calculada de <strong>{NUM(calculo.kwp_sistema, 2)} kWp</strong>. Você pode alterar para outro kit ou escolher o dimensionamento customizado.
+          </p>
           
           <div className="space-y-3 max-h-[350px] overflow-y-auto pr-1">
             <label className={`flex items-start gap-4 p-4 rounded-xl border-2 transition cursor-pointer ${selectedKitId === "" ? "border-navy bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
-              <input type="radio" name="kitSelect" checked={selectedKitId === ""} onChange={() => setSelectedKitId("")} className="mt-1 accent-navy" />
+              <input type="radio" name="kitSelect" checked={selectedKitId === ""} onChange={() => { setSelectedKitId(""); setUsuarioAlterouKit(true); }} className="mt-1 accent-navy" />
               <div className="flex-1">
-                <div className="font-bold text-navy text-sm">Dimensionamento Customizado (Algoritmo Comercial)</div>
+                <div className="flex items-center gap-2">
+                  <div className="font-bold text-navy text-sm">Dimensionamento Customizado (Algoritmo Comercial)</div>
+                  {kitRecomendadoId === null && <span className="bg-blue-100 text-blue-800 text-[9px] font-extrabold px-1.5 py-0.5 rounded">Sugestão do Sistema</span>}
+                </div>
                 <div className="text-xs text-muted-foreground mt-0.5">Calcula o preço médio sugerido por Wp sem vincular a um kit específico.</div>
                 <div className="text-sm font-bold text-navy mt-2">{BRL(calculo.preco_total)}</div>
               </div>
             </label>
 
             {kits.map((kit) => {
-              const diff = Math.abs(Number(kit.potencia_kwp) - (selectedKitId === "" ? calculo.kwp_sistema : Number(kit.potencia_kwp)));
-              const isRecommended = diff <= 2.5;
+              const isRecommended = kit.id === kitRecomendadoId;
+              const isSelected = selectedKitId === kit.id;
+              
               return (
-                <label key={kit.id} className={`flex items-start gap-4 p-4 rounded-xl border-2 transition cursor-pointer ${selectedKitId === kit.id ? "border-navy bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
-                  <input type="radio" name="kitSelect" checked={selectedKitId === kit.id} onChange={() => setSelectedKitId(kit.id)} className="mt-1 accent-navy" />
+                <label key={kit.id} className={`flex items-start gap-4 p-4 rounded-xl border-2 transition cursor-pointer ${isSelected ? "border-navy bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
+                  <input type="radio" name="kitSelect" checked={isSelected} onChange={() => { setSelectedKitId(kit.id); setUsuarioAlterouKit(true); }} className="mt-1 accent-navy" />
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-navy text-sm">{kit.nome}</span>
-                      {isRecommended && <span className="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold px-1.5 py-0.5 rounded">Recomendado</span>}
+                      {isRecommended && <span className="bg-sun text-navy text-[9px] font-extrabold px-1.5 py-0.5 rounded">Sugestão do Sistema</span>}
+                      {kit.destaque && <span className="bg-amber-100 text-amber-800 text-[9px] font-extrabold px-1.5 py-0.5 rounded">Destaque</span>}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
                       Potência: <strong>{kit.potencia_kwp} kWp</strong> · Módulos: <strong>{kit.quantidade_modulos}x {kit.fabricante_modulos}</strong> · Inversor: <strong>{kit.inversor}</strong>
