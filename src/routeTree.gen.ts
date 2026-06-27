@@ -20,10 +20,8 @@ import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppParametrosRouteImport } from './routes/app.parametros'
 import { Route as AppNovoRouteImport } from './routes/app.novo'
-import { Route as AppMetricasRouteImport } from './routes/app.metricas'
+import { Route as AppKitsRouteImport } from './routes/app.kits'
 import { Route as AppCorretoresRouteImport } from './routes/app.corretores'
-import { Route as AppConvitesRouteImport } from './routes/app.convites'
-import { Route as AppContratosRouteImport } from './routes/app.contratos'
 import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
 import { Route as AppPropostasIndexRouteImport } from './routes/app.propostas.index'
@@ -87,24 +85,14 @@ const AppNovoRoute = AppNovoRouteImport.update({
   path: '/novo',
   getParentRoute: () => AppRoute,
 } as any)
-const AppMetricasRoute = AppMetricasRouteImport.update({
-  id: '/metricas',
-  path: '/metricas',
+const AppKitsRoute = AppKitsRouteImport.update({
+  id: '/kits',
+  path: '/kits',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCorretoresRoute = AppCorretoresRouteImport.update({
   id: '/corretores',
   path: '/corretores',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppConvitesRoute = AppConvitesRouteImport.update({
-  id: '/convites',
-  path: '/convites',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppContratosRoute = AppContratosRouteImport.update({
-  id: '/contratos',
-  path: '/contratos',
   getParentRoute: () => AppRoute,
 } as any)
 const AppContratoRoute = AppContratoRouteImport.update({
@@ -150,10 +138,8 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
-  '/app/contratos': typeof AppContratosRoute
-  '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
-  '/app/metricas': typeof AppMetricasRoute
+  '/app/kits': typeof AppKitsRoute
   '/app/novo': typeof AppNovoRoute
   '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -173,10 +159,8 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
-  '/app/contratos': typeof AppContratosRoute
-  '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
-  '/app/metricas': typeof AppMetricasRoute
+  '/app/kits': typeof AppKitsRoute
   '/app/novo': typeof AppNovoRoute
   '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -197,10 +181,8 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
-  '/app/contratos': typeof AppContratosRoute
-  '/app/convites': typeof AppConvitesRoute
   '/app/corretores': typeof AppCorretoresRoute
-  '/app/metricas': typeof AppMetricasRoute
+  '/app/kits': typeof AppKitsRoute
   '/app/novo': typeof AppNovoRoute
   '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -223,10 +205,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/app/clientes'
     | '/app/contrato'
-    | '/app/contratos'
-    | '/app/convites'
     | '/app/corretores'
-    | '/app/metricas'
+    | '/app/kits'
     | '/app/novo'
     | '/app/parametros'
     | '/app/perfil'
@@ -246,10 +226,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/app/clientes'
     | '/app/contrato'
-    | '/app/contratos'
-    | '/app/convites'
     | '/app/corretores'
-    | '/app/metricas'
+    | '/app/kits'
     | '/app/novo'
     | '/app/parametros'
     | '/app/perfil'
@@ -269,10 +247,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/app/clientes'
     | '/app/contrato'
-    | '/app/contratos'
-    | '/app/convites'
     | '/app/corretores'
-    | '/app/metricas'
+    | '/app/kits'
     | '/app/novo'
     | '/app/parametros'
     | '/app/perfil'
@@ -375,11 +351,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNovoRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/metricas': {
-      id: '/app/metricas'
-      path: '/metricas'
-      fullPath: '/app/metricas'
-      preLoaderRoute: typeof AppMetricasRouteImport
+    '/app/kits': {
+      id: '/app/kits'
+      path: '/kits'
+      fullPath: '/app/kits'
+      preLoaderRoute: typeof AppKitsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/corretores': {
@@ -387,20 +363,6 @@ declare module '@tanstack/react-router' {
       path: '/corretores'
       fullPath: '/app/corretores'
       preLoaderRoute: typeof AppCorretoresRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/convites': {
-      id: '/app/convites'
-      path: '/convites'
-      fullPath: '/app/convites'
-      preLoaderRoute: typeof AppConvitesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/contratos': {
-      id: '/app/contratos'
-      path: '/contratos'
-      fullPath: '/app/contratos'
-      preLoaderRoute: typeof AppContratosRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/contrato': {
@@ -486,10 +448,8 @@ const AppPropostasRouteWithChildren = AppPropostasRoute._addFileChildren(
 interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
   AppContratoRoute: typeof AppContratoRouteWithChildren
-  AppContratosRoute: typeof AppContratosRoute
-  AppConvitesRoute: typeof AppConvitesRoute
   AppCorretoresRoute: typeof AppCorretoresRoute
-  AppMetricasRoute: typeof AppMetricasRoute
+  AppKitsRoute: typeof AppKitsRoute
   AppNovoRoute: typeof AppNovoRoute
   AppParametrosRoute: typeof AppParametrosRoute
   AppPerfilRoute: typeof AppPerfilRoute
@@ -501,10 +461,8 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppClientesRoute: AppClientesRoute,
   AppContratoRoute: AppContratoRouteWithChildren,
-  AppContratosRoute: AppContratosRoute,
-  AppConvitesRoute: AppConvitesRoute,
   AppCorretoresRoute: AppCorretoresRoute,
-  AppMetricasRoute: AppMetricasRoute,
+  AppKitsRoute: AppKitsRoute,
   AppNovoRoute: AppNovoRoute,
   AppParametrosRoute: AppParametrosRoute,
   AppPerfilRoute: AppPerfilRoute,

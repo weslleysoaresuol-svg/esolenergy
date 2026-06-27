@@ -510,9 +510,6 @@ function AdminDashboard() {
     </div>
   );
 }
-    </div>
-  );
-}
 
 function CorretorClientes() {
   const { user } = useCurrentUser();
