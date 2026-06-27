@@ -10,7 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { MessageCircle, ArrowLeft, Trash2, FileSpreadsheet, Star, Gift, AlertTriangle } from "lucide-react";
+import { 
+  MessageCircle, ArrowLeft, Trash2, FileSpreadsheet, Star, Gift, AlertTriangle,
+  Inbox, Calendar, FileText, FileSignature, Wrench, Zap, CheckCircle2, RefreshCw
+} from "lucide-react";
 
 export const Route = createFileRoute("/app/cliente/$id")({
   component: ClienteDetail,
@@ -211,6 +214,87 @@ function ClienteDetail() {
           {role === "admin" && <Button variant="ghost" onClick={remove} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
         </div>
       </div>
+
+      {/* TIMELINE DE PROCESSO COMERCIAL SOLAR */}
+      <Card className="p-5 border-0 shadow-md bg-white overflow-hidden">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="font-bold text-navy text-sm flex items-center gap-1.5">
+            <Zap className="w-4 h-4 text-sun-deep" /> Jornada do Cliente Solar
+          </h3>
+          {cliente.status === "perdido" ? (
+            <Badge className="bg-red-100 text-red-800 border-red-200">Lead Perdido</Badge>
+          ) : (
+            <Badge className="bg-blue-50 text-navy border-blue-100">Em Andamento</Badge>
+          )}
+        </div>
+
+        {cliente.status === "perdido" ? (
+          <div className="bg-red-50/50 border border-red-100 rounded-xl p-4 flex flex-wrap justify-between items-center gap-3">
+            <div className="space-y-1">
+              <span className="text-xs text-red-800 font-bold block">🚨 Lead Marcado como Perdido</span>
+              <p className="text-[11px] text-slate-600">
+                Motivo: <strong className="text-red-700">{MOTIVO_PERDA_OPTIONS.find(o => o.value === cliente.motivo_perda)?.label || cliente.motivo_perda}</strong>
+                {cliente.observacao_perda && ` — "${cliente.observacao_perda}"`}
+              </p>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => updateStatus("novo")}
+              className="bg-navy hover:bg-navy-deep text-white font-semibold flex items-center gap-1 h-8 text-xs px-4"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> Reativar Lead
+            </Button>
+          </div>
+        ) : (
+          <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-2 pt-2 pb-2">
+            {/* Linha conectora de fundo */}
+            <div className="absolute left-[15px] top-6 bottom-6 w-0.5 md:left-4 md:right-4 md:top-1/2 md:bottom-auto md:w-auto md:h-1 bg-slate-100 -translate-y-1/2 z-0 hidden md:block" />
+            
+            {/* Lista de passos da Timeline */}
+            {[
+              { idx: 1, label: "Lead / Prospecção", status: "novo", active: ["novo", "contato"], completed: ["visita_agendada", "proposta_enviada", "negociacao", "contrato_assinado", "instalacao", "concluido"], icon: Inbox },
+              { idx: 2, label: "Visita Técnica", status: "visita_agendada", active: ["visita_agendada"], completed: ["proposta_enviada", "negociacao", "contrato_assinado", "instalacao", "concluido"], icon: Calendar },
+              { idx: 3, label: "Proposta Comercial", status: "proposta_enviada", active: ["proposta_enviada", "negociacao"], completed: ["contrato_assinado", "instalacao", "concluido"], icon: FileText },
+              { idx: 4, label: "Contrato Assinado", status: "contrato_assinado", active: ["contrato_assinado"], completed: ["instalacao", "concluido"], icon: FileSignature },
+              { idx: 5, label: "Instalação & Eng.", status: "instalacao", active: ["instalacao"], completed: ["concluido"], icon: Wrench },
+              { idx: 6, label: "Ativação & Ligação", status: "concluido", active: ["concluido"], completed: [], icon: Zap },
+            ].map((step) => {
+              const isCompleted = step.completed.includes(cliente.status);
+              const isActive = step.active.includes(cliente.status);
+              const isFuture = !isCompleted && !isActive;
+              
+              let colorClasses = "bg-slate-50 border-slate-200 text-slate-400";
+              let labelClasses = "text-slate-400 font-semibold";
+              
+              if (isCompleted) {
+                colorClasses = "bg-emerald-500 border-emerald-500 text-white shadow-sm";
+                labelClasses = "text-emerald-700 font-bold";
+              } else if (isActive) {
+                colorClasses = "bg-sun border-sun text-navy font-bold shadow-md scale-110 z-10 ring-4 ring-sun/20";
+                labelClasses = "text-navy font-extrabold";
+              }
+
+              const Icon = step.icon;
+
+              return (
+                <button
+                  key={step.idx}
+                  onClick={() => updateStatus(step.status)}
+                  className="flex md:flex-col items-center gap-3 md:gap-2 flex-1 w-full text-left md:text-center z-10 group cursor-pointer focus:outline-none"
+                >
+                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${colorClasses} group-hover:opacity-90`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <span className={`text-[9px] uppercase tracking-wider block font-bold text-navy/40`}>Etapa {step.idx}</span>
+                    <span className={`text-xs block ${labelClasses} truncate max-w-[130px]`}>{step.label}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </Card>
 
       <Card className="p-5 border-0 shadow-md">
         <Label>Status do funil</Label>
