@@ -26,6 +26,7 @@ import { Route as AppConvitesRouteImport } from './routes/app.convites'
 import { Route as AppContratosRouteImport } from './routes/app.contratos'
 import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
+import { Route as AppPropostasIndexRouteImport } from './routes/app.propostas.index'
 import { Route as AppPropostasNovaRouteImport } from './routes/app.propostas.nova'
 import { Route as AppPropostasIdRouteImport } from './routes/app.propostas.$id'
 import { Route as AppContratoIdRouteImport } from './routes/app.contrato.$id'
@@ -116,6 +117,11 @@ const AppClientesRoute = AppClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPropostasIndexRoute = AppPropostasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPropostasRoute,
+} as any)
 const AppPropostasNovaRoute = AppPropostasNovaRouteImport.update({
   id: '/nova',
   path: '/nova',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/app/contrato/$id': typeof AppContratoIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/app/propostas/': typeof AppPropostasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -173,7 +180,6 @@ export interface FileRoutesByTo {
   '/app/novo': typeof AppNovoRoute
   '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
-  '/app/propostas': typeof AppPropostasRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
   '/proposta/$codigo': typeof PropostaCodigoRoute
   '/app': typeof AppIndexRoute
@@ -181,6 +187,7 @@ export interface FileRoutesByTo {
   '/app/contrato/$id': typeof AppContratoIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/app/propostas': typeof AppPropostasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -205,6 +212,7 @@ export interface FileRoutesById {
   '/app/contrato/$id': typeof AppContratoIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/app/propostas/': typeof AppPropostasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -230,6 +238,7 @@ export interface FileRouteTypes {
     | '/app/contrato/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/app/propostas/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -244,7 +253,6 @@ export interface FileRouteTypes {
     | '/app/novo'
     | '/app/parametros'
     | '/app/perfil'
-    | '/app/propostas'
     | '/convite/$token'
     | '/proposta/$codigo'
     | '/app'
@@ -252,6 +260,7 @@ export interface FileRouteTypes {
     | '/app/contrato/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/app/propostas'
   id:
     | '__root__'
     | '/'
@@ -275,6 +284,7 @@ export interface FileRouteTypes {
     | '/app/contrato/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/app/propostas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -407,6 +417,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/propostas/': {
+      id: '/app/propostas/'
+      path: '/'
+      fullPath: '/app/propostas/'
+      preLoaderRoute: typeof AppPropostasIndexRouteImport
+      parentRoute: typeof AppPropostasRoute
+    }
     '/app/propostas/nova': {
       id: '/app/propostas/nova'
       path: '/nova'
@@ -453,11 +470,13 @@ const AppContratoRouteWithChildren = AppContratoRoute._addFileChildren(
 interface AppPropostasRouteChildren {
   AppPropostasIdRoute: typeof AppPropostasIdRoute
   AppPropostasNovaRoute: typeof AppPropostasNovaRoute
+  AppPropostasIndexRoute: typeof AppPropostasIndexRoute
 }
 
 const AppPropostasRouteChildren: AppPropostasRouteChildren = {
   AppPropostasIdRoute: AppPropostasIdRoute,
   AppPropostasNovaRoute: AppPropostasNovaRoute,
+  AppPropostasIndexRoute: AppPropostasIndexRoute,
 }
 
 const AppPropostasRouteWithChildren = AppPropostasRoute._addFileChildren(
@@ -507,13 +526,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

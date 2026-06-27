@@ -69,10 +69,14 @@ function NovaProposta() {
   const setOverride = (k: string, v: number) => setOverrides((o) => ({ ...o, [k]: v }));
 
   async function salvar(enviar: boolean) {
-    if (!user || !calculo || !params) return;
+    if (!user || !calculo || !params) {
+      toast.error("Não foi possível carregar os dados para gerar a proposta");
+      return;
+    }
     if (selecionados.length === 0) { toast.error("Selecione ao menos um cliente"); return; }
     setSaving(true);
     try {
+      const validadeDias = Number(params.validade_proposta_dias || 15);
       const payload = {
         parceiro_id: user.id,
         titulo: titulo || `Proposta solar`,
@@ -98,20 +102,21 @@ function NovaProposta() {
         preco_total: calculo.preco_total,
         preco_por_wp: calculo.preco_por_wp,
         observacoes, condicoes_pagamento: condicoes,
-        validade_dias: params.validade_proposta_dias,
+        validade_dias: validadeDias,
         editada_pelo_admin: role === "admin" && Object.keys(overrides).length > 0,
         enviada_em: enviar ? new Date().toISOString() : null,
-        expires_at: new Date(Date.now() + params.validade_proposta_dias * 24 * 3600 * 1000).toISOString(),
+        expires_at: new Date(Date.now() + validadeDias * 24 * 3600 * 1000).toISOString(),
       };
       const { data: prop, error } = await supabase.from("propostas").insert(payload).select().single();
       if (error) throw error;
       // associa clientes
       const assoc = selecionados.map((cid) => ({ proposta_id: prop.id, cliente_id: cid }));
-      await supabase.from("proposta_clientes").insert(assoc);
+      const { error: assocError } = await supabase.from("proposta_clientes").insert(assoc);
+      if (assocError) throw assocError;
       toast.success(enviar ? "Proposta gerada e pronta para envio!" : "Rascunho salvo");
       navigate({ to: "/app/propostas/$id", params: { id: prop.id } });
     } catch (e: any) {
-      toast.error(e.message || "Erro ao salvar");
+      toast.error(e.message || "Erro ao salvar a proposta");
     } finally { setSaving(false); }
   }
 
