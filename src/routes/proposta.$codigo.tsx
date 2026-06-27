@@ -19,18 +19,14 @@ function PropostaPublica() {
 
   useEffect(() => {
     (async () => {
-      const { data: p } = await supabase.from("propostas").select("*").eq("codigo_publico", codigo).maybeSingle();
-      if (!p) { setLoading(false); return; }
-      if (new Date(p.expires_at) < new Date()) { setExpirada(true); setLoading(false); return; }
-      setProposta(p);
-      const [{ data: prof }, { data: pcs }] = await Promise.all([
-        supabase.from("profiles").select("nome, email, telefone, avatar_url").eq("id", p.parceiro_id).maybeSingle(),
-        supabase.from("proposta_clientes").select("cliente:cliente_id(nome, cidade, estado)").eq("proposta_id", p.id).limit(1),
-      ]);
-      setParceiro(prof);
-      setCliente(pcs?.[0]?.cliente);
-      // registra visualização
-      await supabase.rpc("proposta_registrar_evento", { _codigo: codigo, _tipo: "visualizada", _ua: navigator.userAgent.slice(0, 200) });
+      const { data } = await (supabase.rpc as any)("get_proposta_publica", { _codigo: codigo });
+      const payload = data as any;
+      if (!payload) { setLoading(false); return; }
+      if (payload.expirada) { setExpirada(true); setLoading(false); return; }
+      setProposta(payload.proposta);
+      setParceiro(payload.parceiro);
+      setCliente(payload.cliente);
+      await (supabase.rpc as any)("proposta_registrar_evento", { _codigo: codigo, _tipo: "visualizada", _ua: navigator.userAgent.slice(0, 200) });
       setLoading(false);
     })();
   }, [codigo]);
