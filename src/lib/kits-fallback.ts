@@ -42,7 +42,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: false,
     consumo_kwh_min: 80,
     consumo_kwh_max: 160,
-    imagem_kit_url: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1548613053-220bfb620c89?w=500&auto=format&fit=crop&q=70",
     ativo: true
   },
   {
@@ -63,7 +63,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: false,
     consumo_kwh_min: 150,
     consumo_kwh_max: 240,
-    imagem_kit_url: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70",
     ativo: true
   },
   {
@@ -84,7 +84,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 220,
     consumo_kwh_max: 350,
-    imagem_kit_url: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
     ativo: true
   },
   {
@@ -105,7 +105,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 400,
     consumo_kwh_max: 580,
-    imagem_kit_url: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
     ativo: true
   },
   {
@@ -126,7 +126,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 650,
     consumo_kwh_max: 920,
-    imagem_kit_url: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
     ativo: true
   },
   {
@@ -147,7 +147,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 380,
     consumo_kwh_max: 550,
-    imagem_kit_url: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
     ativo: true
   },
   {
@@ -168,7 +168,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 1500,
     consumo_kwh_max: 2300,
-    imagem_kit_url: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70",
     ativo: true
   },
   {
@@ -189,7 +189,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 3800,
     consumo_kwh_max: 5400,
-    imagem_kit_url: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&auto=format&fit=crop&q=60",
+    imagem_kit_url: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&auto=format&fit=crop&q=70",
     ativo: true
   }
 ];
