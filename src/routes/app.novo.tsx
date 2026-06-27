@@ -24,6 +24,33 @@ function NovoCliente() {
   const [f, setF] = useState<any>({ imovel_tipo: "residencial", status: "novo" });
   const set = (k: string, v: any) => setF((p: any) => ({ ...p, [k]: v }));
 
+  const handleCepChange = async (cepValue: string) => {
+    set("cep", cepValue);
+    const cleanCep = cepValue.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setF((prev: any) => ({
+            ...prev,
+            cep: cepValue,
+            cidade: data.localidade || prev.cidade || "",
+            estado: data.uf || prev.estado || "",
+            endereco: data.logradouro 
+              ? `${data.logradouro}${data.bairro ? ` - ${data.bairro}` : ""}` 
+              : prev.endereco || ""
+          }));
+          toast.success("CEP localizado!");
+        } else {
+          toast.error("CEP não encontrado.");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      }
+    }
+  };
+
   const save = async () => {
     if (!user) return;
     if (!f.nome || !f.telefone) return toast.error("Nome e telefone são obrigatórios");
@@ -61,10 +88,17 @@ function NovoCliente() {
             <div><Label>Email</Label><Input type="email" value={f.email || ""} onChange={(e) => set("email", e.target.value)} /></div>
             <div><Label>CPF / CNPJ</Label><Input value={f.cpf_cnpj || ""} onChange={(e) => set("cpf_cnpj", e.target.value)} /></div>
             <div><Label>Data nascimento</Label><Input type="date" value={f.data_nascimento || ""} onChange={(e) => set("data_nascimento", e.target.value)} /></div>
-            <div className="sm:col-span-2"><Label>Endereço</Label><Input value={f.endereco || ""} onChange={(e) => set("endereco", e.target.value)} /></div>
-            <div><Label>Cidade</Label><Input value={f.cidade || ""} onChange={(e) => set("cidade", e.target.value)} /></div>
-            <div><Label>Estado</Label><Input maxLength={2} value={f.estado || ""} onChange={(e) => set("estado", e.target.value)} /></div>
-            <div><Label>CEP</Label><Input value={f.cep || ""} onChange={(e) => set("cep", e.target.value)} /></div>
+            <div>
+              <Label>CEP</Label>
+              <Input 
+                placeholder="Ex: 01001-000" 
+                value={f.cep || ""} 
+                onChange={(e) => handleCepChange(e.target.value)} 
+              />
+            </div>
+            <div><Label>Estado</Label><Input maxLength={2} placeholder="UF" value={f.estado || ""} onChange={(e) => set("estado", e.target.value)} /></div>
+            <div><Label>Cidade</Label><Input placeholder="Cidade" value={f.cidade || ""} onChange={(e) => set("cidade", e.target.value)} /></div>
+            <div className="sm:col-span-2"><Label>Endereço</Label><Input placeholder="Rua, número, complemento..." value={f.endereco || ""} onChange={(e) => set("endereco", e.target.value)} /></div>
           </div>
         )}
         {step === 1 && (
