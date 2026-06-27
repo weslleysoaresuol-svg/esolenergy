@@ -13,13 +13,19 @@ import { calcularProposta, type Parametros, type TipoInstalacao, BRL, NUM, regia
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Sun, Zap, Wallet } from "lucide-react";
 
-export const Route = createFileRoute("/app/propostas/nova")({ component: NovaProposta });
+export const Route = createFileRoute("/app/propostas/nova")({ 
+  validateSearch: (search: Record<string, unknown>) => ({
+    cliente: (search.cliente as string) ?? "",
+  }),
+  component: NovaProposta 
+});
 
 const UFS = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
 
 function NovaProposta() {
   const navigate = useNavigate();
   const { user, role } = useCurrentUser();
+  const { cliente: clienteIdPreSel } = Route.useSearch();
   const [step, setStep] = useState(1);
   const [params, setParams] = useState<Parametros | null>(null);
   const [clientes, setClientes] = useState<any[]>([]);
@@ -61,6 +67,17 @@ function NovaProposta() {
       if (pr) setTarifa(Number((pr as any).tarifa_kwh_default));
       if (ks) setKits(ks);
       if (fs) setFinanceiras(fs);
+      // Pré-seleciona cliente vindo da ficha
+      if (clienteIdPreSel && cs) {
+        const found = (cs as any[]).find((c: any) => c.id === clienteIdPreSel);
+        if (found) {
+          setSelecionados([found.id]);
+          if (found.consumo_kwh) setConsumo(Number(found.consumo_kwh));
+          if (found.estado) setEstado(found.estado);
+          if (found.cidade) setCidade(found.cidade);
+          setTitulo(`Proposta solar - ${found.nome}`);
+        }
+      }
     })();
   }, []);
 
@@ -218,7 +235,15 @@ function NovaProposta() {
       const assoc = selecionados.map((cid) => ({ proposta_id: prop.id, cliente_id: cid }));
       const { error: assocError } = await supabase.from("proposta_clientes").insert(assoc);
       if (assocError) throw assocError;
-      toast.success(enviar ? "Proposta gerada e pronta para envio!" : "Rascunho salvo");
+      // Atualiza status dos clientes para "proposta_enviada" automaticamente
+      if (enviar) {
+        await supabase
+          .from("clientes")
+          .update({ status: "proposta_enviada" as any })
+          .in("id", selecionados)
+          .in("status", ["novo", "contato", "visita_agendada"] as any);
+      }
+      toast.success(enviar ? "Proposta gerada! Status dos clientes atualizado." : "Rascunho salvo");
       navigate({ to: "/app/propostas/$id", params: { id: prop.id } });
     } catch (e: any) {
       toast.error(e.message || "Erro ao salvar a proposta");

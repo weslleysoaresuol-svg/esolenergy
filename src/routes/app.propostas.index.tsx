@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, FileText, Eye, Check, X, Clock } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 
@@ -24,42 +25,111 @@ function PropostasList() {
   const { role } = useCurrentUser();
   const [propostas, setPropostas] = useState<any[]>([]);
   const [q, setQ] = useState("");
+  const [filterStatus, setFilterStatus] = useState("todos");
+  const [filterParceiro, setFilterParceiro] = useState("todos");
+  const [parceiros, setParceiros] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from("propostas")
-        .select("*, parceiro:parceiro_id(nome), proposta_clientes(cliente:cliente_id(nome))")
-        .order("created_at", { ascending: false });
-      setPropostas(data || []);
+      const [{ data: ps }, { data: profs }] = await Promise.all([
+        supabase
+          .from("propostas")
+          .select("*, parceiro:parceiro_id(nome, id), proposta_clientes(cliente:cliente_id(nome))")
+          .order("created_at", { ascending: false }),
+        supabase.from("profiles").select("id, nome").order("nome"),
+      ]);
+      setPropostas(ps || []);
+      setParceiros(profs || []);
     })();
   }, []);
 
-  const filtered = propostas.filter((p) =>
-    !q || p.titulo?.toLowerCase().includes(q.toLowerCase()) ||
-    p.proposta_clientes?.some((pc: any) => pc.cliente?.nome?.toLowerCase().includes(q.toLowerCase()))
-  );
+  const now = new Date();
+  const filtered = propostas.filter((p) => {
+    const matchQ = !q || p.titulo?.toLowerCase().includes(q.toLowerCase()) ||
+      p.proposta_clientes?.some((pc: any) => pc.cliente?.nome?.toLowerCase().includes(q.toLowerCase()));
+    const matchStatus = filterStatus === "todos" || p.status === filterStatus;
+    const matchParceiro = filterParceiro === "todos" || p.parceiro?.id === filterParceiro;
+    return matchQ && matchStatus && matchParceiro;
+  });
+
+  const getValidade = (p: any) => {
+    if (!p.expires_at) return null;
+    const exp = new Date(p.expires_at);
+    const days = Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if (days < 0) return <span className="text-xs text-red-500 font-medium">Expirada</span>;
+    if (days <= 3) return <span className="text-xs text-amber-600 font-medium">⚠️ {days}d restantes</span>;
+    return <span className="text-xs text-muted-foreground">{days}d restantes</span>;
+  };
 
   return (
     <div className="space-y-6 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-bold text-navy">Propostas</h1>
-          <p className="text-muted-foreground">{filtered.length} proposta(s)</p>
+          <p className="text-muted-foreground">{filtered.length} de {propostas.length} proposta(s)</p>
         </div>
         <Link to="/app/propostas/nova">
           <Button className="bg-sun hover:bg-sun-deep text-navy font-semibold"><Plus className="w-4 h-4 mr-1" />Nova proposta</Button>
         </Link>
       </div>
 
-      <Card className="p-4 border-0 shadow-md">
-        <Input placeholder="Buscar por título ou cliente…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-sm" />
+      {/* Barra de Filtros */}
+      <Card className="p-4 border-0 shadow-md flex flex-wrap gap-3">
+        <Input
+          placeholder="Buscar por título ou cliente…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          className="max-w-xs"
+        />
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-44"><SelectValue placeholder="Todos os status" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todos">Todos os status</SelectItem>
+            {Object.entries(STATUS_LABEL).map(([k, v]) => (
+              <SelectItem key={k} value={k}>{v.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {role === "admin" && (
+          <Select value={filterParceiro} onValueChange={setFilterParceiro}>
+            <SelectTrigger className="w-48"><SelectValue placeholder="Todos os parceiros" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os parceiros</SelectItem>
+              {parceiros.map((p) => (
+                <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {(filterStatus !== "todos" || filterParceiro !== "todos" || q) && (
+          <Button variant="ghost" size="sm" onClick={() => { setFilterStatus("todos"); setFilterParceiro("todos"); setQ(""); }} className="text-muted-foreground">
+            Limpar filtros
+          </Button>
+        )}
       </Card>
+
+      {/* KPIs rápidos */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {Object.entries(STATUS_LABEL).map(([k, v]) => {
+          const count = propostas.filter((p) => p.status === k).length;
+          if (count === 0) return null;
+          return (
+            <button
+              key={k}
+              onClick={() => setFilterStatus(filterStatus === k ? "todos" : k)}
+              className={`p-3 rounded-xl border-2 text-center transition cursor-pointer ${filterStatus === k ? "border-navy bg-navy/5" : "border-transparent bg-white shadow-sm hover:border-navy/20"}`}
+            >
+              <div className="text-xl font-extrabold text-navy">{count}</div>
+              <Badge className={`${v.color} text-[10px] mt-1`}>{v.label}</Badge>
+            </button>
+          );
+        })}
+      </div>
 
       {filtered.length === 0 ? (
         <Card className="p-12 text-center border-0 shadow-md">
           <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">Nenhuma proposta ainda. Crie a primeira!</p>
+          <p className="text-muted-foreground">Nenhuma proposta encontrada com esses filtros.</p>
         </Card>
       ) : (
         <Card className="border-0 shadow-md overflow-x-auto">
@@ -72,6 +142,7 @@ function PropostasList() {
                 <th className="p-3">Sistema</th>
                 <th className="p-3">Valor</th>
                 <th className="p-3">Status</th>
+                <th className="p-3">Validade</th>
                 <th className="p-3">Data</th>
               </tr>
             </thead>
@@ -88,6 +159,7 @@ function PropostasList() {
                     <td className="p-3">{Number(p.kwp_sistema).toFixed(2)} kWp</td>
                     <td className="p-3 font-semibold">{BRL(Number(p.preco_total))}</td>
                     <td className="p-3"><Badge className={s.color}>{s.label}</Badge></td>
+                    <td className="p-3">{getValidade(p)}</td>
                     <td className="p-3 text-xs text-muted-foreground">{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
                   </tr>
                 );
