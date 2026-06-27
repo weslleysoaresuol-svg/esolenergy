@@ -281,6 +281,16 @@ function NovaProposta() {
         editada_pelo_admin: role === "admin" && Object.keys(overrides).length > 0,
         enviada_em: enviar ? new Date().toISOString() : null,
         expires_at: new Date(Date.now() + validadeDias * 24 * 3600 * 1000).toISOString(),
+        
+        // Novos campos vinculados ao kit
+        kit_id: selectedKitId || null,
+        kit_nome: selectedKit ? selectedKit.nome : null,
+        kit_inversor: selectedKit ? selectedKit.inversor : null,
+        kit_fabricante_modulos: selectedKit ? selectedKit.fabricante_modulos : null,
+        kit_imagem_url: selectedKit ? (selectedKit.imagem_kit_url || selectedKit.imagem_componentes_url) : null,
+        kit_tecnologia_modulo: selectedKit ? selectedKit.tecnologia_modulo : null,
+        kit_garantia_modulos_anos: selectedKit ? Number(selectedKit.garantia_modulos_anos) : null,
+        kit_garantia_inversor_anos: selectedKit ? Number(selectedKit.garantia_inversor_anos) : null,
       };
       const { data: prop, error } = await supabase.from("propostas").insert(payload).select().single();
       if (error) throw error;

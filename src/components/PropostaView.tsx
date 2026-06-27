@@ -84,6 +84,69 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
         </div>
       </section>
 
+      {/* DETALHES DO KIT FOTOVOLTAICO SELECIONADO */}
+      <section className="max-w-5xl mx-auto px-6 md:px-12 py-10">
+        <div className="bg-slate-50 border border-slate-200/50 rounded-3xl p-6 md:p-8 shadow-sm">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            {/* Imagem do Kit */}
+            <div className="relative rounded-2xl overflow-hidden shadow-md group">
+              <img
+                src={p.kit_imagem_url || "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&auto=format&fit=crop&q=80"}
+                alt={p.kit_nome || "Kit Solar"}
+                className="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                <div className="text-white text-xs font-semibold flex items-center gap-1.5 bg-black/40 backdrop-blur px-2.5 py-1 rounded-full">
+                  <ShieldCheck className="w-3.5 h-3.5 text-sun" /> Kit Oficial Homologado
+                </div>
+              </div>
+            </div>
+
+            {/* Descrição do Kit */}
+            <div className="space-y-4">
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-sun-deep">Equipamentos & Tecnologia</span>
+                <h3 className="font-display text-xl md:text-2xl font-bold text-navy mt-1">
+                  {p.kit_nome || "Dimensionamento Técnico Customizado"}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  {p.kit_nome ? "Kit solar montado e testado pelo distribuidor oficial parceiro." : "Dimensionamento sob medida calculado pelo algoritmo inteligente comercial."}
+                </p>
+              </div>
+
+              <div className="divide-y divide-slate-200/60 text-sm">
+                <div className="py-2.5 flex justify-between">
+                  <span className="text-muted-foreground font-medium">Módulos (Placas)</span>
+                  <span className="font-bold text-navy text-right">
+                    {p.qtd_modulos}x {p.kit_fabricante_modulos || `${p.potencia_modulo_w}W`}
+                  </span>
+                </div>
+                <div className="py-2.5 flex justify-between">
+                  <span className="text-muted-foreground font-medium">Inversor Solar</span>
+                  <span className="font-bold text-navy text-right">
+                    {p.kit_inversor || `${p.qtd_inversores}x ${Number(p.potencia_inversor_kw || 0).toFixed(1)} kW`}
+                  </span>
+                </div>
+                {p.kit_tecnologia_modulo && (
+                  <div className="py-2.5 flex justify-between">
+                    <span className="text-muted-foreground font-medium">Tecnologia Painel</span>
+                    <span className="text-xs font-bold text-navy text-right">{p.kit_tecnologia_modulo}</span>
+                  </div>
+                )}
+                <div className="py-2.5 flex justify-between">
+                  <span className="text-muted-foreground font-medium">Garantia Placas</span>
+                  <span className="font-bold text-emerald-700">{p.kit_garantia_modulos_anos || 25} anos</span>
+                </div>
+                <div className="py-2.5 flex justify-between">
+                  <span className="text-muted-foreground font-medium">Garantia Inversor</span>
+                  <span className="font-bold text-emerald-700">{p.kit_garantia_inversor_anos || 10} anos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ECONOMIA 25 ANOS */}
       <section className="max-w-5xl mx-auto px-6 md:px-12 py-10 md:py-14">
         <div className="text-center mb-8">
