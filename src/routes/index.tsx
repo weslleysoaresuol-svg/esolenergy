@@ -42,10 +42,9 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 });
 
 function Landing() {
-  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   return (
     <div className="min-h-screen bg-paper text-ink antialiased selection:bg-sun selection:text-navy">
-      <Nav onOpenTracking={() => setIsTrackingOpen(true)} />
+      <Nav onOpenTracking={() => {}} />
       <Hero />
       <LogosStrip />
       <MetricsBar />
@@ -58,10 +57,10 @@ function Landing() {
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />
-      <AcompanharModal isOpen={isTrackingOpen} onClose={() => setIsTrackingOpen(false)} />
     </div>
   );
 }
+
 
 /* ============================ NAV ============================ */
 function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
