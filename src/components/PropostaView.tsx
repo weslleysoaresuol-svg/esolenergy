@@ -131,6 +131,13 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
               <Row label="Economia em 25 anos" value={BRL(Number(p.economia_25_anos))} />
             </SpecCard>
           </div>
+          
+          {p.observacoes && (
+            <div className="mt-6 bg-slate-100/60 border border-slate-200/60 rounded-2xl p-6 text-sm">
+              <div className="text-xs uppercase tracking-wider text-navy/70 font-bold mb-3">Especificações & Observações Técnicas</div>
+              <div className="text-navy/95 font-medium whitespace-pre-line leading-relaxed">{p.observacoes}</div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -146,8 +153,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 Equivale a <strong className="text-white">{BRL(Number(p.preco_por_wp))}/Wp</strong> instalado
               </div>
               {p.condicoes_pagamento && (
-                <div className="mt-4 text-sm text-white/80 bg-white/10 rounded-lg p-3 border border-white/15">
-                  <strong className="text-sun">Condições:</strong> {p.condicoes_pagamento}
+                <div className="mt-4 text-sm text-white/80 bg-white/10 rounded-lg p-3 border border-white/15 whitespace-pre-line">
+                  <strong className="text-sun">Condições:</strong>{"\n"}{p.condicoes_pagamento}
                 </div>
               )}
             </div>
