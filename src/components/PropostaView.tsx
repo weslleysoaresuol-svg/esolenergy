@@ -86,19 +86,26 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
       {/* DETALHES DO KIT FOTOVOLTAICO SELECIONADO */}
       <section className="max-w-5xl mx-auto px-6 md:px-12 py-10">
-        <div className="bg-slate-50 border border-slate-200/50 rounded-3xl p-6 md:p-8 shadow-sm">
+        <div className="bg-slate-50 border border-slate-200/50 rounded-3xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Imagem do Kit */}
-            <div className="relative rounded-2xl overflow-hidden shadow-md group">
+            <div className="relative rounded-2xl overflow-hidden shadow-md bg-white p-3 border">
               <img
-                src={p.kit_imagem_url || "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&auto=format&fit=crop&q=80"}
+                src={
+                  p.kit_imagem_url || 
+                  (p.tipo_instalacao === "rural" 
+                    ? "/kits/kit-rural.png" 
+                    : Number(p.kwp_sistema) <= 4.0 
+                      ? "/kits/kit-residencial-pequeno.png" 
+                      : Number(p.kwp_sistema) <= 10.0 
+                        ? "/kits/kit-residencial-grande.png" 
+                        : "/kits/kit-comercial-industrial.png")
+                }
                 alt={p.kit_nome || "Kit Solar"}
-                className="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-64 md:h-72 object-contain mx-auto"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
-                <div className="text-white text-xs font-semibold flex items-center gap-1.5 bg-black/40 backdrop-blur px-2.5 py-1 rounded-full">
-                  <ShieldCheck className="w-3.5 h-3.5 text-sun" /> Kit Oficial Homologado
-                </div>
+              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur text-navy text-[10px] font-extrabold px-3 py-1 rounded-full border shadow-sm">
+                🎁 KIT OFICIAL
               </div>
             </div>
 
@@ -106,42 +113,86 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
             <div className="space-y-4">
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-sun-deep">Equipamentos & Tecnologia</span>
-                <h3 className="font-display text-xl md:text-2xl font-bold text-navy mt-1">
+                <h3 className="font-display text-2xl font-bold text-navy mt-1">
                   {p.kit_nome || "Dimensionamento Técnico Customizado"}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                  {p.kit_nome ? "Kit solar montado e testado pelo distribuidor oficial parceiro." : "Dimensionamento sob medida calculado pelo algoritmo inteligente comercial."}
+                <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                  Gerador fotovoltaico completo montado com equipamentos homologados pelo Inmetro e em total conformidade com a regulação da concessionária.
                 </p>
               </div>
 
-              <div className="divide-y divide-slate-200/60 text-sm">
-                <div className="py-2.5 flex justify-between">
-                  <span className="text-muted-foreground font-medium">Módulos (Placas)</span>
-                  <span className="font-bold text-navy text-right">
-                    {p.qtd_modulos}x {p.kit_fabricante_modulos || `${p.potencia_modulo_w}W`}
-                  </span>
+              <div className="grid grid-cols-2 gap-3 text-center">
+                <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
+                  <div className="text-[10px] text-muted-foreground font-semibold">Garantia Painéis</div>
+                  <div className="text-base font-bold text-emerald-700 mt-0.5">{p.kit_garantia_modulos_anos || 25} anos</div>
                 </div>
-                <div className="py-2.5 flex justify-between">
-                  <span className="text-muted-foreground font-medium">Inversor Solar</span>
-                  <span className="font-bold text-navy text-right">
-                    {p.kit_inversor || `${p.qtd_inversores}x ${Number(p.potencia_inversor_kw || 0).toFixed(1)} kW`}
-                  </span>
-                </div>
-                {p.kit_tecnologia_modulo && (
-                  <div className="py-2.5 flex justify-between">
-                    <span className="text-muted-foreground font-medium">Tecnologia Painel</span>
-                    <span className="text-xs font-bold text-navy text-right">{p.kit_tecnologia_modulo}</span>
-                  </div>
-                )}
-                <div className="py-2.5 flex justify-between">
-                  <span className="text-muted-foreground font-medium">Garantia Placas</span>
-                  <span className="font-bold text-emerald-700">{p.kit_garantia_modulos_anos || 25} anos</span>
-                </div>
-                <div className="py-2.5 flex justify-between">
-                  <span className="text-muted-foreground font-medium">Garantia Inversor</span>
-                  <span className="font-bold text-emerald-700">{p.kit_garantia_inversor_anos || 10} anos</span>
+                <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
+                  <div className="text-[10px] text-muted-foreground font-semibold">Garantia Inversor</div>
+                  <div className="text-base font-bold text-emerald-700 mt-0.5">{p.kit_garantia_inversor_anos || 10} anos</div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Tabela de Itens Detalhada (BOM) */}
+          <div className="space-y-3">
+            <div className="text-xs uppercase font-extrabold tracking-wider text-navy/70">Composição Detalhada do Gerador Solar</div>
+            <div className="border rounded-2xl overflow-hidden bg-white shadow-sm">
+              <table className="w-full text-xs text-left border-collapse">
+                <thead className="bg-slate-100 text-[10px] uppercase font-bold text-navy/70 border-b">
+                  <tr>
+                    <th className="p-3">Componente</th>
+                    <th className="p-3">Descrição / Especificação Técnica</th>
+                    <th className="p-3 text-center">Qtd</th>
+                    <th className="p-3 text-right">Garantia</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  <tr>
+                    <td className="p-3 font-bold text-navy">Módulos (Placas)</td>
+                    <td className="p-3 text-muted-foreground">
+                      {p.kit_fabricante_modulos || "Painéis Monocristalinos de Alta Eficiência"}
+                      {p.kit_tecnologia_modulo && <span className="block text-[10px] text-sun-deep mt-0.5">{p.kit_tecnologia_modulo}</span>}
+                    </td>
+                    <td className="p-3 text-center font-bold text-navy">{p.qtd_modulos}</td>
+                    <td className="p-3 text-right text-emerald-700">{p.kit_garantia_modulos_anos || 25} anos</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-navy">Inversor Solar</td>
+                    <td className="p-3 text-muted-foreground">
+                      {p.kit_inversor || "Inversor String Inteligente com Conectividade Wi-Fi"}
+                      <span className="block text-[10px] text-slate-400 mt-0.5">Homologado Inmetro e monitoramento via aplicativo</span>
+                    </td>
+                    <td className="p-3 text-center font-bold text-navy">{p.qtd_inversores || 1}</td>
+                    <td className="p-3 text-right text-emerald-700">{p.kit_garantia_inversor_anos || 10} anos</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-navy">Estrutura de Fixação</td>
+                    <td className="p-3 text-muted-foreground">
+                      Estrutura em Alumínio Anodizado e Aço Inox
+                      <span className="block text-[10px] text-slate-400 mt-0.5">Grampos, perfis e fixadores específicos para o seu telhado</span>
+                    </td>
+                    <td className="p-3 text-center font-bold text-navy">1 Kit</td>
+                    <td className="p-3 text-right text-emerald-700">15 anos</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-navy">Cabos & Conectores</td>
+                    <td className="p-3 text-muted-foreground">
+                      Cabo Solar Flexível 6mm² (Proteção UV e isolamento 1.8kV CC) + Conectores MC4 Staubli
+                    </td>
+                    <td className="p-3 text-center font-bold text-navy">1 Kit</td>
+                    <td className="p-3 text-right text-emerald-700">10 anos</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-navy">String Box</td>
+                    <td className="p-3 text-muted-foreground">
+                      Quadro de Proteção CC/CA com DPS (Dispositivo de Proteção contra Surtos) e Disjuntores
+                    </td>
+                    <td className="p-3 text-center font-bold text-navy">1 Un</td>
+                    <td className="p-3 text-right text-emerald-700">5 anos</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

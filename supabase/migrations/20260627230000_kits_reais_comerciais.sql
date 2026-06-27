@@ -25,7 +25,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'Microinversor', 25, 12,
  6900.00, false, 80, 160,
- 'https://images.unsplash.com/photo-1548613053-220bfb620c89?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_3_30kwp_microinversor_deye_6_paineis_jinko_550w_monocristalino_bifacial_1803_1_fb68d90ca9d6dfec7210609349887752.jpg'),
 
 ('residencial_pequeno',
  'Kit Aldo Solar 2.20 kWp | 4x Canadian 550W | Deye On-Grid 2kW',
@@ -33,7 +33,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino PERC', 21.8,
  'String On-Grid', 25, 10,
  9100.00, false, 150, 240,
- 'https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg'),
 
 ('residencial_pequeno',
  'Kit Aldo Solar 3.30 kWp | 6x Jinko 550W | Deye On-Grid 3kW ★',
@@ -41,7 +41,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid', 25, 10,
  12300.00, true, 220, 350,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_3_30kwp_microinversor_deye_6_paineis_jinko_550w_monocristalino_bifacial_1803_1_fb68d90ca9d6dfec7210609349887752.jpg'),
 
 ('residencial_grande',
  'Kit Aldo Solar 4.40 kWp | 8x Jinko 550W | Deye On-Grid 4kW',
@@ -49,7 +49,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid', 25, 10,
  16200.00, false, 320, 450,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_3_30kwp_microinversor_deye_6_paineis_jinko_550w_monocristalino_bifacial_1803_1_fb68d90ca9d6dfec7210609349887752.jpg'),
 
 ('residencial_grande',
  'Kit Aldo Solar 5.50 kWp | 10x Canadian 550W | Deye On-Grid 5kW ★',
@@ -57,7 +57,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino PERC', 21.8,
  'String On-Grid', 25, 10,
  18900.00, true, 400, 580,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg'),
 
 ('residencial_grande',
  'Kit Aldo Solar 6.60 kWp | 12x Jinko 550W | Deye On-Grid 6kW',
@@ -65,7 +65,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid', 25, 10,
  22400.00, false, 500, 700,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg'),
 
 ('residencial_grande',
  'Kit Aldo Solar 8.80 kWp | 16x Jinko 550W | Deye On-Grid 8kW ★',
@@ -73,7 +73,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid', 25, 10,
  28700.00, true, 650, 920,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg'),
 
 ('residencial_grande',
  'Kit Aldo Solar Híbrido 10 kWp | 18x Canadian 550W | Inversor Deye Híbrido + Bateria Lithium 5.12kWh',
@@ -81,7 +81,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino PERC', 21.8,
  'Híbrido com Armazenamento', 25, 10,
  54900.00, false, 750, 1100,
- 'https://images.unsplash.com/photo-1558441719-ff34b0524a24?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_hibrido_com_bateria_lithium_deye_byd_10kwp_1815_1_2be62bbba969f6a78d89e5e3c79a9f24.jpg'),
 
 
 -- ============================================================
@@ -94,7 +94,7 @@ INSERT INTO public.kits_solares (
  555, 'Monocristalino TOPCon', 22.1,
  'String On-Grid', 25, 10,
  8400.00, false, 140, 230,
- 'https://images.unsplash.com/photo-1548613053-220bfb620c89?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_3_30kwp_microinversor_deye_6_paineis_jinko_550w_monocristalino_bifacial_1803_1_fb68d90ca9d6dfec7210609349887752.jpg'),
 
 ('residencial_pequeno',
  'Kit Sou Energy 3.33 kWp | 6x Trina 555W | Solis On-Grid 3kW',
@@ -102,7 +102,7 @@ INSERT INTO public.kits_solares (
  555, 'Monocristalino TOPCon', 22.2,
  'String On-Grid', 25, 10,
  11950.00, false, 230, 360,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_3_30kwp_microinversor_deye_6_paineis_jinko_550w_monocristalino_bifacial_1803_1_fb68d90ca9d6dfec7210609349887752.jpg'),
 
 ('residencial_grande',
  'Kit Sou Energy 5.00 kWp | 9x Astronergy 555W | Solis On-Grid 5kW ★',
@@ -110,7 +110,7 @@ INSERT INTO public.kits_solares (
  555, 'Monocristalino TOPCon', 22.1,
  'String On-Grid', 25, 10,
  17350.00, true, 380, 550,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg'),
 
 ('residencial_grande',
  'Kit Sou Energy 7.77 kWp | 14x Trina 555W | Sungrow On-Grid 7kW',
@@ -118,7 +118,7 @@ INSERT INTO public.kits_solares (
  555, 'Monocristalino TOPCon', 22.2,
  'String On-Grid Trifásico', 25, 10,
  24900.00, false, 580, 800,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg'),
 
 ('comercial_pequeno',
  'Kit Sou Energy Comercial 13.32 kWp | 24x Trina 555W | Solis 12kW',
@@ -126,7 +126,7 @@ INSERT INTO public.kits_solares (
  555, 'Monocristalino TOPCon', 22.2,
  'String On-Grid Trifásico', 25, 10,
  41500.00, false, 950, 1400,
- 'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 ('comercial_pequeno',
  'Kit Sou Energy Comercial 22.20 kWp | 40x Astronergy 555W | Sungrow 20kW ★',
@@ -134,7 +134,7 @@ INSERT INTO public.kits_solares (
  555, 'Monocristalino TOPCon', 22.1,
  'String On-Grid Trifásico', 25, 10,
  67900.00, true, 1500, 2300,
- 'https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 
 -- ============================================================
@@ -147,7 +147,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid Trifásico', 25, 10,
  51900.00, false, 1100, 1750,
- 'https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 ('comercial_pequeno',
  'Kit Aldo Solar Comercial 27.50 kWp | 50x Jinko 550W | Deye 25kW ★',
@@ -155,7 +155,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid Trifásico', 25, 10,
  82500.00, true, 2000, 3000,
- 'https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 ('comercial_grande',
  'Kit Aldo Solar Comercial 38.50 kWp | 70x Canadian 550W | Huawei 30kW',
@@ -163,7 +163,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino PERC', 21.8,
  'String On-Grid Trifásico', 25, 10,
  119000.00, false, 2800, 4200,
- 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 ('comercial_grande',
  'Kit Aldo Solar Comercial 49.50 kWp | 90x Jinko 550W | Sungrow 40kW ★',
@@ -171,7 +171,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid Trifásico', 25, 10,
  148000.00, true, 3800, 5400,
- 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 ('industrial',
  'Kit Aldo Solar Industrial 77.00 kWp | 140x Jinko 550W | Huawei 75kW ★',
@@ -179,7 +179,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid Trifásico', 25, 10,
  225000.00, true, 5800, 8500,
- 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 ('industrial',
  'Kit Aldo Solar Industrial 110.00 kWp | 200x Canadian 550W | Sungrow 110kW',
@@ -187,7 +187,7 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino PERC', 21.8,
  'String On-Grid Trifásico', 25, 10,
  319000.00, false, 8200, 12500,
- 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg'),
 
 -- ============================================================
 -- 4. KITS RURAIS (Estrutura de Solo / Trator de Solo reforçado)
@@ -199,7 +199,7 @@ INSERT INTO public.kits_solares (
  555, 'Monocristalino TOPCon', 22.2,
  'String On-Grid (Solo)', 25, 10,
  33200.00, false, 650, 950,
- 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=500&auto=format&fit=crop&q=70'),
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_estrutura_de_solo_sou_energy_8kwp_1819_1_0c70d58a3b904b02b07e6975c1d7ad31.jpg'),
 
 ('rural',
  'Kit Rural Aldo Solar 16.50 kWp | 30x Jinko 550W | Deye 15kW + Estrutura Solo Alumínio ★',
@@ -207,4 +207,4 @@ INSERT INTO public.kits_solares (
  550, 'Monocristalino N-Type TOPCon', 22.5,
  'String On-Grid Trifásico (Solo)', 25, 10,
  62900.00, true, 1100, 1800,
- 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=500&auto=format&fit=crop&q=70');
+ 'https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_estrutura_de_solo_sou_energy_8kwp_1819_1_0c70d58a3b904b02b07e6975c1d7ad31.jpg');

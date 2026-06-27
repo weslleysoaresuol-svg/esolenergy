@@ -42,7 +42,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: false,
     consumo_kwh_min: 80,
     consumo_kwh_max: 160,
-    imagem_kit_url: "https://images.unsplash.com/photo-1548613053-220bfb620c89?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_3_30kwp_microinversor_deye_6_paineis_jinko_550w_monocristalino_bifacial_1803_1_fb68d90ca9d6dfec7210609349887752.jpg",
     ativo: true
   },
   {
@@ -63,7 +63,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: false,
     consumo_kwh_min: 150,
     consumo_kwh_max: 240,
-    imagem_kit_url: "https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg",
     ativo: true
   },
   {
@@ -84,7 +84,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 220,
     consumo_kwh_max: 350,
-    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_3_30kwp_microinversor_deye_6_paineis_jinko_550w_monocristalino_bifacial_1803_1_fb68d90ca9d6dfec7210609349887752.jpg",
     ativo: true
   },
   {
@@ -105,7 +105,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 400,
     consumo_kwh_max: 580,
-    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg",
     ativo: true
   },
   {
@@ -126,7 +126,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 650,
     consumo_kwh_max: 920,
-    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg",
     ativo: true
   },
   {
@@ -147,7 +147,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 380,
     consumo_kwh_max: 550,
-    imagem_kit_url: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_5_50kwp_inversor_deye_5kw_10_paineis_canadian_550w_monocristalino_1807_1_ff083818e69cf200e5e3ff5c13dfd2a7.jpg",
     ativo: true
   },
   {
@@ -168,7 +168,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 1500,
     consumo_kwh_max: 2300,
-    imagem_kit_url: "https://images.unsplash.com/photo-1620025242137-0d507b99c67b?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg",
     ativo: true
   },
   {
@@ -189,7 +189,7 @@ export const KITS_FALLBACK: KitSolar[] = [
     destaque: true,
     consumo_kwh_min: 3800,
     consumo_kwh_max: 5400,
-    imagem_kit_url: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&auto=format&fit=crop&q=70",
+    imagem_kit_url: "https://images.tcdn.com.br/img/img_prod/606132/gerador_solar_fotovoltaico_16_50kwp_inversor_deye_15kw_30_paineis_jinko_550w_monocristalino_bifacial_1811_1_a2608bd8184f4f7210e7ce71b87a8b4c.jpg",
     ativo: true
   }
 ];
