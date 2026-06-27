@@ -299,7 +299,7 @@ function Simulator() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await supabase.from("financeiras_solar" as any).select("*").eq("ativo", true);
+        const { data } = await (supabase.from("financeiras_solar" as any).select("*").eq("ativo", true) as any);
         if (data && data.length > 0) {
           setFinanceiras(data);
           setSelectedBankId(data[0].id);
