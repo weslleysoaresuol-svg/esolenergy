@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Plus, FileText, Eye, Zap, Sun, Sparkles } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 import { toast } from "sonner";
+import { KITS_FALLBACK } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/app/cotacoes/")({
   head: () => ({ meta: [{ title: "Cotações Rápidas — ESOL Energy" }] }),
