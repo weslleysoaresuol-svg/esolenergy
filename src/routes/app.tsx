@@ -247,16 +247,14 @@ function AppShell() {
           <div className="font-semibold truncate">{profile?.nome || user.email}</div>
         </div>
         <nav className="space-y-1 flex-1">
-          {nav.map((item) => {
-            const isModoMatches = item.query ? modoAtivo === item.query.modo : !modoAtivo;
-            const active = item.exact 
-              ? pathname === item.to 
-              : pathname.startsWith(item.to) && isModoMatches;
+          {nav.map((item: any) => {
+            const active = item.exact
+              ? pathname === item.to
+              : pathname.startsWith(item.to);
             return (
               <Link
-                key={item.to + (item.query?.modo || "")}
+                key={item.to}
                 to={item.to}
-                search={item.query as any}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${active ? "bg-sun text-navy" : "text-white/80 hover:bg-white/10"}`}
               >
                 <item.icon className="w-4 h-4" />{item.label}
