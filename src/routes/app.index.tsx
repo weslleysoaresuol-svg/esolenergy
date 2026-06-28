@@ -68,11 +68,51 @@ function AdminDashboard() {
   const [fastBill, setFastBill] = useState("");
   const [fastSaving, setFastSaving] = useState(false);
 
+  // Cidade e Estado (Autocomplete do IBGE)
+  const [fastCidade, setFastCidade] = useState("");
+  const [fastEstado, setFastEstado] = useState("");
+  const [ibgeMunicipios, setIbgeMunicipios] = useState<{ nome: string; uf: string }[]>([]);
+  const [showSugestions, setShowSugestions] = useState(false);
+
+  useEffect(() => {
+    // Tenta carregar municípios do sessionStorage ou busca do IBGE
+    const cached = sessionStorage.getItem("ibge_municipios");
+    if (cached) {
+      try { setIbgeMunicipios(JSON.parse(cached)); } catch(e) {}
+    } else {
+      fetch("https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome")
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            const list = data.map((m: any) => ({
+              nome: m.nome,
+              uf: m.microrregiao?.mesorregiao?.UF?.sigla || m.regiao_imediata?.regiao_intermediaria?.UF?.sigla || ""
+            })).filter(x => x.uf);
+            setIbgeMunicipios(list);
+            try { sessionStorage.setItem("ibge_municipios", JSON.stringify(list)); } catch(e) {}
+          }
+        })
+        .catch(err => console.warn("Erro ao carregar lista de municipios IBGE", err));
+    }
+  }, []);
+
+  const sugestoesCidades = useMemo(() => {
+    if (!fastCidade || fastCidade.length < 2) return [];
+    const query = fastCidade.toLowerCase().trim();
+    return ibgeMunicipios
+      .filter((m) => m.nome.toLowerCase().includes(query))
+      .slice(0, 5);
+  }, [fastCidade, ibgeMunicipios]);
+
   const handleFastSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     if (!fastName || !fastPhone) {
       toast.error("Nome e Telefone/WhatsApp são obrigatórios!");
+      return;
+    }
+    if (!fastCidade || !fastEstado) {
+      toast.error("Município e Estado (UF) são necessários para o dimensionamento!");
       return;
     }
     
@@ -89,6 +129,8 @@ function AdminDashboard() {
         consumo_kwh: consumoEstimado,
         status: "novo",
         origem: "manual",
+        cidade: fastCidade.trim(),
+        estado: fastEstado.trim().toUpperCase(),
         corretor_id: user.id
       }).select().single();
 
@@ -116,11 +158,11 @@ function AdminDashboard() {
 
       const tarifaKwh = paramsComerciais.tarifa_kwh_default;
       
-      // Roda o cálculo do dimensionamento comercial automático
+      // Roda o cálculo do dimensionamento comercial automático usando o estado real do lead
       const calculo = calcularProposta({
         consumo_kwh: consumoEstimado,
         tarifa_kwh: tarifaKwh,
-        estado: "SP",
+        estado: fastEstado.trim().toUpperCase(),
         tipo: "residencial"
       }, paramsComerciais);
 
@@ -158,8 +200,8 @@ function AdminDashboard() {
         tipo_instalacao: "residencial",
         consumo_kwh: consumoEstimado,
         tarifa_kwh: tarifaKwh,
-        estado: "SP",
-        cidade: "",
+        estado: fastEstado.trim().toUpperCase(),
+        cidade: fastCidade.trim(),
         condicoes_pagamento: "À vista 5% desconto · Financiamento via parceiros bancários",
         observacoes: "Criada instantaneamente pelo painel de controle expresso"
       }).select().single();
@@ -178,6 +220,8 @@ function AdminDashboard() {
         setFastName("");
         setFastPhone("");
         setFastBill("");
+        setFastCidade("");
+        setFastEstado("");
         
         // Redireciona diretamente para o envio
         navigate({ to: "/app/propostas/$id", params: { id: prop.id } });
@@ -417,7 +461,7 @@ function AdminDashboard() {
                 <p className="text-[11px] text-muted-foreground">Cadastre o cliente e gere a proposta para WhatsApp em uma única ação.</p>
               </div>
             </div>
-            <form onSubmit={handleFastSubmit} className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+            <form onSubmit={handleFastSubmit} className="grid grid-cols-1 sm:grid-cols-5 gap-3 items-end">
               <div className="space-y-1">
                 <label className="text-[10px] text-slate-500 font-bold uppercase">Nome do Cliente *</label>
                 <Input
@@ -448,6 +492,53 @@ function AdminDashboard() {
                   className="h-9 text-xs font-bold text-navy"
                 />
               </div>
+              
+              {/* Campo Autocompletável de Município e Estado */}
+              <div className="space-y-1 relative">
+                <label className="text-[10px] text-slate-500 font-bold uppercase">Município / Estado *</label>
+                <div className="flex gap-1">
+                  <Input
+                    required
+                    placeholder="Buscar cidade..."
+                    value={fastCidade}
+                    onChange={(e) => {
+                      setFastCidade(e.target.value);
+                      setShowSugestions(true);
+                    }}
+                    onFocus={() => setShowSugestions(true)}
+                    onBlur={() => setTimeout(() => setShowSugestions(false), 200)}
+                    className="h-9 text-xs flex-1"
+                  />
+                  <Input
+                    readOnly
+                    placeholder="UF"
+                    value={fastEstado}
+                    className="h-9 text-xs w-11 bg-slate-50 text-center font-bold text-navy border"
+                  />
+                </div>
+
+                {/* Dropdown de sugestões do IBGE */}
+                {showSugestions && sugestoesCidades.length > 0 && (
+                  <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto divide-y">
+                    {sugestoesCidades.map((m, idx) => (
+                      <button
+                        key={`${m.nome}-${m.uf}-${idx}`}
+                        type="button"
+                        onClick={() => {
+                          setFastCidade(m.nome);
+                          setFastEstado(m.uf);
+                          setShowSugestions(false);
+                        }}
+                        className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 text-slate-700 font-semibold flex justify-between items-center"
+                      >
+                        <span>{m.nome}</span>
+                        <Badge variant="outline" className="text-[9px] border-slate-300 font-bold">{m.uf}</Badge>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <Button
                 type="submit"
                 disabled={fastSaving}
