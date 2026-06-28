@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
@@ -12,10 +12,12 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { 
   MessageCircle, ArrowLeft, Trash2, FileSpreadsheet, Star, Gift, AlertTriangle,
-  Inbox, Calendar, FileText, FileSignature, Wrench, Zap, CheckCircle2, RefreshCw
+  Inbox, Calendar, FileText, FileSignature, Wrench, Zap, CheckCircle2, RefreshCw,
+  Upload, Check, ShieldAlert, Sparkles, Building, Landmark, Printer, FileDown
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/cliente/$id")({
+  head: () => ({ meta: [{ title: "Ficha do Cliente — ESOL Energy" }] }),
   component: ClienteDetail,
 });
 
@@ -45,13 +47,46 @@ function ClienteDetail() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [edit, setEdit] = useState<any>({});
+  
   // Modal de motivo de perda
   const [showMotivoPerda, setShowMotivoPerda] = useState(false);
   const [motivoPerda, setMotivoPerda] = useState("");
   const [motivoDescricao, setMotivoDescricao] = useState("");
   const [pendingStatus, setPendingStatus] = useState<string | null>(null);
+  
   // NPS
   const [npsScore, setNpsScore] = useState<number | null>(null);
+
+  // ESTADOS DA ABA DE CONTRATO & FINANCIAMENTO
+  const [contratoTab, setContratoTab] = useState<"dados" | "financiamento" | "documentos" | "minuta">("dados");
+  const [contratoTipo, setContratoTipo] = useState<"pf" | "pj">("pf");
+  
+  // Dados do Contratante
+  const [docCpf, setDocCpf] = useState("");
+  const [docRg, setDocRg] = useState("");
+  const [docNasc, setDocNasc] = useState("");
+  const [docEstadoCivil, setDocEstadoCivil] = useState("solteiro");
+  const [docProfissao, setDocProfissao] = useState("");
+  const [docCnpj, setDocCnpj] = useState("");
+  const [docRazao, setDocRazao] = useState("");
+  const [docIe, setDocIe] = useState("");
+  const [docRepresentante, setDocRepresentante] = useState("");
+  
+  // Dados da Unidade Consumidora (UC)
+  const [docUc, setDocUc] = useState("");
+  const [docTitular, setDocTitular] = useState("");
+  const [docConcessionaria, setDocConcessionaria] = useState("");
+  
+  // Financiamento Solar
+  const [finFormaPagamento, setFinFormaPagamento] = useState("financiamento");
+  const [finBanco, setFinBanco] = useState("solfacil");
+  const [finValor, setFinValor] = useState("");
+  const [finPrazo, setFinPrazo] = useState("60");
+  const [finStatus, setFinStatus] = useState<"pendente" | "simulado" | "analise" | "aprovado" | "reprovado">("pendente");
+
+  // Upload de Documentos (simulação visual com progresso)
+  const [docFiles, setDocFiles] = useState<Record<string, { name: string; progress: number; done: boolean }>>({});
+  const [showMinutaModal, setShowMinutaModal] = useState(false);
 
   const load = async () => {
     const { data, error } = await supabase.from("clientes").select("*, profiles:corretor_id(nome,email)").eq("id", id).maybeSingle();
@@ -60,14 +95,31 @@ function ClienteDetail() {
       const { data: fallbackData } = await supabase.from("clientes").select("*").eq("id", id).maybeSingle();
       setCliente(fallbackData);
       setEdit(fallbackData || {});
+      
+      // Carrega campos do contrato do fallback se existirem
+      if (fallbackData) {
+        setDocUc(fallbackData.numero_uc || "");
+        setDocConcessionaria(fallbackData.concessionaria || "");
+        setFinValor(fallbackData.valor_estimado ? String(fallbackData.valor_estimado) : "");
+        setFinFormaPagamento(fallbackData.forma_pagamento || "financiamento");
+      }
     } else {
       setCliente(data);
       setEdit(data || {});
+      
+      // Preenche estados locais
+      if (data) {
+        setDocUc(data.numero_uc || "");
+        setDocConcessionaria(data.concessionaria || "");
+        setFinValor(data.valor_estimado ? String(data.valor_estimado) : "");
+        setFinFormaPagamento(data.forma_pagamento || "financiamento");
+      }
     }
     const { data: ints } = await supabase.from("interacoes").select("*").eq("cliente_id", id).order("created_at", { ascending: false });
     setInteracoes(ints || []);
     setLoading(false);
   };
+
   useEffect(() => { load(); }, [id]);
 
   const updateStatus = async (status: string) => {
@@ -89,6 +141,7 @@ function ClienteDetail() {
       extraFields.fechado_em = extraFields.fechado_em || new Date().toISOString();
     }
     await supabase.from("clientes").update(extraFields as any).eq("id", id);
+    
     // Registra interação automática
     if (user) {
       const descAuto = status === "perdido" && motivo
@@ -144,10 +197,86 @@ function ClienteDetail() {
     navigate({ to: "/app" });
   };
 
-  if (loading) return <div className="text-muted-foreground">Carregando…</div>;
+  // FUNÇÕES DO WORKFLOW DE CONTRATO
+  const simularUpload = (tipoDoc: string, fileName: string) => {
+    setDocFiles((prev) => ({
+      ...prev,
+      [tipoDoc]: { name: fileName, progress: 0, done: false }
+    }));
+    
+    let p = 0;
+    const interval = setInterval(() => {
+      p += 25;
+      setDocFiles((prev) => {
+        if (!prev[tipoDoc]) return prev;
+        return {
+          ...prev,
+          [tipoDoc]: { ...prev[tipoDoc], progress: p, done: p >= 100 }
+        };
+      });
+      if (p >= 100) {
+        clearInterval(interval);
+        toast.success(`Documento "${fileName}" enviado com sucesso!`);
+      }
+    }, 250);
+  };
+
+  const simularAnaliseCredito = () => {
+    if (!finValor) {
+      toast.error("Insira o valor do projeto para análise.");
+      return;
+    }
+    setFinStatus("analise");
+    toast.info("Enviando solicitação de crédito para a financeira...");
+    setTimeout(() => {
+      setFinStatus("aprovado");
+      toast.success("🎉 Crédito Aprovado! Aguardando assinatura biométrica facial do cliente.");
+      if (user) {
+        supabase.from("interacoes").insert({
+          cliente_id: id,
+          autor_id: user.id,
+          tipo: "nota",
+          descricao: `Financiamento simulado na ${finBanco.toUpperCase()} de R$ ${Number(finValor).toLocaleString("pt-BR")} em ${finPrazo}x. Crédito pré-aprovado com sucesso.`
+        });
+      }
+    }, 2500);
+  };
+
+  const salvarDadosContrato = async () => {
+    // Persiste dados no Supabase para manter o cliente atualizado
+    const { error } = await supabase.from("clientes").update({
+      numero_uc: docUc,
+      concessionaria: docConcessionaria,
+      forma_pagamento: finFormaPagamento
+    } as any).eq("id", id);
+
+    if (error) {
+      toast.error("Erro ao salvar dados: " + error.message);
+    } else {
+      toast.success("Dados cadastrais do contrato salvos com sucesso!");
+      load();
+    }
+  };
+
+  // Cálculo da parcela aproximada do financiamento
+  const parcelaEstimada = useMemo(() => {
+    if (!finValor || isNaN(Number(finValor))) return 0;
+    const taxaMes = 0.0125; // Taxa de juros simulada de 1.25% a.m.
+    const meses = Number(finPrazo);
+    const v = Number(finValor);
+    
+    // Fórmula de amortização Price PMT
+    const pmt = (v * taxaMes * Math.pow(1 + taxaMes, meses)) / (Math.pow(1 + taxaMes, meses) - 1);
+    return Math.round(pmt);
+  }, [finValor, finPrazo]);
+
+  if (loading) return <div className="text-muted-foreground py-12 text-center">Carregando…</div>;
   if (!cliente) return <div>Cliente não encontrado. <Link to="/app" className="text-sun-deep">Voltar</Link></div>;
 
   const whatsapp = cliente.telefone ? `https://wa.me/${cliente.telefone.replace(/\D/g, "")}?text=${encodeURIComponent(`Olá ${cliente.nome?.split(" ")[0]}, tudo bem? Aqui é da ESOL Energy. Quero conversar sobre energia solar para você! 🌞`)}` : null;
+
+  // Renderização condicional da aba do contrato
+  const exibirFluxoContrato = ["contrato_assinado", "instalacao", "concluido"].includes(cliente.status);
 
   return (
     <div className="max-w-5xl space-y-6">
@@ -184,6 +313,99 @@ function ClienteDetail() {
             <div className="flex gap-2 justify-end">
               <Button variant="ghost" onClick={() => { setShowMotivoPerda(false); setPendingStatus(null); }}>Cancelar</Button>
               <Button onClick={confirmarMotivoPerda} className="bg-red-600 hover:bg-red-700 text-white">Registrar perda</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL IMPRIMÍVEL DE MINUTA CONTRATUAL */}
+      {showMinutaModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 print:p-0 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl p-8 print:shadow-none print:rounded-none space-y-6 my-8">
+            <div className="flex items-center justify-between border-b pb-4 print:hidden">
+              <div className="flex items-center gap-2">
+                <FileSignature className="w-6 h-6 text-sun-deep" />
+                <h2 className="text-xl font-extrabold text-navy">Minuta de Contrato de Venda Solar</h2>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => window.print()} className="bg-slate-50 border"><Printer className="w-4 h-4 mr-1" /> Imprimir Contrato</Button>
+                <Button size="sm" variant="ghost" onClick={() => setShowMinutaModal(false)}>Fechar</Button>
+              </div>
+            </div>
+
+            {/* Corpo do Contrato formatado */}
+            <div className="text-slate-800 text-xs space-y-4 leading-relaxed max-h-[60vh] overflow-y-auto pr-2 print:max-h-none print:overflow-visible font-sans">
+              <div className="text-center space-y-1 pb-4 border-b">
+                <h1 className="text-base font-extrabold uppercase text-navy">CONTRATO DE COMPRA E VENDA DE GERADOR FOTOVOLTAICO</h1>
+                <p className="text-[10px] text-muted-foreground">ESOL ENERGY · ENERGIA INTELIGENTE E SUSTENTÁVEL</p>
+              </div>
+
+              <p>
+                Pelo presente instrumento particular, as partes qualificadas a seguir firmam o presente contrato de fornecimento e prestação de serviços técnicos:
+              </p>
+
+              <div>
+                <strong className="text-navy uppercase">1. CONTRATANTE (CLIENTE)</strong>
+                <p className="pl-4 mt-1">
+                  Nome/Razão Social: <strong>{cliente.nome}</strong><br />
+                  CPF/CNPJ: <strong>{contratoTipo === "pf" ? docCpf || cliente.cpf_cnpj || "—" : docCnpj || cliente.cpf_cnpj || "—"}</strong><br />
+                  Endereço de Instalação: <strong>{cliente.endereco || "—"}</strong>, Cidade: <strong>{cliente.cidade || "—"} - {cliente.estado || "SP"}</strong><br />
+                  Telefone/WhatsApp: <strong>{cliente.telefone}</strong>
+                </p>
+              </div>
+
+              <div>
+                <strong className="text-navy uppercase">2. CONTRATADA (FORNECEDOR)</strong>
+                <p className="pl-4 mt-1">
+                  Razão Social: <strong>ESOL ENERGY LIMITADA</strong><br />
+                  CNPJ: <strong>44.555.666/0001-99</strong><br />
+                  Endereço: <strong>Av. Paulista, 1000 - Bela Vista, São Paulo - SP</strong>
+                </p>
+              </div>
+
+              <div>
+                <strong className="text-navy uppercase">3. OBJETO DO CONTRATO</strong>
+                <p className="pl-4 mt-1">
+                  Constitui objeto deste instrumento o fornecimento de Gerador de Energia Solar Fotovoltaico com potência nominal estimada de <strong>{cliente.potencia_kwp || "5.4"} kWp</strong>, dimensionado para o local indicado, composto pelos módulos (painéis) e inversor homologados descritos na proposta comercial técnica correspondente.
+                </p>
+              </div>
+
+              <div>
+                <strong className="text-navy uppercase">4. VALORES E CONDIÇÕES DE PAGAMENTO</strong>
+                <p className="pl-4 mt-1">
+                  O valor de investimento total contratado para fornecimento e homologação é de <strong>R$ {Number(cliente.valor_estimado || 18500).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>.<br />
+                  Modalidade de Pagamento contratada: <strong>{finFormaPagamento === "financiamento" ? `Financiamento Solar via ${finBanco.toUpperCase()}` : finFormaPagamento === "vista" ? "À Vista com 5% de desconto" : "Boleto/Cartão de Crédito"}</strong>.
+                </p>
+              </div>
+
+              <div>
+                <strong className="text-navy uppercase">5. PRAZOS E EXECUÇÃO</strong>
+                <p className="pl-4 mt-1">
+                  O prazo estimado para a entrega dos equipamentos do gerador e finalização da vistoria técnica da concessionária é de <strong>30 a 45 dias úteis</strong> a contar da assinatura digital deste termo e aprovação de crédito pelas instituições financeiras envolvidas.
+                </p>
+              </div>
+
+              <p className="pt-6">
+                E, por estarem justos e contratados, assinam eletronicamente o presente instrumento na data de assinatura gerada pelo portal de fechamentos.
+              </p>
+
+              <div className="grid grid-cols-2 gap-8 pt-10 text-center border-t">
+                <div className="space-y-1">
+                  <div className="h-10 border-b border-slate-300 mx-auto w-48" />
+                  <p className="font-bold text-[10px] uppercase">{cliente.nome}</p>
+                  <p className="text-[9px] text-muted-foreground">CONTRATANTE</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="h-10 border-b border-slate-300 mx-auto w-48" />
+                  <p className="font-bold text-[10px] uppercase">ESOL ENERGY LTDA</p>
+                  <p className="text-[9px] text-muted-foreground">CONTRATADA</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4 border-t print:hidden">
+              <Button variant="ghost" onClick={() => setShowMinutaModal(false)}>Fechar Janela</Button>
+              <Button onClick={() => window.print()} className="bg-navy hover:bg-navy-deep text-white"><Printer className="w-4 h-4 mr-1" /> Imprimir Contrato</Button>
             </div>
           </div>
         </div>
@@ -260,7 +482,6 @@ function ClienteDetail() {
             ].map((step) => {
               const isCompleted = step.completed.includes(cliente.status);
               const isActive = step.active.includes(cliente.status);
-              const isFuture = !isCompleted && !isActive;
               
               let colorClasses = "bg-slate-50 border-slate-200 text-slate-400";
               let labelClasses = "text-slate-400 font-semibold";
@@ -309,61 +530,353 @@ function ClienteDetail() {
         )}
       </Card>
 
-      {/* Card de Pós-Venda (apenas concluídos) */}
-      {cliente.status === "concluido" && (
-        <Card className="p-5 border-0 shadow-md border-l-4 border-l-emerald-500 bg-emerald-50/30">
-          <div className="flex items-center gap-2 mb-4">
-            <Star className="w-5 h-5 text-emerald-600" />
-            <h3 className="font-bold text-emerald-800">Pós-venda — Instalação concluída!</h3>
+      {/* WORKFLOW DE FECHAMENTO DE CONTRATO & CRÉDITO FINANCEIRO (Condicional) */}
+      {exibirFluxoContrato && (
+        <Card className="border-0 shadow-md overflow-hidden bg-white">
+          <div className="bg-gradient-to-r from-navy via-navy-deep to-slate-900 p-5 text-white flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <FileSignature className="w-5 h-5 text-sun animate-pulse" />
+              <div>
+                <h3 className="font-extrabold text-sm">Fechamento de Venda: Contrato & Financiamento</h3>
+                <p className="text-[10px] text-slate-300">Coleta de documentação, simulação de parcelas e geração da minuta legal.</p>
+              </div>
+            </div>
+            <Badge className="bg-sun text-navy font-extrabold text-[10px] tracking-wider uppercase">Fase do Contrato</Badge>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* NPS */}
-            <div>
-              <p className="text-sm font-semibold text-navy mb-2">
-                {cliente.nps_score != null ? `NPS registrado: ${cliente.nps_score}/10 ⭐` : "Como foi a experiência? (NPS 0-10)"}
-              </p>
-              {cliente.nps_score == null ? (
-                <div className="space-y-3">
-                  <div className="flex gap-1 flex-wrap">
-                    {[0,1,2,3,4,5,6,7,8,9,10].map((n) => (
-                      <button
-                        key={n}
-                        onClick={() => setNpsScore(n)}
-                        className={`w-9 h-9 rounded-lg text-sm font-bold border-2 transition ${npsScore === n ? "bg-navy text-white border-navy" : "border-slate-200 hover:border-navy"}`}
+
+          {/* Abas internas do Fechamento */}
+          <div className="flex border-b text-xs font-bold text-slate-500 bg-slate-50">
+            <button
+              onClick={() => setContratoTab("dados")}
+              className={`flex-1 py-3 text-center border-b-2 transition ${contratoTab === "dados" ? "border-navy text-navy bg-white" : "border-transparent hover:text-navy"}`}
+            >
+              1. Faturamento & UC
+            </button>
+            <button
+              onClick={() => setContratoTab("financiamento")}
+              className={`flex-1 py-3 text-center border-b-2 transition ${contratoTab === "financiamento" ? "border-navy text-navy bg-white" : "border-transparent hover:text-navy"}`}
+            >
+              2. Forma de Pagamento / Crédito
+            </button>
+            <button
+              onClick={() => setContratoTab("documentos")}
+              className={`flex-1 py-3 text-center border-b-2 transition ${contratoTab === "documentos" ? "border-navy text-navy bg-white" : "border-transparent hover:text-navy"}`}
+            >
+              3. Envio de Documentos
+            </button>
+            <button
+              onClick={() => setContratoTab("minuta")}
+              className={`flex-1 py-3 text-center border-b-2 transition ${contratoTab === "minuta" ? "border-navy text-navy bg-white" : "border-transparent hover:text-navy"}`}
+            >
+              4. Minuta de Contrato
+            </button>
+          </div>
+
+          <div className="p-6">
+            {/* TAB 1: DADOS DO CONTRATO (PF / PJ) */}
+            {contratoTab === "dados" && (
+              <div className="space-y-5">
+                <div className="flex justify-between items-center flex-wrap gap-2 border-b pb-3">
+                  <span className="text-xs font-bold text-navy flex items-center gap-1.5"><Building className="w-4 h-4" /> Qualificação do Contratante</span>
+                  <div className="flex bg-slate-100 p-0.5 rounded-lg border">
+                    <button
+                      onClick={() => setContratoTipo("pf")}
+                      className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${contratoTipo === "pf" ? "bg-white text-navy shadow-sm" : "text-slate-500"}`}
+                    >
+                      Pessoa Física
+                    </button>
+                    <button
+                      onClick={() => setContratoTipo("pj")}
+                      className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${contratoTipo === "pj" ? "bg-white text-navy shadow-sm" : "text-slate-500"}`}
+                    >
+                      Pessoa Jurídica
+                    </button>
+                  </div>
+                </div>
+
+                {contratoTipo === "pf" ? (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs">CPF *</Label>
+                      <Input placeholder="Ex: 000.000.000-00" value={docCpf} onChange={(e) => setDocCpf(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">RG *</Label>
+                      <Input placeholder="Ex: 12.345.678-9" value={docRg} onChange={(e) => setDocRg(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Data de Nascimento *</Label>
+                      <Input type="date" value={docNasc} onChange={(e) => setDocNasc(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Profissão</Label>
+                      <Input placeholder="Ex: Engenheiro" value={docProfissao} onChange={(e) => setDocProfissao(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs">CNPJ *</Label>
+                      <Input placeholder="Ex: 00.000.000/0001-00" value={docCnpj} onChange={(e) => setDocCnpj(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Razão Social *</Label>
+                      <Input placeholder="Ex: Comercial Solar LTDA" value={docRazao} onChange={(e) => setDocRazao(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Inscrição Estadual (IE)</Label>
+                      <Input placeholder="Ex: Isento ou 123.456.789" value={docIe} onChange={(e) => setDocIe(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Representante Legal (Nome) *</Label>
+                      <Input placeholder="Ex: José Santos" value={docRepresentante} onChange={(e) => setDocRepresentante(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-t pt-4 mt-4 space-y-4">
+                  <span className="text-xs font-bold text-navy flex items-center gap-1.5"><Wrench className="w-4 h-4" /> Dados Técnicos da Unidade Consumidora (UC)</span>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-xs">Número da UC *</Label>
+                      <Input placeholder="Ex: 123456789" value={docUc} onChange={(e) => setDocUc(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Titular da Conta de Luz *</Label>
+                      <Input placeholder="Caso seja diferente do contratante" value={docTitular} onChange={(e) => setDocTitular(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Concessionária de Energia *</Label>
+                      <Input placeholder="Ex: Enel, CPFL, Cemig" value={docConcessionaria} onChange={(e) => setDocConcessionaria(e.target.value)} className="h-9 text-xs mt-1" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-3">
+                  <Button onClick={salvarDadosContrato} className="bg-navy hover:bg-navy-deep text-white text-xs h-9 font-bold px-6">Salvar Dados Cadastrais</Button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: FINANCEIRAS & CRÉDITO */}
+            {contratoTab === "financiamento" && (
+              <div className="space-y-5">
+                <div className="flex justify-between items-center flex-wrap gap-2 border-b pb-3">
+                  <span className="text-xs font-bold text-navy flex items-center gap-1.5"><Landmark className="w-4 h-4" /> Forma de Pagamento Preferencial</span>
+                  <div className="flex bg-slate-100 p-0.5 rounded-lg border">
+                    <button
+                      onClick={() => setFinFormaPagamento("financiamento")}
+                      className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${finFormaPagamento === "financiamento" ? "bg-white text-navy shadow-sm" : "text-slate-500"}`}
+                    >
+                      🏦 Financiamento
+                    </button>
+                    <button
+                      onClick={() => setFinFormaPagamento("vista")}
+                      className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${finFormaPagamento === "vista" ? "bg-white text-navy shadow-sm" : "text-slate-500"}`}
+                    >
+                      💰 À Vista (5% Desc)
+                    </button>
+                    <button
+                      onClick={() => setFinFormaPagamento("outro")}
+                      className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${finFormaPagamento === "outro" ? "bg-white text-navy shadow-sm" : "text-slate-500"}`}
+                    >
+                      💳 Outro
+                    </button>
+                  </div>
+                </div>
+
+                {finFormaPagamento === "financiamento" ? (
+                  <div className="space-y-4">
+                    <div className="grid sm:grid-cols-4 gap-4 items-end">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Instituição Financeira</Label>
+                        <Select value={finBanco} onValueChange={setFinBanco}>
+                          <SelectTrigger className="h-9 mt-1"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="solfacil">🏦 Solfácil (Juros HSL)</SelectItem>
+                            <SelectItem value="bv">🏢 BV Financeira Solar</SelectItem>
+                            <SelectItem value="santander">🏛️ Santander Financiamentos</SelectItem>
+                            <SelectItem value="sicredi">🤝 Cooperativa Sicredi</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Valor do Financiamento (R$)</Label>
+                        <Input type="number" value={finValor} onChange={(e) => setFinValor(e.target.value)} className="h-9 text-xs mt-1 font-bold text-navy" />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Prazo (Parcelas)</Label>
+                        <Select value={finPrazo} onValueChange={setFinPrazo}>
+                          <SelectTrigger className="h-9 mt-1"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="24">24 meses</SelectItem>
+                            <SelectItem value="36">36 meses</SelectItem>
+                            <SelectItem value="48">48 meses</SelectItem>
+                            <SelectItem value="60">60 meses</SelectItem>
+                            <SelectItem value="72">72 meses</SelectItem>
+                            <SelectItem value="84">84 meses</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Botão de Enviar Análise */}
+                      <Button
+                        onClick={simularAnaliseCredito}
+                        disabled={finStatus === "analise"}
+                        className="bg-sun hover:bg-sun-deep text-navy font-extrabold h-9 text-xs shadow-sm flex items-center justify-center gap-1 w-full"
                       >
-                        {n}
-                      </button>
-                    ))}
+                        {finStatus === "analise" ? "Processando..." : "Solicitar Análise 🚀"}
+                      </Button>
+                    </div>
+
+                    {/* Status do Financiamento e Parcela */}
+                    <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                      <div className="bg-slate-50 p-4 rounded-xl border flex flex-col justify-center">
+                        <span className="text-xs text-muted-foreground">Prestação Mensal Estimada (Tabela Price)</span>
+                        <div className="text-2xl font-extrabold text-navy mt-1">
+                          R$ {parcelaEstimada.toLocaleString("pt-BR")}/mês
+                        </div>
+                        <span className="text-[10px] text-slate-400 mt-0.5">* Taxa simulada de 1.25% a.m.</span>
+                      </div>
+
+                      <div className="flex items-center gap-3 p-4 rounded-xl border bg-slate-50">
+                        {finStatus === "pendente" && (
+                          <>
+                            <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><Clock className="w-5 h-5" /></div>
+                            <div>
+                              <div className="text-xs font-bold text-slate-700">Crédito Pendente</div>
+                              <p className="text-[10px] text-muted-foreground">Clique em "Solicitar Análise" para enviar os dados bancários.</p>
+                            </div>
+                          </>
+                        )}
+                        {finStatus === "analise" && (
+                          <>
+                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><RefreshCw className="w-5 h-5 animate-spin" /></div>
+                            <div>
+                              <div className="text-xs font-bold text-blue-800">Em Análise Técnica</div>
+                              <p className="text-[10px] text-muted-foreground">Consultando órgãos de crédito e score do cliente...</p>
+                            </div>
+                          </>
+                        )}
+                        {finStatus === "aprovado" && (
+                          <>
+                            <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><Check className="w-5 h-5" /></div>
+                            <div>
+                              <div className="text-xs font-bold text-emerald-800 flex items-center gap-1">Crédito Aprovado! <Sparkles className="w-3.5 h-3.5 text-sun-deep" /></div>
+                              <p className="text-[10px] text-muted-foreground">Assinatura facial liberada no WhatsApp do cliente.</p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>😞 Péssimo</span><span>😍 Excelente</span>
+                ) : (
+                  <div className="bg-slate-50 p-4 rounded-xl text-xs text-slate-600">
+                    {finFormaPagamento === "vista" ? (
+                      <p>📋 O faturamento será processado à vista via Pix ou transferência. Um desconto comercial de <strong>5%</strong> foi aplicado sobre o investimento solar do cliente.</p>
+                    ) : (
+                      <p>O faturamento será processado através de boleto parcelado ou cartão de crédito embutido conforme acordado na proposta.</p>
+                    )}
                   </div>
-                  <Button size="sm" onClick={saveNps} disabled={npsScore === null} className="bg-emerald-600 hover:bg-emerald-700 text-white">Salvar NPS</Button>
+                )}
+              </div>
+            )}
+
+            {/* TAB 3: DOCUMENTOS PARA UPLOAD */}
+            {contratoTab === "documentos" && (
+              <div className="space-y-5">
+                <div className="flex items-center justify-between border-b pb-3">
+                  <span className="text-xs font-bold text-navy flex items-center gap-1.5"><Upload className="w-4 h-4" /> Documentação do Faturamento</span>
+                  <span className="text-[10px] text-muted-foreground">Requisitos essenciais exigidos pelas financeiras</span>
                 </div>
-              ) : (
-                <div className={`text-3xl font-extrabold ${cliente.nps_score >= 9 ? "text-emerald-600" : cliente.nps_score >= 7 ? "text-amber-500" : "text-red-500"}`}>
-                  {cliente.nps_score}/10
+
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {[
+                    { key: "identidade", label: "Documento de Identificação", sub: "CNH ou RG (Frente/Verso)", required: true },
+                    { key: "residencia", label: "Comprovante de Residência", sub: "Conta de água, luz ou telefone", required: true },
+                    { key: "fatura", label: "Fatura de Energia Completa", sub: "Todas as páginas recentes", required: true },
+                    { key: "renda", label: "Comprovante de Renda", sub: "Contracheques ou IR (Opcional)", required: false },
+                    { key: "selfie", label: "Selfie com Documento", sub: "Para biometria das financeiras", required: false },
+                  ].map((doc) => {
+                    const file = docFiles[doc.key];
+                    return (
+                      <div key={doc.key} className="border border-slate-200 rounded-2xl p-4 flex flex-col justify-between min-h-[140px] bg-slate-50/50 hover:bg-white transition relative">
+                        <div className="space-y-1">
+                          <div className="flex items-start justify-between">
+                            <span className="text-xs font-bold text-navy leading-tight">{doc.label} {doc.required && <span className="text-red-500">*</span>}</span>
+                            {file?.done && <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />}
+                          </div>
+                          <span className="text-[10px] text-muted-foreground block">{doc.sub}</span>
+                        </div>
+
+                        <div className="mt-4">
+                          {file ? (
+                            <div className="space-y-1">
+                              <div className="flex justify-between items-center text-[10px]">
+                                <span className="text-slate-600 truncate max-w-[120px] font-semibold">{file.name}</span>
+                                <span className="font-bold text-navy">{file.progress}%</span>
+                              </div>
+                              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-emerald-500 h-full transition-all" style={{ width: `${file.progress}%` }} />
+                              </div>
+                              {file.done && (
+                                <button
+                                  type="button"
+                                  onClick={() => setDocFiles(prev => { const copy = { ...prev }; delete copy[doc.key]; return copy; })}
+                                  className="text-[9px] text-red-500 font-bold uppercase hover:underline mt-1 block"
+                                >
+                                  Remover arquivo
+                                </button>
+                              )}
+                            </div>
+                          ) : (
+                            <label className="border-2 border-dashed border-slate-300 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-navy hover:bg-navy/5 transition-all text-center">
+                              <Input
+                                type="file"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const name = e.target.files?.[0]?.name;
+                                  if (name) simularUpload(doc.key, name);
+                                }}
+                              />
+                              <Upload className="w-4 h-4 text-slate-400 mb-1" />
+                              <span className="text-[9px] font-extrabold uppercase text-slate-600">Selecionar</span>
+                            </label>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
-            </div>
-            {/* Indicação */}
-            <div>
-              <p className="text-sm font-semibold text-navy mb-2 flex items-center gap-2">
-                <Gift className="w-4 h-4 text-purple-500" />
-                Pedir indicação
-              </p>
-              <p className="text-xs text-muted-foreground mb-3">Envie uma mensagem personalizada pelo WhatsApp pedindo indicação de amigos e familiares.</p>
-              {whatsapp && (
-                <a
-                  href={`https://wa.me/${cliente.telefone?.replace(/\D/g, "")}?text=${encodeURIComponent(`Olá ${cliente.nome?.split(" ")[0]}! Esperamos que seu sistema solar esteja gerando muita economia! 🌞⚡\n\nVocê conhece alguém que também gostaria de economizar na conta de luz? Adoraríamos ajudar! Pode nos indicar? Qualquer dúvida estou à disposição. 😊`)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-600"
-                >
-                  <MessageCircle className="w-4 h-4" />Pedir indicação via WhatsApp
-                </a>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* TAB 4: MINUTA CONTRATUAL */}
+            {contratoTab === "minuta" && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileSignature className="w-5 h-5 text-sun-deep" />
+                  <h3 className="font-bold text-navy text-sm">Geração de Minuta Contratual</h3>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Gerencie e emita o documento jurídico final contendo as cláusulas e o dimensionamento para entrega e homologação do sistema solar de <strong>{cliente.potencia_kwp || "5.4"} kWp</strong>.
+                </p>
+                <div className="bg-slate-50 p-4 border rounded-xl flex items-center justify-between flex-wrap gap-3">
+                  <div>
+                    <span className="text-xs font-bold text-navy block">Status de Documentação do Contrato</span>
+                    <span className="text-[10px] text-muted-foreground">Qualificação legal e dados UC preenchidos.</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setShowMinutaModal(true)}
+                      className="bg-navy hover:bg-navy-deep text-white font-semibold text-xs h-9 flex items-center gap-1 shadow-sm"
+                    >
+                      <Printer className="w-4 h-4" /> Visualizar Minuta
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
       )}

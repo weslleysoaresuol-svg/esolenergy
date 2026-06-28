@@ -67,7 +67,8 @@ function AdminDashboard() {
   const [fastPhone, setFastPhone] = useState("");
   const [fastBill, setFastBill] = useState("");
   const [fastKwh, setFastKwh] = useState("");
-  const [fastImovelTipo, setFastImovelTipo] = useState<"residencial" | "comercial" | "industrial">("residencial");
+  const [fastEndereco, setFastEndereco] = useState("");
+  const [fastImovelTipo, setFastImovelTipo] = useState<"residencial" | "comercial" | "industrial" | "rural">("residencial");
   const [fastInputMode, setFastInputMode] = useState<"fatura" | "kwh">("fatura");
   const [fastSaving, setFastSaving] = useState(false);
 
@@ -160,6 +161,7 @@ function AdminDashboard() {
         origem: "manual",
         cidade: fastCidade.trim(),
         estado: fastEstado.trim().toUpperCase(),
+        endereco: fastEndereco.trim() || null,
         corretor_id: user.id
       }).select().single();
 
@@ -195,7 +197,7 @@ function AdminDashboard() {
 
       // 3. Cria a Proposta
       const { data: prop, error: errProp } = await supabase.from("propostas").insert({
-        titulo: `Proposta Solar ${fastImovelTipo === "residencial" ? "Residencial" : fastImovelTipo === "comercial" ? "Comercial" : "Industrial"} - ${client.nome}`,
+        titulo: `Proposta Solar ${fastImovelTipo === "residencial" ? "Residencial" : fastImovelTipo === "comercial" ? "Comercial" : fastImovelTipo === "industrial" ? "Industrial" : "Rural"} - ${client.nome}`,
         parceiro_id: user.id,
         kwp_sistema: calculo.kwp_sistema,
         preco_total: kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total,
@@ -232,6 +234,7 @@ function AdminDashboard() {
         setFastPhone("");
         setFastBill("");
         setFastKwh("");
+        setFastEndereco("");
         setFastCidade("");
         setFastEstado("");
         
@@ -465,27 +468,26 @@ function AdminDashboard() {
       {activeTab === "crm" && (
         <div className="space-y-6">
           {/* CARD DE CAPTURA & PROPOSTA INSTANTÂNEA */}
-          {/* CARD DE CAPTURA & PROPOSTA INSTANTÂNEA */}
           <Card className="p-5 border-l-4 border-l-sun-deep bg-white shadow-md">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-sun-deep animate-pulse" />
                 <div>
-                  <h3 className="font-extrabold text-navy text-sm">Dimensionador Expresso & Proposta Instantânea (10 Segundos)</h3>
+                  <h3 className="font-extrabold text-navy text-sm">Proposta</h3>
                   <p className="text-[11px] text-muted-foreground">Cadastre o cliente e gere a proposta para WhatsApp em uma única ação.</p>
                 </div>
               </div>
               
               {/* Botões Segmented Control: Tipo de Imóvel */}
               <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/40 w-full sm:w-auto">
-                {(["residencial", "comercial", "industrial"] as const).map((t) => (
+                {(["residencial", "comercial", "industrial", "rural"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setFastImovelTipo(t)}
-                    className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase transition-all ${fastImovelTipo === t ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold uppercase transition-all ${fastImovelTipo === t ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
                   >
-                    {t === "residencial" ? "🏡 Residencial" : t === "comercial" ? "🏢 Comercial" : "🏭 Industrial"}
+                    {t === "residencial" ? "🏡 Residencial" : t === "comercial" ? "🏢 Comercial" : t === "industrial" ? "🏭 Industrial" : "🌾 Rural"}
                   </button>
                 ))}
               </div>
@@ -493,7 +495,7 @@ function AdminDashboard() {
 
             <form onSubmit={handleFastSubmit} className="space-y-4">
               {/* Linha 1: Contato e Endereço */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="space-y-1">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Nome do Cliente *</label>
                   <Input
@@ -511,6 +513,15 @@ function AdminDashboard() {
                     placeholder="Ex: (11) 99999-9999"
                     value={fastPhone}
                     onChange={(e) => setFastPhone(e.target.value)}
+                    className="h-9 text-xs"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Endereço (Opcional)</label>
+                  <Input
+                    placeholder="Ex: Rua das Flores, 123"
+                    value={fastEndereco}
+                    onChange={(e) => setFastEndereco(e.target.value)}
                     className="h-9 text-xs"
                   />
                 </div>
