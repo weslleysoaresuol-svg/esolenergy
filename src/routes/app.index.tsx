@@ -80,7 +80,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     // Tenta carregar municípios do sessionStorage ou busca do IBGE
-    const cached = sessionStorage.getItem("ibge_municipios");
+    const cached = typeof window !== "undefined" ? sessionStorage.getItem("ibge_municipios") : null;
     if (cached) {
       try { setIbgeMunicipios(JSON.parse(cached)); } catch(e) {}
     } else {

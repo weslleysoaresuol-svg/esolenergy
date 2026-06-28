@@ -170,6 +170,7 @@ function AppShell() {
   const navigate = useNavigate();
   const { user, role, profile, loading } = useCurrentUser();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const modoAtivo = useRouterState({ select: (s) => (s.location.search as any)?.modo as string | undefined });
   const notifData = useNotificacoes();
   const { naoLidas } = notifData;
 
@@ -214,8 +215,6 @@ function AppShell() {
     );
   }
 
-  const queryParams = new URLSearchParams(window.location.search);
-
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
@@ -247,7 +246,7 @@ function AppShell() {
         </div>
         <nav className="space-y-1 flex-1">
           {nav.map((item) => {
-            const isModoMatches = item.query ? queryParams.get("modo") === item.query.modo : !queryParams.get("modo");
+            const isModoMatches = item.query ? modoAtivo === item.query.modo : !modoAtivo;
             const active = item.exact 
               ? pathname === item.to 
               : pathname.startsWith(item.to) && isModoMatches;
