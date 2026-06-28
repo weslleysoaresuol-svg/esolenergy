@@ -570,114 +570,71 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           {p.observacoes && (
             <div className="mt-6 bg-slate-100/60 border border-slate-200/60 rounded-2xl p-6 text-sm">
               <div className="text-xs uppercase tracking-wider text-navy/70 font-bold mb-3">Especificações & Observações Técnicas</div>
-              <div className="text-navy/95 font-medium whitespace-pre-line leading-relaxed">{p.observacoes}</div>
+           {/* SIMULADOR FINANCEIRO E ANÁLISE DE VIABILIDADE OU CARD SIMPLIFICADO */}
+      {!docFinAprovado ? (
+        <section className="max-w-5xl mx-auto px-6 md:px-12 py-8 md:py-12 border-t border-slate-100 font-sans">
+          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-sun-deep block">Investimento Comercial</span>
+              <h2 className="text-3xl font-black text-navy">{BRL(simFinanceiro.valorVista)}</h2>
+              <p className="text-xs text-muted-foreground">Preço com desconto à vista (5% de desconto de tabela já aplicado).</p>
+              
+              {p.condicoes_pagamento && (
+                <div className="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-600 leading-relaxed">
+                  <strong>Condições de Pagamento:</strong> {p.condicoes_pagamento.replace(/\[FOCO:[A-Z:]+\]\n?/g, "").replace(/\[DOC:[A-Z_]+\]\n?/g, "")}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </section>
 
-      {/* SIMULADOR FINANCEIRO E ANÁLISE DE VIABILIDADE */}
-      <section className="max-w-5xl mx-auto px-6 md:px-12 py-8 md:py-10 border-t border-slate-100">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-1.5 bg-sun/10 text-sun-deep px-3 py-1 rounded-full text-xs font-bold mb-2">
-            <Coins className="w-3.5 h-3.5" /> PLANEJAMENTO FINANCEIRO INTELIGENTE
-          </div>
-          <h2 className="font-display text-3xl font-bold text-navy">
-            Simulador de Pagamento & Viabilidade
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm">Compare as vantagens de pagar à vista ou trocar a sua conta de luz pela parcela do banco.</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 items-stretch">
-          {/* Coluna 1 e 2: O Simulador */}
-          <div className="md:col-span-2 bg-slate-50 border border-slate-200/50 rounded-3xl p-6 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center flex-wrap gap-2 border-b border-slate-200 pb-3">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-navy flex items-center gap-1.5 font-sans">
-                  <Scale className="w-4 h-4 text-sun-deep" /> Condição Comercial
-                </span>
-                
-                {!focoVista && !focoFinanciado && !focoCartao ? (
-                  <div className="flex bg-slate-200/60 p-0.5 rounded-xl border flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => setPagModo("vista")}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "vista" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                    >
-                      💰 À Vista
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPagModo("cartao")}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "cartao" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                    >
-                      💳 Cartão 10x
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPagModo("financiado")}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "financiado" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                    >
-                      🏦 Financiamento
-                    </button>
-                  </div>
-                ) : (
-                  <Badge className="bg-sun text-navy font-extrabold uppercase text-[10px] tracking-wider">
-                    {focoVista && "🔒 Exclusivo À Vista"}
-                    {focoCartao && "🔒 Parcelado no Cartão 10x"}
-                    {focoFinanciado && `🔒 Financiado via ${FINANCEIRAS[finForcada as keyof typeof FINANCEIRAS]?.nome}`}
-                  </Badge>
-                )}
+            <div className="flex-shrink-0 space-y-3 w-full md:w-auto">
+              <div className="bg-white p-4 rounded-2xl border text-center shadow-sm">
+                <span className="text-[10px] text-muted-foreground block font-bold">Validade da Proposta</span>
+                <strong className="text-navy text-sm font-extrabold">{p.validade_dias || 15} dias</strong>
               </div>
-
-              {pagModo === "vista" && (
-                <div className="space-y-4 py-3">
-                  <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Preço Final com Desconto</span>
-                      <div className="text-3xl font-extrabold text-emerald-700 mt-1">
-                        {BRL(simFinanceiro.valorVista)}
-                      </div>
-                      <span className="text-[10px] text-slate-400 block mt-0.5">Economia de {BRL(simFinanceiro.valorOriginal - simFinanceiro.valorVista)} sobre o valor de tabela.</span>
-                    </div>
-                    <div className="bg-emerald-50 text-emerald-800 font-extrabold px-3 py-1.5 rounded-xl border border-emerald-100 text-xs text-center">
-                      ⚡ 5% de Desconto
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Comprando à vista, você garante o menor prazo de payback possível e rentabilidade média superior a <strong>2,5% ao mês</strong> sobre o capital investido, superando em muito a poupança, Tesouro Direto e Renda Fixa tradicional.
-                  </p>
-                </div>
+              {parceiro && (
+                <a
+                  href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${parceiro.nome.split(" ")[0]}!%20Gostaria%20de%20fechar%20a%20proposta%20solar%20nº%20${String(p.id).slice(0, 8).toUpperCase()}.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-extrabold text-xs h-10 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
+                >
+                  💬 Chamar no WhatsApp
+                </a>
               )}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="max-w-5xl mx-auto px-6 md:px-12 py-8 md:py-10 border-t border-slate-100">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-1.5 bg-sun/10 text-sun-deep px-3 py-1 rounded-full text-xs font-bold mb-2">
+              <Coins className="w-3.5 h-3.5" /> PLANEJAMENTO FINANCEIRO INTELIGENTE
+            </div>
+            <h2 className="font-display text-3xl font-bold text-navy">
+              Simulador de Pagamento & Viabilidade
+            </h2>
+            <p className="text-muted-foreground mt-1 text-sm">Compare as vantagens de pagar à vista ou trocar a sua conta de luz pela parcela do banco.</p>
+          </div>
 
-              {pagModo === "cartao" && (
-                <div className="space-y-4 py-3 animate-fade-in">
-                  <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Parcelado no Cartão de Crédito</span>
-                      <div className="text-3xl font-extrabold text-[#001F5C] mt-1 font-sans">
-                        10x de {BRL(simFinanceiro.valorCartaoParcela)}
-                      </div>
-                      <span className="text-[10px] text-slate-400 block mt-0.5">Preço Total sem acréscimo: {BRL(simFinanceiro.valorCartaoTotal)}</span>
-                    </div>
-                    <div className="bg-blue-50 text-blue-800 font-extrabold px-3 py-1.5 rounded-xl border border-blue-100 text-xs text-center">
-                      💳 Sem Juros
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Opção ideal para quem possui limite livre no cartão de crédito corporativo ou pessoal e prefere parcelar o investimento em até <strong>10 vezes fixas sem juros</strong> sem passar por burocracias de bancos e comprovantes de renda.
-                  </p>
+          <div className="grid md:grid-cols-3 gap-6 items-stretch">
+            {/* Coluna 1 e 2: O Simulador */}
+            <div className="md:col-span-2 bg-slate-50 border border-slate-200/50 rounded-3xl p-6 flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center flex-wrap gap-2 border-b border-slate-200 pb-3">
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-navy flex items-center gap-1.5 font-sans">
+                    <Scale className="w-4 h-4 text-sun-deep" /> Condição Comercial
+                  </span>
+                  
+                  <Badge className="bg-sun text-navy font-extrabold uppercase text-[10px] tracking-wider">
+                    🔒 Financiamento via {FINANCEIRAS[finForcada as keyof typeof FINANCEIRAS]?.nome || finForcada.toUpperCase()}
+                  </Badge>
                 </div>
-              )}
 
-              {pagModo === "financiado" && (
                 <div className="space-y-5 py-2">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-xs text-navy font-bold">Instituição Financeira Parceira</Label>
-                      <Select disabled={focoFinanciado} value={selectedFin} onValueChange={(v: any) => setSelectedFin(v)}>
+                      <Select disabled={true} value={selectedFin} onValueChange={(v: any) => setSelectedFin(v)}>
                         <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="solfacil">🏦 Solfácil (CET 1,29% a.m.)</SelectItem>
@@ -691,7 +648,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
                     <div className="space-y-1.5">
                       <Label className="text-xs text-navy font-bold">Prazo de Pagamento</Label>
-                      <Select value={String(selectedPrazo)} onValueChange={(v) => setSelectedPrazo(Number(v))}>
+                      <Select disabled={true} value={String(selectedPrazo)} onValueChange={(v) => setSelectedPrazo(Number(v))}>
                         <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="24">24 meses</SelectItem>
@@ -733,100 +690,59 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* Diagnóstico Inteligente de Viabilidade */}
-            {pagModo === "financiado" && (
-              <div className={`mt-4 p-4 rounded-2xl border flex gap-3 items-start ${
-                simFinanceiro.nivelViabilidade === "alta" 
-                  ? "bg-emerald-50/40 border-emerald-200 text-emerald-800" 
-                  : simFinanceiro.nivelViabilidade === "media"
-                    ? "bg-amber-50/40 border-amber-200 text-amber-800"
-                    : "bg-rose-50/40 border-rose-200 text-rose-800"
-              }`}>
-                {simFinanceiro.nivelViabilidade === "alta" ? (
-                  <ThumbsUp className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                ) : simFinanceiro.nivelViabilidade === "media" ? (
-                  <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
-                )}
+              {/* Diagnóstico Inteligente de Viabilidade */}
+              <div className={`mt-4 p-4 rounded-2xl border flex gap-3 items-start bg-emerald-50/40 border-emerald-200 text-emerald-800`}>
+                <ThumbsUp className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <span className="text-xs font-extrabold uppercase tracking-wider block">
-                    {simFinanceiro.nivelViabilidade === "alta" 
-                      ? "⚡ Viabilidade Máxima: O sistema se paga!" 
-                      : simFinanceiro.nivelViabilidade === "media"
-                        ? "📈 Viabilidade Equilibrada"
-                        : "⚠️ Atenção: Custo de Financiamento Elevado"
-                    }
+                    ⚡ Viabilidade Máxima: O sistema se paga!
                   </span>
                   <p className="text-[11px] leading-relaxed opacity-90">{simFinanceiro.descViabilidade}</p>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Coluna 3: Indicadores de Retorno Dinâmicos */}
-          <div className="bg-navy text-white rounded-3xl p-6 flex flex-col justify-between shadow-lg relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sun/10 blur-2xl" />
-            
-            <div className="space-y-4">
-              <span className="text-[10px] text-sun uppercase font-bold tracking-widest block">Resumo do Retorno</span>
+            {/* Coluna 3: Indicadores de Retorno Dinâmicos */}
+            <div className="bg-navy text-white rounded-3xl p-6 flex flex-col justify-between shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sun/10 blur-2xl" />
               
-              <div className="space-y-1 border-b border-white/10 pb-4">
-                <span className="text-[10px] text-white/50 block font-semibold uppercase">Economia Mensal Média</span>
-                <div className="text-2xl font-extrabold text-sun">
-                  {BRL(Number(p.economia_mensal))}
+              <div className="space-y-4">
+                <span className="text-[10px] text-sun uppercase font-bold tracking-widest block">Resumo do Retorno</span>
+                
+                <div className="space-y-1 border-b border-white/10 pb-4">
+                  <span className="text-[10px] text-white/50 block font-semibold uppercase">Economia Mensal Média</span>
+                  <div className="text-2xl font-extrabold text-sun">
+                    {BRL(Number(p.economia_mensal))}
+                  </div>
+                  <span className="text-[10px] text-white/40 block">Redução imediata de até 95% na conta.</span>
                 </div>
-                <span className="text-[10px] text-white/40 block">Redução imediata de até 95% na conta.</span>
+
+                <div className="space-y-1 border-b border-white/10 pb-4">
+                  <span className="text-[10px] text-white/50 block font-semibold uppercase">Prestação Mensal ({selectedPrazo}x)</span>
+                  <div className="text-2xl font-extrabold text-white">
+                    {BRL(simFinanceiro.valorParcela)}/mês
+                  </div>
+                  <span className="text-[10px] text-white/40 block">Taxas calculadas via tabela Price.</span>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] text-white/50 block font-semibold uppercase">Payback Financiado Ajustado</span>
+                  <div className="text-3xl font-extrabold text-white flex items-baseline gap-1">
+                    {simFinanceiro.paybackFinanciadoAnos.toFixed(1)} <span className="text-xs text-white/60 font-medium">anos</span>
+                  </div>
+                  <span className="text-[10px] text-white/40 block">Retorno real considerando os juros cobrados.</span>
+                </div>
               </div>
 
-              {pagModo === "vista" ? (
-                <>
-                  <div className="space-y-1 border-b border-white/10 pb-4">
-                    <span className="text-[10px] text-white/50 block font-semibold uppercase">Valor do Investimento</span>
-                    <div className="text-2xl font-extrabold text-white">
-                      {BRL(simFinanceiro.valorVista)}
-                    </div>
-                    <span className="text-[10px] text-emerald-400 block font-bold">5% de desconto aplicado.</span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-[10px] text-white/50 block font-semibold uppercase">Payback (Retorno à Vista)</span>
-                    <div className="text-3xl font-extrabold text-white flex items-baseline gap-1">
-                      {(Number(p.payback_meses) / 12).toFixed(1)} <span className="text-xs text-white/60 font-medium">anos</span>
-                    </div>
-                    <span className="text-[10px] text-white/40 block">Dinheiro recuperado direto em economia.</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1 border-b border-white/10 pb-4">
-                    <span className="text-[10px] text-white/50 block font-semibold uppercase">Prestação Mensal ({selectedPrazo}x)</span>
-                    <div className="text-2xl font-extrabold text-white">
-                      {BRL(simFinanceiro.valorParcela)}/mês
-                    </div>
-                    <span className="text-[10px] text-white/40 block">Taxas calculadas via tabela Price.</span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-[10px] text-white/50 block font-semibold uppercase">Payback Financiado Ajustado</span>
-                    <div className="text-3xl font-extrabold text-white flex items-baseline gap-1">
-                      {simFinanceiro.paybackFinanciadoAnos.toFixed(1)} <span className="text-xs text-white/60 font-medium">anos</span>
-                    </div>
-                    <span className="text-[10px] text-white/40 block">Retorno real considerando os juros cobrados.</span>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="pt-4 border-t border-white/10 text-[9px] text-white/40 leading-relaxed">
-              * Simulação aproximada de crédito. Sujeita a análise de perfil, score e alterações sem aviso prévio pelas financeiras.
+              <div className="pt-4 border-t border-white/10 text-[9px] text-white/40 leading-relaxed">
+                * Simulação aproximada de crédito. Sujeita a análise de perfil, score e alterações sem aviso prévio pelas financeiras.
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* INVESTIMENTO */}
       <section className="max-w-5xl mx-auto px-6 md:px-12 py-10 md:py-14">

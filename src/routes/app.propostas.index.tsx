@@ -29,6 +29,9 @@ function PropostasList() {
   const [filterParceiro, setFilterParceiro] = useState("todos");
   const [parceiros, setParceiros] = useState<any[]>([]);
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const modo = queryParams.get("modo") || "proposta";
+
   useEffect(() => {
     (async () => {
       const [{ data: ps }, { data: profs }] = await Promise.all([
@@ -41,10 +44,24 @@ function PropostasList() {
       setPropostas(ps || []);
       setParceiros(profs || []);
     })();
-  }, []);
+  }, [modo]);
 
   const now = new Date();
-  const filtered = propostas.filter((p) => {
+  
+  // Filtra de acordo com o tipo de documento
+  const typedPropostas = propostas.filter((p) => {
+    const cond = p.condicoes_pagamento || "";
+    if (modo === "cotacao") {
+      return cond.includes("[DOC:COTACAO]");
+    }
+    if (modo === "financiamento") {
+      return cond.includes("[DOC:FIN_AGUARDANDO]") || cond.includes("[DOC:FIN_APROVADO:");
+    }
+    // Propostas padrão: não possuem tags de cotação ou financiamento
+    return !cond.includes("[DOC:COTACAO]") && !cond.includes("[DOC:FIN_AGUARDANDO]") && !cond.includes("[DOC:FIN_APROVADO:");
+  });
+
+  const filtered = typedPropostas.filter((p) => {
     const matchQ = !q || p.titulo?.toLowerCase().includes(q.toLowerCase()) ||
       p.proposta_clientes?.some((pc: any) => pc.cliente?.nome?.toLowerCase().includes(q.toLowerCase()));
     const matchStatus = filterStatus === "todos" || p.status === filterStatus;
@@ -61,15 +78,27 @@ function PropostasList() {
     return <span className="text-xs text-muted-foreground">{days}d restantes</span>;
   };
 
+  const getModoTitle = () => {
+    if (modo === "cotacao") return "Cotações Rápidas";
+    if (modo === "financiamento") return "Simulações de Financiamento";
+    return "Propostas Comerciais";
+  };
+
+  const getModoButton = () => {
+    if (modo === "cotacao") return "Nova cotação";
+    if (modo === "financiamento") return "Nova simulação";
+    return "Nova proposta";
+  };
+
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6 max-w-7xl font-sans">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-navy">Propostas</h1>
-          <p className="text-muted-foreground">{filtered.length} de {propostas.length} proposta(s)</p>
+          <h1 className="text-3xl font-extrabold text-navy tracking-tight">{getModoTitle()}</h1>
+          <p className="text-muted-foreground">{filtered.length} de {typedPropostas.length} registro(s)</p>
         </div>
-        <Link to="/app/propostas/nova">
-          <Button className="bg-sun hover:bg-sun-deep text-navy font-semibold"><Plus className="w-4 h-4 mr-1" />Nova proposta</Button>
+        <Link to="/app/propostas/nova" search={{ modo } as any}>
+          <Button className="bg-sun hover:bg-sun-deep text-navy font-bold shadow-md rounded-xl"><Plus className="w-4.5 h-4.5 mr-1" />{getModoButton()}</Button>
         </Link>
       </div>
 

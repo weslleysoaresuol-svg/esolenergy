@@ -214,10 +214,14 @@ function AppShell() {
     );
   }
 
+  const queryParams = new URLSearchParams(window.location.search);
+
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
-    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/propostas", query: { modo: "proposta" }, icon: FileSpreadsheet, label: "Propostas Solar" },
+    { to: "/app/propostas", query: { modo: "cotacao" }, icon: FileText, label: "Cotações Rápidas" },
+    { to: "/app/propostas", query: { modo: "financiamento" }, icon: Briefcase, label: "Financiamentos" },
     { to: "/app/kits", icon: Sun, label: "Kits Solares" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros & Convites" },
     { to: "/app/parametros", icon: Settings, label: "Tarifas & Parâmetros" },
@@ -225,7 +229,9 @@ function AppShell() {
   ];
   const corretorNav = [
     { to: "/app", icon: Briefcase, label: "Meus Clientes", exact: true },
-    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/propostas", query: { modo: "proposta" }, icon: FileSpreadsheet, label: "Propostas Solar" },
+    { to: "/app/propostas", query: { modo: "cotacao" }, icon: FileText, label: "Cotações Rápidas" },
+    { to: "/app/propostas", query: { modo: "financiamento" }, icon: Briefcase, label: "Financiamentos" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const nav = role === "admin" ? adminNav : corretorNav;
@@ -241,11 +247,15 @@ function AppShell() {
         </div>
         <nav className="space-y-1 flex-1">
           {nav.map((item) => {
-            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+            const isModoMatches = item.query ? queryParams.get("modo") === item.query.modo : !queryParams.get("modo");
+            const active = item.exact 
+              ? pathname === item.to 
+              : pathname.startsWith(item.to) && isModoMatches;
             return (
               <Link
-                key={item.to}
+                key={item.to + (item.query?.modo || "")}
                 to={item.to}
+                search={item.query as any}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${active ? "bg-sun text-navy" : "text-white/80 hover:bg-white/10"}`}
               >
                 <item.icon className="w-4 h-4" />{item.label}
