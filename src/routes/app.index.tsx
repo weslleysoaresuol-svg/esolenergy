@@ -66,6 +66,9 @@ function AdminDashboard() {
   const [fastName, setFastName] = useState("");
   const [fastPhone, setFastPhone] = useState("");
   const [fastBill, setFastBill] = useState("");
+  const [fastKwh, setFastKwh] = useState("");
+  const [fastImovelTipo, setFastImovelTipo] = useState<"residencial" | "comercial" | "industrial">("residencial");
+  const [fastInputMode, setFastInputMode] = useState<"fatura" | "kwh">("fatura");
   const [fastSaving, setFastSaving] = useState(false);
 
   // Cidade e Estado (Autocomplete do IBGE)
@@ -118,29 +121,7 @@ function AdminDashboard() {
     
     setFastSaving(true);
     try {
-      const billVal = Number(fastBill) || 0;
-      const consumoEstimado = billVal > 0 ? Math.round(billVal / 0.95) : 500;
-      
-      // 1. Cadastra o cliente expressamente
-      const { data: client, error: errClient } = await supabase.from("clientes").insert({
-        nome: fastName.trim(),
-        telefone: fastPhone.trim(),
-        valor_fatura: billVal > 0 ? billVal : null,
-        consumo_kwh: consumoEstimado,
-        status: "novo",
-        origem: "manual",
-        cidade: fastCidade.trim(),
-        estado: fastEstado.trim().toUpperCase(),
-        corretor_id: user.id
-      }).select().single();
-
-      if (errClient) {
-        toast.error("Erro ao salvar lead: " + errClient.message);
-        setFastSaving(false);
-        return;
-      }
-
-      // 2. Carrega parâmetros comerciais do banco (ou fallback)
+      // 1. Carrega parâmetros comerciais do banco (ou fallback)
       let paramsComerciais = {
         hsp_norte: 4.5, hsp_nordeste: 5.0, hsp_centro_oeste: 4.8, hsp_sudeste: 4.5, hsp_sul: 4.0,
         preco_wp_residencial_pequeno: 2.8, preco_wp_residencial_grande: 2.5,
@@ -156,14 +137,44 @@ function AdminDashboard() {
         if (pr) paramsComerciais = { ...paramsComerciais, ...pr };
       } catch (errRpc) {}
 
-      const tarifaKwh = paramsComerciais.tarifa_kwh_default;
+      const tarifaKwh = paramsComerciais.tarifa_kwh_default || 0.95;
       
-      // Roda o cálculo do dimensionamento comercial automático usando o estado real do lead
+      let billVal = 0;
+      let consumoEstimado = 0;
+      if (fastInputMode === "fatura") {
+        billVal = Number(fastBill) || 0;
+        consumoEstimado = billVal > 0 ? Math.round(billVal / tarifaKwh) : 500;
+      } else {
+        consumoEstimado = Number(fastKwh) || 500;
+        billVal = Math.round(consumoEstimado * tarifaKwh);
+      }
+      
+      // 2. Cadastra o cliente expressamente
+      const { data: client, error: errClient } = await supabase.from("clientes").insert({
+        nome: fastName.trim(),
+        telefone: fastPhone.trim(),
+        valor_fatura: billVal > 0 ? billVal : null,
+        consumo_kwh: consumoEstimado,
+        imovel_tipo: fastImovelTipo,
+        status: "novo",
+        origem: "manual",
+        cidade: fastCidade.trim(),
+        estado: fastEstado.trim().toUpperCase(),
+        corretor_id: user.id
+      }).select().single();
+
+      if (errClient) {
+        toast.error("Erro ao salvar lead: " + errClient.message);
+        setFastSaving(false);
+        return;
+      }
+      
+      // Roda o cálculo do dimensionamento comercial automático usando o estado real do lead e tipo de imóvel
       const calculo = calcularProposta({
         consumo_kwh: consumoEstimado,
         tarifa_kwh: tarifaKwh,
         estado: fastEstado.trim().toUpperCase(),
-        tipo: "residencial"
+        tipo: fastImovelTipo
       }, paramsComerciais);
 
       // Carrega Kits fotovoltaicos do Supabase (ou fallback)
@@ -184,7 +195,7 @@ function AdminDashboard() {
 
       // 3. Cria a Proposta
       const { data: prop, error: errProp } = await supabase.from("propostas").insert({
-        titulo: `Proposta Solar - ${client.nome}`,
+        titulo: `Proposta Solar ${fastImovelTipo === "residencial" ? "Residencial" : fastImovelTipo === "comercial" ? "Comercial" : "Industrial"} - ${client.nome}`,
         parceiro_id: user.id,
         kwp_sistema: calculo.kwp_sistema,
         preco_total: kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total,
@@ -197,7 +208,7 @@ function AdminDashboard() {
         kit_id: kitRecomendado?.id || null,
         tipo_conexao: "bifasico",
         tipo_telhado: "ceramico",
-        tipo_instalacao: "residencial",
+        tipo_instalacao: fastImovelTipo,
         consumo_kwh: consumoEstimado,
         tarifa_kwh: tarifaKwh,
         estado: fastEstado.trim().toUpperCase(),
@@ -220,6 +231,7 @@ function AdminDashboard() {
         setFastName("");
         setFastPhone("");
         setFastBill("");
+        setFastKwh("");
         setFastCidade("");
         setFastEstado("");
         
@@ -453,100 +465,163 @@ function AdminDashboard() {
       {activeTab === "crm" && (
         <div className="space-y-6">
           {/* CARD DE CAPTURA & PROPOSTA INSTANTÂNEA */}
+          {/* CARD DE CAPTURA & PROPOSTA INSTANTÂNEA */}
           <Card className="p-5 border-l-4 border-l-sun-deep bg-white shadow-md">
-            <div className="flex items-center gap-2 mb-3">
-              <Zap className="w-5 h-5 text-sun-deep animate-pulse" />
-              <div>
-                <h3 className="font-extrabold text-navy text-sm">Dimensionador Expresso & Proposta Instantânea (10 Segundos)</h3>
-                <p className="text-[11px] text-muted-foreground">Cadastre o cliente e gere a proposta para WhatsApp em uma única ação.</p>
-              </div>
-            </div>
-            <form onSubmit={handleFastSubmit} className="grid grid-cols-1 sm:grid-cols-5 gap-3 items-end">
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 font-bold uppercase">Nome do Cliente *</label>
-                <Input
-                  required
-                  placeholder="Ex: João da Silva"
-                  value={fastName}
-                  onChange={(e) => setFastName(e.target.value)}
-                  className="h-9 text-xs"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 font-bold uppercase">WhatsApp / Telefone *</label>
-                <Input
-                  required
-                  placeholder="Ex: (11) 99999-9999"
-                  value={fastPhone}
-                  onChange={(e) => setFastPhone(e.target.value)}
-                  className="h-9 text-xs"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 font-bold uppercase">Valor da Fatura (R$)</label>
-                <Input
-                  type="number"
-                  placeholder="Ex: 450"
-                  value={fastBill}
-                  onChange={(e) => setFastBill(e.target.value)}
-                  className="h-9 text-xs font-bold text-navy"
-                />
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-sun-deep animate-pulse" />
+                <div>
+                  <h3 className="font-extrabold text-navy text-sm">Dimensionador Expresso & Proposta Instantânea (10 Segundos)</h3>
+                  <p className="text-[11px] text-muted-foreground">Cadastre o cliente e gere a proposta para WhatsApp em uma única ação.</p>
+                </div>
               </div>
               
-              {/* Campo Autocompletável de Município e Estado */}
-              <div className="space-y-1 relative">
-                <label className="text-[10px] text-slate-500 font-bold uppercase">Município / Estado *</label>
-                <div className="flex gap-1">
+              {/* Botões Segmented Control: Tipo de Imóvel */}
+              <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/40 w-full sm:w-auto">
+                {(["residencial", "comercial", "industrial"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setFastImovelTipo(t)}
+                    className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase transition-all ${fastImovelTipo === t ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                  >
+                    {t === "residencial" ? "🏡 Residencial" : t === "comercial" ? "🏢 Comercial" : "🏭 Industrial"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <form onSubmit={handleFastSubmit} className="space-y-4">
+              {/* Linha 1: Contato e Endereço */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Nome do Cliente *</label>
                   <Input
                     required
-                    placeholder="Buscar cidade..."
-                    value={fastCidade}
-                    onChange={(e) => {
-                      setFastCidade(e.target.value);
-                      setShowSugestions(true);
-                    }}
-                    onFocus={() => setShowSugestions(true)}
-                    onBlur={() => setTimeout(() => setShowSugestions(false), 200)}
-                    className="h-9 text-xs flex-1"
-                  />
-                  <Input
-                    readOnly
-                    placeholder="UF"
-                    value={fastEstado}
-                    className="h-9 text-xs w-11 bg-slate-50 text-center font-bold text-navy border"
+                    placeholder="Ex: João da Silva"
+                    value={fastName}
+                    onChange={(e) => setFastName(e.target.value)}
+                    className="h-9 text-xs"
                   />
                 </div>
-
-                {/* Dropdown de sugestões do IBGE */}
-                {showSugestions && sugestoesCidades.length > 0 && (
-                  <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto divide-y">
-                    {sugestoesCidades.map((m, idx) => (
-                      <button
-                        key={`${m.nome}-${m.uf}-${idx}`}
-                        type="button"
-                        onClick={() => {
-                          setFastCidade(m.nome);
-                          setFastEstado(m.uf);
-                          setShowSugestions(false);
-                        }}
-                        className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 text-slate-700 font-semibold flex justify-between items-center"
-                      >
-                        <span>{m.nome}</span>
-                        <Badge variant="outline" className="text-[9px] border-slate-300 font-bold">{m.uf}</Badge>
-                      </button>
-                    ))}
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">WhatsApp / Telefone *</label>
+                  <Input
+                    required
+                    placeholder="Ex: (11) 99999-9999"
+                    value={fastPhone}
+                    onChange={(e) => setFastPhone(e.target.value)}
+                    className="h-9 text-xs"
+                  />
+                </div>
+                
+                {/* Campo Autocompletável de Município e Estado */}
+                <div className="space-y-1 relative">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Município / Estado *</label>
+                  <div className="flex gap-1">
+                    <Input
+                      required
+                      placeholder="Buscar cidade..."
+                      value={fastCidade}
+                      onChange={(e) => {
+                        setFastCidade(e.target.value);
+                        setShowSugestions(true);
+                      }}
+                      onFocus={() => setShowSugestions(true)}
+                      onBlur={() => setTimeout(() => setShowSugestions(false), 200)}
+                      className="h-9 text-xs flex-1"
+                    />
+                    <Input
+                      readOnly
+                      placeholder="UF"
+                      value={fastEstado}
+                      className="h-9 text-xs w-11 bg-slate-50 text-center font-bold text-navy border"
+                    />
                   </div>
-                )}
+
+                  {/* Dropdown de sugestões do IBGE */}
+                  {showSugestions && sugestoesCidades.length > 0 && (
+                    <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto divide-y">
+                      {sugestoesCidades.map((m, idx) => (
+                        <button
+                          key={`${m.nome}-${m.uf}-${idx}`}
+                          type="button"
+                          onClick={() => {
+                            setFastCidade(m.nome);
+                            setFastEstado(m.uf);
+                            setShowSugestions(false);
+                          }}
+                          className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 text-slate-700 font-semibold flex justify-between items-center"
+                        >
+                          <span>{m.nome}</span>
+                          <Badge variant="outline" className="text-[9px] border-slate-300 font-bold">{m.uf}</Badge>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <Button
-                type="submit"
-                disabled={fastSaving}
-                className="bg-sun hover:bg-sun-deep text-navy font-extrabold h-9 text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all"
-              >
-                {fastSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-navy" /> : <Send className="w-3.5 h-3.5 text-navy" />}
-                {fastSaving ? "Salvando..." : "Salvar & Criar Proposta 🚀"}
-              </Button>
+              {/* Linha 2: Consumo Alternável e Envio */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end pt-2 border-t border-slate-100">
+                {/* Seletor de Tipo de Consumo (Fatura vs kWh) */}
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Preencher energia por</label>
+                  <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200/50">
+                    <button
+                      type="button"
+                      onClick={() => setFastInputMode("fatura")}
+                      className={`flex-1 py-1 rounded-md text-[10px] font-bold transition-all ${fastInputMode === "fatura" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    >
+                      💰 Fatura (R$)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFastInputMode("kwh")}
+                      className={`flex-1 py-1 rounded-md text-[10px] font-bold transition-all ${fastInputMode === "kwh" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    >
+                      ⚡ Consumo (kWh)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Input Dinâmico conforme Seleção */}
+                <div className="space-y-1">
+                  {fastInputMode === "fatura" ? (
+                    <>
+                      <label className="text-[10px] text-slate-500 font-bold uppercase">Valor da Fatura Média (R$)</label>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 450"
+                        value={fastBill}
+                        onChange={(e) => setFastBill(e.target.value)}
+                        className="h-9 text-xs font-bold text-navy"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <label className="text-[10px] text-slate-500 font-bold uppercase">Consumo Médio Mensal (kWh)</label>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 500"
+                        value={fastKwh}
+                        onChange={(e) => setFastKwh(e.target.value)}
+                        className="h-9 text-xs font-bold text-navy"
+                      />
+                    </>
+                  )}
+                </div>
+
+                {/* Botão Principal de Envio */}
+                <Button
+                  type="submit"
+                  disabled={fastSaving}
+                  className="bg-sun hover:bg-sun-deep text-navy font-extrabold h-9 text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all animate-pulse"
+                >
+                  {fastSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-navy" /> : <Send className="w-3.5 h-3.5 text-navy" />}
+                  {fastSaving ? "Salvando..." : "Salvar & Criar Proposta 🚀"}
+                </Button>
+              </div>
             </form>
           </Card>
 
