@@ -1,6 +1,9 @@
 import { useState, useMemo } from "react";
 import { BRL, NUM } from "@/lib/proposta-calc";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Sun, Zap, TrendingDown, Leaf, ShieldCheck, Clock, Home, Award, Phone, Mail, MapPin,
   Scale, Coins, Info, Percent, PiggyBank, ThumbsUp, AlertTriangle

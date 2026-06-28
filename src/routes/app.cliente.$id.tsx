@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { 
   MessageCircle, ArrowLeft, Trash2, FileSpreadsheet, Star, Gift, AlertTriangle,
   Inbox, Calendar, FileText, FileSignature, Wrench, Zap, CheckCircle2, RefreshCw,
-  Upload, Check, ShieldAlert, Sparkles, Building, Landmark, Printer, FileDown
+  Upload, Check, ShieldAlert, Sparkles, Building, Landmark, Printer, FileDown, Clock
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/cliente/$id")({
