@@ -54,6 +54,7 @@ function NovaProposta() {
   // Estados do Roteiro de Vendas & Foco da Proposta
   const [preferenciaFoco, setPreferenciaFoco] = useState<"ambos" | "vista" | "financiado">("ambos");
   const [bancoPreSelecionado, setBancoPreSelecionado] = useState<string>("solfacil");
+  const [selectedPrazo, setSelectedPrazo] = useState(60);
   const [usarScriptVendas, setUsarScriptVendas] = useState(false);
   const [scriptStep, setScriptStep] = useState(1);
   
@@ -520,6 +521,7 @@ function NovaProposta() {
   if (!params) return <div className="text-center py-12 text-muted-foreground">Carregando…</div>;
 
   return (
+    <div className="space-y-6 max-w-5xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
         <div className="flex items-center gap-3">
           <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
