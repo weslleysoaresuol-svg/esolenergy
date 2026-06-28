@@ -5,8 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { TrendingUp, DollarSign, Users, Target, Link2, FileText, ClipboardCopy, Send } from "lucide-react";
+import {
+  TrendingUp, DollarSign, Users, Target, Link2, FileText, ClipboardCopy, Send,
+  Search, Phone, Mail, MapPin, Banknote, QrCode, ShieldCheck, AlertTriangle,
+  CheckCircle2, XCircle, ChevronRight, User, Star, Calendar
+} from "lucide-react";
 
 export const Route = createFileRoute("/app/corretores")({
   head: () => ({ meta: [{ title: "Parceiros & Equipe — ESOL Energy" }] }),
@@ -21,6 +26,7 @@ function AdminCorretores() {
   const [totalComissao, setTotalComissao] = useState(0);
   const [totalReceita, setTotalReceita] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [busca, setBusca] = useState("");
 
   // Estados dos convites
   const [convites, setConvites] = useState<any[]>([]);
@@ -30,12 +36,17 @@ function AdminCorretores() {
   // Estados dos termos/contratos
   const [contratos, setContratos] = useState<any[]>([]);
 
+  // Drawer de detalhe do parceiro
+  const [parceiroSel, setParceiroSel] = useState<any>(null);
+  const [contratosParceiro, setContratosParceiro] = useState<any[]>([]);
+  const [loadingDrawer, setLoadingDrawer] = useState(false);
+
   const loadParceiros = async () => {
     setLoading(true);
     const { data: roles } = await supabase.from("user_roles").select("user_id, role").eq("role", "corretor");
     const ids = (roles || []).map((r) => r.user_id);
     if (ids.length === 0) { setList([]); setLoading(false); return; }
-    
+
     const [{ data: profiles }, { data: clientes }, { data: propostas }] = await Promise.all([
       supabase.from("profiles").select("*").in("id", ids),
       supabase.from("clientes").select("corretor_id, status").in("corretor_id", ids),
@@ -52,19 +63,20 @@ function AdminCorretores() {
       const receitaBruta = psAceitas.reduce((s, pr) => s + Number(pr.preco_total || 0), 0);
       const comissaoPct = Number(p.comissao_percent || 0);
       const comissaoTotal = receitaBruta * (comissaoPct / 100);
-      
+
       const psMes = psAceitas.filter((pr) => {
         const d = new Date(pr.created_at);
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}` === mesAtual;
       });
       const receitaMes = psMes.reduce((s, pr) => s + Number(pr.preco_total || 0), 0);
       const comissaoMes = receitaMes * (comissaoPct / 100);
-      const conversao = ps.length > 0 ? ((psAceitas.length / ps.filter((pr) => pr.status !== "rascunho").length) * 100) : 0;
-      
+      const conv = ps.filter((pr) => pr.status !== "rascunho");
+      const conversao = conv.length > 0 ? (psAceitas.length / conv.length) * 100 : 0;
+
       return {
         ...p,
         total: cs.length,
-        fechados: cs.filter((c) => ["contrato_assinado","instalacao","concluido"].includes(c.status)).length,
+        fechados: cs.filter((c) => ["contrato_assinado", "instalacao", "concluido"].includes(c.status)).length,
         propostas: ps.length,
         propostasAceitas: psAceitas.length,
         receitaBruta,
@@ -104,6 +116,7 @@ function AdminCorretores() {
     await supabase.from("profiles").update({ ativo: !ativo }).eq("id", id);
     toast.success(!ativo ? "Parceiro ativado" : "Parceiro desativado");
     loadParceiros();
+    if (parceiroSel?.id === id) setParceiroSel((p: any) => ({ ...p, ativo: !ativo }));
   };
 
   const setComissao = async (id: string, v: string) => {
@@ -116,13 +129,11 @@ function AdminCorretores() {
     if (!novoEmail) return;
     setEnviandoConvite(true);
     const token = crypto.randomUUID();
-    
     const { error } = await (supabase.from("convites" as any).insert({
       email: novoEmail.trim().toLowerCase(),
       token,
       status: "pendente",
     } as any) as any);
-
     setEnviandoConvite(false);
     if (error) {
       toast.error("Erro ao criar convite: " + error.message);
@@ -138,6 +149,30 @@ function AdminCorretores() {
     navigator.clipboard.writeText(link);
     toast.success("Link de acesso copiado!");
   };
+
+  const abrirParceiro = async (p: any) => {
+    setParceiroSel(p);
+    setLoadingDrawer(true);
+    const { data } = await supabase
+      .from("contratos_parceria")
+      .select("id,nome_completo,cpf,versao,assinado_em,ip_assinatura")
+      .eq("user_id", p.id)
+      .order("assinado_em", { ascending: false });
+    setContratosParceiro(data || []);
+    setLoadingDrawer(false);
+  };
+
+  // Filtro de busca
+  const listaFiltrada = list.filter((p) => {
+    if (!busca) return true;
+    const q = busca.toLowerCase();
+    return (
+      (p.nome || "").toLowerCase().includes(q) ||
+      (p.email || "").toLowerCase().includes(q) ||
+      (p.cidade || "").toLowerCase().includes(q) ||
+      (p.cpf_cnpj || "").toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -169,9 +204,9 @@ function AdminCorretores() {
         </button>
       </div>
 
-      {/* ABA 1: LISTA DE PARCEIROS */}
+      {/* ===== ABA 1: LISTA DE PARCEIROS ===== */}
       {activeTab === "lista" && (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* KPIs globais */}
           {list.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -185,7 +220,7 @@ function AdminCorretores() {
                 <div className="w-9 h-9 rounded-lg bg-sun/10 text-sun-deep flex items-center justify-center mb-2"><DollarSign className="w-4 h-4" /></div>
                 <div className="text-xs text-muted-foreground">Receita total gerada</div>
                 <div className="font-bold text-xl text-navy">{BRL(totalReceita)}</div>
-                <div className="text-xs text-muted-foreground mt-1">Somando todos os parceiros</div>
+                <div className="text-xs text-muted-foreground mt-1">Todos os parceiros</div>
               </Card>
               <Card className="p-4 border-0 shadow-md bg-amber-50">
                 <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-2"><DollarSign className="w-4 h-4" /></div>
@@ -199,36 +234,66 @@ function AdminCorretores() {
                 <div className="font-bold text-xl text-navy">
                   {list.length > 0 ? `${Math.max(...list.map((p) => p.conversao)).toFixed(0)}%` : "—"}
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">{list.find((p) => p.conversao === Math.max(...list.map((x) => x.conversao)))?.nome || "—"}</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {list.find((p) => p.conversao === Math.max(...list.map((x) => x.conversao)))?.nome || "—"}
+                </div>
               </Card>
             </div>
           )}
 
+          {/* Barra de busca */}
+          <div className="relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nome, e-mail, cidade..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+
           {loading ? (
             <div className="py-10 text-center text-muted-foreground text-sm">Carregando parceiros...</div>
-          ) : list.length === 0 ? (
+          ) : listaFiltrada.length === 0 ? (
             <Card className="p-10 text-center border-dashed">
-              <p className="text-muted-foreground">Nenhum parceiro ativo cadastrado no sistema.</p>
-              <button onClick={() => setActiveTab("convites")} className="mt-4 bg-navy text-white px-6 py-2.5 rounded-full font-semibold text-sm">
-                Gerar primeiro convite
-              </button>
+              {busca ? (
+                <p className="text-muted-foreground">Nenhum parceiro encontrado para "<strong>{busca}</strong>".</p>
+              ) : (
+                <>
+                  <p className="text-muted-foreground">Nenhum parceiro ativo cadastrado no sistema.</p>
+                  <button onClick={() => setActiveTab("convites")} className="mt-4 bg-navy text-white px-6 py-2.5 rounded-full font-semibold text-sm">
+                    Gerar primeiro convite
+                  </button>
+                </>
+              )}
             </Card>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {list.map((c, idx) => (
-                <Card key={c.id} className="p-5 border-0 shadow-md flex flex-col justify-between h-full bg-white">
+              {listaFiltrada.map((c, idx) => (
+                <Card
+                  key={c.id}
+                  onClick={() => abrirParceiro(c)}
+                  className="p-5 border-0 shadow-md flex flex-col justify-between h-full bg-white hover:shadow-lg hover:border-navy/20 border cursor-pointer transition-all group"
+                >
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-sm ${idx === 0 ? "bg-sun text-navy" : idx === 1 ? "bg-slate-200 text-navy" : idx === 2 ? "bg-amber-700/20 text-amber-800" : "bg-slate-100 text-navy"}`}>
-                          #{idx + 1}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-sm ${idx === 0 ? "bg-sun text-navy" : idx === 1 ? "bg-slate-200 text-navy" : idx === 2 ? "bg-amber-700/20 text-amber-800" : "bg-slate-100 text-navy"}`}>
+                          {c.avatar_url ? (
+                            <img src={c.avatar_url} alt="" className="w-full h-full object-cover rounded-full" />
+                          ) : (
+                            `#${idx + 1}`
+                          )}
                         </div>
                         <div>
                           <h3 className="font-bold text-navy text-sm">{c.nome || c.email}</h3>
                           <p className="text-[10px] text-muted-foreground truncate max-w-[150px]">{c.email} · {c.cidade || "—"}</p>
                         </div>
                       </div>
-                      <Badge variant={c.ativo ? "default" : "secondary"} className="text-[10px]">{c.ativo ? "Ativo" : "Inativo"}</Badge>
+                      <div className="flex items-center gap-1">
+                        <Badge variant={c.ativo ? "default" : "secondary"} className="text-[10px]">{c.ativo ? "Ativo" : "Inativo"}</Badge>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-navy transition-colors" />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 text-center text-xs">
@@ -246,28 +311,32 @@ function AdminCorretores() {
                       </div>
                     </div>
 
-                    {/* Faturamento e Comissões */}
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="bg-slate-50 rounded-lg p-2">
                         <div className="text-[10px] text-muted-foreground uppercase">Faturamento</div>
                         <div className="font-bold text-navy mt-0.5">{BRL(c.receitaBruta)}</div>
                       </div>
                       <div className={`rounded-lg p-2 ${c.comissaoMes > 0 ? "bg-amber-50" : "bg-slate-50"}`}>
-                        <div className="text-[10px] text-muted-foreground uppercase">Comissão</div>
+                        <div className="text-[10px] text-muted-foreground uppercase">Comissão Mês</div>
                         <div className={`font-bold mt-0.5 ${c.comissaoMes > 0 ? "text-amber-700" : "text-navy"}`}>
                           {BRL(c.comissaoMes)}
                         </div>
                       </div>
                     </div>
+
+                    {/* Indicador de dados bancários */}
+                    <div className="flex items-center gap-1.5 text-[10px]">
+                      {(c.pix_chave || c.banco_conta) ? (
+                        <><CheckCircle2 className="w-3 h-3 text-emerald-600" /><span className="text-emerald-700 font-semibold">Dados bancários cadastrados</span></>
+                      ) : (
+                        <><AlertTriangle className="w-3 h-3 text-amber-500" /><span className="text-amber-700 font-semibold">Dados bancários pendentes</span></>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex gap-2 items-end mt-4 border-t pt-4">
-                    <div className="flex-1">
-                      <label className="text-[10px] text-muted-foreground font-semibold">Comissão %</label>
-                      <Input type="number" step="0.1" defaultValue={c.comissao_percent} onBlur={(e) => setComissao(c.id, e.target.value)} className="h-8 text-xs mt-0.5" />
-                    </div>
-                    <Button variant="outline" size="sm" onClick={() => toggle(c.id, c.ativo)} className="h-8 text-xs">{c.ativo ? "Desativar" : "Ativar"}</Button>
-                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-3 pt-3 border-t text-center">
+                    Clique para ver detalhes completos →
+                  </p>
                 </Card>
               ))}
             </div>
@@ -275,20 +344,14 @@ function AdminCorretores() {
         </div>
       )}
 
-      {/* ABA 2: CONVITES DE ACESSO */}
+      {/* ===== ABA 2: CONVITES ===== */}
       {activeTab === "convites" && (
         <div className="space-y-6">
           <Card className="p-5 border-0 shadow-md bg-white">
             <h3 className="font-bold text-navy text-base mb-2">Convidar Novo Parceiro Comercial</h3>
             <p className="text-xs text-muted-foreground mb-4">Insira o e-mail do integrador. O sistema gerará um link exclusivo de aceitação e assinatura do termo de parceria.</p>
             <form onSubmit={criarConvite} className="flex gap-2 max-w-lg">
-              <Input
-                type="email"
-                required
-                placeholder="E-mail do parceiro"
-                value={novoEmail}
-                onChange={(e) => setNovoEmail(e.target.value)}
-              />
+              <Input type="email" required placeholder="E-mail do parceiro" value={novoEmail} onChange={(e) => setNovoEmail(e.target.value)} />
               <Button type="submit" disabled={enviandoConvite} className="bg-sun-deep hover:bg-sun text-navy font-bold flex gap-1.5 items-center">
                 <Send className="w-4 h-4" /> {enviandoConvite ? "Gerando..." : "Gerar Convite"}
               </Button>
@@ -337,7 +400,7 @@ function AdminCorretores() {
         </div>
       )}
 
-      {/* ABA 3: TERMOS DE PARCERIA ASSINADOS */}
+      {/* ===== ABA 3: TERMOS ASSINADOS ===== */}
       {activeTab === "contratos" && (
         <div className="space-y-6">
           <Card className="border-0 shadow-md overflow-hidden bg-white">
@@ -376,6 +439,176 @@ function AdminCorretores() {
           </Card>
         </div>
       )}
+
+      {/* ===== DRAWER: DETALHES DO PARCEIRO ===== */}
+      <Dialog open={!!parceiroSel} onOpenChange={(o) => { if (!o) setParceiroSel(null); }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {parceiroSel && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-navy/10 flex items-center justify-center">
+                    <User className="w-6 h-6 text-navy" />
+                  </div>
+                  <div>
+                    <div className="text-navy font-bold">{parceiroSel.nome || parceiroSel.email}</div>
+                    <div className="text-xs text-muted-foreground font-normal">Consultor Parceiro</div>
+                  </div>
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-5 mt-2">
+                {/* Status + Comissão */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <Badge variant={parceiroSel.ativo ? "default" : "secondary"}>
+                    {parceiroSel.ativo ? "✅ Ativo" : "⛔ Inativo"}
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">
+                    Comissão: <strong className="text-navy">{parceiroSel.comissao_percent || 0}%</strong>
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => toggle(parceiroSel.id, parceiroSel.ativo)}
+                    className={parceiroSel.ativo ? "text-rose-600 hover:bg-rose-50" : "text-emerald-600 hover:bg-emerald-50"}
+                  >
+                    {parceiroSel.ativo ? <><XCircle className="w-3.5 h-3.5 mr-1" />Desativar</> : <><CheckCircle2 className="w-3.5 h-3.5 mr-1" />Ativar</>}
+                  </Button>
+                </div>
+
+                {/* Dados pessoais */}
+                <Card className="p-4 border bg-slate-50/50">
+                  <h3 className="font-bold text-navy text-sm mb-3 flex items-center gap-2">
+                    <User className="w-4 h-4" /> Informações Pessoais
+                  </h3>
+                  <div className="grid grid-cols-2 gap-y-2 text-sm">
+                    <div className="flex items-center gap-2 text-muted-foreground"><Mail className="w-3.5 h-3.5" />{parceiroSel.email || "—"}</div>
+                    <div className="flex items-center gap-2 text-muted-foreground"><Phone className="w-3.5 h-3.5" />{parceiroSel.telefone || "—"}</div>
+                    <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="w-3.5 h-3.5" />{parceiroSel.cidade || "—"}/{parceiroSel.estado || "—"}</div>
+                    <div className="flex items-center gap-2 text-muted-foreground"><ShieldCheck className="w-3.5 h-3.5" />CPF: {parceiroSel.cpf_cnpj || "Não informado"}</div>
+                  </div>
+                  {parceiroSel.bio && (
+                    <p className="mt-3 text-xs text-muted-foreground italic border-t pt-3">{parceiroSel.bio}</p>
+                  )}
+                </Card>
+
+                {/* KPIs do parceiro */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {[
+                    { label: "Clientes", value: parceiroSel.total, color: "text-navy" },
+                    { label: "Fechados", value: parceiroSel.fechados, color: "text-emerald-700" },
+                    { label: "Conversão", value: `${(parceiroSel.conversao || 0).toFixed(0)}%`, color: "text-blue-700" },
+                    { label: "Comissão Total", value: BRL(parceiroSel.comissaoTotal || 0), color: "text-amber-700" },
+                  ].map((k) => (
+                    <div key={k.label} className="bg-white border rounded-xl p-3 text-center">
+                      <div className="text-[10px] text-muted-foreground uppercase">{k.label}</div>
+                      <div className={`font-bold text-base mt-0.5 ${k.color}`}>{k.value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Dados bancários */}
+                <Card className="p-4 border">
+                  <h3 className="font-bold text-navy text-sm mb-3 flex items-center gap-2">
+                    <Banknote className="w-4 h-4 text-emerald-600" /> Dados para Pagamento de Comissões
+                  </h3>
+                  {parceiroSel.pix_chave ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <QrCode className="w-4 h-4 text-emerald-600" />
+                        <span className="font-semibold text-navy">Pix ({parceiroSel.pix_tipo || "—"}): </span>
+                        <span className="font-mono text-sm">{parceiroSel.pix_chave}</span>
+                      </div>
+                      {parceiroSel.pix_tipo === "cpf" && parceiroSel.cpf_cnpj && (
+                        <div className="text-[11px] text-emerald-700 flex items-center gap-1">
+                          <ShieldCheck className="w-3 h-3" /> Chave no CPF cadastrado — Pagamento liberado
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-amber-700 text-sm">
+                      <AlertTriangle className="w-4 h-4" />
+                      Nenhuma chave Pix cadastrada. Solicite ao parceiro que complete seu perfil.
+                    </div>
+                  )}
+                  {parceiroSel.banco_nome && (
+                    <div className="mt-3 pt-3 border-t text-sm space-y-1">
+                      <div className="font-semibold text-navy">{parceiroSel.banco_nome}</div>
+                      <div className="text-muted-foreground text-xs">
+                        Ag: {parceiroSel.banco_agencia || "—"} · Conta: {parceiroSel.banco_conta || "—"}
+                      </div>
+                    </div>
+                  )}
+                </Card>
+
+                {/* Contratos assinados */}
+                <Card className="p-4 border">
+                  <h3 className="font-bold text-navy text-sm mb-3 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-navy" /> Termos de Parceria Assinados
+                  </h3>
+                  {loadingDrawer ? (
+                    <p className="text-xs text-muted-foreground">Carregando contratos…</p>
+                  ) : contratosParceiro.length === 0 ? (
+                    <div className="flex items-center gap-2 text-amber-700 text-sm">
+                      <AlertTriangle className="w-4 h-4" />
+                      Nenhum termo assinado pelo parceiro ainda.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {contratosParceiro.map((ct) => (
+                        <div key={ct.id} className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <div>
+                              <div className="text-xs font-bold text-navy">{ct.nome_completo} — Versão {ct.versao}</div>
+                              <div className="text-[10px] text-muted-foreground">CPF: {ct.cpf}</div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center gap-1 text-[10px] text-emerald-700">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(ct.assinado_em).toLocaleDateString("pt-BR")}
+                            </div>
+                            {ct.ip_assinatura && (
+                              <div className="text-[9px] text-muted-foreground font-mono">{ct.ip_assinatura}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+
+                {/* Ações */}
+                <div className="flex gap-2 pt-2 border-t">
+                  <div className="flex-1">
+                    <label className="text-xs text-muted-foreground font-semibold">Ajustar % de Comissão</label>
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        type="number"
+                        step="0.1"
+                        defaultValue={parceiroSel.comissao_percent}
+                        className="h-9 w-28 text-sm"
+                        id="input-comissao-parceiro"
+                      />
+                      <Button
+                        size="sm"
+                        className="bg-navy text-white"
+                        onClick={() => {
+                          const el = document.getElementById("input-comissao-parceiro") as HTMLInputElement;
+                          if (el) { setComissao(parceiroSel.id, el.value); toast.success("Comissão salva!"); }
+                        }}
+                      >
+                        Salvar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
