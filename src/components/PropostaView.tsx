@@ -52,8 +52,21 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     }
   };
 
-  const [pagModo, setPagModo] = useState<"vista" | "financiado">("vista");
-  const [selectedFin, setSelectedFin] = useState<keyof typeof FINANCEIRAS>("solfacil");
+  // Extração das tags de faturamento da proposta
+  const condText = p.condicoes_pagamento || "";
+  const focoVista = condText.includes("[FOCO:VISTA]");
+  const focoFinanciado = condText.includes("[FOCO:FINANCIAMENTO:");
+  
+  // Encontra qual banco foi pré-selecionado se houver (ex: [FOCO:FINANCIAMENTO:bv])
+  const matchFin = condText.match(/\[FOCO:FINANCIAMENTO:([a-z]+)\]/);
+  const finForcada = matchFin && FINANCEIRAS[matchFin[1] as keyof typeof FINANCEIRAS] ? matchFin[1] : "solfacil";
+
+  const [pagModo, setPagModo] = useState<"vista" | "financiado">(
+    focoFinanciado ? "financiado" : "vista"
+  );
+  const [selectedFin, setSelectedFin] = useState<keyof typeof FINANCEIRAS>(
+    finForcada as keyof typeof FINANCEIRAS
+  );
   const [selectedPrazo, setSelectedPrazo] = useState<number>(60);
 
   const simFinanceiro = useMemo(() => {
@@ -365,26 +378,32 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           <div className="md:col-span-2 bg-slate-50 border border-slate-200/50 rounded-3xl p-6 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center flex-wrap gap-2 border-b border-slate-200 pb-3">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-navy flex items-center gap-1.5">
-                  <Scale className="w-4 h-4 text-sun-deep" /> Escolha o Modo de Faturamento
+                <span className="text-xs font-extrabold uppercase tracking-wider text-navy flex items-center gap-1.5 font-sans">
+                  <Scale className="w-4 h-4 text-sun-deep" /> Condição Comercial
                 </span>
                 
-                <div className="flex bg-slate-200/60 p-0.5 rounded-xl border">
-                  <button
-                    type="button"
-                    onClick={() => setPagModo("vista")}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "vista" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                  >
-                    💰 À Vista (5% Desc.)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPagModo("financiado")}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "financiado" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                  >
-                    🏦 Financiamento Solar
-                  </button>
-                </div>
+                {!focoVista && !focoFinanciado ? (
+                  <div className="flex bg-slate-200/60 p-0.5 rounded-xl border">
+                    <button
+                      type="button"
+                      onClick={() => setPagModo("vista")}
+                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "vista" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    >
+                      💰 À Vista (5% Desc.)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPagModo("financiado")}
+                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "financiado" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    >
+                      🏦 Financiamento Solar
+                    </button>
+                  </div>
+                ) : (
+                  <Badge className="bg-sun text-navy font-extrabold uppercase text-[10px] tracking-wider">
+                    {focoVista ? "🔒 Exclusivo À Vista" : `🔒 Financiado via ${FINANCEIRAS[finForcada as keyof typeof FINANCEIRAS]?.nome}`}
+                  </Badge>
+                )}
               </div>
 
               {pagModo === "vista" ? (
@@ -411,7 +430,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-xs text-navy font-bold">Instituição Financeira Parceira</Label>
-                      <Select value={selectedFin} onValueChange={(v: any) => setSelectedFin(v)}>
+                      <Select disabled={focoFinanciado} value={selectedFin} onValueChange={(v: any) => setSelectedFin(v)}>
                         <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="solfacil">🏦 Solfácil (CET 1,29% a.m.)</SelectItem>

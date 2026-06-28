@@ -51,6 +51,21 @@ function NovaProposta() {
   const [selectedFinanceirasIds, setSelectedFinanceirasIds] = useState<string[]>([]);
   const [usuarioAlterouKit, setUsuarioAlterouKit] = useState(false);
 
+  // Estados do Roteiro de Vendas & Foco da Proposta
+  const [preferenciaFoco, setPreferenciaFoco] = useState<"ambos" | "vista" | "financiado">("ambos");
+  const [bancoPreSelecionado, setBancoPreSelecionado] = useState<string>("solfacil");
+  const [usarScriptVendas, setUsarScriptVendas] = useState(false);
+  const [scriptStep, setScriptStep] = useState(1);
+  
+  // Dados do lead durante conversa (se for cliente novo)
+  const [scriptName, setScriptName] = useState("");
+  const [scriptPhone, setScriptPhone] = useState("");
+  const [scriptInputMode, setScriptInputMode] = useState<"fatura" | "kwh">("fatura");
+  const [scriptBill, setScriptBill] = useState("");
+  const [scriptKwh, setScriptKwh] = useState("");
+  const [scriptCidade, setScriptCidade] = useState("");
+  const [scriptEstado, setScriptEstado] = useState("");
+
   useEffect(() => {
     (async () => {
       // 1. Parâmetros Comerciais
@@ -274,6 +289,16 @@ function NovaProposta() {
       }
 
       let finalCondicoes = condicoes;
+      
+      // Injeta tags ocultas para o frontend da PropostaView ler
+      const tagFoco = preferenciaFoco === "vista" 
+        ? "[FOCO:VISTA]" 
+        : preferenciaFoco === "financiado" 
+          ? `[FOCO:FINANCIAMENTO:${bancoPreSelecionado}]` 
+          : "[FOCO:AMBOS]";
+      
+      finalCondicoes = `${tagFoco}\n` + finalCondicoes;
+
       const chosenFinanceiras = financeiras.filter((f) => selectedFinanceirasIds.includes(f.id));
       if (chosenFinanceiras.length > 0) {
         const financingTexts = chosenFinanceiras.map((fin) => {
@@ -377,24 +402,412 @@ function NovaProposta() {
     } finally { setSaving(false); }
   }
 
+  const salvarViaScript = async () => {
+    if (!user || !params) {
+      toast.error("Parâmetros comerciais não carregados.");
+      return;
+    }
+    if (!scriptName || !scriptPhone || !scriptCidade || !scriptEstado) {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const tarifaKwh = params.tarifa_kwh_default || 0.95;
+      let billVal = 0;
+      let consumoEstimado = 0;
+      if (scriptInputMode === "fatura") {
+        billVal = Number(scriptBill) || 0;
+        consumoEstimado = billVal > 0 ? Math.round(billVal / tarifaKwh) : 500;
+      } else {
+        consumoEstimado = Number(scriptKwh) || 500;
+        billVal = Math.round(consumoEstimado * tarifaKwh);
+      }
+      
+      // 1. Cadastra o cliente
+      const { data: newClient, error: errClient } = await supabase.from("clientes").insert({
+        nome: scriptName.trim(),
+        telefone: scriptPhone.trim(),
+        valor_fatura: billVal > 0 ? billVal : null,
+        consumo_kwh: consumoEstimado,
+        imovel_tipo: tipo,
+        status: "novo",
+        origem: "manual",
+        cidade: scriptCidade.trim(),
+        estado: scriptEstado.trim().toUpperCase(),
+        corretor_id: user.id
+      }).select().single();
+
+      if (errClient) {
+        toast.error("Erro ao salvar cliente: " + errClient.message);
+        setSaving(false);
+        return;
+      }
+
+      // 2. Roda cálculo de dimensionamento
+      const baseResult = calcularProposta({ 
+        consumo_kwh: consumoEstimado, 
+        tarifa_kwh: tarifaKwh, 
+        estado: scriptEstado.trim().toUpperCase(), 
+        tipo 
+      }, params);
+
+      // Encontra melhor kit
+      let loadedKits = kits.length > 0 ? kits : KITS_FALLBACK;
+      const adequados = loadedKits.filter((k) => k.potencia_kwp >= baseResult.kwp_sistema);
+      const kitRecomendado = adequados.length > 0 
+        ? adequados.sort((a, b) => a.preco - b.preco)[0]
+        : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
+
+      const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResult.preco_total;
+      const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResult.kwp_sistema;
+      
+      // Juros e condições
+      const tagFoco = preferenciaFoco === "vista" 
+        ? "[FOCO:VISTA]" 
+        : preferenciaFoco === "financiado" 
+          ? `[FOCO:FINANCIAMENTO:${bancoPreSelecionado}]` 
+          : "[FOCO:AMBOS]";
+      
+      const finalCondicoes = `${tagFoco}\nÀ vista (5% desc.): ${BRL(precoTotal * 0.95)}\nFinanciamento Solar no banco pré-selecionado.`;
+      const expDate = new Date();
+      expDate.setDate(expDate.getDate() + (params.validade_proposta_dias || 15));
+
+      // 3. Cadastra Proposta
+      const { data: prop, error: errProp } = await supabase.from("propostas").insert({
+        titulo: `Proposta Solar ${tipo === "residencial" ? "Residencial" : tipo === "comercial" ? "Comercial" : tipo === "industrial" ? "Industrial" : "Rural"} - ${newClient.nome}`,
+        parceiro_id: user.id,
+        kwp_sistema: kwp,
+        preco_total: precoTotal,
+        custos_totais: baseResult.custos_totais,
+        comissao_parceiro: baseResult.custo_comissao,
+        margem_estimada: baseResult.margem_real,
+        codigo_publico: crypto.randomUUID().slice(0, 8),
+        expires_at: expDate.toISOString(),
+        status: "enviada",
+        kit_id: kitRecomendado?.id || null,
+        tipo_conexao: "bifasico",
+        tipo_telhado: "ceramico",
+        tipo_instalacao: tipo,
+        consumo_kwh: consumoEstimado,
+        tarifa_kwh: tarifaKwh,
+        estado: scriptEstado.trim().toUpperCase(),
+        cidade: scriptCidade.trim(),
+        condicoes_pagamento: finalCondicoes,
+        observacoes: "Gerada pelo Roteiro Guiado de Fechamento de Elite"
+      }).select().single();
+
+      if (errProp) {
+        console.error("Erro ao criar proposta do script:", errProp);
+        navigate({ to: "/app/cliente/$id", params: { id: newClient.id } });
+      } else {
+        await supabase.from("proposta_clientes").insert({
+          proposta_id: prop.id,
+          cliente_id: newClient.id
+        });
+        
+        toast.success("Cliente e Proposta gerados com sucesso!");
+        navigate({ to: "/app/propostas/$id", params: { id: prop.id } });
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao salvar proposta do roteiro");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!params) return <div className="text-center py-12 text-muted-foreground">Carregando…</div>;
 
   return (
-    <div className="max-w-5xl space-y-6">
-      <div className="flex items-center gap-3">
-        <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
-        <h1 className="text-3xl font-bold text-navy">Nova proposta</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
+        <div className="flex items-center gap-3">
+          <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
+          <h1 className="text-2xl font-extrabold text-navy">Nova Proposta</h1>
+        </div>
+
+        {/* Alternador do Roteiro de Elite */}
+        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50 w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={() => setUsarScriptVendas(false)}
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all ${!usarScriptVendas ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
+          >
+            📋 Formulário Clássico
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setUsarScriptVendas(true);
+              setScriptStep(1);
+            }}
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${usarScriptVendas ? "bg-gradient-to-r from-sun to-amber-500 text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+          >
+            ⚡ Roteiro Guiado de Elite
+          </button>
+        </div>
       </div>
 
-      <div className="flex items-center gap-2 text-sm flex-wrap">
-        {[1, 2, 3, 4, 5].map((n) => (
-          <div key={n} className={`flex items-center gap-2 ${n <= step ? "text-navy font-semibold" : "text-muted-foreground"}`}>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${n <= step ? "bg-sun text-navy" : "bg-slate-200"}`}>{n}</div>
-            {n === 1 && "Cliente"}{n === 2 && "Dados"}{n === 3 && "Escolha do Kit"}{n === 4 && "Financiamento"}{n === 5 && "Revisão"}
-            {n < 5 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
+      {usarScriptVendas ? (
+        <div className="space-y-6 animate-fade-in">
+          {/* Timeline do Roteiro */}
+          <div className="flex items-center gap-2 text-xs flex-wrap bg-slate-50 p-3 rounded-2xl border">
+            {[
+              { n: 1, label: "Olá & Contato" },
+              { n: 2, label: "Imóvel & Cidade" },
+              { n: 3, label: "Consumo de Luz" },
+              { n: 4, label: "Faturamento Focado" },
+              { n: 5, label: "Finalização" }
+            ].map((stepObj) => (
+              <div key={stepObj.n} className={`flex items-center gap-2 ${stepObj.n <= scriptStep ? "text-navy font-bold" : "text-muted-foreground"}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${stepObj.n <= scriptStep ? "bg-sun text-navy font-extrabold" : "bg-slate-200"}`}>{stepObj.n}</div>
+                <span>{stepObj.label}</span>
+                {stepObj.n < 5 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+
+          {/* Balão de Script de Conversa (O que o Corretor de Elite fala) */}
+          <div className="bg-gradient-to-r from-navy via-navy-deep to-slate-900 text-white rounded-3xl p-5 md:p-6 shadow-md border-l-4 border-l-sun-deep relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-sun/10 blur-xl" />
+            <div className="flex gap-3 items-start relative z-10 font-sans">
+              <div className="w-9 h-9 rounded-full bg-sun flex items-center justify-center text-navy text-lg font-bold flex-shrink-0">
+                🎙️
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-sun">Script de Atendimento Ativo</span>
+                <p className="text-sm italic font-medium leading-relaxed text-slate-100">
+                  {scriptStep === 1 && `"Olá! Tudo bem? Aqui é o consultor de fechamentos da ESOL Energy. Estou montando o estudo de viabilidade para reduzir em até 95% sua conta de luz. Para eu iniciar a personalização aqui, qual é o seu nome completo e o seu WhatsApp com DDD?"`}
+                  {scriptStep === 2 && `"Excelente, ${scriptName ? scriptName.split(" ")[0] : "cliente"}! Onde será instalado esse gerador? Qual a cidade e o estado? E se trata de um imóvel residencial, comercial, industrial ou é uma área rural?"`}
+                  {scriptStep === 3 && `"Compreendi. Para dimensionarmos o tamanho do sistema de placas solares adequado para suprir o seu consumo, qual é o valor médio da sua conta de luz hoje (R$) ou a média de kWh consumido por mês?"`}
+                  {scriptStep === 4 && `"Entendido. Nós temos dois modelos de contratação hoje: a compra à vista com 5% de desconto de tabela, ou a nossa modalidade mais procurada que é a troca de boleto — você financia sem nenhuma entrada e a parcela do banco fica menor ou igual à sua conta de luz atual. Qual das duas opções atende melhor seu planejamento hoje?"`}
+                  {scriptStep === 5 && `"Perfeito, ${scriptName ? scriptName.split(" ")[0] : "cliente"}! Registrei tudo aqui. Estou gerando agora a sua proposta oficial focada exatamente no que conversamos. Em menos de 5 segundos ela estará pronta no seu WhatsApp!"`}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card com os inputs do passo do Script */}
+          <Card className="p-6 border-0 shadow-md space-y-5 bg-white font-sans">
+            {scriptStep === 1 && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center flex-wrap gap-2">
+                  <h3 className="font-extrabold text-navy text-sm">Informações de Contato</h3>
+                  <Select onValueChange={(cid) => {
+                    const c = clientes.find(x => x.id === cid);
+                    if (c) {
+                      setScriptName(c.nome || "");
+                      setScriptPhone(c.telefone || "");
+                      setScriptCidade(c.cidade || "");
+                      setScriptEstado(c.estado || "");
+                      if (c.consumo_kwh) setScriptKwh(String(c.consumo_kwh));
+                      setSelecionados([c.id]);
+                      toast.success(`Dados de ${c.nome} importados!`);
+                    }
+                  }}>
+                    <SelectTrigger className="h-8 text-[11px] w-64 bg-slate-50 border"><SelectValue placeholder="Ou busque um cliente já cadastrado" /></SelectTrigger>
+                    <SelectContent>
+                      {clientes.map(c => <SelectItem key={c.id} value={c.id} className="text-xs">{c.nome}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-slate-700">Nome Completo *</Label>
+                    <Input placeholder="Ex: João da Silva" value={scriptName} onChange={(e) => setScriptName(e.target.value)} className="h-9 text-xs mt-1" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-slate-700">Telefone / WhatsApp *</Label>
+                    <Input placeholder="Ex: (11) 99999-9999" value={scriptPhone} onChange={(e) => setScriptPhone(e.target.value)} className="h-9 text-xs mt-1" />
+                  </div>
+                </div>
+                <div className="flex justify-end pt-3">
+                  <Button disabled={!scriptName || !scriptPhone} onClick={() => setScriptStep(2)} className="bg-navy text-white text-xs h-9 font-bold px-6">Continuar Script ➔</Button>
+                </div>
+              </div>
+            )}
+
+            {scriptStep === 2 && (
+              <div className="space-y-4">
+                <h3 className="font-extrabold text-navy text-sm">Classificação do Imóvel & Localidade</h3>
+                
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-700">Tipo de Imóvel</Label>
+                  <div className="flex bg-slate-100 p-1 rounded-xl border w-full sm:w-fit">
+                    {(["residencial", "comercial", "industrial", "rural"] as const).map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setTipo(t)}
+                        className={`px-4 py-2 rounded-lg text-[10px] font-extrabold uppercase transition-all ${tipo === t ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                      >
+                        {t === "residencial" ? "🏡 Residencial" : t === "comercial" ? "🏢 Comercial" : t === "industrial" ? "🏭 Industrial" : "🌾 Rural"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-slate-700">Cidade de Instalação *</Label>
+                    <Input placeholder="Ex: Campinas" value={scriptCidade} onChange={(e) => setScriptCidade(e.target.value)} className="h-9 text-xs mt-1" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-slate-700">Estado (UF) *</Label>
+                    <Select value={scriptEstado} onValueChange={setScriptEstado}>
+                      <SelectTrigger className="h-9 mt-1"><SelectValue placeholder="UF" /></SelectTrigger>
+                      <SelectContent>
+                        {UFS.map(uf => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex justify-between pt-3 border-t">
+                  <Button variant="ghost" onClick={() => setScriptStep(1)} className="text-xs">← Voltar</Button>
+                  <Button disabled={!scriptCidade || !scriptEstado} onClick={() => setScriptStep(3)} className="bg-navy text-white text-xs h-9 font-bold px-6">Continuar Script ➔</Button>
+                </div>
+              </div>
+            )}
+
+            {scriptStep === 3 && (
+              <div className="space-y-4">
+                <h3 className="font-extrabold text-navy text-sm">Dados de Consumo</h3>
+                
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-700">Preencher consumo por</Label>
+                  <div className="flex bg-slate-100 p-0.5 rounded-lg border w-full sm:w-64">
+                    <button
+                      type="button"
+                      onClick={() => setScriptInputMode("fatura")}
+                      className={`flex-1 py-1 rounded-md text-[10px] font-bold transition-all ${scriptInputMode === "fatura" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    >
+                      💰 Fatura (R$)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setScriptInputMode("kwh")}
+                      className={`flex-1 py-1 rounded-md text-[10px] font-bold transition-all ${scriptInputMode === "kwh" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    >
+                      ⚡ Consumo (kWh)
+                    </button>
+                  </div>
+                </div>
+
+                <div className="max-w-md pt-2">
+                  {scriptInputMode === "fatura" ? (
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-bold text-slate-700">Valor Médio da Fatura (R$) *</Label>
+                      <Input type="number" placeholder="Ex: 450" value={scriptBill} onChange={(e) => setScriptBill(e.target.value)} className="h-9 text-xs font-bold text-navy" />
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-bold text-slate-700">Consumo Mensal Médio (kWh) *</Label>
+                      <Input type="number" placeholder="Ex: 500" value={scriptKwh} onChange={(e) => setScriptKwh(e.target.value)} className="h-9 text-xs font-bold text-navy" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-between pt-3 border-t">
+                  <Button variant="ghost" onClick={() => setScriptStep(2)} className="text-xs">← Voltar</Button>
+                  <Button disabled={scriptInputMode === "fatura" ? !scriptBill : !scriptKwh} onClick={() => setScriptStep(4)} className="bg-navy text-white text-xs h-9 font-bold px-6">Continuar Script ➔</Button>
+                </div>
+              </div>
+            )}
+
+            {scriptStep === 4 && (
+              <div className="space-y-4">
+                <h3 className="font-extrabold text-navy text-sm font-bold">Qualificação Financeira & Foco da Proposta</h3>
+                
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-700">Preferencia de Foco (A Proposta exibirá APENAS isso ao cliente)</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1.5">
+                    {[
+                      { key: "ambos", label: "⚖️ Ambos (Comparativo completo)" },
+                      { key: "vista", label: "💰 Apenas À Vista (Esconder juros)" },
+                      { key: "financiado", label: "🏦 Apenas Financiamento (Foco na Parcela)" }
+                    ].map((f) => (
+                      <button
+                        key={f.key}
+                        type="button"
+                        onClick={() => setPreferenciaFoco(f.key as any)}
+                        className={`p-3 rounded-xl border-2 text-xs font-bold text-left transition-all ${preferenciaFoco === f.key ? "border-navy bg-slate-50 text-navy" : "border-slate-200 hover:border-slate-300 text-slate-600"}`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {preferenciaFoco === "financiado" && (
+                  <div className="grid sm:grid-cols-2 gap-4 p-4 bg-slate-50 border rounded-2xl animate-fade-in mt-2">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-bold text-slate-700">Financeira Recomendada</Label>
+                      <Select value={bancoPreSelecionado} onValueChange={setBancoPreSelecionado}>
+                        <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="solfacil">🏦 Solfácil (1,29% a.m.)</SelectItem>
+                          <SelectItem value="bv">🏢 Banco BV Solar (1,39% a.m.)</SelectItem>
+                          <SelectItem value="santander">🏛️ Santander Financiamentos (1,45% a.m.)</SelectItem>
+                          <SelectItem value="sicredi">🤝 Sicredi Cooperativa (1,24% a.m.)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-bold text-slate-700">Prazo Estimado de Parcelamento</Label>
+                      <Select value={String(selectedPrazo)} onValueChange={(v) => setSelectedPrazo(Number(v))}>
+                        <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="24">24 parcelas</SelectItem>
+                          <SelectItem value="36">36 parcelas</SelectItem>
+                          <SelectItem value="48">48 parcelas</SelectItem>
+                          <SelectItem value="60">60 parcelas</SelectItem>
+                          <SelectItem value="72">72 parcelas</SelectItem>
+                          <SelectItem value="84">84 parcelas</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-between pt-3 border-t">
+                  <Button variant="ghost" onClick={() => setScriptStep(3)} className="text-xs">← Voltar</Button>
+                  <Button onClick={() => setScriptStep(5)} className="bg-navy text-white text-xs h-9 font-bold px-6">Continuar Script ➔</Button>
+                </div>
+              </div>
+            )}
+
+            {scriptStep === 5 && (
+              <div className="space-y-4 text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-amber-50 text-sun-deep flex items-center justify-center mx-auto text-3xl animate-bounce">
+                  ✨
+                </div>
+                <h3 className="font-extrabold text-navy text-base">Roteiro Concluído! Tudo pronto para gerar</h3>
+                <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+                  O sistema irá processar o dimensionamento técnico automático do kit fotovoltaico ideal para o consumo informado e travar a proposta conforme a preferência de faturamento selecionada.
+                </p>
+
+                <div className="flex justify-between pt-6 border-t mt-4">
+                  <Button variant="ghost" onClick={() => setScriptStep(4)} className="text-xs">← Voltar</Button>
+                  <Button disabled={saving} onClick={salvarViaScript} className="bg-gradient-to-r from-sun to-amber-500 hover:from-sun-deep hover:to-amber-600 text-navy font-extrabold text-xs h-9 px-8 rounded-xl shadow-md transition-all hover:scale-105 flex items-center justify-center gap-1.5">
+                    {saving ? <span className="animate-spin mr-1">⌛</span> : "Gerar Proposta Focada 🚀"}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 text-sm flex-wrap">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <div key={n} className={`flex items-center gap-2 ${n <= step ? "text-navy font-semibold" : "text-muted-foreground"}`}>
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${n <= step ? "bg-sun text-navy" : "bg-slate-200"}`}>{n}</div>
+                {n === 1 && "Cliente"}{n === 2 && "Dados"}{n === 3 && "Escolha do Kit"}{n === 4 && "Financiamento"}{n === 5 && "Revisão"}
+                {n < 5 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
+              </div>
+            ))}
+          </div>
 
       {step === 1 && (
         <Card className="p-6 border-0 shadow-md space-y-4">
@@ -639,6 +1052,8 @@ function NovaProposta() {
             </div>
           </div>
         </Card>
+      )}
+        </div>
       )}
     </div>
   );
