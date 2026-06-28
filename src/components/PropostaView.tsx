@@ -283,6 +283,24 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 </div>
               </div>
 
+              {/* Detalhes do Kit Selecionado */}
+              {p.kit_nome && (
+                <div className="bg-slate-50 border rounded-3xl p-5 shadow-sm space-y-3 font-sans">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-sun-deep block">Equipamento Selecionado</span>
+                  <strong className="text-navy text-sm font-extrabold block">{p.kit_nome}</strong>
+                  <div className="grid grid-cols-2 gap-4 text-xs mt-2 border-t pt-3">
+                    <div>
+                      <span className="text-slate-400 font-bold block text-[9px] uppercase">Garantia Painéis</span>
+                      <strong className="text-navy font-bold">{p.kit_garantia_modulos_anos || 25} anos</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 font-bold block text-[9px] uppercase">Garantia Inversor</span>
+                      <strong className="text-navy font-bold">{p.kit_garantia_inversor_anos || 10} anos</strong>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Tabela de Preços */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                 <h3 className="font-extrabold text-sm text-navy uppercase tracking-wider">Opções de Aquisição</h3>

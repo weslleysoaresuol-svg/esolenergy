@@ -48,6 +48,7 @@ function NovaProposta() {
   const [tipoConexao, setTipoConexao] = useState<"monofasico" | "bifasico" | "trifasico">("bifasico");
   const [tipoTelhado, setTipoTelhado] = useState("ceramico");
   const [selectedKitId, setSelectedKitId] = useState<string>("");
+  const [selectedCotacaoKitId, setSelectedCotacaoKitId] = useState<string>("");
   const [selectedFinanceirasIds, setSelectedFinanceirasIds] = useState<string[]>([]);
   const queryParams = new URLSearchParams(window.location.search);
   const modo = queryParams.get("modo") || "proposta";
@@ -479,12 +480,17 @@ function NovaProposta() {
         tipo 
       }, params);
 
-      // Encontra melhor kit
+      // Encontra melhor kit ou usa o selecionado manualmente na cotação
       let loadedKits = kits.length > 0 ? kits : KITS_FALLBACK;
-      const adequados = loadedKits.filter((k) => k.potencia_kwp >= baseResult.kwp_sistema);
-      const kitRecomendado = adequados.length > 0 
-        ? adequados.sort((a, b) => a.preco - b.preco)[0]
-        : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
+      const manualKit = perfilCliente === "cotacao" && selectedCotacaoKitId 
+        ? loadedKits.find(k => k.id === selectedCotacaoKitId) 
+        : null;
+
+      const kitRecomendado = manualKit || (
+        loadedKits.filter((k) => k.potencia_kwp >= baseResult.kwp_sistema).length > 0
+          ? loadedKits.filter((k) => k.potencia_kwp >= baseResult.kwp_sistema).sort((a, b) => a.preco - b.preco)[0]
+          : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0]
+      );
 
       const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResult.preco_total;
       const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResult.kwp_sistema;
@@ -778,11 +784,34 @@ function NovaProposta() {
             </div>
           </div>
 
+          {/* SELEÇÃO DO KIT SOLAR NA COTAÇÃO */}
+          <div className="space-y-3 pt-3 border-t">
+            <Label className="text-xs font-extrabold text-navy block">Escolha o Kit Solar para a Cotação *</Label>
+            <div className="grid sm:grid-cols-2 gap-3 max-h-[250px] overflow-y-auto pr-1">
+              {kits.map((kit) => {
+                const isSelected = selectedCotacaoKitId === kit.id;
+                return (
+                  <label key={kit.id} className={`flex items-start gap-3 p-3 rounded-xl border-2 transition cursor-pointer ${isSelected ? "border-navy bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
+                    <input type="radio" name="cotacaoKit" checked={isSelected} onChange={() => setSelectedCotacaoKitId(kit.id)} className="mt-1 accent-navy" />
+                    <div className="flex-1 text-xs">
+                      <div className="font-bold text-navy leading-snug">{kit.nome}</div>
+                      <div className="text-[10px] text-muted-foreground mt-0.5">Potência: <strong>{kit.potencia_kwp} kWp</strong> · {kit.quantidade_modulos}x painéis</div>
+                      <div className="text-xs font-extrabold text-emerald-700 mt-1">{BRL(Number(kit.preco))}</div>
+                    </div>
+                    {kit.imagem_kit_url && (
+                      <img src={kit.imagem_kit_url} className="size-10 rounded object-cover border" alt="Kit" />
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="flex justify-between pt-6 border-t mt-4">
             <div className="text-xs text-muted-foreground self-center">
-              * Todos os campos marcados com * são obrigatórios para estimar a irradiação local.
+              * Selecione o kit e todos os campos obrigatórios.
             </div>
-            <Button disabled={saving || !scriptName || !scriptPhone || !scriptCidade || !scriptEstado || !scriptKwh} onClick={salvarViaScript} className="bg-sun hover:bg-sun-deep text-navy font-extrabold text-xs h-9 px-8 rounded-xl shadow-md transition-all flex items-center gap-1">
+            <Button disabled={saving || !scriptName || !scriptPhone || !scriptCidade || !scriptEstado || !scriptKwh || !selectedCotacaoKitId} onClick={salvarViaScript} className="bg-sun hover:bg-sun-deep text-navy font-extrabold text-xs h-9 px-8 rounded-xl shadow-md transition-all flex items-center gap-1">
               {saving ? <span className="animate-spin mr-1">⌛</span> : "Gerar Cotação Expresso 🚀"}
             </Button>
           </div>
