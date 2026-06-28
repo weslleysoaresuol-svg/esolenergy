@@ -570,7 +570,13 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           {p.observacoes && (
             <div className="mt-6 bg-slate-100/60 border border-slate-200/60 rounded-2xl p-6 text-sm">
               <div className="text-xs uppercase tracking-wider text-navy/70 font-bold mb-3">Especificações & Observações Técnicas</div>
-           {/* SIMULADOR FINANCEIRO E ANÁLISE DE VIABILIDADE OU CARD SIMPLIFICADO */}
+              <div className="text-muted-foreground whitespace-pre-line leading-relaxed">{p.observacoes}</div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* SIMULADOR FINANCEIRO E ANÁLISE DE VIABILIDADE OU CARD SIMPLIFICADO */}
       {!docFinAprovado ? (
         <section className="max-w-5xl mx-auto px-6 md:px-12 py-8 md:py-12 border-t border-slate-100 font-sans">
           <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
