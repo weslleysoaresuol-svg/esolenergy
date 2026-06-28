@@ -1,19 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "@tanstack/react-router";
+import { toast } from "sonner";
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
-  FileSpreadsheet
+  FileSpreadsheet, Send, Loader2
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, Legend
 } from "recharts";
+import { calcularProposta } from "@/lib/proposta-calc";
+import { KITS_FALLBACK } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/app/")(
   { component: DashboardOrList }
@@ -48,6 +50,8 @@ function DashboardOrList() {
 }
 
 function AdminDashboard() {
+  const navigate = useNavigate();
+  const { user } = useCurrentUser();
   const [activeTab, setActiveTab] = useState<"crm" | "bi">("crm");
   const [clientes, setClientes] = useState<any[]>([]);
   const [propostas, setPropostas] = useState<any[]>([]);
@@ -55,6 +59,133 @@ function AdminDashboard() {
   const [params, setParams] = useState<any>(null);
   const [activeKanbanCol, setActiveKanbanCol] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Estados do Cadastro Expresso de Leads na Home
+  const [fastName, setFastName] = useState("");
+  const [fastPhone, setFastPhone] = useState("");
+  const [fastBill, setFastBill] = useState("");
+  const [fastSaving, setFastSaving] = useState(false);
+
+  const handleFastSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    if (!fastName || !fastPhone) {
+      toast.error("Nome e Telefone/WhatsApp são obrigatórios!");
+      return;
+    }
+    
+    setFastSaving(true);
+    try {
+      const billVal = Number(fastBill) || 0;
+      const consumoEstimado = billVal > 0 ? Math.round(billVal / 0.95) : 500;
+      
+      // 1. Cadastra o cliente expressamente
+      const { data: client, error: errClient } = await supabase.from("clientes").insert({
+        nome: fastName.trim(),
+        telefone: fastPhone.trim(),
+        valor_fatura: billVal > 0 ? billVal : null,
+        consumo_kwh: consumoEstimado,
+        status: "novo",
+        origem: "manual",
+        corretor_id: user.id
+      }).select().single();
+
+      if (errClient) {
+        toast.error("Erro ao salvar lead: " + errClient.message);
+        setFastSaving(false);
+        return;
+      }
+
+      // 2. Carrega parâmetros comerciais do banco (ou fallback)
+      let paramsComerciais = {
+        hsp_norte: 4.5, hsp_nordeste: 5.0, hsp_centro_oeste: 4.8, hsp_sudeste: 4.5, hsp_sul: 4.0,
+        preco_wp_residencial_pequeno: 2.8, preco_wp_residencial_grande: 2.5,
+        preco_wp_comercial_pequeno: 2.2, preco_wp_comercial_grande: 2.0, preco_wp_industrial: 1.8,
+        tarifa_kwh_default: 0.95, perdas_sistema: 0.15, inflacao_energetica: 0.08, vida_util_anos: 25,
+        potencia_modulo_w: 550, area_por_modulo_m2: 2.5,
+        custo_equipamentos_pct: 0.5, custo_instalacao_pct: 0.15, custo_frete_pct: 0.05, custo_impostos_pct: 0.1, custo_comissao_pct: 0.05, margem_alvo_pct: 0.15,
+        validade_proposta_dias: 15
+      };
+      
+      try {
+        const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
+        if (pr) paramsComerciais = { ...paramsComerciais, ...pr };
+      } catch (errRpc) {}
+
+      const tarifaKwh = paramsComerciais.tarifa_kwh_default;
+      
+      // Roda o cálculo do dimensionamento comercial automático
+      const calculo = calcularProposta({
+        consumo_kwh: consumoEstimado,
+        tarifa_kwh: tarifaKwh,
+        estado: "SP",
+        tipo: "residencial"
+      }, paramsComerciais);
+
+      // Carrega Kits fotovoltaicos do Supabase (ou fallback)
+      let loadedKits = KITS_FALLBACK;
+      try {
+        const { data: dbKits } = await supabase.from("kits_solares" as any).select("*");
+        if (dbKits && dbKits.length > 0) loadedKits = dbKits;
+      } catch(e) {}
+
+      // Encontra o kit adequado mais econômico para o cliente
+      const adequados = loadedKits.filter((k) => k.potencia_kwp >= calculo.kwp_sistema);
+      const kitRecomendado = adequados.length > 0 
+        ? adequados.sort((a, b) => a.preco - b.preco)[0]
+        : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
+
+      const expDate = new Date();
+      expDate.setDate(expDate.getDate() + (paramsComerciais.validade_proposta_dias || 15));
+
+      // 3. Cria a Proposta
+      const { data: prop, error: errProp } = await supabase.from("propostas").insert({
+        titulo: `Proposta Solar - ${client.nome}`,
+        parceiro_id: user.id,
+        kwp_sistema: calculo.kwp_sistema,
+        preco_total: kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total,
+        custos_totais: calculo.custos_totais,
+        comissao_parceiro: calculo.custo_comissao,
+        margem_estimada: calculo.margem_real,
+        codigo_publico: crypto.randomUUID().slice(0, 8),
+        expires_at: expDate.toISOString(),
+        status: "enviada",
+        kit_id: kitRecomendado?.id || null,
+        tipo_conexao: "bifasico",
+        tipo_telhado: "ceramico",
+        tipo_instalacao: "residencial",
+        consumo_kwh: consumoEstimado,
+        tarifa_kwh: tarifaKwh,
+        estado: "SP",
+        cidade: "",
+        condicoes_pagamento: "À vista 5% desconto · Financiamento via parceiros bancários",
+        observacoes: "Criada instantaneamente pelo painel de controle expresso"
+      }).select().single();
+
+      if (errProp) {
+        console.error("Erro ao criar proposta expressa na home:", errProp);
+        navigate({ to: "/app/cliente/$id", params: { id: client.id } });
+      } else {
+        // Vincula o cliente à proposta
+        await supabase.from("proposta_clientes").insert({
+          proposta_id: prop.id,
+          cliente_id: client.id
+        });
+        
+        toast.success("Lead e Proposta gerados instantaneamente!");
+        setFastName("");
+        setFastPhone("");
+        setFastBill("");
+        
+        // Redireciona diretamente para o envio
+        navigate({ to: "/app/propostas/$id", params: { id: prop.id } });
+      }
+    } catch (err) {
+      toast.error("Falha no processo de gravação rápida.");
+    } finally {
+      setFastSaving(false);
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -275,6 +406,57 @@ function AdminDashboard() {
       {/* ABA 1: CRM & OPERAÇÃO */}
       {activeTab === "crm" && (
         <div className="space-y-6">
+          {/* CARD DE CAPTURA & PROPOSTA INSTANTÂNEA */}
+          <Card className="p-5 border-l-4 border-l-sun-deep bg-white shadow-md">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-5 h-5 text-sun-deep animate-pulse" />
+              <div>
+                <h3 className="font-extrabold text-navy text-sm">Dimensionador Expresso & Proposta Instantânea (10 Segundos)</h3>
+                <p className="text-[11px] text-muted-foreground">Cadastre o cliente e gere a proposta para WhatsApp em uma única ação.</p>
+              </div>
+            </div>
+            <form onSubmit={handleFastSubmit} className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+              <div className="space-y-1">
+                <label className="text-[10px] text-slate-500 font-bold uppercase">Nome do Cliente *</label>
+                <Input
+                  required
+                  placeholder="Ex: João da Silva"
+                  value={fastName}
+                  onChange={(e) => setFastName(e.target.value)}
+                  className="h-9 text-xs"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-slate-500 font-bold uppercase">WhatsApp / Telefone *</label>
+                <Input
+                  required
+                  placeholder="Ex: (11) 99999-9999"
+                  value={fastPhone}
+                  onChange={(e) => setFastPhone(e.target.value)}
+                  className="h-9 text-xs"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-slate-500 font-bold uppercase">Valor da Fatura (R$)</label>
+                <Input
+                  type="number"
+                  placeholder="Ex: 450"
+                  value={fastBill}
+                  onChange={(e) => setFastBill(e.target.value)}
+                  className="h-9 text-xs font-bold text-navy"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={fastSaving}
+                className="bg-sun hover:bg-sun-deep text-navy font-extrabold h-9 text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all"
+              >
+                {fastSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-navy" /> : <Send className="w-3.5 h-3.5 text-navy" />}
+                {fastSaving ? "Salvando..." : "Salvar & Criar Proposta 🚀"}
+              </Button>
+            </form>
+          </Card>
+
           {/* KPIs Operacionais */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-5 border-0 shadow-md">
