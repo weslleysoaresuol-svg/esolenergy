@@ -52,7 +52,7 @@ function NovaProposta() {
   const [usuarioAlterouKit, setUsuarioAlterouKit] = useState(false);
 
   // Estados do Roteiro de Vendas & Foco da Proposta
-  const [preferenciaFoco, setPreferenciaFoco] = useState<"ambos" | "vista" | "financiado">("ambos");
+  const [preferenciaFoco, setPreferenciaFoco] = useState<"ambos" | "vista" | "financiado" | "cartao">("ambos");
   const [bancoPreSelecionado, setBancoPreSelecionado] = useState<string>("solfacil");
   const [usarScriptVendas, setUsarScriptVendas] = useState(false);
   const [scriptStep, setScriptStep] = useState(1);
@@ -295,7 +295,9 @@ function NovaProposta() {
         ? "[FOCO:VISTA]" 
         : preferenciaFoco === "financiado" 
           ? `[FOCO:FINANCIAMENTO:${bancoPreSelecionado}]` 
-          : "[FOCO:AMBOS]";
+          : preferenciaFoco === "cartao"
+            ? "[FOCO:CARTAO]"
+            : "[FOCO:AMBOS]";
       
       finalCondicoes = `${tagFoco}\n` + finalCondicoes;
 
@@ -468,7 +470,9 @@ function NovaProposta() {
         ? "[FOCO:VISTA]" 
         : preferenciaFoco === "financiado" 
           ? `[FOCO:FINANCIAMENTO:${bancoPreSelecionado}]` 
-          : "[FOCO:AMBOS]";
+          : preferenciaFoco === "cartao"
+            ? "[FOCO:CARTAO]"
+            : "[FOCO:AMBOS]";
       
       const finalCondicoes = `${tagFoco}\nÀ vista (5% desc.): ${BRL(precoTotal * 0.95)}\nFinanciamento Solar no banco pré-selecionado.`;
       const expDate = new Date();
@@ -721,17 +725,18 @@ function NovaProposta() {
                 
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-slate-700">Preferencia de Foco (A Proposta exibirá APENAS isso ao cliente)</Label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mt-1.5">
                     {[
-                      { key: "ambos", label: "⚖️ Ambos (Comparativo completo)" },
-                      { key: "vista", label: "💰 Apenas À Vista (Esconder juros)" },
-                      { key: "financiado", label: "🏦 Apenas Financiamento (Foco na Parcela)" }
+                      { key: "ambos", label: "⚖️ Ambos (Comparativo)" },
+                      { key: "vista", label: "💰 Apenas À Vista (5% Desc.)" },
+                      { key: "cartao", label: "💳 Apenas Cartão (10x Sem Juros)" },
+                      { key: "financiado", label: "🏦 Apenas Financiamento (Parcela)" }
                     ].map((f) => (
                       <button
                         key={f.key}
                         type="button"
                         onClick={() => setPreferenciaFoco(f.key as any)}
-                        className={`p-3 rounded-xl border-2 text-xs font-bold text-left transition-all ${preferenciaFoco === f.key ? "border-navy bg-slate-50 text-navy" : "border-slate-200 hover:border-slate-300 text-slate-600"}`}
+                        className={`p-3 rounded-xl border-2 text-[10px] font-extrabold text-left transition-all leading-snug flex items-center ${preferenciaFoco === f.key ? "border-navy bg-slate-50 text-navy" : "border-slate-200 hover:border-slate-300 text-slate-600"}`}
                       >
                         {f.label}
                       </button>

@@ -56,13 +56,14 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   const condText = p.condicoes_pagamento || "";
   const focoVista = condText.includes("[FOCO:VISTA]");
   const focoFinanciado = condText.includes("[FOCO:FINANCIAMENTO:");
+  const focoCartao = condText.includes("[FOCO:CARTAO]");
   
   // Encontra qual banco foi pré-selecionado se houver (ex: [FOCO:FINANCIAMENTO:bv])
   const matchFin = condText.match(/\[FOCO:FINANCIAMENTO:([a-z]+)\]/);
   const finForcada = matchFin && FINANCEIRAS[matchFin[1] as keyof typeof FINANCEIRAS] ? matchFin[1] : "solfacil";
 
-  const [pagModo, setPagModo] = useState<"vista" | "financiado">(
-    focoFinanciado ? "financiado" : "vista"
+  const [pagModo, setPagModo] = useState<"vista" | "financiado" | "cartao">(
+    focoFinanciado ? "financiado" : focoCartao ? "cartao" : "vista"
   );
   const [selectedFin, setSelectedFin] = useState<keyof typeof FINANCEIRAS>(
     finForcada as keyof typeof FINANCEIRAS
@@ -72,6 +73,11 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   const simFinanceiro = useMemo(() => {
     const valorOriginal = Number(p.preco_total);
     const valorVista = valorOriginal * 0.95; // 5% de desconto à vista
+    
+    // Cálculo do Cartão de Crédito 10x sem juros (valor de tabela dividido em 10 parcelas)
+    const valorCartaoTotal = valorOriginal;
+    const valorCartaoParcela = Math.round(valorOriginal / 10);
+    
     const fin = FINANCEIRAS[selectedFin];
     
     // Cálculo PMT (Price) baseado no CET Mensal
@@ -108,6 +114,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     return {
       valorOriginal,
       valorVista,
+      valorCartaoTotal,
+      valorCartaoParcela,
       valorParcela,
       custoTotalFinanciado,
       jurosTotais,
@@ -382,31 +390,40 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                   <Scale className="w-4 h-4 text-sun-deep" /> Condição Comercial
                 </span>
                 
-                {!focoVista && !focoFinanciado ? (
-                  <div className="flex bg-slate-200/60 p-0.5 rounded-xl border">
+                {!focoVista && !focoFinanciado && !focoCartao ? (
+                  <div className="flex bg-slate-200/60 p-0.5 rounded-xl border flex-wrap">
                     <button
                       type="button"
                       onClick={() => setPagModo("vista")}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "vista" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "vista" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
                     >
-                      💰 À Vista (5% Desc.)
+                      💰 À Vista
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPagModo("cartao")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "cartao" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                    >
+                      💳 Cartão 10x
                     </button>
                     <button
                       type="button"
                       onClick={() => setPagModo("financiado")}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "financiado" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${pagModo === "financiado" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
                     >
-                      🏦 Financiamento Solar
+                      🏦 Financiamento
                     </button>
                   </div>
                 ) : (
                   <Badge className="bg-sun text-navy font-extrabold uppercase text-[10px] tracking-wider">
-                    {focoVista ? "🔒 Exclusivo À Vista" : `🔒 Financiado via ${FINANCEIRAS[finForcada as keyof typeof FINANCEIRAS]?.nome}`}
+                    {focoVista && "🔒 Exclusivo À Vista"}
+                    {focoCartao && "🔒 Parcelado no Cartão 10x"}
+                    {focoFinanciado && `🔒 Financiado via ${FINANCEIRAS[finForcada as keyof typeof FINANCEIRAS]?.nome}`}
                   </Badge>
                 )}
               </div>
 
-              {pagModo === "vista" ? (
+              {pagModo === "vista" && (
                 <div className="space-y-4 py-3">
                   <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
                     <div>
@@ -425,7 +442,30 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                     Comprando à vista, você garante o menor prazo de payback possível e rentabilidade média superior a <strong>2,5% ao mês</strong> sobre o capital investido, superando em muito a poupança, Tesouro Direto e Renda Fixa tradicional.
                   </p>
                 </div>
-              ) : (
+              )}
+
+              {pagModo === "cartao" && (
+                <div className="space-y-4 py-3 animate-fade-in">
+                  <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Parcelado no Cartão de Crédito</span>
+                      <div className="text-3xl font-extrabold text-[#001F5C] mt-1 font-sans">
+                        10x de {BRL(simFinanceiro.valorCartaoParcela)}
+                      </div>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">Preço Total sem acréscimo: {BRL(simFinanceiro.valorCartaoTotal)}</span>
+                    </div>
+                    <div className="bg-blue-50 text-blue-800 font-extrabold px-3 py-1.5 rounded-xl border border-blue-100 text-xs text-center">
+                      💳 Sem Juros
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Opção ideal para quem possui limite livre no cartão de crédito corporativo ou pessoal e prefere parcelar o investimento em até <strong>10 vezes fixas sem juros</strong> sem passar por burocracias de bancos e comprovantes de renda.
+                  </p>
+                </div>
+              )}
+
+              {pagModo === "financiado" && (
                 <div className="space-y-5 py-2">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
