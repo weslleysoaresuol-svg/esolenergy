@@ -309,7 +309,7 @@ function FinanceiroDashboard() {
                       </td>
                       <td className="p-3 text-right">
                         {c.status === "a_receber" && (
-                          <Button size="xs" onClick={() => pagarComissao(c.id)} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[10px] h-7 px-2">
+                          <Button size="sm" onClick={() => pagarComissao(c.id)} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[10px] h-7 px-2">
                             <Check className="w-3.5 h-3.5 mr-1" /> Dar Baixa (Pagar)
                           </Button>
                         )}
@@ -407,9 +407,13 @@ function FinanceiroDashboard() {
                     <SelectTrigger className="text-xs"><SelectValue placeholder="Sem parceiro" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">Nenhum</SelectItem>
-                      {comissoes.map((c) => c.parceiro).filter((v, i, a) => a.findIndex(t => t?.id === v?.id) === i).map((p) => (
-                        <SelectItem key={p?.id} value={p?.id}>{p?.nome}</SelectItem>
-                      ))}
+                      {comissoes
+                        .map((c) => c.parceiro)
+                        .filter((p): p is { id: string; nome: string } => !!p?.id)
+                        .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i)
+                        .map((p) => (
+                          <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
