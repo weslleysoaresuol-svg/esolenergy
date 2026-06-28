@@ -247,10 +247,10 @@ function CotacoesList() {
               <Label>Kit solar</Label>
               <Select value={novo.kit_id} onValueChange={(v) => setNovo({ ...novo, kit_id: v })}>
                 <SelectTrigger><SelectValue placeholder="Escolha um kit" /></SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[300px] overflow-y-auto">
                   {kits.map((k) => (
                     <SelectItem key={k.id} value={k.id}>
-                      {k.potencia_kwp} kWp — {BRL(Number(k.preco))}
+                      {k.nome} — {BRL(Number(k.preco))}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -67,7 +67,7 @@ function CotacaoPublica() {
               <Item label="Módulos" v={`${kitData?.quantidade_modulos}x ${kitData?.fabricante_modulos || ""} ${kitData?.potencia_modulo_w}W`} />
               <Item label="Inversor" v={kitData?.inversor} />
               <Item label="Tecnologia" v={kitData?.tecnologia_modulo} />
-              <Item label="Eficiência" v={`${kitData?.eficiencia_modulo}%`} />
+              <Item label="Distribuidora / CD" v={kitData?.fornecedor || "Aldo Solar"} />
               <Item label="Garantia módulos" v={`${kitData?.garantia_modulos_anos} anos`} />
               <Item label="Garantia inversor" v={`${kitData?.garantia_inversor_anos} anos`} />
             </div>

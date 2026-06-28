@@ -46,6 +46,8 @@ const EMPTY_KIT = {
   consumo_kwh_max: "",
   destaque: false,
   ativo: true,
+  fornecedor: "Aldo Solar",
+  url_fornecedor: "",
 };
 
 function AdminKits() {
@@ -130,6 +132,8 @@ function AdminKits() {
         consumo_kwh_max: editando.consumo_kwh_max ? Number(editando.consumo_kwh_max) : null,
         destaque: editando.destaque,
         ativo: editando.ativo,
+        fornecedor: editando.fornecedor || null,
+        url_fornecedor: editando.url_fornecedor || null,
       };
 
       if (editando.id) {
@@ -509,6 +513,7 @@ function AdminKits() {
                   <th className="p-3">Módulos</th>
                   <th className="p-3">Inversor</th>
                   <th className="p-3">Consumo alvo</th>
+                  <th className="p-3">Fornecedor</th>
                   <th className="p-3">Preço</th>
                   <th className="p-3">Status</th>
                   <th className="p-3">Ações</th>
@@ -516,7 +521,7 @@ function AdminKits() {
               </thead>
               <tbody>
                 {filtered.length === 0 && (
-                  <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">Nenhum kit encontrado.</td></tr>
+                  <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">Nenhum kit encontrado.</td></tr>
                 )}
                 {filtered.map((kit) => {
                   const f = FAIXAS[kit.faixa] || FAIXAS.residencial_pequeno;
@@ -544,6 +549,20 @@ function AdminKits() {
                         {kit.consumo_kwh_min && kit.consumo_kwh_max
                           ? `${kit.consumo_kwh_min}–${kit.consumo_kwh_max} kWh`
                           : "—"}
+                      </td>
+                      <td className="p-3 text-xs">
+                        {kit.fornecedor ? (
+                          <div>
+                            <span className="font-semibold text-navy">{kit.fornecedor}</span>
+                            {kit.url_fornecedor && (
+                              <a href={kit.url_fornecedor} target="_blank" rel="noreferrer" className="block text-[10px] text-blue-600 hover:underline mt-0.5">
+                                🛒 Comprar B2B
+                              </a>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
                       </td>
                       <td className="p-3 font-bold text-navy">{BRL(Number(kit.preco))}</td>
                       <td className="p-3">
@@ -851,7 +870,21 @@ function AdminKits() {
                 <Label>Preço do kit (R$)</Label>
                 <Input type="number" step="100" value={editando.preco} onChange={F("preco")} placeholder="23500" />
               </div>
-              <div className="flex flex-col gap-3 pt-2">
+              <div>
+                <Label>Fornecedor</Label>
+                <Select value={editando.fornecedor || "Aldo Solar"} onValueChange={(v) => setEditando((p: any) => ({ ...p, fornecedor: v }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Aldo Solar">Aldo Solar</SelectItem>
+                    <SelectItem value="Sou Energy">Sou Energy</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="md:col-span-2">
+                <Label>Link do kit no Fornecedor (URL B2B)</Label>
+                <Input value={editando.url_fornecedor || ""} onChange={F("url_fornecedor")} placeholder="https://www.aldosolar.com.br/gerador..." />
+              </div>
+              <div className="flex flex-col gap-3 pt-2 md:col-span-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={editando.destaque} onChange={(e) => setEditando((p: any) => ({ ...p, destaque: e.target.checked }))} className="accent-amber-500" />
                   <span className="text-sm flex items-center gap-1"><Star className="w-3.5 h-3.5 text-amber-500" /> Destaque na seleção</span>
