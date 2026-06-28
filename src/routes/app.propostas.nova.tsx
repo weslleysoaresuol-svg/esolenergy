@@ -293,6 +293,12 @@ function NovaProposta() {
       let finalCondicoes = condicoes;
       
       // Injeta tags ocultas para o frontend da PropostaView ler
+      const tagDoc = perfilCliente === "cotacao" 
+        ? "[DOC:COTACAO]" 
+        : perfilCliente === "financiamento" 
+          ? "[DOC:FIN_AGUARDANDO]" 
+          : "[DOC:PROPOSTA]";
+      
       const tagFoco = preferenciaFoco === "vista" 
         ? "[FOCO:VISTA]" 
         : preferenciaFoco === "financiado" 
@@ -301,7 +307,7 @@ function NovaProposta() {
             ? "[FOCO:CARTAO]"
             : "[FOCO:AMBOS]";
       
-      finalCondicoes = `${tagFoco}\n` + finalCondicoes;
+      finalCondicoes = `${tagDoc}\n${tagFoco}\n` + finalCondicoes;
 
       const chosenFinanceiras = financeiras.filter((f) => selectedFinanceirasIds.includes(f.id));
       if (chosenFinanceiras.length > 0) {
@@ -469,6 +475,12 @@ function NovaProposta() {
       const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResult.qtd_modulos;
       
       // Juros e condições
+      const tagDoc = perfilCliente === "cotacao" 
+        ? "[DOC:COTACAO]" 
+        : perfilCliente === "financiamento" 
+          ? "[DOC:FIN_AGUARDANDO]" 
+          : "[DOC:PROPOSTA]";
+      
       const tagFoco = preferenciaFoco === "vista" 
         ? "[FOCO:VISTA]" 
         : preferenciaFoco === "financiado" 
@@ -477,7 +489,7 @@ function NovaProposta() {
             ? "[FOCO:CARTAO]"
             : "[FOCO:AMBOS]";
       
-      const finalCondicoes = `${tagFoco}\nÀ vista (5% desc.): ${BRL(precoTotal * 0.95)}\nFinanciamento Solar no banco pré-selecionado.`;
+      const finalCondicoes = `${tagDoc}\n${tagFoco}\nÀ vista (5% desc.): ${BRL(precoTotal * 0.95)}\nFinanciamento Solar no banco pré-selecionado.`;
       const expDate = new Date();
       expDate.setDate(expDate.getDate() + (params.validade_proposta_dias || 15));
 

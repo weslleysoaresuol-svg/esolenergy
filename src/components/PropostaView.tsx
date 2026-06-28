@@ -57,13 +57,30 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
   // Extração das tags de faturamento da proposta
   const condText = p.condicoes_pagamento || "";
+  
+  // Detecção do Tipo de Documento
+  const docCotacao = condText.includes("[DOC:COTACAO]");
+  const docFinAguardando = condText.includes("[DOC:FIN_AGUARDANDO]");
+  const docFinAprovado = condText.includes("[DOC:FIN_APROVADO:");
+  
+  // Mapeamento dos dados de aprovação de financiamento
+  const matchAprovado = condText.match(/\[DOC:FIN_APROVADO:([a-z]+):([0-9]+):([0-9.]+):([0-9.]+)\]/);
+  const dadosAprovados = matchAprovado ? {
+    banco: matchAprovado[1],
+    prazo: Number(matchAprovado[2]),
+    taxa: Number(matchAprovado[3]),
+    pmt: Number(matchAprovado[4])
+  } : null;
+
   const focoVista = condText.includes("[FOCO:VISTA]");
-  const focoFinanciado = condText.includes("[FOCO:FINANCIAMENTO:");
+  const focoFinanciado = condText.includes("[FOCO:FINANCIAMENTO:") || docFinAprovado;
   const focoCartao = condText.includes("[FOCO:CARTAO]");
   
   // Encontra qual banco foi pré-selecionado se houver (ex: [FOCO:FINANCIAMENTO:bv])
   const matchFin = condText.match(/\[FOCO:FINANCIAMENTO:([a-z]+)\]/);
-  const finForcada = matchFin && FINANCEIRAS[matchFin[1] as keyof typeof FINANCEIRAS] ? matchFin[1] : "solfacil";
+  const finForcada = dadosAprovados 
+    ? dadosAprovados.banco 
+    : (matchFin && FINANCEIRAS[matchFin[1] as keyof typeof FINANCEIRAS] ? matchFin[1] : "solfacil");
 
   const [pagModo, setPagModo] = useState<"vista" | "financiado" | "cartao">(
     focoFinanciado ? "financiado" : focoCartao ? "cartao" : "vista"
@@ -71,7 +88,9 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   const [selectedFin, setSelectedFin] = useState<keyof typeof FINANCEIRAS>(
     finForcada as keyof typeof FINANCEIRAS
   );
-  const [selectedPrazo, setSelectedPrazo] = useState<number>(60);
+  const [selectedPrazo, setSelectedPrazo] = useState<number>(
+    dadosAprovados ? dadosAprovados.prazo : 60
+  );
 
   const simFinanceiro = useMemo(() => {
     const valorOriginal = Number(p.preco_total);
@@ -83,11 +102,12 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     
     const fin = FINANCEIRAS[selectedFin];
     
-    // Cálculo PMT (Price) baseado no CET Mensal
-    const i = fin.cetMensal / 100;
-    const n = selectedPrazo;
-    const pmt = (valorOriginal * i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
-    const valorParcela = Math.round(pmt);
+    // Cálculo PMT (Price) ou Override Aprovado
+    const n = dadosAprovados ? dadosAprovados.prazo : selectedPrazo;
+    const rate = dadosAprovados ? dadosAprovados.taxa : fin.cetMensal;
+    const pmtCalculada = (valorOriginal * (rate / 100) * Math.pow(1 + (rate / 100), n)) / (Math.pow(1 + (rate / 100), n) - 1);
+    const valorParcela = dadosAprovados ? dadosAprovados.pmt : Math.round(pmtCalculada);
+    
     const custoTotalFinanciado = valorParcela * n;
     const jurosTotais = custoTotalFinanciado - valorOriginal;
     
@@ -128,7 +148,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
       descViabilidade,
       finInfo: fin
     };
-  }, [p.preco_total, p.economia_mensal, p.economia_anual, selectedFin, selectedPrazo]);
+  }, [p.preco_total, p.economia_mensal, p.economia_anual, selectedFin, selectedPrazo, dadosAprovados]);
 
   const inflacao = 0.08;
   const chartData = Array.from({ length: 25 }, (_, i) => ({
@@ -139,8 +159,192 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   const validadeDias = p.validade_dias || 15;
   const expiraEm = p.expires_at ? new Date(p.expires_at) : null;
 
+  if (docFinAguardando) {
+    return (
+      <div className="bg-slate-50 min-h-screen text-navy flex flex-col justify-between font-sans">
+        <header className="bg-gradient-to-r from-navy via-navy-deep to-slate-900 text-white py-6 px-6 md:px-12 shadow-sm">
+          <div className="max-w-5xl mx-auto flex justify-between items-center">
+            <img src={logo} alt="ESOL Energy" className="h-10 w-auto brightness-0 invert" />
+            <Badge className="bg-sun text-navy font-bold">Ficha de Crédito em Análise</Badge>
+          </div>
+        </header>
+
+        <main className="max-w-3xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center text-center space-y-8">
+          <div className="w-20 h-20 bg-amber-50 text-sun flex items-center justify-center rounded-full mx-auto text-4xl shadow-md border-2 border-sun animate-pulse">
+            🏦
+          </div>
+
+          <div className="space-y-3">
+            <h1 className="text-3xl font-extrabold text-navy md:text-4xl leading-tight">
+              Sua Ficha de Crédito está sob Análise!
+            </h1>
+            <p className="text-slate-600 text-sm max-w-lg mx-auto leading-relaxed">
+              Olá, <strong>{cliente?.nome || "cliente"}</strong>. Nossa mesa de crédito já está negociando as melhores taxas e prazos nas principais operadoras solares do país (Solfácil, BV, Santander e Sicredi).
+            </p>
+          </div>
+
+          {/* Cronômetro Regressivo de Análise de Crédito */}
+          <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-lg max-w-md mx-auto space-y-4">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 block">Tempo Estimado para Retorno</span>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="bg-slate-50 p-3 rounded-2xl border">
+                <div className="text-3xl font-black text-navy">72</div>
+                <div className="text-[9px] text-muted-foreground uppercase font-bold">Horas</div>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-2xl border">
+                <div className="text-3xl font-black text-navy">00</div>
+                <div className="text-[9px] text-muted-foreground uppercase font-bold">Minutos</div>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-2xl border">
+                <div className="text-3xl font-black text-navy">00</div>
+                <div className="text-[9px] text-muted-foreground uppercase font-bold">Segundos</div>
+              </div>
+            </div>
+            <p className="text-[10px] text-emerald-700 font-bold">
+              ⚡ Nossa equipe jurídica costuma aprovar o crédito em menos de 24 horas úteis!
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/50 shadow-sm text-left max-w-xl mx-auto space-y-4">
+            <h3 className="font-extrabold text-sm text-navy flex items-center gap-2">
+              📋 Dados do Estudo Fotovoltaico
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-xs">
+              <div className="bg-slate-50 p-3 rounded-xl border">
+                <span className="text-slate-400 font-bold block text-[9px] uppercase">Potência do Sistema</span>
+                <strong className="text-navy text-sm font-black">{NUM(Number(p.kwp_sistema), 2)} kWp</strong>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-xl border">
+                <span className="text-slate-400 font-bold block text-[9px] uppercase">Geração Mensal Esperada</span>
+                <strong className="text-navy text-sm font-black">{NUM(Number(p.geracao_mensal_kwh))} kWh</strong>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-xl border">
+                <span className="text-slate-400 font-bold block text-[9px] uppercase">Economia Mensal Estimada</span>
+                <strong className="text-emerald-700 text-sm font-black">{BRL(Number(p.economia_mensal))}</strong>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-xl border">
+                <span className="text-slate-400 font-bold block text-[9px] uppercase">Redução de Emissões CO₂</span>
+                <strong className="text-navy text-sm font-black">{NUM(Number(p.co2_evitado_ton), 1)} t/ano</strong>
+              </div>
+            </div>
+          </div>
+
+          {parceiro && (
+            <div className="text-slate-500 text-xs">
+              Dúvidas sobre o cadastro? Fale com seu consultor <strong>{parceiro.nome}</strong> no telefone <strong>{parceiro.telefone}</strong>.
+            </div>
+          )}
+        </main>
+
+        <footer className="py-6 border-t border-slate-200 text-center text-xs text-muted-foreground bg-white">
+          ESOL Energy © {new Date().getFullYear()} · Todos os direitos reservados.
+        </footer>
+      </div>
+    );
+  }
+
+  if (docCotacao) {
+    return (
+      <div className="bg-white text-navy font-sans min-h-screen flex flex-col justify-between">
+        <header className="bg-gradient-to-r from-navy via-[#0a2d6e] to-slate-900 text-white py-8 px-6 md:px-12 relative overflow-hidden shadow-md">
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-sun/10 rounded-full blur-2xl" />
+          <div className="max-w-5xl mx-auto flex justify-between items-center relative z-10">
+            <img src={logo} alt="ESOL Energy" className="h-10 w-auto brightness-0 invert" />
+            <div className="text-right text-xs">
+              <span className="text-white/60">Cotação Solar</span>
+              <div className="font-mono font-bold">#{String(p.id || "").slice(0, 8).toUpperCase()}</div>
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-5xl mx-auto px-6 py-10 md:py-12 space-y-8 flex-1 w-full">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-extrabold text-navy tracking-tight md:text-4xl">
+              Cotação Comercial de Energia Solar
+            </h1>
+            <p className="text-slate-500 text-sm leading-relaxed max-w-2xl">
+              Preparamos este orçamento rápido sob medida para o consumo estimado de <strong>{NUM(Number(p.consumo_kwh))} kWh/mês</strong> em <strong>{p.cidade || "sua localidade"}/{p.estado}</strong>.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 items-start">
+            {/* Dados do Estudo */}
+            <div className="md:col-span-2 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
+                  <span className="text-slate-400 font-bold block text-[10px] uppercase">Potência Sugerida</span>
+                  <div className="text-2xl font-black text-navy mt-1">{NUM(Number(p.kwp_sistema), 2)} kWp</div>
+                  <span className="text-[10px] text-muted-foreground block mt-0.5">Área estimada: {NUM(Number(p.area_necessaria_m2 || p.kwp_sistema * 6), 1)} m²</span>
+                </div>
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
+                  <span className="text-slate-400 font-bold block text-[10px] uppercase">Economia Mensal</span>
+                  <div className="text-2xl font-black text-emerald-700 mt-1">{BRL(Number(p.economia_mensal))}</div>
+                  <span className="text-[10px] text-muted-foreground block mt-0.5">Economia anual de {BRL(Number(p.economia_anual))}</span>
+                </div>
+              </div>
+
+              {/* Tabela de Preços */}
+              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <h3 className="font-extrabold text-sm text-navy uppercase tracking-wider">Opções de Aquisição</h3>
+                <div className="divide-y text-xs">
+                  <div className="py-4 flex justify-between items-center">
+                    <div>
+                      <strong className="text-navy text-sm font-bold block">💰 Pagamento À Vista</strong>
+                      <span className="text-[10px] text-muted-foreground">Desconto de 5% de tabela já aplicado</span>
+                    </div>
+                    <span className="text-lg font-black text-emerald-700">{BRL(simFinanceiro.valorVista)}</span>
+                  </div>
+                  <div className="py-4 flex justify-between items-center">
+                    <div>
+                      <strong className="text-navy text-sm font-bold block">💳 Cartão de Crédito em 10x</strong>
+                      <span className="text-[10px] text-muted-foreground">Parcelado sem juros nas bandeiras tradicionais</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-base font-black text-navy">{BRL(simFinanceiro.valorCartaoParcela)}/mês</span>
+                      <span className="text-[9px] text-slate-400 block">Total: {BRL(simFinanceiro.valorCartaoTotal)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Coluna Lateral: Contato e Ações */}
+            <div className="space-y-4">
+              {parceiro && (
+                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/60 shadow-sm space-y-4">
+                  <div className="text-center">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Consultor Responsável</span>
+                    <h4 className="font-extrabold text-navy text-sm mt-1">{parceiro.nome}</h4>
+                    {parceiro.telefone && <p className="text-xs text-muted-foreground mt-0.5">{parceiro.telefone}</p>}
+                  </div>
+                  <a
+                    href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${parceiro.nome.split(" ")[0]}!%20Recebi%20minha%20Cotação%20Solar%20nº%20${String(p.id).slice(0,8).toUpperCase()}%20e%20gostaria%20de%20fechar.`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-extrabold text-xs h-10 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
+                  >
+                    💬 Aceitar & Chamar no WhatsApp
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
+
+        <footer className="py-6 border-t border-slate-200 text-center text-xs text-muted-foreground bg-white">
+          ESOL Energy © {new Date().getFullYear()} · Todos os direitos reservados.
+        </footer>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white text-ink">
+    <div className="bg-white text-ink font-sans">
+      {docFinAprovado && dadosAprovados && (
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 px-6 text-center font-bold text-xs tracking-wider shadow-md flex items-center justify-center gap-2 animate-fade-in relative z-20">
+          🎉 CRÉDITO SOLAR PRÉ-APROVADO: Financiamento liberado via {FINANCEIRAS[dadosAprovados.banco as keyof typeof FINANCEIRAS]?.nome || dadosAprovados.banco.toUpperCase()} em {dadosAprovados.prazo}x de {BRL(dadosAprovados.pmt)} (Taxa de {dadosAprovados.taxa}% a.m.)!
+        </div>
+      )}
       {/* HERO */}
       <section className="bg-gradient-to-br from-[#001F5C] via-[#0a2d6e] to-[#001533] text-white px-6 md:px-12 py-10 md:py-16 relative overflow-hidden">
         <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-sun/20 blur-3xl" />

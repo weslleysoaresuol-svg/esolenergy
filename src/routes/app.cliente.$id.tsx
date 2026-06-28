@@ -88,6 +88,16 @@ function ClienteDetail() {
   const [docFiles, setDocFiles] = useState<Record<string, { name: string; progress: number; done: boolean }>>({});
   const [showMinutaModal, setShowMinutaModal] = useState(false);
 
+  // Propostas vinculadas
+  const [propostas, setPropostas] = useState<any[]>([]);
+  
+  // Estados para Lançamento do Financiamento Aprovado
+  const [aprovBanco, setAprovBanco] = useState("solfacil");
+  const [aprovPrazo, setAprovPrazo] = useState("60");
+  const [aprovTaxa, setAprovTaxa] = useState("1.29");
+  const [aprovPmt, setAprovPmt] = useState("");
+  const [savingAprov, setSavingAprov] = useState(false);
+
   const load = async () => {
     const { data, error } = await supabase.from("clientes").select("*, profiles:corretor_id(nome,email)").eq("id", id).maybeSingle();
     if (error) {
@@ -115,6 +125,22 @@ function ClienteDetail() {
         setFinFormaPagamento(data.forma_pagamento || "financiamento");
       }
     }
+
+    // Carrega propostas associadas
+    try {
+      const { data: propAssocs } = await supabase
+        .from("proposta_clientes")
+        .select("proposta_id, propostas(*)")
+        .eq("cliente_id", id);
+      
+      if (propAssocs) {
+        const list = propAssocs.map((pa: any) => pa.propostas).filter(Boolean);
+        setPropostas(list);
+      }
+    } catch (e) {
+      console.warn("Erro ao buscar propostas do cliente:", e);
+    }
+
     const { data: ints } = await supabase.from("interacoes").select("*").eq("cliente_id", id).order("created_at", { ascending: false });
     setInteracoes(ints || []);
     setLoading(false);
@@ -160,6 +186,62 @@ function ClienteDetail() {
     setMotivoPerda("");
     setMotivoDescricao("");
     setPendingStatus(null);
+  };
+
+  const lancarAprovacaoFinanciamento = async () => {
+    const propAguardando = propostas.find((p) => p.condicoes_pagamento?.includes("[DOC:FIN_AGUARDANDO]"));
+    if (!propAguardando) {
+      toast.error("Nenhuma proposta aguardando análise de financiamento foi encontrada.");
+      return;
+    }
+    if (!aprovPmt) {
+      toast.error("Por favor, informe o valor aprovado da parcela (R$).");
+      return;
+    }
+    
+    setSavingAprov(true);
+    try {
+      const novaTag = `[DOC:FIN_APROVADO:${aprovBanco}:${aprovPrazo}:${aprovTaxa}:${aprovPmt}]`;
+      const antigasCondicoes = propAguardando.condicoes_pagamento || "";
+      const novasCondicoes = antigasCondicoes.replace("[DOC:FIN_AGUARDANDO]", novaTag);
+
+      // 1. Atualiza proposta com a liberação
+      const { error: errProp } = await supabase
+        .from("propostas")
+        .update({ condicoes_pagamento: novasCondicoes })
+        .eq("id", propAguardando.id);
+      
+      if (errProp) throw errProp;
+
+      // 2. Atualiza status do cliente
+      const { error: errClient } = await supabase
+        .from("clientes")
+        .update({ 
+          status: "contrato_assinado" as any,
+          forma_pagamento: "financiamento",
+          valor_estimado: propAguardando.preco_total
+        })
+        .eq("id", id);
+      
+      if (errClient) throw errClient;
+
+      // 3. Registra Interação
+      if (user) {
+        await supabase.from("interacoes").insert({
+          cliente_id: id,
+          autor_id: user.id,
+          tipo: "nota",
+          descricao: `Financiamento APROVADO via ${aprovBanco.toUpperCase()} em ${aprovPrazo}x de R$ ${aprovPmt} (Taxa: ${aprovTaxa}% a.m.). Status atualizado para Contrato Assinado.`
+        });
+      }
+
+      toast.success("Resultado do financiamento solar registrado com sucesso!");
+      load();
+    } catch (e: any) {
+      toast.error("Erro ao registrar aprovação: " + e.message);
+    } finally {
+      setSavingAprov(false);
+    }
   };
 
   const addInteracao = async () => {
@@ -436,6 +518,67 @@ function ClienteDetail() {
           {role === "admin" && <Button variant="ghost" onClick={remove} className="text-red-600"><Trash2 className="w-4 h-4" /></Button>}
         </div>
       </div>
+
+      {/* CARD DE LANÇAMENTO DE CRÉDITO APROVADO (Aparece se houver financiamento aguardando) */}
+      {propostas.some((p) => p.condicoes_pagamento?.includes("[DOC:FIN_AGUARDANDO]")) && (
+        <Card className="p-6 border-2 border-amber-300 bg-amber-50/50 shadow-md space-y-4 animate-fade-in font-sans">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-sun text-navy flex items-center justify-center text-xl animate-pulse">
+              🏦
+            </div>
+            <div>
+              <h3 className="font-extrabold text-navy text-sm">Ficha de Crédito Solar em Análise (3 dias úteis)</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Preencha o resultado liberado pela financeira para atualizar a proposta pública do cliente.</p>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-4 gap-3 pt-2">
+            <div className="space-y-1">
+              <Label className="text-[10px] uppercase font-bold text-slate-500">Financeira Parceira</Label>
+              <Select value={aprovBanco} onValueChange={setAprovBanco}>
+                <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="solfacil">🏦 Solfácil</SelectItem>
+                  <SelectItem value="bv">🏢 Banco BV Solar</SelectItem>
+                  <SelectItem value="santander">🏛️ Santander</SelectItem>
+                  <SelectItem value="sicredi">🤝 Sicredi Cooperativa</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-[10px] uppercase font-bold text-slate-500">Prazo Aprovado</Label>
+              <Select value={aprovPrazo} onValueChange={setAprovPrazo}>
+                <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="24">24 parcelas</SelectItem>
+                  <SelectItem value="36">36 parcelas</SelectItem>
+                  <SelectItem value="48">48 parcelas</SelectItem>
+                  <SelectItem value="60">60 parcelas</SelectItem>
+                  <SelectItem value="72">72 parcelas</SelectItem>
+                  <SelectItem value="84">84 parcelas</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-[10px] uppercase font-bold text-slate-500">Taxa Liberada (% a.m.)</Label>
+              <Input type="number" step="0.01" value={aprovTaxa} onChange={(e) => setAprovTaxa(e.target.value)} className="h-9 bg-white text-xs font-bold text-navy" />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-[10px] uppercase font-bold text-slate-500">Valor da Parcela Aprovada (R$) *</Label>
+              <Input type="number" placeholder="Ex: 389" value={aprovPmt} onChange={(e) => setAprovPmt(e.target.value)} className="h-9 bg-white text-xs font-black text-emerald-700" />
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button disabled={savingAprov || !aprovPmt} onClick={lancarAprovacaoFinanciamento} className="bg-sun hover:bg-sun-deep text-navy font-extrabold text-xs h-9 px-6 rounded-xl shadow-sm flex items-center gap-1.5">
+              {savingAprov ? <span className="animate-spin mr-1">⌛</span> : "Aprovar e Liberar Crédito no App 🚀"}
+            </Button>
+          </div>
+        </Card>
+      )}
 
       {/* TIMELINE DE PROCESSO COMERCIAL SOLAR */}
       <Card className="p-5 border-0 shadow-md bg-white overflow-hidden">
