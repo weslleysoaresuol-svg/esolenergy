@@ -861,3 +861,4 @@ function Trust({ icon: Icon, title, subtitle }: any) {
     </div>
   );
 }
+
