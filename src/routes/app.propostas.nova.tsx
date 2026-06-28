@@ -50,6 +50,7 @@ function NovaProposta() {
   const [selectedKitId, setSelectedKitId] = useState<string>("");
   const [selectedFinanceirasIds, setSelectedFinanceirasIds] = useState<string[]>([]);
   const [usuarioAlterouKit, setUsuarioAlterouKit] = useState(false);
+  const [perfilCliente, setPerfilCliente] = useState<"completo" | "cotacao" | "financiamento">("completo");
 
   // Estados do Roteiro de Vendas & Foco da Proposta
   const [preferenciaFoco, setPreferenciaFoco] = useState<"ambos" | "vista" | "financiado" | "cartao">("ambos");
@@ -537,36 +538,123 @@ function NovaProposta() {
   if (!params) return <div className="text-center py-12 text-muted-foreground">Carregando…</div>;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
+    <div className="space-y-6 max-w-5xl mx-auto font-sans">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
         <div className="flex items-center gap-3">
           <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
-          <h1 className="text-2xl font-extrabold text-navy">Nova Proposta</h1>
+          <div>
+            <h1 className="text-xl font-extrabold text-navy leading-tight">Painel de Vendas</h1>
+            <p className="text-[10px] text-muted-foreground">Selecione o perfil do cliente para definir o fluxo de geração</p>
+          </div>
         </div>
 
-        {/* Alternador do Roteiro de Elite */}
-        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50 w-full sm:w-auto">
+        {/* Categorização Inicial dos Três Perfis de Clientes */}
+        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50 flex-wrap">
           <button
             type="button"
-            onClick={() => setUsarScriptVendas(false)}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all ${!usarScriptVendas ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
+            onClick={() => {
+              setPerfilCliente("financiamento");
+              setPreferenciaFoco("financiado");
+              setUsarScriptVendas(true);
+              setScriptStep(1);
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${perfilCliente === "financiamento" ? "bg-gradient-to-r from-sun to-amber-500 text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
           >
-            📋 Formulário Clássico
+            🏦 Financiamento (Foco Parcela)
           </button>
           <button
             type="button"
             onClick={() => {
-              setUsarScriptVendas(true);
-              setScriptStep(1);
+              setPerfilCliente("cotacao");
+              setPreferenciaFoco("vista");
+              setUsarScriptVendas(false);
             }}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${usarScriptVendas ? "bg-gradient-to-r from-sun to-amber-500 text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${perfilCliente === "cotacao" ? "bg-navy text-white shadow-sm" : "text-slate-500 hover:text-navy"}`}
           >
-            ⚡ Roteiro Guiado de Elite
+            ⚡ Cotação Rápida (Expresso)
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPerfilCliente("completo");
+              setPreferenciaFoco("ambos");
+              setUsarScriptVendas(false);
+              setStep(1);
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${perfilCliente === "completo" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
+          >
+            📋 Proposta Completa (Técnico)
           </button>
         </div>
       </div>
 
-      {usarScriptVendas ? (
+      {perfilCliente === "cotacao" && (
+        <Card className="p-6 border-0 shadow-md space-y-6 bg-white">
+          <div className="border-b pb-3">
+            <h2 className="font-extrabold text-navy text-sm flex items-center gap-2">
+              ⚡ Cotação Rápida (Lead Expresso)
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1">Gere uma estimativa rápida de investimento solar com o menor atrito de informação possível.</p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-700">Nome do Lead *</Label>
+              <Input placeholder="Ex: Maria Souza" value={scriptName} onChange={(e) => setScriptName(e.target.value)} className="h-9 text-xs" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-700">Telefone / WhatsApp *</Label>
+              <Input placeholder="Ex: (11) 98888-8888" value={scriptPhone} onChange={(e) => setScriptPhone(e.target.value)} className="h-9 text-xs" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-700">Cidade de Instalação *</Label>
+              <Input placeholder="Ex: Sorocaba" value={scriptCidade} onChange={(e) => setScriptCidade(e.target.value)} className="h-9 text-xs" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-700">Estado (UF) *</Label>
+              <Select value={scriptEstado} onValueChange={setScriptEstado}>
+                <SelectTrigger className="h-9"><SelectValue placeholder="UF" /></SelectTrigger>
+                <SelectContent>
+                  {UFS.map(uf => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4 pt-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-700">Tipo de Imóvel</Label>
+              <div className="flex bg-slate-100 p-0.5 rounded-lg border w-full">
+                {(["residencial", "comercial", "industrial", "rural"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setTipo(t)}
+                    className={`flex-1 py-1 rounded-md text-[9px] font-extrabold uppercase transition-all ${tipo === t ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                  >
+                    {t === "residencial" ? "🏡 Res." : t === "comercial" ? "🏢 Com." : t === "industrial" ? "🏭 Ind." : "🌾 Rural"}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-700">Consumo Mensal Médio (kWh) *</Label>
+              <Input type="number" placeholder="Ex: 400" value={scriptKwh} onChange={(e) => setScriptKwh(e.target.value)} className="h-9 text-xs font-bold text-navy" />
+            </div>
+          </div>
+
+          <div className="flex justify-between pt-6 border-t mt-4">
+            <div className="text-xs text-muted-foreground self-center">
+              * Todos os campos marcados com * são obrigatórios para estimar a irradiação local.
+            </div>
+            <Button disabled={saving || !scriptName || !scriptPhone || !scriptCidade || !scriptEstado || !scriptKwh} onClick={salvarViaScript} className="bg-sun hover:bg-sun-deep text-navy font-extrabold text-xs h-9 px-8 rounded-xl shadow-md transition-all flex items-center gap-1">
+              {saving ? <span className="animate-spin mr-1">⌛</span> : "Gerar Cotação Expresso 🚀"}
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {perfilCliente !== "cotacao" && usarScriptVendas ? (
         <div className="space-y-6 animate-fade-in">
           {/* Timeline do Roteiro */}
           <div className="flex items-center gap-2 text-xs flex-wrap bg-slate-50 p-3 rounded-2xl border">
@@ -816,8 +904,10 @@ function NovaProposta() {
             )}
           </Card>
         </div>
-      ) : (
-        <div className="space-y-6">
+      )}
+
+      {perfilCliente === "completo" && (
+        <div className="space-y-6 animate-fade-in">
           <div className="flex items-center gap-2 text-sm flex-wrap">
             {[1, 2, 3, 4, 5].map((n) => (
               <div key={n} className={`flex items-center gap-2 ${n <= step ? "text-navy font-semibold" : "text-muted-foreground"}`}>
