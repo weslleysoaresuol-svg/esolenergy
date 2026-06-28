@@ -146,3 +146,67 @@
 @utility text-pretty {
   text-wrap: pretty;
 }
+
+/* =========================================================
+   IMPRESSÃO / PDF — força cores e backgrounds originais
+   O browser remove backgrounds por padrão para economizar
+   tinta. print-color-adjust: exact força a impressão fiel.
+   ========================================================= */
+@media print {
+  /* Força todos os elementos a manterem suas cores exatas */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Remove elementos de navegação que não devem aparecer no PDF */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Garante que a página ocupa toda a largura */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  /* Remove sombras pesadas que ficam estranhas no PDF */
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: none !important;
+  }
+
+  /* Evita quebra de página dentro de cards importantes */
+  .print-no-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Garante que gradients e backgrounds coloridos sejam preservados */
+  [class*="bg-navy"],
+  [class*="bg-sun"],
+  [class*="bg-emerald"],
+  [class*="bg-blue"],
+  [class*="bg-amber"],
+  [class*="bg-slate"],
+  [class*="bg-rose"],
+  [class*="bg-gradient"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Garante que textos coloridos sejam mantidos */
+  [class*="text-navy"],
+  [class*="text-sun"],
+  [class*="text-emerald"],
+  [class*="text-blue"],
+  [class*="text-amber"],
+  [class*="text-rose"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

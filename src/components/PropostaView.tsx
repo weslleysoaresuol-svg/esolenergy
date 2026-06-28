@@ -357,7 +357,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   }
 
   return (
-    <div className="bg-white text-ink font-sans">
+    <div className="bg-white text-ink font-sans" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" } as React.CSSProperties}>
       {docFinAprovado && dadosAprovados && (
         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 px-6 text-center font-bold text-xs tracking-wider shadow-md flex items-center justify-center gap-2 animate-fade-in relative z-20">
           🎉 CRÉDITO SOLAR PRÉ-APROVADO: Financiamento liberado via {FINANCEIRAS[dadosAprovados.banco as keyof typeof FINANCEIRAS]?.nome || dadosAprovados.banco.toUpperCase()} em {dadosAprovados.prazo}x de {BRL(dadosAprovados.pmt)} (Taxa de {dadosAprovados.taxa}% a.m.)!
