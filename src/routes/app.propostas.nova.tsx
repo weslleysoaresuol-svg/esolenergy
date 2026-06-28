@@ -17,6 +17,7 @@ import { ChevronLeft, ChevronRight, Sun, Zap, Wallet } from "lucide-react";
 export const Route = createFileRoute("/app/propostas/nova")({ 
   validateSearch: (search: Record<string, unknown>) => ({
     cliente: (search.cliente as string) ?? "",
+    modo: (search.modo as string) ?? "proposta",
   }),
   component: NovaProposta 
 });
@@ -26,7 +27,7 @@ const UFS = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","P
 function NovaProposta() {
   const navigate = useNavigate();
   const { user, role } = useCurrentUser();
-  const { cliente: clienteIdPreSel } = Route.useSearch();
+  const { cliente: clienteIdPreSel, modo } = Route.useSearch();
   const [step, setStep] = useState(1);
   const [params, setParams] = useState<Parametros | null>(null);
   const [clientes, setClientes] = useState<any[]>([]);
@@ -48,9 +49,8 @@ function NovaProposta() {
   const [tipoConexao, setTipoConexao] = useState<"monofasico" | "bifasico" | "trifasico">("bifasico");
   const [tipoTelhado, setTipoTelhado] = useState("ceramico");
   const [selectedKitId, setSelectedKitId] = useState<string>("");
+  const [usuarioAlterouKit, setUsuarioAlterouKit] = useState(false);
   const [selectedFinanceirasIds, setSelectedFinanceirasIds] = useState<string[]>([]);
-  const queryParams = new URLSearchParams(window.location.search);
-  const modo = queryParams.get("modo") || "proposta";
 
   const [perfilCliente, setPerfilCliente] = useState<"completo" | "cotacao" | "financiamento">(
     modo === "cotacao" ? "cotacao" : modo === "financiamento" ? "financiamento" : "completo"
@@ -564,6 +564,10 @@ function NovaProposta() {
   };
 
   const salvarFinanciamento = async () => {
+    if (!params) {
+      toast.error("Parâmetros comerciais não carregados.");
+      return;
+    }
     if (!scriptName || !scriptPhone || !finCpf || !scriptKwh || !scriptCidade || !scriptEstado) {
       toast.error("Por favor, preencha todos os campos obrigatórios (Nome, Celular, CPF, Consumo e Localidade).");
       return;
@@ -585,7 +589,7 @@ function NovaProposta() {
           numero_uc: finUc,
           concessionaria: finConcessionaria,
           forma_pagamento: "financiamento"
-        })
+        } as any)
         .select()
         .single();
         
@@ -593,7 +597,12 @@ function NovaProposta() {
 
       // 2. Dimensiona sistema solar
       const kwh = Number(scriptKwh) || 300;
-      const baseResult = calcularDimensionamento(kwh, scriptEstado, scriptCidade);
+      const baseResult = calcularProposta({
+        consumo_kwh: kwh,
+        tarifa_kwh: tarifa || params.tarifa_kwh_default || 0.95,
+        estado: scriptEstado.trim().toUpperCase(),
+        tipo,
+      }, params);
 
       // Encontra melhor kit comercial
       let loadedKits = kits.length > 0 ? kits : KITS_FALLBACK;
@@ -628,7 +637,7 @@ function NovaProposta() {
           payback_meses: baseResult.payback_meses,
           geracao_mensal_kwh: baseResult.geracao_mensal_kwh,
           co2_evitado_ton: baseResult.co2_evitado_ton,
-          arvores_equivalentes: baseResult.arvores_salvas || 5,
+          arvores_equivalentes: baseResult.arvores_equivalentes || 5,
           area_necessaria_m2: baseResult.area_necessaria_m2,
           condicoes_pagamento: finalCondicoes,
           expires_at: expDate.toISOString(),
@@ -958,15 +967,15 @@ function NovaProposta() {
                   <div className="grid sm:grid-cols-3 gap-3">
                     <div className="border border-dashed p-4 rounded-xl text-center space-y-1.5 bg-slate-50/50">
                       <span className="text-[10px] font-bold text-slate-500 block uppercase">RG / CNH *</span>
-                      <Button size="xs" variant="outline" type="button" className="h-7 text-[10px] bg-white border">📎 Anexar Documento</Button>
+                      <Button size="sm" variant="outline" type="button" className="h-7 text-[10px] bg-white border">📎 Anexar Documento</Button>
                     </div>
                     <div className="border border-dashed p-4 rounded-xl text-center space-y-1.5 bg-slate-50/50">
                       <span className="text-[10px] font-bold text-slate-500 block uppercase">Comprovante de Residência *</span>
-                      <Button size="xs" variant="outline" type="button" className="h-7 text-[10px] bg-white border">📎 Anexar Comprovante</Button>
+                      <Button size="sm" variant="outline" type="button" className="h-7 text-[10px] bg-white border">📎 Anexar Comprovante</Button>
                     </div>
                     <div className="border border-dashed p-4 rounded-xl text-center space-y-1.5 bg-slate-50/50">
                       <span className="text-[10px] font-bold text-slate-500 block uppercase">Última Conta de Luz *</span>
-                      <Button size="xs" variant="outline" type="button" className="h-7 text-[10px] bg-white border">📎 Anexar Conta</Button>
+                      <Button size="sm" variant="outline" type="button" className="h-7 text-[10px] bg-white border">📎 Anexar Conta</Button>
                     </div>
                   </div>
                 </div>
@@ -1228,7 +1237,7 @@ function NovaProposta() {
           <div><Label>Condições de pagamento</Label><Input value={condicoes} onChange={(e) => setCondicoes(e.target.value)} /></div>
           <div><Label>Observações (opcional)</Label><Textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows={3} /></div>
           <div className="bg-slate-50 rounded-lg p-4 text-sm">
-            <strong className="text-navy">{selecionados.length} cliente(s)</strong> · {NUM(calculo.kwp_sistema, 2)} kWp · {BRL(calculo.preco_total)} · Validade {params.validade_proposta_dias} dias
+            <strong className="text-navy">{selecionados.length} cliente(s)</strong> · {NUM(calculo.kwp_sistema, 2)} kWp · {BRL(calculo.preco_total)} · Validade {params?.validade_proposta_dias || 15} dias
           </div>
           <div className="flex justify-between">
             <Button variant="ghost" onClick={() => setStep(4)}><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button>
