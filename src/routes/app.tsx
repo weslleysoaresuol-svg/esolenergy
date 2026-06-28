@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog,
   Plus, FileText, Link2, FileSpreadsheet, BarChart3, Settings,
-  Bell, CheckCheck, X, ExternalLink, Sun,
+  Bell, CheckCheck, X, ExternalLink, Sun, ShoppingCart, Landmark, Zap,
 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
@@ -218,19 +218,21 @@ function AppShell() {
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
-    { to: "/app/propostas", query: { modo: "proposta" }, icon: FileSpreadsheet, label: "Propostas Solar" },
-    { to: "/app/propostas", query: { modo: "cotacao" }, icon: FileText, label: "Cotações Rápidas" },
-    { to: "/app/propostas", query: { modo: "financiamento" }, icon: Briefcase, label: "Financiamentos" },
+    { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
     { to: "/app/kits", icon: Sun, label: "Kits Solares" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros & Convites" },
-    { to: "/app/parametros", icon: Settings, label: "Tarifas & Parâmetros" },
+    { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const corretorNav = [
     { to: "/app", icon: Briefcase, label: "Meus Clientes", exact: true },
-    { to: "/app/propostas", query: { modo: "proposta" }, icon: FileSpreadsheet, label: "Propostas Solar" },
-    { to: "/app/propostas", query: { modo: "cotacao" }, icon: FileText, label: "Cotações Rápidas" },
-    { to: "/app/propostas", query: { modo: "financiamento" }, icon: Briefcase, label: "Financiamentos" },
+    { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const nav = role === "admin" ? adminNav : corretorNav;
