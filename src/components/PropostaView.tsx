@@ -318,7 +318,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                     {parceiro.telefone && <p className="text-xs text-muted-foreground mt-0.5">{parceiro.telefone}</p>}
                   </div>
                   <a
-                    href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${parceiro.nome.split(" ")[0]}!%20Recebi%20minha%20Cotação%20Solar%20nº%20${String(p.id).slice(0,8).toUpperCase()}%20e%20gostaria%20de%20fechar.`}
+                    href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${(parceiro.nome || "ESOL").split(" ")[0]}!%20Recebi%20minha%20Cotação%20Solar%20nº%20${String(p.id).slice(0,8).toUpperCase()}%20e%20gostaria%20de%20fechar.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-extrabold text-xs h-10 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
@@ -599,7 +599,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
               </div>
               {parceiro && (
                 <a
-                  href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${parceiro.nome.split(" ")[0]}!%20Gostaria%20de%20fechar%20a%20proposta%20solar%20nº%20${String(p.id).slice(0, 8).toUpperCase()}.`}
+                  href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${(parceiro.nome || "ESOL").split(" ")[0]}!%20Gostaria%20de%20fechar%20a%20proposta%20solar%20nº%20${String(p.id).slice(0, 8).toUpperCase()}.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-extrabold text-xs h-10 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
