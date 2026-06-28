@@ -10,7 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, FileText, Eye, Check, X, Clock } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 
-export const Route = createFileRoute("/app/propostas/")({ component: PropostasList });
+export const Route = createFileRoute("/app/propostas/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    modo: (search.modo as string) ?? "proposta",
+  }),
+  component: PropostasList,
+});
 
 const STATUS_LABEL: Record<string, { label: string; color: string; icon: any }> = {
   rascunho: { label: "Rascunho", color: "bg-slate-200 text-slate-700", icon: FileText },
@@ -28,9 +33,7 @@ function PropostasList() {
   const [filterStatus, setFilterStatus] = useState("todos");
   const [filterParceiro, setFilterParceiro] = useState("todos");
   const [parceiros, setParceiros] = useState<any[]>([]);
-
-  const queryParams = new URLSearchParams(window.location.search);
-  const modo = queryParams.get("modo") || "proposta";
+  const { modo } = Route.useSearch();
 
   useEffect(() => {
     (async () => {
