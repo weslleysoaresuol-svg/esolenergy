@@ -36,21 +36,31 @@ function CotacoesList() {
   const [openNew, setOpenNew] = useState(false);
   const [novo, setNovo] = useState({ cliente_id: "", kit_id: "", quantidade: 1, observacoes: "" });
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [q, setQ] = useState("");
   const [clienteTipo, setClienteTipo] = useState<"existente" | "novo">("existente");
   const [novoCliente, setNovoCliente] = useState({ nome: "", telefone: "", cidade: "", estado: "SP" });
 
   const load = async () => {
-    const [{ data: cs }, { data: cls }, { data: ks }] = await Promise.all([
+    setLoading(true);
+    const [cs, cls, ks] = await Promise.all([
       (supabase.from as any)("cotacoes")
-        .select("*, cliente:cliente_id(nome, telefone), kit:kit_id(nome, potencia_kwp, imagem_url)")
+        .select("*, cliente:cliente_id(*), kit:kit_id(*)")
         .order("created_at", { ascending: false }),
-      supabase.from("clientes").select("id, nome, telefone").order("nome"),
-      (supabase.from as any)("kits_produtos").select("*").eq("ativo", true).order("potencia_kwp"),
+      supabase.from("clientes").select("id, nome, telefone, cidade, estado"),
+      supabase.from("kits_produtos" as any).select("*").order("potencia_kwp"),
     ]);
-    setCotacoes(cs || []);
-    setClientes(cls || []);
-    setKits(ks || []);
+    setCotacoes(cs.data || []);
+    setClientes(cls.data || []);
+    
+    let mergedKits = ks.data || [];
+    if (mergedKits.length < 20) {
+      const codes = new Set(mergedKits.map((k: any) => k.codigo));
+      const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
+      mergedKits = [...mergedKits, ...missing];
+    }
+    setKits(mergedKits);
+    setLoading(false);
   };
 
   useEffect(() => { if (user) load(); }, [user]);

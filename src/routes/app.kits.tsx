@@ -91,7 +91,38 @@ function AdminKits() {
         console.warn("Tabela kits_produtos vazia ou inacessível. Usando fallback estático...");
         setKits(KITS_FALLBACK);
       } else {
-        setKits(data);
+        // Se o banco possuir menos de 20 kits, mesclamos com o fallback para garantir a lista completa de 50
+        let merged = [...data];
+        if (data.length < 20) {
+          const codes = new Set(data.map((k: any) => k.codigo));
+          const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
+          // Adapta campos de fallback para bater com colunas do banco
+          const missingMapped = missing.map(m => ({
+            id: m.id,
+            codigo: m.id,
+            faixa: m.faixa,
+            nome: m.nome,
+            potencia_kwp: m.potencia_kwp,
+            quantidade_modulos: m.quantidade_modulos,
+            fabricante_modulos: m.fabricante_modulos,
+            potencia_modulo_w: m.potencia_modulo_w,
+            tecnologia_modulo: m.tecnologia_modulo,
+            eficiencia_modulo: m.eficiencia_modulo,
+            inversor: m.inversor,
+            tipo_inversor: m.tipo_inversor,
+            garantia_modulos_anos: m.garantia_modulos_anos,
+            garantia_inversor_anos: m.garantia_inversor_anos,
+            preco: m.preco,
+            consumo_kwh_min: m.consumo_kwh_min,
+            consumo_kwh_max: m.consumo_kwh_max,
+            destaque: m.destaque,
+            ativo: m.ativo,
+            fornecedor: m.fornecedor,
+            url_fornecedor: m.url_fornecedor
+          }));
+          merged = [...merged, ...missingMapped];
+        }
+        setKits(merged);
       }
     } catch (err) {
       console.warn("Falha de conexão com kits_produtos. Usando fallback estático...", err);

@@ -138,11 +138,19 @@ function NovoCliente() {
           tipo: f.imovel_tipo || "residencial"
         }, paramsComerciais);
 
-        // Carrega Kits fotovoltaicos do Supabase (ou fallback)
-        let loadedKits = KITS_FALLBACK;
+        // Carrega Kits fotovoltaicos do Supabase (ou fallback) e mescla para ter todos os 50
+        let loadedKits = [...KITS_FALLBACK];
         try {
           const { data: dbKits } = await supabase.from("kits_produtos" as any).select("*");
-          if (dbKits && dbKits.length > 0) loadedKits = dbKits as any;
+          if (dbKits && dbKits.length > 0) {
+            let merged = [...dbKits];
+            if (dbKits.length < 20) {
+              const codes = new Set(dbKits.map((k: any) => k.codigo));
+              const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
+              merged = [...merged, ...missing];
+            }
+            loadedKits = merged as any;
+          }
         } catch(e) {}
 
         // Encontra o kit adequado mais econômico para o cliente

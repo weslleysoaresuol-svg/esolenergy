@@ -119,7 +119,13 @@ function NovaProposta() {
           console.warn("Tabela kits_produtos vazia ou inacessível. Usando fallback estático...");
           setKits(KITS_FALLBACK);
         } else {
-          setKits(ks);
+          let merged = [...ks];
+          if (ks.length < 20) {
+            const codes = new Set(ks.map((k: any) => k.codigo));
+            const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
+            merged = [...merged, ...missing];
+          }
+          setKits(merged);
         }
       } catch (err) {
         console.warn("Falha de conexão com kits_produtos. Usando fallback estático...", err);
