@@ -654,7 +654,7 @@ function NovaProposta() {
         </Card>
       )}
 
-      {perfilCliente !== "cotacao" && usarScriptVendas ? (
+      {perfilCliente !== "cotacao" && usarScriptVendas && (
         <div className="space-y-6 animate-fade-in">
           {/* Timeline do Roteiro */}
           <div className="flex items-center gap-2 text-xs flex-wrap bg-slate-50 p-3 rounded-2xl border">
