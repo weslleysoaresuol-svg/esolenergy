@@ -16,7 +16,7 @@ import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, Legend
 } from "recharts";
-import { calcularProposta } from "@/lib/proposta-calc";
+import { calcularProposta, BRL } from "@/lib/proposta-calc";
 import { KITS_FALLBACK } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/app/")(
@@ -130,7 +130,8 @@ function AdminDashboard() {
         tarifa_kwh_default: 0.95, perdas_sistema: 0.15, inflacao_energetica: 0.08, vida_util_anos: 25,
         potencia_modulo_w: 550, area_por_modulo_m2: 2.5,
         custo_equipamentos_pct: 0.5, custo_instalacao_pct: 0.15, custo_frete_pct: 0.05, custo_impostos_pct: 0.1, custo_comissao_pct: 0.05, margem_alvo_pct: 0.15,
-        validade_proposta_dias: 15
+        validade_proposta_dias: 15,
+        capacidade_instaladores_kwp_mes: 120
       };
       
       try {
@@ -183,7 +184,7 @@ function AdminDashboard() {
       let loadedKits = KITS_FALLBACK;
       try {
         const { data: dbKits } = await supabase.from("kits_solares" as any).select("*");
-        if (dbKits && dbKits.length > 0) loadedKits = dbKits;
+          if (dbKits && dbKits.length > 0) loadedKits = dbKits as any;
       } catch(e) {}
 
       // Encontra o kit adequado mais econômico para o cliente
@@ -196,28 +197,42 @@ function AdminDashboard() {
       expDate.setDate(expDate.getDate() + (paramsComerciais.validade_proposta_dias || 15));
 
       // 3. Cria a Proposta
+      const precoFinal = kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total;
+      const kwpFinal = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : calculo.kwp_sistema;
+      const qtdModulosFinal = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : calculo.qtd_modulos;
       const { data: prop, error: errProp } = await supabase.from("propostas").insert({
         titulo: `Proposta Solar ${fastImovelTipo === "residencial" ? "Residencial" : fastImovelTipo === "comercial" ? "Comercial" : fastImovelTipo === "industrial" ? "Industrial" : "Rural"} - ${client.nome}`,
         parceiro_id: user.id,
-        kwp_sistema: calculo.kwp_sistema,
-        preco_total: kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total,
-        custos_totais: calculo.custos_totais,
-        comissao_parceiro: calculo.custo_comissao,
-        margem_estimada: calculo.margem_real,
-        codigo_publico: crypto.randomUUID().slice(0, 8),
+        kwp_sistema: kwpFinal,
+        preco_total: precoFinal,
+        codigo_publico: crypto.randomUUID(),
         expires_at: expDate.toISOString(),
         status: "enviada",
         kit_id: kitRecomendado?.id || null,
-        tipo_conexao: "bifasico",
-        tipo_telhado: "ceramico",
         tipo_instalacao: fastImovelTipo,
         consumo_kwh: consumoEstimado,
         tarifa_kwh: tarifaKwh,
         estado: fastEstado.trim().toUpperCase(),
         cidade: fastCidade.trim(),
+        regiao: calculo.regiao,
+        hsp: calculo.hsp,
+        qtd_modulos: qtdModulosFinal,
+        potencia_modulo_w: calculo.potencia_modulo_w,
+        qtd_inversores: calculo.qtd_inversores,
+        potencia_inversor_kw: calculo.potencia_inversor_kw,
+        area_necessaria_m2: calculo.area_necessaria_m2,
+        geracao_mensal_kwh: calculo.geracao_mensal_kwh,
+        economia_mensal: calculo.economia_mensal,
+        economia_anual: calculo.economia_anual,
+        economia_25_anos: calculo.economia_25_anos,
+        payback_meses: calculo.payback_meses,
+        co2_evitado_ton: calculo.co2_evitado_ton,
+        arvores_equivalentes: calculo.arvores_equivalentes,
+        preco_por_wp: +(precoFinal / (kwpFinal * 1000)).toFixed(2),
+        validade_dias: paramsComerciais.validade_proposta_dias || 15,
         condicoes_pagamento: "À vista 5% desconto · Financiamento via parceiros bancários",
         observacoes: "Criada instantaneamente pelo painel de controle expresso"
-      }).select().single();
+      } as any).select().single();
 
       if (errProp) {
         console.error("Erro ao criar proposta expressa na home:", errProp);

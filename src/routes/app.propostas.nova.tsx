@@ -54,6 +54,7 @@ function NovaProposta() {
   // Estados do Roteiro de Vendas & Foco da Proposta
   const [preferenciaFoco, setPreferenciaFoco] = useState<"ambos" | "vista" | "financiado">("ambos");
   const [bancoPreSelecionado, setBancoPreSelecionado] = useState<string>("solfacil");
+  const [selectedPrazo, setSelectedPrazo] = useState(60);
   const [usarScriptVendas, setUsarScriptVendas] = useState(false);
   const [scriptStep, setScriptStep] = useState(1);
   
@@ -462,6 +463,7 @@ function NovaProposta() {
 
       const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResult.preco_total;
       const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResult.kwp_sistema;
+      const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResult.qtd_modulos;
       
       // Juros e condições
       const tagFoco = preferenciaFoco === "vista" 
@@ -480,23 +482,34 @@ function NovaProposta() {
         parceiro_id: user.id,
         kwp_sistema: kwp,
         preco_total: precoTotal,
-        custos_totais: baseResult.custos_totais,
-        comissao_parceiro: baseResult.custo_comissao,
-        margem_estimada: baseResult.margem_real,
-        codigo_publico: crypto.randomUUID().slice(0, 8),
+        codigo_publico: crypto.randomUUID(),
         expires_at: expDate.toISOString(),
         status: "enviada",
         kit_id: kitRecomendado?.id || null,
-        tipo_conexao: "bifasico",
-        tipo_telhado: "ceramico",
         tipo_instalacao: tipo,
         consumo_kwh: consumoEstimado,
         tarifa_kwh: tarifaKwh,
         estado: scriptEstado.trim().toUpperCase(),
         cidade: scriptCidade.trim(),
+        regiao: baseResult.regiao,
+        hsp: baseResult.hsp,
+        qtd_modulos: qtdModulos,
+        potencia_modulo_w: baseResult.potencia_modulo_w,
+        qtd_inversores: baseResult.qtd_inversores,
+        potencia_inversor_kw: baseResult.potencia_inversor_kw,
+        area_necessaria_m2: baseResult.area_necessaria_m2,
+        geracao_mensal_kwh: baseResult.geracao_mensal_kwh,
+        economia_mensal: baseResult.economia_mensal,
+        economia_anual: baseResult.economia_anual,
+        economia_25_anos: baseResult.economia_25_anos,
+        payback_meses: baseResult.payback_meses,
+        co2_evitado_ton: baseResult.co2_evitado_ton,
+        arvores_equivalentes: baseResult.arvores_equivalentes,
+        preco_por_wp: +(precoTotal / (kwp * 1000)).toFixed(2),
+        validade_dias: params.validade_proposta_dias || 15,
         condicoes_pagamento: finalCondicoes,
         observacoes: "Gerada pelo Roteiro Guiado de Fechamento de Elite"
-      }).select().single();
+      } as any).select().single();
 
       if (errProp) {
         console.error("Erro ao criar proposta do script:", errProp);
@@ -520,6 +533,7 @@ function NovaProposta() {
   if (!params) return <div className="text-center py-12 text-muted-foreground">Carregando…</div>;
 
   return (
+    <div className="space-y-6 max-w-5xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
         <div className="flex items-center gap-3">
           <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
