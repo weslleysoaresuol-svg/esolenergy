@@ -69,6 +69,10 @@ function CotacoesList() {
   const kitSel = kits.find((k) => k.id === novo.kit_id);
   const total = kitSel ? Number(kitSel.preco) * novo.quantidade : 0;
 
+  // Verifica se o kit_id é um UUID válido (kits do fallback têm IDs como "KIT-RES-PEQ-03")
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const kitIdParaDB = novo.kit_id && UUID_REGEX.test(novo.kit_id) ? novo.kit_id : null;
+
   const criar = async () => {
     if (!user || !novo.kit_id) {
       toast.error("Selecione o kit solar"); return;
@@ -111,12 +115,15 @@ function CotacoesList() {
       const { data, error } = await (supabase.from as any)("cotacoes").insert({
         parceiro_id: user.id,
         cliente_id: targetClienteId,
-        kit_id: novo.kit_id,
+        // kit_id só é enviado se for um UUID real (kits cadastrados no banco).
+        // Kits do fallback têm IDs como "KIT-RES-PEQ-03" e causariam erro de UUID.
+        // Nesses casos, kit_id fica null e todos os dados ficam no kit_snapshot.
+        kit_id: kitIdParaDB,
         kit_snapshot: kitSel,
         quantidade: novo.quantidade,
-        preco_unit: kitSel.preco,
+        preco_unit: Number(kitSel!.preco),
         preco_total: total,
-        observacoes: novo.observacoes,
+        observacoes: novo.observacoes || null,
         status: "enviada",
       }).select().single();
 
@@ -200,7 +207,7 @@ function CotacoesList() {
       </div>
 
       <Dialog open={openNew} onOpenChange={setOpenNew}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>Nova cotação rápida</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div>
@@ -257,11 +264,15 @@ function CotacoesList() {
             <div>
               <Label>Kit solar</Label>
               <Select value={novo.kit_id} onValueChange={(v) => setNovo({ ...novo, kit_id: v })}>
-                <SelectTrigger><SelectValue placeholder="Escolha um kit" /></SelectTrigger>
-                <SelectContent className="max-h-[300px] overflow-y-auto">
+                <SelectTrigger className="w-full">
+                  <span className="truncate block text-left">
+                    {kitSel ? `${kitSel.nome} — ${BRL(Number(kitSel.preco))}` : "Escolha um kit solar"}
+                  </span>
+                </SelectTrigger>
+                <SelectContent className="max-h-[280px] overflow-y-auto w-full">
                   {kits.map((k) => (
-                    <SelectItem key={k.id} value={k.id}>
-                      {k.nome} — {BRL(Number(k.preco))}
+                    <SelectItem key={k.id} value={k.id} className="text-xs">
+                      <span className="block truncate max-w-[380px]">{k.nome} — {BRL(Number(k.preco))}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
