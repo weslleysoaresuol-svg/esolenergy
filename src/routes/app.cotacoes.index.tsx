@@ -48,16 +48,20 @@ function CotacoesList() {
       (supabase.from as any)("cotacoes")
         .select("*, cliente:cliente_id(*), kit:kit_id(*)")
         .order("created_at", { ascending: false }),
-      supabase.from("clientes").select("id, nome, telefone, cidade, estado"),
+      // Clientes: ordenados pelo mais recente (created_at DESC) — o \u00faltimo cadastrado fica no topo
+      supabase.from("clientes").select("id, nome, telefone, cidade, estado").order("created_at", { ascending: false }),
       supabase.from("kits_produtos" as any).select("*").order("potencia_kwp"),
     ]);
     setCotacoes(cs.data || []);
     setClientes(cls.data || []);
     
-    let mergedKits = ks.data || [];
+    // Kits: mantém ordem por potencia_kwp, mas fallback j\u00e1 vem ordenado por potencia
+    let mergedKits = (ks.data || []).sort((a: any, b: any) => Number(a.potencia_kwp) - Number(b.potencia_kwp));
     if (mergedKits.length < 20) {
       const codes = new Set(mergedKits.map((k: any) => k.codigo));
-      const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
+      const missing = KITS_FALLBACK
+        .filter((k) => !codes.has(k.id) && !codes.has(k.codigo))
+        .sort((a, b) => a.potencia_kwp - b.potencia_kwp);
       mergedKits = [...mergedKits, ...missing];
     }
     setKits(mergedKits);

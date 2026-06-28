@@ -103,11 +103,12 @@ function NovaProposta() {
       // 2. Clientes
       let loadedClientes: any[] = [];
       try {
-        const { data: cs } = await supabase.from("clientes").select("id, nome, telefone, email, cidade, estado, consumo_kwh, valor_fatura").order("nome");
-        if (cs) {
-          setClientes(cs);
-          loadedClientes = cs;
-        }
+      // Clientes: mais recente no topo (created_at DESC)
+      const { data: cs } = await supabase.from("clientes").select("id, nome, telefone, email, cidade, estado, consumo_kwh, valor_fatura").order("created_at", { ascending: false });
+      if (cs) {
+        setClientes(cs);
+        loadedClientes = cs;
+      }
       } catch (err) {
         console.warn("Erro ao buscar clientes:", err);
       }
@@ -115,14 +116,17 @@ function NovaProposta() {
       // 3. Kits Solares
       try {
         const { data: ks, error } = await supabase.from("kits_produtos" as any).select("*");
+        // Kits: ordenados por pot\u00eancia crescente + fallback tamb\u00e9m ordenado
         if (error || !ks || ks.length === 0) {
-          console.warn("Tabela kits_produtos vazia ou inacessível. Usando fallback estático...");
-          setKits(KITS_FALLBACK);
+          console.warn("Tabela kits_produtos vazia ou inacess\u00edvel. Usando fallback est\u00e1tico...");
+          setKits([...KITS_FALLBACK].sort((a, b) => a.potencia_kwp - b.potencia_kwp));
         } else {
-          let merged = [...ks];
+          let merged = [...ks].sort((a: any, b: any) => Number(a.potencia_kwp) - Number(b.potencia_kwp));
           if (ks.length < 20) {
             const codes = new Set(ks.map((k: any) => k.codigo));
-            const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
+            const missing = KITS_FALLBACK
+              .filter((k) => !codes.has(k.id) && !codes.has(k.codigo))
+              .sort((a, b) => a.potencia_kwp - b.potencia_kwp);
             merged = [...merged, ...missing];
           }
           setKits(merged);
@@ -231,8 +235,50 @@ function NovaProposta() {
         return melhorKit.id;
       }
     }
-    return null;
   }, [params, kits, consumo, estado, tipo, tarifa]);
+
+  const sortedKits = useMemo(() => {
+    if (!kitRecomendadoId) return kits;
+    return [...kits].sort((a, b) => {
+      if (a.id === kitRecomendadoId) return -1;
+      if (b.id === kitRecomendadoId) return 1;
+      return 0;
+    });
+  }, [kits, kitRecomendadoId]);
+
+  const sortedClientes = useMemo(() => {
+    return [...clientes].sort((a, b) => {
+      // 1. Clientes selecionados primeiro
+      const aSel = selecionados.includes(a.id) ? 1 : 0;
+      const bSel = selecionados.includes(b.id) ? 1 : 0;
+      if (aSel !== bSel) return bSel - aSel;
+
+      // 2. Cliente pre-selecionado (via URL/Search) em seguida
+      if (clienteIdPreSel) {
+        const aPre = a.id === clienteIdPreSel ? 1 : 0;
+        const bPre = b.id === clienteIdPreSel ? 1 : 0;
+        if (aPre !== bPre) return bPre - aPre;
+      }
+
+      return 0;
+    });
+  }, [clientes, selecionados, clienteIdPreSel]);
+
+  // Sincroniza o consumo com base nas entradas do script de vendas (cotacao rapida ou financiamento)
+  useEffect(() => {
+    const tarifaKwh = params?.tarifa_kwh_default || 0.95;
+    if (scriptInputMode === "fatura" && scriptBill) {
+      const billVal = Number(scriptBill);
+      if (!isNaN(billVal) && billVal > 0) {
+        setConsumo(Math.round(billVal / tarifaKwh));
+      }
+    } else if (scriptInputMode === "kwh" && scriptKwh) {
+      const val = Number(scriptKwh);
+      if (!isNaN(val) && val > 0) {
+        setConsumo(val);
+      }
+    }
+  }, [scriptInputMode, scriptBill, scriptKwh, params]);
 
   const calculo = useMemo(() => {
     if (!params) return null;
@@ -814,13 +860,17 @@ function NovaProposta() {
           <div className="space-y-3 pt-3 border-t">
             <Label className="text-xs font-extrabold text-navy block">Escolha o Kit Solar para a Cotação *</Label>
             <div className="grid sm:grid-cols-2 gap-3 max-h-[250px] overflow-y-auto pr-1">
-              {kits.map((kit) => {
+              {sortedKits.map((kit) => {
                 const isSelected = selectedCotacaoKitId === kit.id;
+                const isRecommended = kit.id === kitRecomendadoId;
                 return (
                   <label key={kit.id} className={`flex items-start gap-3 p-3 rounded-xl border-2 transition cursor-pointer ${isSelected ? "border-navy bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
                     <input type="radio" name="cotacaoKit" checked={isSelected} onChange={() => setSelectedCotacaoKitId(kit.id)} className="mt-1 accent-navy" />
                     <div className="flex-1 text-xs">
-                      <div className="font-bold text-navy leading-snug">{kit.nome}</div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-navy leading-snug">{kit.nome}</span>
+                        {isRecommended && <span className="bg-sun text-navy text-[8px] font-extrabold px-1 rounded">Recomendado</span>}
+                      </div>
                       <div className="text-[10px] text-muted-foreground mt-0.5">Potência: <strong>{kit.potencia_kwp} kWp</strong> · {kit.quantidade_modulos}x painéis</div>
                       <div className="text-xs font-extrabold text-emerald-700 mt-1">{BRL(Number(kit.preco))}</div>
                     </div>
@@ -1061,7 +1111,7 @@ function NovaProposta() {
             </div>
           ) : (
             <div className="max-h-96 overflow-y-auto divide-y border rounded-lg">
-              {clientes.map((c) => (
+              {sortedClientes.map((c) => (
                 <label key={c.id} className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer">
                   <Checkbox checked={selecionados.includes(c.id)} onCheckedChange={(v) => setSelecionados((s) => v ? [...s, c.id] : s.filter((id) => id !== c.id))} />
                   <div className="flex-1">
@@ -1165,7 +1215,7 @@ function NovaProposta() {
               </div>
             </label>
 
-            {kits.map((kit) => {
+            {sortedKits.map((kit) => {
               const isRecommended = kit.id === kitRecomendadoId;
               const isSelected = selectedKitId === kit.id;
               
