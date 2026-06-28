@@ -15,18 +15,29 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as PropostaCodigoRouteImport } from './routes/proposta.$codigo'
+import { Route as FinanciamentoCodigoRouteImport } from './routes/financiamento.$codigo'
+import { Route as CotacaoCodigoRouteImport } from './routes/cotacao.$codigo'
 import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
+import { Route as AppPedidosRouteImport } from './routes/app.pedidos'
 import { Route as AppParametrosRouteImport } from './routes/app.parametros'
 import { Route as AppNovoRouteImport } from './routes/app.novo'
 import { Route as AppKitsRouteImport } from './routes/app.kits'
+import { Route as AppFinanciamentosRouteImport } from './routes/app.financiamentos'
+import { Route as AppCotacoesRouteImport } from './routes/app.cotacoes'
 import { Route as AppCorretoresRouteImport } from './routes/app.corretores'
 import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
 import { Route as AppPropostasIndexRouteImport } from './routes/app.propostas.index'
+import { Route as AppPedidosIndexRouteImport } from './routes/app.pedidos.index'
+import { Route as AppFinanciamentosIndexRouteImport } from './routes/app.financiamentos.index'
+import { Route as AppCotacoesIndexRouteImport } from './routes/app.cotacoes.index'
 import { Route as AppPropostasNovaRouteImport } from './routes/app.propostas.nova'
 import { Route as AppPropostasIdRouteImport } from './routes/app.propostas.$id'
+import { Route as AppPedidosIdRouteImport } from './routes/app.pedidos.$id'
+import { Route as AppFinanciamentosIdRouteImport } from './routes/app.financiamentos.$id'
+import { Route as AppCotacoesIdRouteImport } from './routes/app.cotacoes.$id'
 import { Route as AppContratoIdRouteImport } from './routes/app.contrato.$id'
 import { Route as AppClienteIdRouteImport } from './routes/app.cliente.$id'
 
@@ -60,6 +71,16 @@ const PropostaCodigoRoute = PropostaCodigoRouteImport.update({
   path: '/proposta/$codigo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FinanciamentoCodigoRoute = FinanciamentoCodigoRouteImport.update({
+  id: '/financiamento/$codigo',
+  path: '/financiamento/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CotacaoCodigoRoute = CotacaoCodigoRouteImport.update({
+  id: '/cotacao/$codigo',
+  path: '/cotacao/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConviteTokenRoute = ConviteTokenRouteImport.update({
   id: '/convite/$token',
   path: '/convite/$token',
@@ -75,6 +96,11 @@ const AppPerfilRoute = AppPerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPedidosRoute = AppPedidosRouteImport.update({
+  id: '/pedidos',
+  path: '/pedidos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppParametrosRoute = AppParametrosRouteImport.update({
   id: '/parametros',
   path: '/parametros',
@@ -88,6 +114,16 @@ const AppNovoRoute = AppNovoRouteImport.update({
 const AppKitsRoute = AppKitsRouteImport.update({
   id: '/kits',
   path: '/kits',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanciamentosRoute = AppFinanciamentosRouteImport.update({
+  id: '/financiamentos',
+  path: '/financiamentos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCotacoesRoute = AppCotacoesRouteImport.update({
+  id: '/cotacoes',
+  path: '/cotacoes',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCorretoresRoute = AppCorretoresRouteImport.update({
@@ -110,6 +146,21 @@ const AppPropostasIndexRoute = AppPropostasIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppPropostasRoute,
 } as any)
+const AppPedidosIndexRoute = AppPedidosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPedidosRoute,
+} as any)
+const AppFinanciamentosIndexRoute = AppFinanciamentosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppFinanciamentosRoute,
+} as any)
+const AppCotacoesIndexRoute = AppCotacoesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppCotacoesRoute,
+} as any)
 const AppPropostasNovaRoute = AppPropostasNovaRouteImport.update({
   id: '/nova',
   path: '/nova',
@@ -119,6 +170,21 @@ const AppPropostasIdRoute = AppPropostasIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AppPropostasRoute,
+} as any)
+const AppPedidosIdRoute = AppPedidosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppPedidosRoute,
+} as any)
+const AppFinanciamentosIdRoute = AppFinanciamentosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppFinanciamentosRoute,
+} as any)
+const AppCotacoesIdRoute = AppCotacoesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppCotacoesRoute,
 } as any)
 const AppContratoIdRoute = AppContratoIdRouteImport.update({
   id: '/$id',
@@ -139,18 +205,29 @@ export interface FileRoutesByFullPath {
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/corretores': typeof AppCorretoresRoute
+  '/app/cotacoes': typeof AppCotacoesRouteWithChildren
+  '/app/financiamentos': typeof AppFinanciamentosRouteWithChildren
   '/app/kits': typeof AppKitsRoute
   '/app/novo': typeof AppNovoRoute
   '/app/parametros': typeof AppParametrosRoute
+  '/app/pedidos': typeof AppPedidosRouteWithChildren
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
+  '/cotacao/$codigo': typeof CotacaoCodigoRoute
+  '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
   '/proposta/$codigo': typeof PropostaCodigoRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
+  '/app/cotacoes/$id': typeof AppCotacoesIdRoute
+  '/app/financiamentos/$id': typeof AppFinanciamentosIdRoute
+  '/app/pedidos/$id': typeof AppPedidosIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/app/cotacoes/': typeof AppCotacoesIndexRoute
+  '/app/financiamentos/': typeof AppFinanciamentosIndexRoute
+  '/app/pedidos/': typeof AppPedidosIndexRoute
   '/app/propostas/': typeof AppPropostasIndexRoute
 }
 export interface FileRoutesByTo {
@@ -165,12 +242,20 @@ export interface FileRoutesByTo {
   '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
   '/convite/$token': typeof ConviteTokenRoute
+  '/cotacao/$codigo': typeof CotacaoCodigoRoute
+  '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
   '/proposta/$codigo': typeof PropostaCodigoRoute
   '/app': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
+  '/app/cotacoes/$id': typeof AppCotacoesIdRoute
+  '/app/financiamentos/$id': typeof AppFinanciamentosIdRoute
+  '/app/pedidos/$id': typeof AppPedidosIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/app/cotacoes': typeof AppCotacoesIndexRoute
+  '/app/financiamentos': typeof AppFinanciamentosIndexRoute
+  '/app/pedidos': typeof AppPedidosIndexRoute
   '/app/propostas': typeof AppPropostasIndexRoute
 }
 export interface FileRoutesById {
@@ -182,18 +267,29 @@ export interface FileRoutesById {
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/corretores': typeof AppCorretoresRoute
+  '/app/cotacoes': typeof AppCotacoesRouteWithChildren
+  '/app/financiamentos': typeof AppFinanciamentosRouteWithChildren
   '/app/kits': typeof AppKitsRoute
   '/app/novo': typeof AppNovoRoute
   '/app/parametros': typeof AppParametrosRoute
+  '/app/pedidos': typeof AppPedidosRouteWithChildren
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
+  '/cotacao/$codigo': typeof CotacaoCodigoRoute
+  '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
   '/proposta/$codigo': typeof PropostaCodigoRoute
   '/app/': typeof AppIndexRoute
   '/app/cliente/$id': typeof AppClienteIdRoute
   '/app/contrato/$id': typeof AppContratoIdRoute
+  '/app/cotacoes/$id': typeof AppCotacoesIdRoute
+  '/app/financiamentos/$id': typeof AppFinanciamentosIdRoute
+  '/app/pedidos/$id': typeof AppPedidosIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/app/cotacoes/': typeof AppCotacoesIndexRoute
+  '/app/financiamentos/': typeof AppFinanciamentosIndexRoute
+  '/app/pedidos/': typeof AppPedidosIndexRoute
   '/app/propostas/': typeof AppPropostasIndexRoute
 }
 export interface FileRouteTypes {
@@ -206,18 +302,29 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contrato'
     | '/app/corretores'
+    | '/app/cotacoes'
+    | '/app/financiamentos'
     | '/app/kits'
     | '/app/novo'
     | '/app/parametros'
+    | '/app/pedidos'
     | '/app/perfil'
     | '/app/propostas'
     | '/convite/$token'
+    | '/cotacao/$codigo'
+    | '/financiamento/$codigo'
     | '/proposta/$codigo'
     | '/app/'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
+    | '/app/cotacoes/$id'
+    | '/app/financiamentos/$id'
+    | '/app/pedidos/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/app/cotacoes/'
+    | '/app/financiamentos/'
+    | '/app/pedidos/'
     | '/app/propostas/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -232,12 +339,20 @@ export interface FileRouteTypes {
     | '/app/parametros'
     | '/app/perfil'
     | '/convite/$token'
+    | '/cotacao/$codigo'
+    | '/financiamento/$codigo'
     | '/proposta/$codigo'
     | '/app'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
+    | '/app/cotacoes/$id'
+    | '/app/financiamentos/$id'
+    | '/app/pedidos/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/app/cotacoes'
+    | '/app/financiamentos'
+    | '/app/pedidos'
     | '/app/propostas'
   id:
     | '__root__'
@@ -248,18 +363,29 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contrato'
     | '/app/corretores'
+    | '/app/cotacoes'
+    | '/app/financiamentos'
     | '/app/kits'
     | '/app/novo'
     | '/app/parametros'
+    | '/app/pedidos'
     | '/app/perfil'
     | '/app/propostas'
     | '/convite/$token'
+    | '/cotacao/$codigo'
+    | '/financiamento/$codigo'
     | '/proposta/$codigo'
     | '/app/'
     | '/app/cliente/$id'
     | '/app/contrato/$id'
+    | '/app/cotacoes/$id'
+    | '/app/financiamentos/$id'
+    | '/app/pedidos/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/app/cotacoes/'
+    | '/app/financiamentos/'
+    | '/app/pedidos/'
     | '/app/propostas/'
   fileRoutesById: FileRoutesById
 }
@@ -269,6 +395,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ConviteTokenRoute: typeof ConviteTokenRoute
+  CotacaoCodigoRoute: typeof CotacaoCodigoRoute
+  FinanciamentoCodigoRoute: typeof FinanciamentoCodigoRoute
   PropostaCodigoRoute: typeof PropostaCodigoRoute
 }
 
@@ -316,6 +444,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropostaCodigoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/financiamento/$codigo': {
+      id: '/financiamento/$codigo'
+      path: '/financiamento/$codigo'
+      fullPath: '/financiamento/$codigo'
+      preLoaderRoute: typeof FinanciamentoCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cotacao/$codigo': {
+      id: '/cotacao/$codigo'
+      path: '/cotacao/$codigo'
+      fullPath: '/cotacao/$codigo'
+      preLoaderRoute: typeof CotacaoCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/convite/$token': {
       id: '/convite/$token'
       path: '/convite/$token'
@@ -337,6 +479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPerfilRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/pedidos': {
+      id: '/app/pedidos'
+      path: '/pedidos'
+      fullPath: '/app/pedidos'
+      preLoaderRoute: typeof AppPedidosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/parametros': {
       id: '/app/parametros'
       path: '/parametros'
@@ -356,6 +505,20 @@ declare module '@tanstack/react-router' {
       path: '/kits'
       fullPath: '/app/kits'
       preLoaderRoute: typeof AppKitsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/financiamentos': {
+      id: '/app/financiamentos'
+      path: '/financiamentos'
+      fullPath: '/app/financiamentos'
+      preLoaderRoute: typeof AppFinanciamentosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/cotacoes': {
+      id: '/app/cotacoes'
+      path: '/cotacoes'
+      fullPath: '/app/cotacoes'
+      preLoaderRoute: typeof AppCotacoesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/corretores': {
@@ -386,6 +549,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPropostasIndexRouteImport
       parentRoute: typeof AppPropostasRoute
     }
+    '/app/pedidos/': {
+      id: '/app/pedidos/'
+      path: '/'
+      fullPath: '/app/pedidos/'
+      preLoaderRoute: typeof AppPedidosIndexRouteImport
+      parentRoute: typeof AppPedidosRoute
+    }
+    '/app/financiamentos/': {
+      id: '/app/financiamentos/'
+      path: '/'
+      fullPath: '/app/financiamentos/'
+      preLoaderRoute: typeof AppFinanciamentosIndexRouteImport
+      parentRoute: typeof AppFinanciamentosRoute
+    }
+    '/app/cotacoes/': {
+      id: '/app/cotacoes/'
+      path: '/'
+      fullPath: '/app/cotacoes/'
+      preLoaderRoute: typeof AppCotacoesIndexRouteImport
+      parentRoute: typeof AppCotacoesRoute
+    }
     '/app/propostas/nova': {
       id: '/app/propostas/nova'
       path: '/nova'
@@ -399,6 +583,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/propostas/$id'
       preLoaderRoute: typeof AppPropostasIdRouteImport
       parentRoute: typeof AppPropostasRoute
+    }
+    '/app/pedidos/$id': {
+      id: '/app/pedidos/$id'
+      path: '/$id'
+      fullPath: '/app/pedidos/$id'
+      preLoaderRoute: typeof AppPedidosIdRouteImport
+      parentRoute: typeof AppPedidosRoute
+    }
+    '/app/financiamentos/$id': {
+      id: '/app/financiamentos/$id'
+      path: '/$id'
+      fullPath: '/app/financiamentos/$id'
+      preLoaderRoute: typeof AppFinanciamentosIdRouteImport
+      parentRoute: typeof AppFinanciamentosRoute
+    }
+    '/app/cotacoes/$id': {
+      id: '/app/cotacoes/$id'
+      path: '/$id'
+      fullPath: '/app/cotacoes/$id'
+      preLoaderRoute: typeof AppCotacoesIdRouteImport
+      parentRoute: typeof AppCotacoesRoute
     }
     '/app/contrato/$id': {
       id: '/app/contrato/$id'
@@ -429,6 +634,47 @@ const AppContratoRouteWithChildren = AppContratoRoute._addFileChildren(
   AppContratoRouteChildren,
 )
 
+interface AppCotacoesRouteChildren {
+  AppCotacoesIdRoute: typeof AppCotacoesIdRoute
+  AppCotacoesIndexRoute: typeof AppCotacoesIndexRoute
+}
+
+const AppCotacoesRouteChildren: AppCotacoesRouteChildren = {
+  AppCotacoesIdRoute: AppCotacoesIdRoute,
+  AppCotacoesIndexRoute: AppCotacoesIndexRoute,
+}
+
+const AppCotacoesRouteWithChildren = AppCotacoesRoute._addFileChildren(
+  AppCotacoesRouteChildren,
+)
+
+interface AppFinanciamentosRouteChildren {
+  AppFinanciamentosIdRoute: typeof AppFinanciamentosIdRoute
+  AppFinanciamentosIndexRoute: typeof AppFinanciamentosIndexRoute
+}
+
+const AppFinanciamentosRouteChildren: AppFinanciamentosRouteChildren = {
+  AppFinanciamentosIdRoute: AppFinanciamentosIdRoute,
+  AppFinanciamentosIndexRoute: AppFinanciamentosIndexRoute,
+}
+
+const AppFinanciamentosRouteWithChildren =
+  AppFinanciamentosRoute._addFileChildren(AppFinanciamentosRouteChildren)
+
+interface AppPedidosRouteChildren {
+  AppPedidosIdRoute: typeof AppPedidosIdRoute
+  AppPedidosIndexRoute: typeof AppPedidosIndexRoute
+}
+
+const AppPedidosRouteChildren: AppPedidosRouteChildren = {
+  AppPedidosIdRoute: AppPedidosIdRoute,
+  AppPedidosIndexRoute: AppPedidosIndexRoute,
+}
+
+const AppPedidosRouteWithChildren = AppPedidosRoute._addFileChildren(
+  AppPedidosRouteChildren,
+)
+
 interface AppPropostasRouteChildren {
   AppPropostasIdRoute: typeof AppPropostasIdRoute
   AppPropostasNovaRoute: typeof AppPropostasNovaRoute
@@ -449,9 +695,12 @@ interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
   AppContratoRoute: typeof AppContratoRouteWithChildren
   AppCorretoresRoute: typeof AppCorretoresRoute
+  AppCotacoesRoute: typeof AppCotacoesRouteWithChildren
+  AppFinanciamentosRoute: typeof AppFinanciamentosRouteWithChildren
   AppKitsRoute: typeof AppKitsRoute
   AppNovoRoute: typeof AppNovoRoute
   AppParametrosRoute: typeof AppParametrosRoute
+  AppPedidosRoute: typeof AppPedidosRouteWithChildren
   AppPerfilRoute: typeof AppPerfilRoute
   AppPropostasRoute: typeof AppPropostasRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
@@ -462,9 +711,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppClientesRoute: AppClientesRoute,
   AppContratoRoute: AppContratoRouteWithChildren,
   AppCorretoresRoute: AppCorretoresRoute,
+  AppCotacoesRoute: AppCotacoesRouteWithChildren,
+  AppFinanciamentosRoute: AppFinanciamentosRouteWithChildren,
   AppKitsRoute: AppKitsRoute,
   AppNovoRoute: AppNovoRoute,
   AppParametrosRoute: AppParametrosRoute,
+  AppPedidosRoute: AppPedidosRouteWithChildren,
   AppPerfilRoute: AppPerfilRoute,
   AppPropostasRoute: AppPropostasRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
@@ -479,18 +731,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ConviteTokenRoute: ConviteTokenRoute,
+  CotacaoCodigoRoute: CotacaoCodigoRoute,
+  FinanciamentoCodigoRoute: FinanciamentoCodigoRoute,
   PropostaCodigoRoute: PropostaCodigoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

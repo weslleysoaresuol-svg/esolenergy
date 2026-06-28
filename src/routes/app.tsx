@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog,
   Plus, FileText, Link2, FileSpreadsheet, BarChart3, Settings,
-  Bell, CheckCheck, X, ExternalLink, Sun,
+  Bell, CheckCheck, X, ExternalLink, Sun, ShoppingCart, Landmark, Zap,
 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
@@ -218,19 +218,21 @@ function AppShell() {
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
-    { to: "/app/propostas", query: { modo: "proposta" }, icon: FileSpreadsheet, label: "Propostas Solar" },
-    { to: "/app/propostas", query: { modo: "cotacao" }, icon: FileText, label: "Cotações Rápidas" },
-    { to: "/app/propostas", query: { modo: "financiamento" }, icon: Briefcase, label: "Financiamentos" },
+    { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
     { to: "/app/kits", icon: Sun, label: "Kits Solares" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros & Convites" },
-    { to: "/app/parametros", icon: Settings, label: "Tarifas & Parâmetros" },
+    { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const corretorNav = [
     { to: "/app", icon: Briefcase, label: "Meus Clientes", exact: true },
-    { to: "/app/propostas", query: { modo: "proposta" }, icon: FileSpreadsheet, label: "Propostas Solar" },
-    { to: "/app/propostas", query: { modo: "cotacao" }, icon: FileText, label: "Cotações Rápidas" },
-    { to: "/app/propostas", query: { modo: "financiamento" }, icon: Briefcase, label: "Financiamentos" },
+    { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const nav = role === "admin" ? adminNav : corretorNav;
@@ -245,16 +247,14 @@ function AppShell() {
           <div className="font-semibold truncate">{profile?.nome || user.email}</div>
         </div>
         <nav className="space-y-1 flex-1">
-          {nav.map((item) => {
-            const isModoMatches = item.query ? modoAtivo === item.query.modo : !modoAtivo;
-            const active = item.exact 
-              ? pathname === item.to 
-              : pathname.startsWith(item.to) && isModoMatches;
+          {nav.map((item: any) => {
+            const active = item.exact
+              ? pathname === item.to
+              : pathname.startsWith(item.to);
             return (
               <Link
-                key={item.to + (item.query?.modo || "")}
+                key={item.to}
                 to={item.to}
-                search={item.query as any}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${active ? "bg-sun text-navy" : "text-white/80 hover:bg-white/10"}`}
               >
                 <item.icon className="w-4 h-4" />{item.label}

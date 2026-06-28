@@ -149,6 +149,237 @@ export type Database = {
         }
         Relationships: []
       }
+      cotacoes: {
+        Row: {
+          cliente_id: string
+          codigo_publico: string
+          created_at: string
+          expires_at: string
+          id: string
+          kit_id: string | null
+          kit_snapshot: Json | null
+          observacoes: string | null
+          parceiro_id: string
+          pedido_id: string | null
+          preco_total: number
+          preco_unit: number
+          proposta_id: string | null
+          quantidade: number
+          status: Database["public"]["Enums"]["cotacao_status"]
+          updated_at: string
+        }
+        Insert: {
+          cliente_id: string
+          codigo_publico?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          kit_id?: string | null
+          kit_snapshot?: Json | null
+          observacoes?: string | null
+          parceiro_id: string
+          pedido_id?: string | null
+          preco_total: number
+          preco_unit: number
+          proposta_id?: string | null
+          quantidade?: number
+          status?: Database["public"]["Enums"]["cotacao_status"]
+          updated_at?: string
+        }
+        Update: {
+          cliente_id?: string
+          codigo_publico?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          kit_id?: string | null
+          kit_snapshot?: Json | null
+          observacoes?: string | null
+          parceiro_id?: string
+          pedido_id?: string | null
+          preco_total?: number
+          preco_unit?: number
+          proposta_id?: string | null
+          quantidade?: number
+          status?: Database["public"]["Enums"]["cotacao_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cotacoes_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cotacoes_kit_id_fkey"
+            columns: ["kit_id"]
+            isOneToOne: false
+            referencedRelation: "kits_produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cotacoes_parceiro_id_fkey"
+            columns: ["parceiro_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financiamento_eventos: {
+        Row: {
+          autor_id: string | null
+          created_at: string
+          financiamento_id: string
+          id: string
+          nota: string | null
+          status_anterior:
+            | Database["public"]["Enums"]["financiamento_status"]
+            | null
+          status_novo: Database["public"]["Enums"]["financiamento_status"]
+        }
+        Insert: {
+          autor_id?: string | null
+          created_at?: string
+          financiamento_id: string
+          id?: string
+          nota?: string | null
+          status_anterior?:
+            | Database["public"]["Enums"]["financiamento_status"]
+            | null
+          status_novo: Database["public"]["Enums"]["financiamento_status"]
+        }
+        Update: {
+          autor_id?: string | null
+          created_at?: string
+          financiamento_id?: string
+          id?: string
+          nota?: string | null
+          status_anterior?:
+            | Database["public"]["Enums"]["financiamento_status"]
+            | null
+          status_novo?: Database["public"]["Enums"]["financiamento_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financiamento_eventos_autor_id_fkey"
+            columns: ["autor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financiamento_eventos_financiamento_id_fkey"
+            columns: ["financiamento_id"]
+            isOneToOne: false
+            referencedRelation: "financiamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financiamentos: {
+        Row: {
+          banco: string | null
+          carencia_dias: number | null
+          cliente_id: string
+          codigo_publico: string
+          created_at: string
+          decidido_em: string | null
+          financeira: string | null
+          id: string
+          observacoes_cliente: string | null
+          observacoes_internas: string | null
+          parceiro_id: string
+          parcela_mensal: number | null
+          parcelas: number | null
+          pedido_id: string | null
+          proposta_id: string | null
+          publicado: boolean
+          status: Database["public"]["Enums"]["financiamento_status"]
+          taxa_juros_am: number | null
+          updated_at: string
+          valor_aprovado: number | null
+          valor_solicitado: number
+        }
+        Insert: {
+          banco?: string | null
+          carencia_dias?: number | null
+          cliente_id: string
+          codigo_publico?: string
+          created_at?: string
+          decidido_em?: string | null
+          financeira?: string | null
+          id?: string
+          observacoes_cliente?: string | null
+          observacoes_internas?: string | null
+          parceiro_id: string
+          parcela_mensal?: number | null
+          parcelas?: number | null
+          pedido_id?: string | null
+          proposta_id?: string | null
+          publicado?: boolean
+          status?: Database["public"]["Enums"]["financiamento_status"]
+          taxa_juros_am?: number | null
+          updated_at?: string
+          valor_aprovado?: number | null
+          valor_solicitado: number
+        }
+        Update: {
+          banco?: string | null
+          carencia_dias?: number | null
+          cliente_id?: string
+          codigo_publico?: string
+          created_at?: string
+          decidido_em?: string | null
+          financeira?: string | null
+          id?: string
+          observacoes_cliente?: string | null
+          observacoes_internas?: string | null
+          parceiro_id?: string
+          parcela_mensal?: number | null
+          parcelas?: number | null
+          pedido_id?: string | null
+          proposta_id?: string | null
+          publicado?: boolean
+          status?: Database["public"]["Enums"]["financiamento_status"]
+          taxa_juros_am?: number | null
+          updated_at?: string
+          valor_aprovado?: number | null
+          valor_solicitado?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financiamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financiamentos_parceiro_id_fkey"
+            columns: ["parceiro_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financiamentos_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financiamentos_proposta_id_fkey"
+            columns: ["proposta_id"]
+            isOneToOne: false
+            referencedRelation: "propostas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interacoes: {
         Row: {
           autor_id: string | null
@@ -183,6 +414,81 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kits_produtos: {
+        Row: {
+          ativo: boolean
+          codigo: string | null
+          consumo_kwh_max: number | null
+          consumo_kwh_min: number | null
+          created_at: string
+          destaque: boolean
+          eficiencia_modulo: number | null
+          fabricante_modulos: string | null
+          faixa: string
+          garantia_inversor_anos: number | null
+          garantia_modulos_anos: number | null
+          id: string
+          imagem_url: string | null
+          inversor: string | null
+          nome: string
+          potencia_kwp: number
+          potencia_modulo_w: number
+          preco: number
+          quantidade_modulos: number
+          tecnologia_modulo: string | null
+          tipo_inversor: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          codigo?: string | null
+          consumo_kwh_max?: number | null
+          consumo_kwh_min?: number | null
+          created_at?: string
+          destaque?: boolean
+          eficiencia_modulo?: number | null
+          fabricante_modulos?: string | null
+          faixa?: string
+          garantia_inversor_anos?: number | null
+          garantia_modulos_anos?: number | null
+          id?: string
+          imagem_url?: string | null
+          inversor?: string | null
+          nome: string
+          potencia_kwp: number
+          potencia_modulo_w?: number
+          preco: number
+          quantidade_modulos: number
+          tecnologia_modulo?: string | null
+          tipo_inversor?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string | null
+          consumo_kwh_max?: number | null
+          consumo_kwh_min?: number | null
+          created_at?: string
+          destaque?: boolean
+          eficiencia_modulo?: number | null
+          fabricante_modulos?: string | null
+          faixa?: string
+          garantia_inversor_anos?: number | null
+          garantia_modulos_anos?: number | null
+          id?: string
+          imagem_url?: string | null
+          inversor?: string | null
+          nome?: string
+          potencia_kwp?: number
+          potencia_modulo_w?: number
+          preco?: number
+          quantidade_modulos?: number
+          tecnologia_modulo?: string | null
+          tipo_inversor?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       parametros_comerciais: {
         Row: {
@@ -306,6 +612,81 @@ export type Database = {
           used_by?: string | null
         }
         Relationships: []
+      }
+      pedidos: {
+        Row: {
+          cliente_id: string
+          created_at: string
+          data_entrega_prevista: string | null
+          data_instalacao_prevista: string | null
+          descricao: string | null
+          forma_pagamento: string | null
+          id: string
+          kit_snapshot: Json | null
+          numero: string
+          observacoes: string | null
+          observacoes_cliente: string | null
+          origem: Database["public"]["Enums"]["pedido_origem"]
+          origem_id: string | null
+          parceiro_id: string
+          status: Database["public"]["Enums"]["pedido_status"]
+          updated_at: string
+          valor_total: number
+        }
+        Insert: {
+          cliente_id: string
+          created_at?: string
+          data_entrega_prevista?: string | null
+          data_instalacao_prevista?: string | null
+          descricao?: string | null
+          forma_pagamento?: string | null
+          id?: string
+          kit_snapshot?: Json | null
+          numero?: string
+          observacoes?: string | null
+          observacoes_cliente?: string | null
+          origem?: Database["public"]["Enums"]["pedido_origem"]
+          origem_id?: string | null
+          parceiro_id: string
+          status?: Database["public"]["Enums"]["pedido_status"]
+          updated_at?: string
+          valor_total: number
+        }
+        Update: {
+          cliente_id?: string
+          created_at?: string
+          data_entrega_prevista?: string | null
+          data_instalacao_prevista?: string | null
+          descricao?: string | null
+          forma_pagamento?: string | null
+          id?: string
+          kit_snapshot?: Json | null
+          numero?: string
+          observacoes?: string | null
+          observacoes_cliente?: string | null
+          origem?: Database["public"]["Enums"]["pedido_origem"]
+          origem_id?: string | null
+          parceiro_id?: string
+          status?: Database["public"]["Enums"]["pedido_status"]
+          updated_at?: string
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedidos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedidos_parceiro_id_fkey"
+            columns: ["parceiro_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -578,6 +959,57 @@ export type Database = {
           },
         ]
       }
+      timeline_cliente: {
+        Row: {
+          cliente_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          metadata: Json | null
+          parceiro_id: string | null
+          referencia_id: string | null
+          tipo: Database["public"]["Enums"]["timeline_tipo"]
+          titulo: string
+        }
+        Insert: {
+          cliente_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          metadata?: Json | null
+          parceiro_id?: string | null
+          referencia_id?: string | null
+          tipo: Database["public"]["Enums"]["timeline_tipo"]
+          titulo: string
+        }
+        Update: {
+          cliente_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          metadata?: Json | null
+          parceiro_id?: string | null
+          referencia_id?: string | null
+          tipo?: Database["public"]["Enums"]["timeline_tipo"]
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timeline_cliente_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timeline_cliente_parceiro_id_fkey"
+            columns: ["parceiro_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -605,6 +1037,8 @@ export type Database = {
     }
     Functions: {
       consume_invite: { Args: { _token: string }; Returns: boolean }
+      get_cotacao_publica: { Args: { _codigo: string }; Returns: Json }
+      get_financiamento_publico: { Args: { _codigo: string }; Returns: Json }
       get_parametros_publicos: { Args: never; Returns: Json }
       get_proposta_publica: { Args: { _codigo: string }; Returns: Json }
       has_role: {
@@ -639,7 +1073,32 @@ export type Database = {
         | "instalacao"
         | "concluido"
         | "perdido"
+      cotacao_status:
+        | "rascunho"
+        | "enviada"
+        | "convertida_proposta"
+        | "convertida_pedido"
+        | "cancelada"
+      financiamento_status:
+        | "aguardando_documentos"
+        | "em_analise"
+        | "pre_aprovado"
+        | "aprovado"
+        | "recusado"
+        | "contrato_assinado"
+        | "liberado"
+        | "cancelado"
       imovel_tipo: "residencial" | "comercial" | "industrial" | "rural"
+      pedido_origem: "cotacao" | "proposta" | "manual"
+      pedido_status:
+        | "novo"
+        | "em_separacao"
+        | "faturado"
+        | "expedido"
+        | "entregue"
+        | "instalado"
+        | "concluido"
+        | "cancelado"
       proposta_status:
         | "rascunho"
         | "enviada"
@@ -647,6 +1106,14 @@ export type Database = {
         | "aceita"
         | "recusada"
         | "expirada"
+      timeline_tipo:
+        | "cotacao"
+        | "proposta"
+        | "pedido"
+        | "financiamento"
+        | "interacao"
+        | "contrato"
+        | "observacao"
       tipo_instalacao: "residencial" | "comercial" | "industrial" | "rural"
     }
     CompositeTypes: {
@@ -787,7 +1254,35 @@ export const Constants = {
         "concluido",
         "perdido",
       ],
+      cotacao_status: [
+        "rascunho",
+        "enviada",
+        "convertida_proposta",
+        "convertida_pedido",
+        "cancelada",
+      ],
+      financiamento_status: [
+        "aguardando_documentos",
+        "em_analise",
+        "pre_aprovado",
+        "aprovado",
+        "recusado",
+        "contrato_assinado",
+        "liberado",
+        "cancelado",
+      ],
       imovel_tipo: ["residencial", "comercial", "industrial", "rural"],
+      pedido_origem: ["cotacao", "proposta", "manual"],
+      pedido_status: [
+        "novo",
+        "em_separacao",
+        "faturado",
+        "expedido",
+        "entregue",
+        "instalado",
+        "concluido",
+        "cancelado",
+      ],
       proposta_status: [
         "rascunho",
         "enviada",
@@ -795,6 +1290,15 @@ export const Constants = {
         "aceita",
         "recusada",
         "expirada",
+      ],
+      timeline_tipo: [
+        "cotacao",
+        "proposta",
+        "pedido",
+        "financiamento",
+        "interacao",
+        "contrato",
+        "observacao",
       ],
       tipo_instalacao: ["residencial", "comercial", "industrial", "rural"],
     },
