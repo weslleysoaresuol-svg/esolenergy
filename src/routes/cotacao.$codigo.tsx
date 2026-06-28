@@ -30,9 +30,10 @@ function CotacaoPublica() {
   if (d.expirada) return <div className="min-h-screen flex items-center justify-center p-6 text-center"><div><h1 className="text-xl text-navy font-bold mb-2">Cotação expirada</h1><p className="text-muted-foreground">Solicite uma nova ao consultor.</p></div></div>;
 
   const { cotacao, kit, parceiro, cliente } = d;
+  const kitData = kit || cotacao.kit_snapshot;
   const total = Number(cotacao.preco_total);
   const tel = (parceiro?.telefone || "").replace(/\D/g, "");
-  const wa = `https://wa.me/55${tel}?text=${encodeURIComponent(`Olá ${parceiro?.nome}, vi a cotação ${kit?.nome} e quero saber mais!`)}`;
+  const wa = `https://wa.me/55${tel}?text=${encodeURIComponent(`Olá ${parceiro?.nome}, vi a cotação ${kitData?.nome} e quero saber mais!`)}`;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -51,30 +52,41 @@ function CotacaoPublica() {
         </Card>
 
         <Card className="overflow-hidden shadow-xl">
-          {kit?.imagem_url ? (
-            <img src={kit.imagem_url} alt={kit.nome} className="w-full h-64 object-cover" />
+          {kitData?.imagem_url ? (
+            <img src={kitData.imagem_url} alt={kitData.nome} className="w-full h-64 object-cover" />
           ) : (
             <div className="w-full h-64 bg-gradient-to-br from-sun/30 to-sun-deep/20 flex items-center justify-center">
               <Sun className="w-24 h-24 text-sun-deep" />
             </div>
           )}
           <div className="p-6">
-            <Badge className="bg-sun text-navy mb-3">{kit?.potencia_kwp} kWp</Badge>
-            <h2 className="text-2xl font-bold text-navy mb-4">{kit?.nome}</h2>
+            <Badge className="bg-sun text-navy mb-3">{kitData?.potencia_kwp} kWp</Badge>
+            <h2 className="text-2xl font-bold text-navy mb-4">{kitData?.nome}</h2>
 
             <div className="grid md:grid-cols-2 gap-3 mb-6 text-sm">
-              <Item label="Módulos" v={`${kit?.quantidade_modulos}x ${kit?.fabricante_modulos || ""} ${kit?.potencia_modulo_w}W`} />
-              <Item label="Inversor" v={kit?.inversor} />
-              <Item label="Tecnologia" v={kit?.tecnologia_modulo} />
-              <Item label="Eficiência" v={`${kit?.eficiencia_modulo}%`} />
-              <Item label="Garantia módulos" v={`${kit?.garantia_modulos_anos} anos`} />
-              <Item label="Garantia inversor" v={`${kit?.garantia_inversor_anos} anos`} />
+              <Item label="Módulos" v={`${kitData?.quantidade_modulos}x ${kitData?.fabricante_modulos || ""} ${kitData?.potencia_modulo_w}W`} />
+              <Item label="Inversor" v={kitData?.inversor} />
+              <Item label="Tecnologia" v={kitData?.tecnologia_modulo} />
+              <Item label="Eficiência" v={`${kitData?.eficiencia_modulo}%`} />
+              <Item label="Garantia módulos" v={`${kitData?.garantia_modulos_anos} anos`} />
+              <Item label="Garantia inversor" v={`${kitData?.garantia_inversor_anos} anos`} />
             </div>
 
-            <div className="bg-gradient-to-r from-sun/20 to-sun-deep/10 rounded-xl p-6 text-center mb-4">
-              <div className="text-sm text-muted-foreground">Investimento total</div>
-              <div className="text-4xl font-extrabold text-navy">{BRL(total)}</div>
-              <div className="text-xs text-muted-foreground mt-1">{cotacao.quantidade}x · {BRL(Number(cotacao.preco_unit))} cada</div>
+            <div className="grid sm:grid-cols-2 gap-3 mb-6 font-sans">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
+                <div className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider">💰 À Vista (PIX / TED)</div>
+                <div className="text-2xl font-black text-emerald-700 mt-1">{BRL(total * 0.95)}</div>
+                <span className="text-[9px] text-emerald-600 block mt-0.5">5% de desconto já aplicado (De: {BRL(total)})</span>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-center">
+                <div className="text-[10px] text-blue-800 font-bold uppercase tracking-wider">💳 Cartão de Crédito</div>
+                <div className="text-2xl font-black text-navy mt-1">10x de {BRL(total / 10)}</div>
+                <span className="text-[9px] text-blue-600 block mt-0.5">Sem juros no cartão (Total: {BRL(total)})</span>
+              </div>
+            </div>
+
+            <div className="text-center text-xs text-muted-foreground mb-4">
+              Quantidade solicitada: {cotacao.quantidade}x • Preço unitário de tabela: {BRL(Number(cotacao.preco_unit))}
             </div>
 
             {cotacao.observacoes && (

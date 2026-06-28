@@ -89,17 +89,17 @@ function FinPublica() {
                 const atual = i === stepAtual;
                 const Icon = etapa.icon;
                 return (
-                  <div key={etapa.k} className="flex items-start gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${concluido ? "bg-emerald-500 text-white" : atual ? "bg-blue-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+                  <div key={etapa.k} className="relative flex items-start gap-3 pb-8 last:pb-0">
+                    {i < ETAPAS.length - 1 && (
+                      <div className={`absolute left-5 top-10 bottom-0 w-0.5 -ml-px ${concluido ? "bg-emerald-500" : "bg-slate-200"}`} />
+                    )}
+                    <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${concluido ? "bg-emerald-500 text-white" : atual ? "bg-blue-500 text-white" : "bg-slate-200 text-slate-400"}`}>
                       <Icon className={`w-5 h-5 ${atual && etapa.k === "em_analise" ? "animate-spin" : ""}`} />
                     </div>
                     <div className="flex-1 pt-1.5">
                       <div className={`font-semibold ${concluido || atual ? "text-navy" : "text-slate-400"}`}>{etapa.label}</div>
                       {atual && <div className="text-xs text-blue-600 mt-0.5">⏳ Etapa atual</div>}
                     </div>
-                    {i < ETAPAS.length - 1 && (
-                      <div className={`absolute ml-5 mt-10 h-6 w-0.5 ${concluido ? "bg-emerald-500" : "bg-slate-200"}`} />
-                    )}
                   </div>
                 );
               })}

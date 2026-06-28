@@ -62,28 +62,94 @@ function CotacaoDetail() {
   const gerarPedido = async () => {
     if (!user) return;
     if (!confirm(`Confirmar pedido de ${c.quantidade}x ${kit.nome} para ${c.cliente?.nome}?`)) return;
-    const { data, error } = await (supabase.from as any)("pedidos").insert({
-      parceiro_id: user.id,
-      cliente_id: c.cliente_id,
-      origem: "cotacao",
-      origem_id: c.id,
-      kit_snapshot: kit,
-      descricao: `${c.quantidade}x ${kit.nome}`,
-      valor_total: c.preco_total,
-      status: "novo",
-    }).select().single();
-    if (error) { toast.error(error.message); return; }
-    await (supabase.from as any)("cotacoes").update({
-      status: "convertida_pedido", pedido_id: data.id,
-    }).eq("id", c.id);
-    await (supabase.from as any)("timeline_cliente").insert({
-      cliente_id: c.cliente_id, parceiro_id: user.id,
-      tipo: "pedido", referencia_id: data.id,
-      titulo: `Pedido ${data.numero} criado a partir da cotação`,
-      descricao: `${c.quantidade}x ${kit.nome} — ${BRL(Number(c.preco_total))}`,
-    });
-    toast.success(`Pedido ${data.numero} criado!`);
-    navigate({ to: "/app/pedidos/$id", params: { id: data.id } });
+    
+    try {
+      // 1. Cria o pedido
+      const { data, error } = await (supabase.from as any)("pedidos").insert({
+        parceiro_id: user.id,
+        cliente_id: c.cliente_id,
+        origem: "cotacao",
+        origem_id: c.id,
+        kit_snapshot: kit,
+        descricao: `${c.quantidade}x ${kit.nome}`,
+        valor_total: c.preco_total,
+        status: "novo",
+      }).select().single();
+
+      if (error) throw error;
+
+      // 2. Atualiza a cotação
+      await (supabase.from as any)("cotacoes").update({
+        status: "convertida_pedido", pedido_id: data.id,
+      }).eq("id", c.id);
+
+      // 3. Registra na Timeline
+      await (supabase.from as any)("timeline_cliente").insert({
+        cliente_id: c.cliente_id, parceiro_id: user.id,
+        tipo: "pedido", referencia_id: data.id,
+        titulo: `Pedido ${data.numero} criado a partir da cotação`,
+        descricao: `${c.quantidade}x ${kit.nome} — ${BRL(Number(c.preco_total))}`,
+      });
+
+      // 4. Lança Comissões do Parceiro automaticamente (Gatilho 1: 50% em 30 dias, Gatilho 2: 50% em 60 dias)
+      const { data: prof } = await supabase.from("profiles").select("comissao_percent").eq("id", user.id).maybeSingle();
+      const pct = Number(prof?.comissao_percent || 5); // fallback para 5%
+      const valTotalComissao = Number(c.preco_total) * (pct / 100);
+      const valParcela = valTotalComissao / 2;
+
+      const d30 = new Date(); d30.setDate(d30.getDate() + 30);
+      const d60 = new Date(); d60.setDate(d60.getDate() + 60);
+
+      await (supabase.from as any)("parceiro_comissoes").insert([
+        {
+          parceiro_id: user.id,
+          pedido_id: data.id,
+          valor_total_pedido: c.preco_total,
+          percentual_comissao: pct,
+          valor_comissao: valParcela,
+          parcela: 1,
+          total_parcelas: 2,
+          status: "a_receber",
+          data_previsao_pagamento: d30.toISOString().split("T")[0],
+          detalhes: "Gatilho 1: Liberação após Fechamento/Assinatura de Contrato"
+        },
+        {
+          parceiro_id: user.id,
+          pedido_id: data.id,
+          valor_total_pedido: c.preco_total,
+          percentual_comissao: pct,
+          valor_comissao: valParcela,
+          parcela: 2,
+          total_parcelas: 2,
+          status: "a_receber",
+          data_previsao_pagamento: d60.toISOString().split("T")[0],
+          detalhes: "Gatilho 2: Liberação pós Conclusão de Montagem Física"
+        }
+      ]);
+
+      // 5. Lança Compra do Kit com Fornecedor (Aldo Solar ou Sou Energy) - Faturamento Direto (Simulando kit como 50% do total)
+      const { data: forn } = await (supabase.from as any)("fornecedores_solar")
+        .select("id")
+        .ilike("nome", kit.fornecedor || "%aldo%").maybeSingle();
+
+      const targetFornId = forn?.id;
+      
+      if (targetFornId) {
+        const d15 = new Date(); d15.setDate(d15.getDate() + 15);
+        await (supabase.from as any)("fornecedor_pagamentos").insert({
+          fornecedor_id: targetFornId,
+          pedido_id: data.id,
+          valor_kit: Number(c.preco_total) * 0.5, // 50% representativo de equipamentos
+          status: "pendente",
+          data_vencimento: d15.toISOString().split("T")[0]
+        });
+      }
+
+      toast.success(`Pedido ${data.numero} criado e comissões programadas!`);
+      navigate({ to: "/app/pedidos/$id", params: { id: data.id } });
+    } catch (err: any) {
+      toast.error("Erro ao gerar pedido: " + err.message);
+    }
   };
 
   const compartilharWhatsApp = () => {

@@ -222,6 +222,7 @@ function AppShell() {
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
     { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
+    { to: "/app/financeiro", icon: Landmark, label: "Financeiro" },
     { to: "/app/kits", icon: Sun, label: "Kits Solares" },
     { to: "/app/corretores", icon: UserCog, label: "Parceiros & Convites" },
     { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
@@ -233,6 +234,7 @@ function AppShell() {
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
     { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
+    { to: "/app/parceiro/financeiro", icon: Landmark, label: "Minhas Comissões" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
   const nav = role === "admin" ? adminNav : corretorNav;

@@ -183,7 +183,7 @@ function AdminDashboard() {
       // Carrega Kits fotovoltaicos do Supabase (ou fallback)
       let loadedKits = KITS_FALLBACK;
       try {
-        const { data: dbKits } = await supabase.from("kits_solares" as any).select("*");
+        const { data: dbKits } = await supabase.from("kits_produtos" as any).select("*");
           if (dbKits && dbKits.length > 0) loadedKits = dbKits as any;
       } catch(e) {}
 

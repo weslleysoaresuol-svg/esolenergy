@@ -18,6 +18,8 @@ export const Route = createFileRoute("/app/propostas/nova")({
   validateSearch: (search: Record<string, unknown>) => ({
     cliente: (search.cliente as string) ?? "",
     modo: (search.modo as string) ?? "proposta",
+    consumo: (search.consumo as number | string | undefined),
+    cotacao: (search.cotacao as string | undefined),
   }),
   component: NovaProposta 
 });
@@ -27,7 +29,7 @@ const UFS = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","P
 function NovaProposta() {
   const navigate = useNavigate();
   const { user, role } = useCurrentUser();
-  const { cliente: clienteIdPreSel, modo } = Route.useSearch();
+  const { cliente: clienteIdPreSel, modo, consumo: consumoPreSel, cotacao: cotacaoIdPreSel } = Route.useSearch();
   const [step, setStep] = useState(1);
   const [params, setParams] = useState<Parametros | null>(null);
   const [clientes, setClientes] = useState<any[]>([]);
@@ -112,15 +114,15 @@ function NovaProposta() {
 
       // 3. Kits Solares
       try {
-        const { data: ks, error } = await supabase.from("kits_solares" as any).select("*");
+        const { data: ks, error } = await supabase.from("kits_produtos" as any).select("*");
         if (error || !ks || ks.length === 0) {
-          console.warn("Tabela kits_solares vazia ou inacessível. Usando fallback estático...");
+          console.warn("Tabela kits_produtos vazia ou inacessível. Usando fallback estático...");
           setKits(KITS_FALLBACK);
         } else {
           setKits(ks);
         }
       } catch (err) {
-        console.warn("Falha de conexão com kits_solares. Usando fallback estático...", err);
+        console.warn("Falha de conexão com kits_produtos. Usando fallback estático...", err);
         setKits(KITS_FALLBACK);
       }
 
@@ -148,6 +150,15 @@ function NovaProposta() {
           if (found.cidade) setCidade(found.cidade);
           setTitulo(`Proposta solar - ${found.nome}`);
         }
+      }
+
+      // Se vier consumo ou cotação pré-selecionados (ex: ao converter cotação rápida)
+      if (consumoPreSel) {
+        setConsumo(Number(consumoPreSel));
+      }
+      if (cotacaoIdPreSel) {
+        setObservacoes(`Proposta gerada a partir da cotação rápida de ID: ${cotacaoIdPreSel}`);
+        setCondicoes(`À vista 5% desconto · Vínculo com cotação anterior`);
       }
     })();
   }, []);

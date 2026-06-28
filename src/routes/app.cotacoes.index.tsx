@@ -37,6 +37,8 @@ function CotacoesList() {
   const [novo, setNovo] = useState({ cliente_id: "", kit_id: "", quantidade: 1, observacoes: "" });
   const [saving, setSaving] = useState(false);
   const [q, setQ] = useState("");
+  const [clienteTipo, setClienteTipo] = useState<"existente" | "novo">("existente");
+  const [novoCliente, setNovoCliente] = useState({ nome: "", telefone: "", cidade: "", estado: "SP" });
 
   const load = async () => {
     const [{ data: cs }, { data: cls }, { data: ks }] = await Promise.all([
@@ -57,35 +59,79 @@ function CotacoesList() {
   const total = kitSel ? Number(kitSel.preco) * novo.quantidade : 0;
 
   const criar = async () => {
-    if (!user || !novo.cliente_id || !novo.kit_id) {
-      toast.error("Selecione cliente e kit"); return;
+    if (!user || !novo.kit_id) {
+      toast.error("Selecione o kit solar"); return;
     }
+    
+    let targetClienteId = novo.cliente_id;
     setSaving(true);
-    const { data, error } = await (supabase.from as any)("cotacoes").insert({
-      parceiro_id: user.id,
-      cliente_id: novo.cliente_id,
-      kit_id: novo.kit_id,
-      kit_snapshot: kitSel,
-      quantidade: novo.quantidade,
-      preco_unit: kitSel.preco,
-      preco_total: total,
-      observacoes: novo.observacoes,
-      status: "enviada",
-    }).select().single();
-    if (error) { toast.error(error.message); setSaving(false); return; }
-    // Timeline
-    await (supabase.from as any)("timeline_cliente").insert({
-      cliente_id: novo.cliente_id,
-      parceiro_id: user.id,
-      tipo: "cotacao",
-      referencia_id: data.id,
-      titulo: `Cotação gerada: ${kitSel.nome}`,
-      descricao: `Valor: ${BRL(total)}`,
-    });
-    toast.success("Cotação criada!");
-    setOpenNew(false);
-    setNovo({ cliente_id: "", kit_id: "", quantidade: 1, observacoes: "" });
-    navigate({ to: "/app/cotacoes/$id", params: { id: data.id } });
+
+    try {
+      // Se for cliente novo, primeiro cadastra ele
+      if (clienteTipo === "novo") {
+        if (!novoCliente.nome || !novoCliente.telefone) {
+          toast.error("Nome e telefone são obrigatórios");
+          setSaving(false);
+          return;
+        }
+
+        const { data: newCl, error: errCl } = await supabase.from("clientes").insert({
+          nome: novoCliente.nome.trim(),
+          telefone: novoCliente.telefone.trim(),
+          cidade: novoCliente.cidade.trim(),
+          estado: novoCliente.estado.trim().toUpperCase(),
+          corretor_id: user.id,
+          status: "novo",
+          origem: "manual"
+        }).select().single();
+
+        if (errCl || !newCl) {
+          toast.error("Erro ao cadastrar cliente: " + errCl.message);
+          setSaving(false);
+          return;
+        }
+        targetClienteId = newCl.id;
+      } else if (!targetClienteId) {
+        toast.error("Selecione um cliente da lista");
+        setSaving(false);
+        return;
+      }
+
+      const { data, error } = await (supabase.from as any)("cotacoes").insert({
+        parceiro_id: user.id,
+        cliente_id: targetClienteId,
+        kit_id: novo.kit_id,
+        kit_snapshot: kitSel,
+        quantidade: novo.quantidade,
+        preco_unit: kitSel.preco,
+        preco_total: total,
+        observacoes: novo.observacoes,
+        status: "enviada",
+      }).select().single();
+
+      if (error) throw error;
+
+      // Timeline
+      await (supabase.from as any)("timeline_cliente").insert({
+        cliente_id: targetClienteId,
+        parceiro_id: user.id,
+        tipo: "cotacao",
+        referencia_id: data.id,
+        titulo: `Cotação gerada: ${kitSel.nome}`,
+        descricao: `Valor: ${BRL(total)}`,
+      });
+
+      toast.success("Cotação criada com sucesso!");
+      setOpenNew(false);
+      setNovo({ cliente_id: "", kit_id: "", quantidade: 1, observacoes: "" });
+      setNovoCliente({ nome: "", telefone: "", cidade: "", estado: "SP" });
+      setClienteTipo("existente");
+      navigate({ to: "/app/cotacoes/$id", params: { id: data.id } });
+    } catch (err: any) {
+      toast.error("Erro ao gerar cotação: " + err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const filtered = cotacoes.filter((c) =>
@@ -147,13 +193,55 @@ function CotacoesList() {
           <DialogHeader><DialogTitle>Nova cotação rápida</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>Cliente</Label>
-              <Select value={novo.cliente_id} onValueChange={(v) => setNovo({ ...novo, cliente_id: v })}>
-                <SelectTrigger><SelectValue placeholder="Selecione um cliente" /></SelectTrigger>
-                <SelectContent>
-                  {clientes.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <Label className="block mb-2 text-xs font-bold text-slate-700">Cliente da Cotação</Label>
+              <div className="flex bg-slate-100 p-0.5 rounded-lg border mb-3">
+                <button
+                  type="button"
+                  onClick={() => setClienteTipo("existente")}
+                  className={`flex-1 py-1 rounded-md text-[10px] font-extrabold uppercase transition-all ${clienteTipo === "existente" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
+                >
+                  👥 Selecionar Cadastrado
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setClienteTipo("novo")}
+                  className={`flex-1 py-1 rounded-md text-[10px] font-extrabold uppercase transition-all ${clienteTipo === "novo" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
+                >
+                  ➕ Cadastrar Novo Lead
+                </button>
+              </div>
+
+              {clienteTipo === "existente" ? (
+                <Select value={novo.cliente_id} onValueChange={(v) => setNovo({ ...novo, cliente_id: v })}>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione um cliente" /></SelectTrigger>
+                  <SelectContent>
+                    {clientes.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/50">
+                  <div className="col-span-2 space-y-1">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">Nome do Cliente *</Label>
+                    <Input placeholder="Ex: João da Silva" value={novoCliente.nome} onChange={(e) => setNovoCliente({ ...novoCliente, nome: e.target.value })} className="h-9 text-xs" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">Celular / WhatsApp *</Label>
+                    <Input placeholder="Ex: (11) 99999-9999" value={novoCliente.telefone} onChange={(e) => setNovoCliente({ ...novoCliente, telefone: e.target.value })} className="h-9 text-xs" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">Cidade / UF</Label>
+                    <div className="flex gap-1.5">
+                      <Input placeholder="Cidade" value={novoCliente.cidade} onChange={(e) => setNovoCliente({ ...novoCliente, cidade: e.target.value })} className="h-9 text-xs flex-1" />
+                      <Select value={novoCliente.estado} onValueChange={(v) => setNovoCliente({ ...novoCliente, estado: v })}>
+                        <SelectTrigger className="h-9 w-16 text-xs"><SelectValue placeholder="UF" /></SelectTrigger>
+                        <SelectContent>
+                          {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <div>
               <Label>Kit solar</Label>

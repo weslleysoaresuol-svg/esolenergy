@@ -84,15 +84,15 @@ function AdminKits() {
 
   const load = async () => {
     try {
-      const { data, error } = await supabase.from("kits_solares" as any).select("*").order("potencia_kwp");
+      const { data, error } = await supabase.from("kits_produtos" as any).select("*").order("potencia_kwp");
       if (error || !data || data.length === 0) {
-        console.warn("Tabela kits_solares vazia ou inacessível. Usando fallback estático...");
+        console.warn("Tabela kits_produtos vazia ou inacessível. Usando fallback estático...");
         setKits(KITS_FALLBACK);
       } else {
         setKits(data);
       }
     } catch (err) {
-      console.warn("Falha de conexão com kits_solares. Usando fallback estático...", err);
+      console.warn("Falha de conexão com kits_produtos. Usando fallback estático...", err);
       setKits(KITS_FALLBACK);
     }
   };
@@ -133,10 +133,10 @@ function AdminKits() {
       };
 
       if (editando.id) {
-        await supabase.from("kits_solares" as any).update(payload).eq("id", editando.id);
+        await supabase.from("kits_produtos" as any).update(payload).eq("id", editando.id);
         toast.success("Kit atualizado!");
       } else {
-        await supabase.from("kits_solares" as any).insert(payload);
+        await supabase.from("kits_produtos" as any).insert(payload);
         toast.success("Kit cadastrado!");
       }
       setEditando(null);
@@ -149,18 +149,18 @@ function AdminKits() {
   };
 
   const toggleAtivo = async (kit: any) => {
-    await supabase.from("kits_solares" as any).update({ ativo: !kit.ativo }).eq("id", kit.id);
+    await supabase.from("kits_produtos" as any).update({ ativo: !kit.ativo }).eq("id", kit.id);
     toast.success(kit.ativo ? "Kit desativado" : "Kit ativado");
     load();
   };
 
   const toggleDestaque = async (kit: any) => {
-    await supabase.from("kits_solares" as any).update({ destaque: !kit.destaque }).eq("id", kit.id);
+    await supabase.from("kits_produtos" as any).update({ destaque: !kit.destaque }).eq("id", kit.id);
     load();
   };
 
   const excluir = async (id: string) => {
-    await supabase.from("kits_solares" as any).delete().eq("id", id);
+    await supabase.from("kits_produtos" as any).delete().eq("id", id);
     toast.success("Kit excluído");
     setConfirmDelete(null);
     load();
@@ -280,7 +280,7 @@ function AdminKits() {
         return;
       }
 
-      const { error } = await supabase.from("kits_solares" as any).insert(listToInsert);
+      const { error } = await supabase.from("kits_produtos" as any).insert(listToInsert);
       if (error) throw error;
 
       toast.success(`${listToInsert.length} kits solares reais importados com sucesso!`);
@@ -409,7 +409,7 @@ function AdminKits() {
       const kitsToInsert = fornecedor === "aldo" ? mockKitsAldo : mockKitsSou;
 
       try {
-        await supabase.from("kits_solares" as any).insert(kitsToInsert);
+        await supabase.from("kits_produtos" as any).insert(kitsToInsert);
         log("Tabelas de preços atualizadas com sucesso!");
         toast.success(`Kits atualizados via integração com a ${fornecedor === "aldo" ? "Aldo Solar" : "Sou Energy"}!`);
         load();
