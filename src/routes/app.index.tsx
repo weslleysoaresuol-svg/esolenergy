@@ -5,6 +5,8 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
@@ -491,7 +493,7 @@ function AdminDashboard() {
             </Card>
           </div>
 
-          {/* Kanban Visual */}
+          {/* Funil Kanban */}
           <Card className="border-0 shadow-md p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-navy flex items-center gap-2"><Target className="w-5 h-5 text-sun-deep" />Funil de Vendas Operacional</h2>
@@ -551,47 +553,38 @@ function AdminDashboard() {
                         {c.nome}
                         <Badge variant="outline" className="text-[10px] border-sun-deep text-sun-deep">Site</Badge>
                       </div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{c.telefone}{c.email ? ` · ${c.email}` : ""}{c.cidade ? ` · ${c.cidade}` : ""}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}/{c.estado || "—"}</div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xs text-muted-foreground">{fmtDate(c.created_at)}</div>
-                      {c.telefone && (
-                        <a href={`https://wa.me/${c.telefone.replace(/\D/g,"")}`} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}
-                          className="mt-1 inline-flex items-center gap-1 text-xs text-green-600 hover:underline">
-                          <MessageCircle className="w-3 h-3" /> WhatsApp
-                        </a>
-                      )}
-                    </div>
+                    <div className="text-xs text-muted-foreground">{fmtDate(c.created_at)}</div>
                   </Link>
                 ))
               )}
             </div>
           </Card>
 
-          {/* Clientes Recentes / Kanban Filtrado */}
+          {/* Clientes e Leads Recentes */}
           <Card className="border-0 shadow-md">
-            <div className="flex items-center justify-between p-5 border-b">
-              <h2 className="font-bold text-navy">
-                {activeKanbanCol ? `Clientes em: ${activeKanbanCol}` : "Clientes com movimentações recentes"}
-              </h2>
-              <Link to="/app/clientes" className="text-sm text-sun-deep hover:underline flex items-center gap-1">Ver todos <ArrowRight className="w-3 h-3" /></Link>
+            <div className="p-5 border-b flex justify-between items-center">
+              <h2 className="font-bold text-navy">Clientes e leads recentes sob gestão</h2>
+              {activeKanbanCol && <Badge variant="secondary">Coluna: {activeKanbanCol}</Badge>}
             </div>
             <div className="divide-y">
-              {displayedClientes.length === 0 && <div className="p-8 text-center text-muted-foreground">Nenhum cliente cadastrado nesta etapa do funil.</div>}
-              {(activeKanbanCol ? displayedClientes : displayedClientes.slice(0, 10)).map((c) => (
-                <Link key={c.id} to="/app/cliente/$id" params={{ id: c.id }} className="block p-4 hover:bg-slate-50">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="font-semibold text-navy flex items-center gap-2">
-                        {c.nome}
-                        {c.origem === "landing" && <Badge variant="outline" className="text-[10px] border-sun-deep text-sun-deep">Site</Badge>}
-                      </div>
-                      <div className="text-xs text-muted-foreground">{c.telefone} · {c.cidade || "—"} · Parceiro: {c.profiles?.nome || "Não atribuído"}</div>
+              {displayedClientes.length === 0 ? (
+                <div className="p-10 text-center text-muted-foreground text-sm">Nenhum cliente sob gestão localizado.</div>
+              ) : (
+                displayedClientes.slice(0, 8).map((c) => (
+                  <div key={c.id} className="p-4 flex items-center justify-between hover:bg-slate-50/50 transition">
+                    <div>
+                      <Link to="/app/cliente/$id" params={{ id: c.id }} className="font-semibold text-navy hover:underline">{c.nome}</Link>
+                      <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}</div>
                     </div>
-                    <Badge className={STATUS_COLOR[c.status]}>{STATUS_LABEL[c.status]}</Badge>
+                    <div className="flex items-center gap-3">
+                      <Badge className={STATUS_COLOR[c.status]}>{STATUS_LABEL[c.status]}</Badge>
+                      <Link to="/app/cliente/$id" params={{ id: c.id }} className="text-xs text-sun-deep hover:underline">Ver ficha</Link>
+                    </div>
                   </div>
-                </Link>
-              ))}
+                ))
+              )}
             </div>
           </Card>
         </div>
@@ -600,36 +593,22 @@ function AdminDashboard() {
       {/* ABA 2: INTELIGÊNCIA COMERCIAL (BI) */}
       {activeTab === "bi" && (
         <div className="space-y-6">
-          {/* KPIs de BI */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-navy/10 flex items-center justify-center mb-3">
-                <FileSpreadsheet className="w-5 h-5 text-navy" />
-              </div>
-              <div className="text-2xl font-bold text-navy">{m.totalProp}</div>
-              <div className="text-xs text-muted-foreground mt-1">Propostas Geradas</div>
-            </Card>
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-3">
-                <Target className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div className="text-2xl font-bold text-emerald-700">{m.conversao.toFixed(1)}%</div>
+          {/* Métricas e KPIs Financeiros */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="p-4 border-0 shadow-md">
+              <div className="text-2xl font-bold text-navy">{m.conversao.toFixed(1)}%</div>
               <div className="text-xs text-muted-foreground mt-1">Taxa de Conversão</div>
             </Card>
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mb-3">
-                <DollarSign className="w-5 h-5 text-amber-600" />
-              </div>
-              <div className="text-2xl font-bold text-navy">
-                {m.receitaRealizada.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">Faturamento Realizado</div>
+            <Card className="p-4 border-0 shadow-md">
+              <div className="text-2xl font-bold text-navy">{BRL(m.receitaRealizada)}</div>
+              <div className="text-xs text-muted-foreground mt-1">Faturamento Realizado (Mês)</div>
             </Card>
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center mb-3">
-                <Percent className="w-5 h-5 text-purple-600" />
-              </div>
-              <div className="text-2xl font-bold text-purple-700">{m.margemPct.toFixed(1)}%</div>
+            <Card className="p-4 border-0 shadow-md">
+              <div className="text-2xl font-bold text-navy">{BRL(m.ticketMedio)}</div>
+              <div className="text-xs text-muted-foreground mt-1">Ticket Médio por Projeto</div>
+            </Card>
+            <Card className="p-4 border-0 shadow-md bg-emerald-50/20 border border-emerald-100">
+              <div className="text-2xl font-bold text-emerald-700">{m.margemPct.toFixed(1)}%</div>
               <div className="text-xs text-muted-foreground mt-1">Margem Média Estimada</div>
             </Card>
           </div>
@@ -827,10 +806,10 @@ function CorretorClientes() {
           <div className="text-2xl font-extrabold text-emerald-700">{clientes.filter((c) => c.status === "concluido").length}</div>
           <div className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1"><CheckCircle2 className="w-3 h-3" /> Concluídos</div>
         </Card>
-        <Card className={`p-4 border-0 shadow-sm text-center ${leadsFrios.length > 0 ? "bg-red-50 border border-red-200" : ""}`}>
-          <div className={`text-2xl font-extrabold ${leadsFrios.length > 0 ? "text-red-600" : "text-navy"}`}>{leadsFrios.length}</div>
+        <Card className={leadsFrios.length > 0 ? "p-4 border border-red-200 bg-red-50 shadow-sm text-center" : "p-4 border-0 shadow-sm text-center"}>
+          <div className={leadsFrios.length > 0 ? "text-2xl font-extrabold text-red-600" : "text-2xl font-extrabold text-navy"}>{leadsFrios.length}</div>
           <div className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1">
-            <AlertTriangle className={`w-3 h-3 ${leadsFrios.length > 0 ? "text-red-500" : ""}`} /> Parados 3+ dias
+            <AlertTriangle className={leadsFrios.length > 0 ? "w-3 h-3 text-red-500" : "w-3 h-3"} /> Parados 3+ dias
           </div>
         </Card>
       </div>
@@ -853,7 +832,7 @@ function CorretorClientes() {
                 const frio = dias >= DIAS_SLA && !["concluido", "perdido", "contrato_assinado"].includes(c.status);
                 return (
                   <Link key={c.id} to="/app/cliente/$id" params={{ id: c.id }}>
-                    <Card className={`p-4 hover:shadow-lg transition cursor-pointer border-l-4 ${frio ? "border-l-red-400 bg-red-50/30" : ""}`} style={!frio ? { borderLeftColor: "var(--color-sun, #facc15)" } : {}}>
+                    <Card className={frio ? "p-4 hover:shadow-lg transition cursor-pointer border-l-4 border-l-red-400 bg-red-50/30" : "p-4 hover:shadow-lg transition cursor-pointer border-l-4 border-l-amber-400 bg-white"}>
                       <div className="font-semibold text-navy">{c.nome}</div>
                       <div className="text-xs text-muted-foreground mt-1">{c.telefone}</div>
                       {c.valor_estimado && <div className="text-xs text-emerald-700 font-semibold mt-1">R$ {Number(c.valor_estimado).toLocaleString("pt-BR")}</div>}
