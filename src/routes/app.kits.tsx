@@ -1016,6 +1016,64 @@ function AdminKits() {
                 </div>
               </div>
             </div>
+
+            {/* Manuais Técnicos das Fabricantes */}
+            <div className="border-t pt-4 space-y-3">
+              <strong className="text-xs uppercase font-extrabold text-navy/70 tracking-wider block">Fichas Técnicas e Manuais Oficiais das Fabricantes (PDF)</strong>
+              <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
+                <a 
+                  href="https://www.jinkosolar.com/uploads/Tiger%20Neo%2072HL4-(V)-A3-EN.pdf" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
+                >
+                  <div>
+                    <span className="font-bold text-navy block">Jinko Solar 550W</span>
+                    <span className="text-[9px] text-slate-400">Datasheet Tiger Neo (PDF)</span>
+                  </div>
+                  <span className="text-base">📄</span>
+                </a>
+                
+                <a 
+                  href="https://www.canadiansolar.com/wp-content/uploads/2020/09/Canadian_Solar-Datasheet-CS6W-MS_EN.pdf" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
+                >
+                  <div>
+                    <span className="font-bold text-navy block">Canadian Solar 550W</span>
+                    <span className="text-[9px] text-slate-400">Datasheet HiKu6 (PDF)</span>
+                  </div>
+                  <span className="text-base">📄</span>
+                </a>
+
+                <a 
+                  href="https://www.deyeinverter.com/deyeinverter/doc/SUN-1.6K-3K-G-en.pdf" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
+                >
+                  <div>
+                    <span className="font-bold text-navy block">Deye SUN Inverters</span>
+                    <span className="text-[9px] text-slate-400">Datasheet SUN-G (PDF)</span>
+                  </div>
+                  <span className="text-base">📄</span>
+                </a>
+
+                <a 
+                  href="https://www.ginverter.com/upload/file/MIC_750-3000TL-X_Datasheet_EN_202008.pdf" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
+                >
+                  <div>
+                    <span className="font-bold text-navy block">Growatt MIC Inverters</span>
+                    <span className="text-[9px] text-slate-400">Datasheet MIC-X (PDF)</span>
+                  </div>
+                  <span className="text-base">📄</span>
+                </a>
+              </div>
+            </div>
           </Card>
         </div>
       )}
@@ -1301,6 +1359,40 @@ function AdminKits() {
                       Ir para Login do Distribuidor B2B 🔑
                     </a>
                   </div>
+                </div>
+              </div>
+
+              {/* Manuais Técnicos Oficiais */}
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/60 space-y-2">
+                <h5 className="text-xs font-extrabold text-navy uppercase tracking-wider">Fichas Técnicas do Fabricante (PDF Oficial)</h5>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {selectedKitDetails.fabricante_modulos.toLowerCase().includes("jinko") ? (
+                    <a 
+                      href="https://www.jinkosolar.com/uploads/Tiger%20Neo%2072HL4-(V)-A3-EN.pdf" 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="bg-white hover:bg-slate-100 border p-2 rounded-xl flex items-center gap-1.5 transition text-slate-700 font-medium hover:border-navy/20 shadow-sm"
+                    >
+                      📄 Datasheet Jinko Solar 550W
+                    </a>
+                  ) : (
+                    <a 
+                      href="https://www.canadiansolar.com/wp-content/uploads/2020/09/Canadian_Solar-Datasheet-CS6W-MS_EN.pdf" 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="bg-white hover:bg-slate-100 border p-2 rounded-xl flex items-center gap-1.5 transition text-slate-700 font-medium hover:border-navy/20 shadow-sm"
+                    >
+                      📄 Datasheet Canadian Solar 550W
+                    </a>
+                  )}
+                  <a 
+                    href={selectedKitDetails.inversor.toLowerCase().includes("deye") ? "https://www.deyeinverter.com/deyeinverter/doc/SUN-1.6K-3K-G-en.pdf" : "https://www.ginverter.com/upload/file/MIC_750-3000TL-X_Datasheet_EN_202008.pdf"}
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="bg-white hover:bg-slate-100 border p-2 rounded-xl flex items-center gap-1.5 transition text-slate-700 font-medium hover:border-navy/20 shadow-sm"
+                  >
+                    📄 Datasheet Inversor {selectedKitDetails.inversor.toLowerCase().includes("deye") ? "Deye" : "Growatt"}
+                  </a>
                 </div>
               </div>
 
