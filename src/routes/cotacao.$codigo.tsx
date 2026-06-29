@@ -53,13 +53,26 @@ function CotacaoPublica() {
         </Card>
 
         <Card className="overflow-hidden shadow-xl">
-          {kitData?.imagem_url ? (
-            <img src={kitData.imagem_url} alt={kitData.nome} className="w-full h-64 object-cover" />
-          ) : (
-            <div className="w-full h-64 bg-gradient-to-br from-sun/30 to-sun-deep/20 flex items-center justify-center">
-              <Sun className="w-24 h-24 text-sun-deep" />
-            </div>
-          )}
+          <div className="h-64 bg-slate-50 border-b flex items-center justify-center p-4">
+            <img 
+              src={
+                kitData?.imagem_url || (
+                  kitData?.faixa === "rural" 
+                    ? "/kits/kit-rural.png" 
+                    : Number(kitData?.potencia_kwp) <= 4.4 
+                      ? "/kits/kit-residencial-pequeno.png" 
+                      : Number(kitData?.potencia_kwp) <= 12.1 
+                        ? "/kits/kit-residencial-grande.png" 
+                        : "/kits/kit-comercial-industrial.png"
+                )
+              } 
+              alt={kitData?.nome} 
+              className="max-h-full max-w-full object-contain mx-auto"
+              onError={(e) => {
+                (e.target as any).src = "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&q=80";
+              }}
+            />
+          </div>
           <div className="p-6">
             <Badge className="bg-sun text-navy mb-3">{kitData?.potencia_kwp} kWp</Badge>
             <h2 className="text-2xl font-bold text-navy mb-4">{kitData?.nome}</h2>
@@ -111,14 +124,34 @@ function CotacaoPublica() {
           <h3 className="font-bold text-navy text-base flex items-center gap-2 border-b pb-2">
             📦 Componentes e Acessórios Inclusos no Gerador
           </h3>
-          <ul className="space-y-3">
-            {obterComponentesKit(kitData).map((item: string, idx: number) => (
-              <li key={idx} className="flex gap-2 text-xs text-slate-700 leading-relaxed items-start">
-                <span className="text-sun-deep mt-0.5 font-bold shrink-0">⚡</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="grid sm:grid-cols-2 gap-3.5">
+            {obterComponentesKit(kitData).map((item: string, idx: number) => {
+              let icon = "⚡";
+              if (idx === 0) icon = "☀️"; // placas
+              if (idx === 1) icon = "📟"; // inversor
+              if (idx === 2) icon = "🛠️"; // estrutura
+              if (idx === 3) icon = "🔌"; // cabos
+              if (idx === 4) icon = "🔗"; // mc4
+              if (idx === 5) icon = "🛡️"; // string box
+
+              return (
+                <div key={idx} className="flex gap-2.5 items-start bg-slate-50/50 p-3 rounded-xl border border-slate-100 text-xs text-slate-700">
+                  <span className="text-base shrink-0 mt-0.5">{icon}</span>
+                  <div className="space-y-0.5">
+                    <span className="font-semibold text-navy block text-[10px] uppercase text-slate-400">
+                      {idx === 0 && "Módulos Fotovoltaicos"}
+                      {idx === 1 && "Inversor / Conversor"}
+                      {idx === 2 && "Estrutura de Fixação"}
+                      {idx === 3 && "Cabeamento de Descida"}
+                      {idx === 4 && "Conectores Rápidos"}
+                      {idx === 5 && "Proteções String Box"}
+                    </span>
+                    <span className="leading-normal font-medium">{item}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
           <p className="text-[10px] text-muted-foreground mt-2 border-t pt-2 leading-relaxed">
             * Nota: A Esol Energy fornece apenas marcas líderes de mercado. Cabos, conectores e acessórios elétricos são certificados e dimensionados em conformidade com as normas NBR 5410 e NBR 16690.
           </p>

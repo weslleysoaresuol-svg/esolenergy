@@ -486,6 +486,32 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
             </div>
           </div>
 
+          {/* Grid Visual de Equipamentos */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {componentesKit.map((item: string, idx: number) => {
+              let title = "Equipamento";
+              let icon = "⚡";
+              if (idx === 0) { title = "Módulos"; icon = "☀️"; }
+              if (idx === 1) { title = "Inversor"; icon = "📟"; }
+              if (idx === 2) { title = "Estrutura"; icon = "🛠️"; }
+              if (idx === 3) { title = "Cabos"; icon = "🔌"; }
+              if (idx === 4) { title = "Conectores"; icon = "🔗"; }
+              if (idx === 5) { title = "Proteções"; icon = "🛡️"; }
+
+              return (
+                <div key={idx} className="bg-white border rounded-2xl p-3 text-center space-y-1 shadow-sm flex flex-col items-center justify-between">
+                  <div className="text-2xl">{icon}</div>
+                  <div className="space-y-0.5">
+                    <span className="text-[9px] font-extrabold text-navy uppercase tracking-wider block">{title}</span>
+                    <span className="text-[10px] text-muted-foreground font-medium leading-tight line-clamp-2" title={item}>
+                      {item}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
           {/* Tabela de Itens Detalhada (BOM) */}
           <div className="space-y-3">
             <div className="text-xs uppercase font-extrabold tracking-wider text-navy/70">Composição Detalhada do Gerador Solar</div>

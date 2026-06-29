@@ -11,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import {
   Plus, Pencil, Trash2, Sun, Zap, Star, ToggleLeft, ToggleRight, X, Check,
-  Upload, RefreshCw, Link2, FileSpreadsheet, Eye, HelpCircle, ChevronDown, ChevronUp, Boxes
+  Upload, RefreshCw, Link2, FileSpreadsheet, Eye, HelpCircle, ChevronDown, ChevronUp, Boxes,
+  LayoutGrid, List
 } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 import { KITS_FALLBACK, obterComponentesKit } from "@/lib/kits-fallback";
@@ -61,6 +62,8 @@ function AdminKits() {
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [expandedKitId, setExpandedKitId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+  const [selectedKitDetails, setSelectedKitDetails] = useState<any | null>(null);
 
   // Estados de Integração
   const [fornecedor, setFornecedor] = useState<"aldo" | "sou" | "custom">("aldo");
@@ -166,6 +169,7 @@ function AdminKits() {
         ativo: editando.ativo,
         fornecedor: editando.fornecedor || null,
         url_fornecedor: editando.url_fornecedor || null,
+        componentes: editando.componentes || null,
       };
 
       if (editando.id) {
@@ -532,136 +536,243 @@ function AdminKits() {
                 Limpar
               </Button>
             )}
-            <span className="ml-auto self-center text-sm text-muted-foreground">{filtered.length} kit(s)</span>
+            <div className="ml-auto flex items-center gap-3">
+              <span className="text-xs text-muted-foreground font-semibold">{filtered.length} kit(s)</span>
+              <div className="flex bg-slate-100 p-0.5 rounded-lg border">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("cards")}
+                  className={`p-1.5 rounded-md transition ${viewMode === "cards" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                  title="Visualização em Cards"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("table")}
+                  className={`p-1.5 rounded-md transition ${viewMode === "table" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
+                  title="Visualização em Tabela"
+                >
+                  <List className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
           </Card>
 
-          {/* Tabela de kits */}
-          <Card className="border-0 shadow-md overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
-                <tr>
-                  <th className="p-3 w-8"></th>
-                  <th className="p-3">Kit</th>
-                  <th className="p-3">kWp</th>
-                  <th className="p-3">Módulos</th>
-                  <th className="p-3">Inversor</th>
-                  <th className="p-3">Consumo alvo</th>
-                  <th className="p-3">Fornecedor</th>
-                  <th className="p-3">Preço</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.length === 0 && (
-                  <tr><td colSpan={10} className="p-8 text-center text-muted-foreground">Nenhum kit encontrado.</td></tr>
-                )}
-                {filtered.map((kit) => {
-                  const f = FAIXAS[kit.faixa] || FAIXAS.residencial_pequeno;
-                  const isExpanded = expandedKitId === kit.id;
-                  return (
-                    <React.Fragment key={kit.id}>
-                      <tr className={`border-t ${!kit.ativo ? "opacity-50" : ""} hover:bg-slate-50`}>
-                        <td className="p-3">
+          {/* Visualização em Cards ou Tabela */}
+          {viewMode === "cards" ? (
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {filtered.length === 0 && (
+                <div className="col-span-full py-16 text-center text-muted-foreground bg-white rounded-3xl border shadow-sm">
+                  <Boxes className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                  <p className="text-sm font-semibold">Nenhum kit solar encontrado com os filtros ativos.</p>
+                </div>
+              )}
+              {filtered.map((kit) => {
+                const f = FAIXAS[kit.faixa] || FAIXAS.residencial_pequeno;
+                const imagePath = kit.imagem_kit_url || (
+                  kit.faixa === "rural" 
+                    ? "/kits/kit-rural.png" 
+                    : Number(kit.potencia_kwp) <= 4.4 
+                      ? "/kits/kit-residencial-pequeno.png" 
+                      : Number(kit.potencia_kwp) <= 12.1 
+                        ? "/kits/kit-residencial-grande.png" 
+                        : "/kits/kit-comercial-industrial.png"
+                );
+
+                return (
+                  <Card key={kit.id} className={`overflow-hidden border border-slate-200/60 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col bg-white rounded-3xl ${!kit.ativo ? "opacity-60" : ""}`}>
+                    {/* Header Image */}
+                    <div className="relative h-44 bg-slate-50 border-b flex items-center justify-center p-4">
+                      <img 
+                        src={imagePath} 
+                        alt={kit.nome} 
+                        className="max-h-full max-w-full object-contain mx-auto transition-transform hover:scale-105 duration-300"
+                        onError={(e) => {
+                          (e.target as any).src = "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=400&q=80";
+                        }}
+                      />
+                      <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                        <Badge className={`${f.color} text-[9px] font-extrabold px-2 py-0.5 shadow-sm rounded-full`}>
+                          {f.emoji} {f.label}
+                        </Badge>
+                        {kit.destaque && (
+                          <Badge className="bg-amber-500 text-white text-[9px] font-extrabold px-2 py-0.5 shadow-sm rounded-full flex items-center gap-0.5">
+                            <Star className="w-2.5 h-2.5 fill-white" /> Destaque
+                          </Badge>
+                        )}
+                      </div>
+                      <Badge className="absolute bottom-3 right-3 bg-navy/95 text-white text-[10px] font-black px-2 py-0.5 shadow-sm rounded-full">
+                        {Number(kit.potencia_kwp).toFixed(2)} kWp
+                      </Badge>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="font-extrabold text-sm text-navy leading-snug line-clamp-2 min-h-[40px]">
+                          {kit.nome}
+                        </h3>
+                        <div className="text-[11px] text-slate-600 space-y-1">
+                          <p className="flex items-center gap-1"><span className="text-slate-400">Placas:</span> <strong>{kit.quantidade_modulos}x {kit.fabricante_modulos} ({kit.potencia_modulo_w}W)</strong></p>
+                          <p className="flex items-center gap-1"><span className="text-slate-400">Inversor:</span> <strong>{kit.inversor}</strong></p>
+                          <p className="flex items-center gap-1"><span className="text-slate-400">Distribuidor:</span> <strong className="text-emerald-700">{kit.fornecedor || "Aldo Solar"}</strong></p>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t flex items-center justify-between">
+                        <div>
+                          <span className="text-[9px] text-slate-400 font-bold block uppercase">Preço Tabela B2B</span>
+                          <span className="text-base font-black text-navy">{BRL(Number(kit.preco))}</span>
+                        </div>
+                        <div className="flex gap-1">
                           <button
-                            onClick={() => setExpandedKitId(isExpanded ? null : kit.id)}
-                            className="text-muted-foreground hover:text-navy transition-colors p-1"
-                            title="Ver componentes inclusos"
+                            onClick={() => setSelectedKitDetails(kit)}
+                            className="bg-navy hover:bg-navy/90 text-white font-extrabold text-[10px] px-2.5 py-1.5 rounded-lg shadow-sm"
                           >
-                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            Detalhes
                           </button>
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-2">
-                            {kit.destaque && <Star className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" fill="currentColor" />}
-                            <div>
-                              <div className="font-semibold text-navy text-xs leading-snug">{kit.nome}</div>
-                              <Badge className={`${f.color} text-[9px] mt-0.5`}>{f.emoji} {f.label}</Badge>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-3 font-bold text-navy">{Number(kit.potencia_kwp).toFixed(2)} kWp</td>
-                        <td className="p-3">
-                          <div className="text-xs">{kit.quantidade_modulos}× {kit.potencia_modulo_w}W</div>
-                          <div className="text-[10px] text-muted-foreground">{kit.fabricante_modulos?.split(" ").slice(0, 2).join(" ")}</div>
-                        </td>
-                        <td className="p-3">
-                          <div className="text-xs">{kit.inversor?.split(" ").slice(0, 3).join(" ")}</div>
-                          <div className="text-[10px] text-muted-foreground">{kit.tipo_inversor}</div>
-                        </td>
-                        <td className="p-3 text-xs text-muted-foreground">
-                          {kit.consumo_kwh_min && kit.consumo_kwh_max
-                            ? `${kit.consumo_kwh_min}–${kit.consumo_kwh_max} kWh`
-                            : "—"}
-                        </td>
-                        <td className="p-3 text-xs">
-                          {kit.fornecedor ? (
-                            <div>
-                              <span className="font-semibold text-navy">{kit.fornecedor}</span>
-                              {kit.url_fornecedor && (
-                                <a href={kit.url_fornecedor} target="_blank" rel="noreferrer" className="block text-[10px] text-blue-600 hover:underline mt-0.5">
-                                  🛒 Comprar B2B
-                                </a>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </td>
-                        <td className="p-3 font-bold text-navy">{BRL(Number(kit.preco))}</td>
-                        <td className="p-3">
-                          <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"}>
-                            {kit.ativo
-                              ? <ToggleRight className="w-6 h-6 text-emerald-500" />
-                              : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
+                          <button
+                            onClick={() => setEditando({ ...kit })}
+                            className="bg-slate-100 hover:bg-slate-200 text-navy font-bold text-[10px] px-2.5 py-1.5 rounded-lg border"
+                          >
+                            Editar
                           </button>
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-1">
-                            <button onClick={() => toggleDestaque(kit)} title={kit.destaque ? "Remover destaque" : "Destacar"} className={kit.destaque ? "text-amber-500" : "text-muted-foreground hover:text-amber-400"}>
-                              <Star className="w-4 h-4" fill={kit.destaque ? "currentColor" : "none"} />
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <Card className="border-0 shadow-md overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="p-3 w-8"></th>
+                    <th className="p-3">Kit</th>
+                    <th className="p-3">kWp</th>
+                    <th className="p-3">Módulos</th>
+                    <th className="p-3">Inversor</th>
+                    <th className="p-3">Consumo alvo</th>
+                    <th className="p-3">Fornecedor</th>
+                    <th className="p-3">Preço</th>
+                    <th className="p-3">Status</th>
+                    <th className="p-3">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.length === 0 && (
+                    <tr><td colSpan={10} className="p-8 text-center text-muted-foreground">Nenhum kit encontrado.</td></tr>
+                  )}
+                  {filtered.map((kit) => {
+                    const f = FAIXAS[kit.faixa] || FAIXAS.residencial_pequeno;
+                    const isExpanded = expandedKitId === kit.id;
+                    return (
+                      <React.Fragment key={kit.id}>
+                        <tr className={`border-t ${!kit.ativo ? "opacity-50" : ""} hover:bg-slate-50`}>
+                          <td className="p-3">
+                            <button
+                              onClick={() => setExpandedKitId(isExpanded ? null : kit.id)}
+                              className="text-muted-foreground hover:text-navy transition-colors p-1"
+                              title="Ver componentes inclusos"
+                            >
+                              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
-                            <button onClick={() => setEditando({ ...kit })} className="text-navy hover:text-sun-deep">
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            {confirmDelete === kit.id ? (
-                              <span className="flex gap-1">
-                                <button onClick={() => excluir(kit.id)} className="text-red-600"><Check className="w-4 h-4" /></button>
-                                <button onClick={() => setConfirmDelete(null)} className="text-muted-foreground"><X className="w-4 h-4" /></button>
-                              </span>
-                            ) : (
-                              <button onClick={() => setConfirmDelete(kit.id)} className="text-muted-foreground hover:text-red-500">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      {isExpanded && (
-                        <tr className="bg-slate-50/50">
-                          <td colSpan={10} className="p-3 border-t">
-                            <div className="bg-white border rounded-xl p-4 space-y-2 max-w-4xl mx-auto shadow-sm">
-                              <h4 className="font-bold text-navy text-xs uppercase flex items-center gap-1.5 border-b pb-1.5">
-                                <Boxes className="w-4 h-4 text-sun-deep" /> Componentes e Acessórios Reais Inclusos no Kit
-                              </h4>
-                              <div className="grid md:grid-cols-2 gap-3 text-xs leading-relaxed text-slate-700">
-                                {obterComponentesKit(kit).map((comp, idx) => (
-                                  <div key={idx} className="flex gap-2 items-start bg-slate-50/40 p-2 rounded border border-slate-100">
-                                    <span className="text-sun-deep font-bold shrink-0 mt-0.5">⚡</span>
-                                    <span>{comp}</span>
-                                  </div>
-                                ))}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-2">
+                              {kit.destaque && <Star className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" fill="currentColor" />}
+                              <div>
+                                <div className="font-semibold text-navy text-xs leading-snug">{kit.nome}</div>
+                                <Badge className={`${f.color} text-[9px] mt-0.5`}>{f.emoji} {f.label}</Badge>
                               </div>
                             </div>
                           </td>
+                          <td className="p-3 font-bold text-navy">{Number(kit.potencia_kwp).toFixed(2)} kWp</td>
+                          <td className="p-3">
+                            <div className="text-xs">{kit.quantidade_modulos}× {kit.potencia_modulo_w}W</div>
+                            <div className="text-[10px] text-muted-foreground">{kit.fabricante_modulos?.split(" ").slice(0, 2).join(" ")}</div>
+                          </td>
+                          <td className="p-3">
+                            <div className="text-xs">{kit.inversor?.split(" ").slice(0, 3).join(" ")}</div>
+                            <div className="text-[10px] text-muted-foreground">{kit.tipo_inversor}</div>
+                          </td>
+                          <td className="p-3 text-xs text-muted-foreground">
+                            {kit.consumo_kwh_min && kit.consumo_kwh_max
+                              ? `${kit.consumo_kwh_min}–${kit.consumo_kwh_max} kWh`
+                              : "—"}
+                          </td>
+                          <td className="p-3 text-xs">
+                            {kit.fornecedor ? (
+                              <div>
+                                <span className="font-semibold text-navy">{kit.fornecedor}</span>
+                                {kit.url_fornecedor && (
+                                  <a href={kit.url_fornecedor} target="_blank" rel="noreferrer" className="block text-[10px] text-blue-600 hover:underline mt-0.5">
+                                    🛒 Comprar B2B
+                                  </a>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="p-3 font-bold text-navy">{BRL(Number(kit.preco))}</td>
+                          <td className="p-3">
+                            <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"}>
+                              {kit.ativo
+                                ? <ToggleRight className="w-6 h-6 text-emerald-500" />
+                                : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
+                            </button>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => toggleDestaque(kit)} title={kit.destaque ? "Remover destaque" : "Destacar"} className={kit.destaque ? "text-amber-500" : "text-muted-foreground hover:text-amber-400"}>
+                                <Star className="w-4 h-4" fill={kit.destaque ? "currentColor" : "none"} />
+                              </button>
+                              <button onClick={() => setEditando({ ...kit })} className="text-navy hover:text-sun-deep">
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              {confirmDelete === kit.id ? (
+                                <span className="flex gap-1">
+                                  <button onClick={() => excluir(kit.id)} className="text-red-600"><Check className="w-4 h-4" /></button>
+                                  <button onClick={() => setConfirmDelete(null)} className="text-muted-foreground"><X className="w-4 h-4" /></button>
+                                </span>
+                              ) : (
+                                <button onClick={() => setConfirmDelete(kit.id)} className="text-muted-foreground hover:text-red-500">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+                          </td>
                         </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
-          </Card>
+                        {isExpanded && (
+                          <tr className="bg-slate-50/50">
+                            <td colSpan={10} className="p-3 border-t">
+                              <div className="bg-white border rounded-xl p-4 space-y-2 max-w-4xl mx-auto shadow-sm">
+                                <h4 className="font-bold text-navy text-xs uppercase flex items-center gap-1.5 border-b pb-1.5">
+                                  <Boxes className="w-4 h-4 text-sun-deep" /> Componentes e Acessórios Reais Inclusos no Kit
+                                </h4>
+                                <div className="grid md:grid-cols-2 gap-3 text-xs leading-relaxed text-slate-700">
+                                  {obterComponentesKit(kit).map((comp, idx) => (
+                                    <div key={idx} className="flex gap-2 items-start bg-slate-50/40 p-2 rounded border border-slate-100">
+                                      <span className="text-sun-deep font-bold shrink-0 mt-0.5">⚡</span>
+                                      <span>{comp}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </Card>
+          )}
         </>
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
@@ -948,6 +1059,18 @@ function AdminKits() {
                 <Label>Link do kit no Fornecedor (URL B2B)</Label>
                 <Input value={editando.url_fornecedor || ""} onChange={F("url_fornecedor")} placeholder="https://www.aldosolar.com.br/gerador..." />
               </div>
+              <div className="md:col-span-2">
+                <Label>Componentes Inclusos (um por linha - se vazio, será gerado automaticamente)</Label>
+                <textarea
+                  className="w-full min-h-[100px] p-2.5 border rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-navy"
+                  placeholder="Ex:&#10;10x Painéis Solares Jinko 550W&#10;1x Inversor Growatt MIC 5000TL-X&#10;Estruturas de fixação para 10 painéis"
+                  value={Array.isArray(editando.componentes) ? editando.componentes.join("\n") : ""}
+                  onChange={(e) => {
+                    const lines = e.target.value.split("\n").filter(line => line.trim() !== "");
+                    setEditando((p: any) => ({ ...p, componentes: lines.length > 0 ? lines : null }));
+                  }}
+                />
+              </div>
               <div className="flex flex-col gap-3 pt-2 md:col-span-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={editando.destaque} onChange={(e) => setEditando((p: any) => ({ ...p, destaque: e.target.checked }))} className="accent-amber-500" />
@@ -974,6 +1097,161 @@ function AdminKits() {
               <Button variant="outline" onClick={() => setEditando(null)}>Cancelar</Button>
               <Button disabled={saving || !editando.nome || !editando.preco} onClick={save} className="bg-sun hover:bg-sun-deep text-navy font-semibold">
                 {saving ? "Salvando..." : editando.id ? "Salvar alterações" : "Cadastrar kit"}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+      {selectedKitDetails && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 border-0">
+            {/* Header */}
+            <div className="bg-navy text-white p-5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Boxes className="w-5 h-5 text-sun" />
+                <div>
+                  <h3 className="font-extrabold text-sm uppercase tracking-wider text-sun">Ficha Detalhada do Gerador</h3>
+                  <p className="text-[10px] text-slate-300 font-medium">Informações de Distribuição & Componentes</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedKitDetails(null)}
+                className="text-slate-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 p-1.5 rounded-full"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Scrollable Body */}
+            <div className="p-6 max-h-[75vh] overflow-y-auto space-y-6">
+              <div className="grid md:grid-cols-2 gap-6 items-start">
+                {/* Imagem do Kit */}
+                <div className="bg-slate-50 border rounded-2xl p-4 flex flex-col items-center justify-center relative min-h-[200px]">
+                  <img 
+                    src={
+                      selectedKitDetails.imagem_kit_url || (
+                        selectedKitDetails.faixa === "rural" 
+                          ? "/kits/kit-rural.png" 
+                          : Number(selectedKitDetails.potencia_kwp) <= 4.4 
+                            ? "/kits/kit-residencial-pequeno.png" 
+                            : Number(selectedKitDetails.potencia_kwp) <= 12.1 
+                              ? "/kits/kit-residencial-grande.png" 
+                              : "/kits/kit-comercial-industrial.png"
+                      )
+                    } 
+                    alt={selectedKitDetails.nome} 
+                    className="max-h-48 object-contain"
+                  />
+                  <Badge className="absolute top-3 left-3 bg-navy text-white text-[10px] font-black">
+                    {Number(selectedKitDetails.potencia_kwp).toFixed(2)} kWp
+                  </Badge>
+                </div>
+
+                {/* Resumo Comercial */}
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-[9px] font-extrabold text-sun-deep uppercase tracking-wider block">Nome do Gerador</span>
+                    <h4 className="font-black text-navy text-base leading-tight mt-0.5">{selectedKitDetails.nome}</h4>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <span className="text-[9px] text-slate-400 font-bold block uppercase">Marca Módulos</span>
+                      <strong className="text-navy font-bold">{selectedKitDetails.fabricante_modulos}</strong>
+                    </div>
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <span className="text-[9px] text-slate-400 font-bold block uppercase">Modelo Inversor</span>
+                      <strong className="text-navy font-bold">{selectedKitDetails.inversor}</strong>
+                    </div>
+                  </div>
+
+                  <div className="bg-emerald-50/60 border border-emerald-100 p-3.5 rounded-2xl flex items-center justify-between">
+                    <div>
+                      <span className="text-[9px] text-emerald-800 font-bold block uppercase">Valor de Tabela B2B</span>
+                      <strong className="text-xl font-black text-emerald-700">{BRL(Number(selectedKitDetails.preco))}</strong>
+                    </div>
+                    {selectedKitDetails.url_fornecedor && (
+                      <a 
+                        href={selectedKitDetails.url_fornecedor} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm flex items-center gap-1 transition"
+                      >
+                        Comprar B2B 🛒
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Informações da Fonte */}
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/60 space-y-2">
+                <h5 className="text-xs font-extrabold text-navy uppercase tracking-wider">Fonte da Informação e Distribuição</h5>
+                <div className="grid sm:grid-cols-2 gap-3 text-xs leading-relaxed">
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold block">Distribuidora PJ</span>
+                    <strong className="text-navy">{selectedKitDetails.fornecedor || "Aldo Solar"}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold block">Origem do Material</span>
+                    <span className="text-slate-700 font-medium">
+                      {selectedKitDetails.fornecedor === "Sou Energy" 
+                        ? "Tabela Comercial B2B Sou Energy (PDF / Região Nordeste)" 
+                        : "Tabela Comercial B2B Aldo Solar (XLSX / Distribuição Nacional)"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Componentes Detalhados */}
+              <div className="space-y-3">
+                <h5 className="text-xs font-extrabold text-navy uppercase tracking-wider border-b pb-1">Itens e Componentes Inclusos no Kit</h5>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {obterComponentesKit(selectedKitDetails).map((comp: string, idx: number) => {
+                    let icon = "⚡";
+                    if (idx === 0) icon = "☀️"; // placas
+                    if (idx === 1) icon = "📟"; // inversor
+                    if (idx === 2) icon = "🛠️"; // estrutura
+                    if (idx === 3) icon = "🔌"; // cabos
+                    if (idx === 4) icon = "🔗"; // mc4
+                    if (idx === 5) icon = "🛡️"; // string box
+
+                    return (
+                      <div key={idx} className="flex gap-2.5 items-start bg-slate-50/50 p-2.5 rounded-xl border border-slate-100 text-xs text-slate-700">
+                        <span className="text-base shrink-0 mt-0.5">{icon}</span>
+                        <div className="space-y-0.5">
+                          <span className="font-semibold text-navy block text-[10px] uppercase text-slate-400">
+                            {idx === 0 && "Módulos Fotovoltaicos"}
+                            {idx === 1 && "Inversor / Conversor"}
+                            {idx === 2 && "Estrutura de Fixação"}
+                            {idx === 3 && "Cabeamento de Descida"}
+                            {idx === 4 && "Conectores Rápidos"}
+                            {idx === 5 && "Proteções String Box"}
+                          </span>
+                          <span className="leading-normal font-medium">{comp}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-slate-50 border-t p-4 flex justify-between">
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => { setEditando({ ...selectedKitDetails }); setSelectedKitDetails(null); }}
+                  className="bg-slate-200 text-navy hover:bg-slate-300 font-extrabold text-xs px-4 h-9 rounded-xl"
+                >
+                  Editar Cadastro ✏️
+                </Button>
+              </div>
+              <Button 
+                onClick={() => setSelectedKitDetails(null)}
+                className="bg-navy hover:bg-navy-deep text-white font-extrabold text-xs px-6 h-9 rounded-xl"
+              >
+                Fechar
               </Button>
             </div>
           </Card>
