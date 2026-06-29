@@ -943,6 +943,22 @@ function AdminKits() {
               Como distribuidoras B2B exclusivas para integradores, a Aldo Solar e a Sou Energy exigem login de parceiro aprovado para liberação das planilhas de preços oficiais. Abaixo estão os links diretos para a área de downloads e tabelas de cada fornecedor:
             </p>
 
+            <div className="bg-navy/5 border border-navy/10 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1 text-center sm:text-left">
+                <strong className="text-sm text-navy block">📊 Planilha Oficial de Referência dos 50 Kits</strong>
+                <p className="text-xs text-slate-600 leading-relaxed max-w-xl">
+                  Baixe o arquivo de planilha consolidado com as especificações técnicas completas, preços B2B e links de todos os 50 kits fotovoltaicos cadastrados no banco de dados da Esol Energy.
+                </p>
+              </div>
+              <a 
+                href="/tabela-referencia-kits.csv" 
+                download="tabela-referencia-kits.csv"
+                className="bg-navy hover:bg-navy-deep text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition shrink-0"
+              >
+                Download Planilha de Kits (.CSV) 📥
+              </a>
+            </div>
+
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="border rounded-2xl p-4 bg-slate-50 space-y-3">
                 <div className="flex items-center justify-between border-b pb-2">
