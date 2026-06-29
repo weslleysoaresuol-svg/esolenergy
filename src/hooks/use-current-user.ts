@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
-export type AppRole = "admin" | "corretor";
+export type AppRole = "admin" | "corretor" | "auxiliar" | "atendente";
 
 export type CurrentUser = {
   user: User | null;
@@ -30,9 +30,13 @@ export function useCurrentUser(): CurrentUser {
       const roles = (r ?? []).map((row: any) => row.role as AppRole);
       const resolved: AppRole | null = roles.includes("admin")
         ? "admin"
-        : roles.includes("corretor")
-          ? "corretor"
-          : null;
+        : roles.includes("auxiliar")
+          ? "auxiliar"
+          : roles.includes("atendente")
+            ? "atendente"
+            : roles.includes("corretor")
+              ? "corretor"
+              : null;
       setRole(resolved);
       setProfile(p ?? null);
     } else {

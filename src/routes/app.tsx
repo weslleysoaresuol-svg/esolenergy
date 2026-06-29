@@ -185,7 +185,7 @@ function AppShell() {
     }
     if (
       !loading && user && profile && profile.onboarding_completo &&
-      role && role !== "admin" && !profile.contrato_assinado &&
+      role && role === "corretor" && !profile.contrato_assinado &&
       pathname !== "/app/contrato" && pathname !== "/app/perfil"
     ) {
       navigate({ to: "/app/contrato" });
@@ -207,7 +207,7 @@ function AppShell() {
         <div className="max-w-md text-center bg-white rounded-2xl shadow p-8">
           <h1 className="text-xl font-bold text-navy mb-2">Acesso pendente</h1>
           <p className="text-sm text-muted-foreground mb-6">
-            Sua conta foi criada, mas ainda não está vinculada à equipe ESOL Energy. Solicite um <strong>link de convite</strong> ao administrador para concluir seu cadastro como parceiro.
+            Sua conta foi criada, mas ainda não está vinculada à equipe ESOL Energy. Solicite um <strong>link de convite</strong> ao administrador para concluir seu cadastro.
           </p>
           <Button onClick={signOut} variant="outline" className="w-full">Sair</Button>
         </div>
@@ -228,6 +228,26 @@ function AppShell() {
     { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
+
+  const auxiliarNav = [
+    { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
+    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
+  ];
+
+  const atendenteNav = [
+    { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
+  ];
+
   const corretorNav = [
     { to: "/app", icon: Briefcase, label: "Meus Clientes", exact: true },
     { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
@@ -237,7 +257,21 @@ function AppShell() {
     { to: "/app/parceiro/financeiro", icon: Landmark, label: "Minhas Comissões" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
-  const nav = role === "admin" ? adminNav : corretorNav;
+
+  const ROLE_LABELS: Record<string, string> = {
+    admin: "Administrador",
+    auxiliar: "Auxiliar Admin",
+    atendente: "Atendente",
+    corretor: "Parceiro",
+  };
+
+  const nav = role === "admin" 
+    ? adminNav 
+    : role === "auxiliar"
+      ? auxiliarNav
+      : role === "atendente"
+        ? atendenteNav
+        : corretorNav;
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -245,7 +279,7 @@ function AppShell() {
       <aside className="hidden md:flex w-64 flex-col bg-navy text-white p-5">
         <Link to="/" className="mb-8"><img src={logo} alt="ESOL" className="h-10 w-auto brightness-0 invert" /></Link>
         <div className="mb-6 px-2">
-          <div className="text-xs uppercase tracking-wider text-white/50">{role === "admin" ? "Administrador" : "Parceiro"}</div>
+          <div className="text-xs uppercase tracking-wider text-white/50">{ROLE_LABELS[role ?? ""] || "Parceiro"}</div>
           <div className="font-semibold truncate">{profile?.nome || user.email}</div>
         </div>
         <nav className="space-y-1 flex-1">

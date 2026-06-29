@@ -31,6 +31,7 @@ function AdminCorretores() {
   // Estados dos convites
   const [convites, setConvites] = useState<any[]>([]);
   const [novoEmail, setNovoEmail] = useState("");
+  const [novoCargo, setNovoCargo] = useState<"corretor" | "auxiliar" | "atendente">("corretor");
   const [enviandoConvite, setEnviandoConvite] = useState(false);
 
   // Estados dos termos/contratos
@@ -43,9 +44,14 @@ function AdminCorretores() {
 
   const loadParceiros = async () => {
     setLoading(true);
-    const { data: roles } = await supabase.from("user_roles").select("user_id, role").eq("role", "corretor");
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("user_id, role")
+      .in("role", ["corretor", "auxiliar", "atendente"]);
     const ids = (roles || []).map((r) => r.user_id);
     if (ids.length === 0) { setList([]); setLoading(false); return; }
+
+    const roleMap = new Map((roles || []).map((r) => [r.user_id, r.role]));
 
     const [{ data: profiles }, { data: clientes }, { data: propostas }] = await Promise.all([
       supabase.from("profiles").select("*").in("id", ids),
@@ -57,6 +63,7 @@ function AdminCorretores() {
     const mesAtual = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
     const stats = (profiles || []).map((p) => {
+      const userRole = roleMap.get(p.id) || "corretor";
       const cs = (clientes || []).filter((c) => c.corretor_id === p.id);
       const ps = (propostas || []).filter((pr) => pr.parceiro_id === p.id);
       const psAceitas = ps.filter((pr) => pr.status === "aceita");
@@ -75,6 +82,7 @@ function AdminCorretores() {
 
       return {
         ...p,
+        role: userRole,
         total: cs.length,
         fechados: cs.filter((c) => ["contrato_assinado", "instalacao", "concluido"].includes(c.status)).length,
         propostas: ps.length,
@@ -133,6 +141,7 @@ function AdminCorretores() {
       email: novoEmail.trim().toLowerCase(),
       token,
       status: "pendente",
+      role_to_assign: novoCargo,
     } as any) as any);
     setEnviandoConvite(false);
     if (error) {
@@ -155,7 +164,7 @@ function AdminCorretores() {
     setLoadingDrawer(true);
     const { data } = await supabase
       .from("contratos_parceria")
-      .select("id,nome_completo,cpf,versao,assinado_em,ip_assinatura")
+      .select("id,nome_completo,cpf,versao,assinado_em,user_id,ip_assinatura,selfie_url,documento_frente_url,documento_verso_url,user_agent,hash_conteudo_contrato,codigo_verificacao_email")
       .eq("user_id", p.id)
       .order("assinado_em", { ascending: false });
     setContratosParceiro(data || []);
@@ -286,8 +295,13 @@ function AdminCorretores() {
                           )}
                         </div>
                         <div>
-                          <h3 className="font-bold text-navy text-sm">{c.nome || c.email}</h3>
-                          <p className="text-[10px] text-muted-foreground truncate max-w-[150px]">{c.email} · {c.cidade || "—"}</p>
+                          <div className="flex flex-col gap-1">
+                            <h3 className="font-bold text-navy text-sm truncate max-w-[160px]">{c.nome || c.email}</h3>
+                            <Badge variant="outline" className="text-[9px] w-fit bg-slate-50 border-slate-200 uppercase font-extrabold text-slate-500">
+                              {c.role === "auxiliar" ? "Auxiliar Admin" : c.role === "atendente" ? "Atendente" : "Parceiro"}
+                            </Badge>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground truncate max-w-[150px] mt-0.5">{c.email} · {c.cidade || "—"}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
@@ -296,33 +310,46 @@ function AdminCorretores() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                      <div className="bg-slate-50 rounded-lg p-2">
-                        <div className="text-[10px] text-muted-foreground">Clientes</div>
-                        <div className="font-bold text-navy mt-0.5">{c.total}</div>
-                      </div>
-                      <div className="bg-emerald-50 rounded-lg p-2">
-                        <div className="text-[10px] text-emerald-800">Fechados</div>
-                        <div className="font-bold text-emerald-700 mt-0.5">{c.fechados}</div>
-                      </div>
-                      <div className="bg-blue-50 rounded-lg p-2">
-                        <div className="text-[10px] text-blue-800">Conversão</div>
-                        <div className="font-bold text-blue-700 mt-0.5">{c.conversao.toFixed(0)}%</div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="bg-slate-50 rounded-lg p-2">
-                        <div className="text-[10px] text-muted-foreground uppercase">Faturamento</div>
-                        <div className="font-bold text-navy mt-0.5">{BRL(c.receitaBruta)}</div>
-                      </div>
-                      <div className={`rounded-lg p-2 ${c.comissaoMes > 0 ? "bg-amber-50" : "bg-slate-50"}`}>
-                        <div className="text-[10px] text-muted-foreground uppercase">Comissão Mês</div>
-                        <div className={`font-bold mt-0.5 ${c.comissaoMes > 0 ? "text-amber-700" : "text-navy"}`}>
-                          {BRL(c.comissaoMes)}
+                    {c.role === "corretor" ? (
+                      <>
+                        <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                          <div className="bg-slate-50 rounded-lg p-2">
+                            <div className="text-[10px] text-muted-foreground">Clientes</div>
+                            <div className="font-bold text-navy mt-0.5">{c.total}</div>
+                          </div>
+                          <div className="bg-emerald-50 rounded-lg p-2">
+                            <div className="text-[10px] text-emerald-800">Fechados</div>
+                            <div className="font-bold text-emerald-700 mt-0.5">{c.fechados}</div>
+                          </div>
+                          <div className="bg-blue-50 rounded-lg p-2">
+                            <div className="text-[10px] text-blue-800">Conversão</div>
+                            <div className="font-bold text-blue-700 mt-0.5">{c.conversao.toFixed(0)}%</div>
+                          </div>
                         </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="bg-slate-50 rounded-lg p-2">
+                            <div className="text-[10px] text-muted-foreground uppercase">Faturamento</div>
+                            <div className="font-bold text-navy mt-0.5">{BRL(c.receitaBruta)}</div>
+                          </div>
+                          <div className={`rounded-lg p-2 ${c.comissaoMes > 0 ? "bg-amber-50" : "bg-slate-50"}`}>
+                            <div className="text-[10px] text-muted-foreground uppercase">Comissão Mês</div>
+                            <div className={`font-bold mt-0.5 ${c.comissaoMes > 0 ? "text-amber-700" : "text-navy"}`}>
+                              {BRL(c.comissaoMes)}
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="bg-slate-50 rounded-xl p-3 border border-slate-100/80 space-y-1">
+                        <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Permissões de Acesso</div>
+                        <p className="text-[11px] text-slate-700 leading-relaxed">
+                          {c.role === "auxiliar" 
+                            ? "Acesso operacional: controle de kits solares, pedidos e financiamentos." 
+                            : "Acesso comercial: registro de leads, cotações e propostas."}
+                        </p>
                       </div>
-                    </div>
+                    )}
 
                     {/* Indicador de dados bancários */}
                     <div className="flex items-center gap-1.5 text-[10px]">
@@ -348,10 +375,19 @@ function AdminCorretores() {
       {activeTab === "convites" && (
         <div className="space-y-6">
           <Card className="p-5 border-0 shadow-md bg-white">
-            <h3 className="font-bold text-navy text-base mb-2">Convidar Novo Parceiro Comercial</h3>
-            <p className="text-xs text-muted-foreground mb-4">Insira o e-mail do integrador. O sistema gerará um link exclusivo de aceitação e assinatura do termo de parceria.</p>
-            <form onSubmit={criarConvite} className="flex gap-2 max-w-lg">
-              <Input type="email" required placeholder="E-mail do parceiro" value={novoEmail} onChange={(e) => setNovoEmail(e.target.value)} />
+            <h3 className="font-bold text-navy text-base mb-2">Convidar Novo Integrante / Parceiro</h3>
+            <p className="text-xs text-muted-foreground mb-4">Insira o e-mail do usuário e selecione o cargo desejado. O sistema gerará um link exclusivo de aceitação e registro com as permissões corretas.</p>
+            <form onSubmit={criarConvite} className="flex flex-col sm:flex-row gap-3 max-w-2xl">
+              <Input type="email" required placeholder="E-mail do convidado" value={novoEmail} onChange={(e) => setNovoEmail(e.target.value)} className="flex-1" />
+              <select 
+                value={novoCargo} 
+                onChange={(e) => setNovoCargo(e.target.value as any)}
+                className="h-10 text-xs px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold text-navy uppercase focus:ring-2 focus:ring-sun focus:outline-none cursor-pointer"
+              >
+                <option value="corretor">Parceiro Comercial</option>
+                <option value="auxiliar">Auxiliar Admin</option>
+                <option value="atendente">Atendente</option>
+              </select>
               <Button type="submit" disabled={enviandoConvite} className="bg-sun-deep hover:bg-sun text-navy font-bold flex gap-1.5 items-center">
                 <Send className="w-4 h-4" /> {enviandoConvite ? "Gerando..." : "Gerar Convite"}
               </Button>
@@ -369,6 +405,7 @@ function AdminCorretores() {
                     <tr>
                       <th className="p-3">Destinatário</th>
                       <th className="p-3">Token</th>
+                      <th className="p-3">Cargo/Acesso</th>
                       <th className="p-3">Status</th>
                       <th className="p-3">Gerado em</th>
                       <th className="p-3 text-right">Ação</th>
@@ -379,6 +416,11 @@ function AdminCorretores() {
                       <tr key={cv.id} className="hover:bg-slate-50">
                         <td className="p-3 font-bold text-navy">{cv.email}</td>
                         <td className="p-3 text-muted-foreground font-mono text-[10px]">{cv.token}</td>
+                        <td className="p-3">
+                          <Badge variant="outline" className="text-[10px] bg-slate-50 uppercase border-slate-200">
+                            {cv.role_to_assign === "auxiliar" ? "Auxiliar Admin" : cv.role_to_assign === "atendente" ? "Atendente" : "Parceiro"}
+                          </Badge>
+                        </td>
                         <td className="p-3">
                           <Badge variant={cv.status === "aceito" ? "default" : "secondary"} className="text-[10px]">
                             {cv.status === "aceito" ? "Aceito" : "Pendente"}
@@ -556,23 +598,84 @@ function AdminCorretores() {
                   ) : (
                     <div className="space-y-2">
                       {contratosParceiro.map((ct) => (
-                        <div key={ct.id} className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                            <div>
-                              <div className="text-xs font-bold text-navy">{ct.nome_completo} — Versão {ct.versao}</div>
-                              <div className="text-[10px] text-muted-foreground">CPF: {ct.cpf}</div>
+                        <div key={ct.id} className="space-y-2 bg-slate-50 border rounded-xl p-3">
+                          <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                              <div>
+                                <div className="text-xs font-bold text-navy">{ct.nome_completo} — Versão {ct.versao}</div>
+                                <div className="text-[10px] text-muted-foreground">CPF: {ct.cpf}</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1 text-[10px] text-emerald-700">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(ct.assinado_em).toLocaleDateString("pt-BR")}
+                              </div>
+                              {ct.ip_assinatura && (
+                                <div className="text-[9px] text-muted-foreground font-mono">{ct.ip_assinatura}</div>
+                              )}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="flex items-center gap-1 text-[10px] text-emerald-700">
-                              <Calendar className="w-3 h-3" />
-                              {new Date(ct.assinado_em).toLocaleDateString("pt-BR")}
+
+                          {/* Seção de Documentos & Selfie do Contrato */}
+                          {ct.selfie_url && (
+                            <div className="mt-2 p-2.5 bg-white border border-slate-200/50 rounded-xl space-y-2.5">
+                              <div className="text-[9px] text-navy font-bold uppercase tracking-wider flex items-center gap-1">
+                                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Identificação e Validade Jurídica
+                              </div>
+                              <div className="grid grid-cols-3 gap-2">
+                                <div className="space-y-1">
+                                  <span className="text-[8px] text-slate-500 font-bold block">Selfie com Doc</span>
+                                  <a 
+                                    href={supabase.storage.from("parceiros").getPublicUrl(ct.selfie_url).data.publicUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                  >
+                                    <img 
+                                      src={supabase.storage.from("parceiros").getPublicUrl(ct.selfie_url).data.publicUrl} 
+                                      alt="Selfie" 
+                                      className="w-full h-12 object-cover rounded-lg border hover:scale-105 transition-transform shadow-sm"
+                                    />
+                                  </a>
+                                </div>
+                                <div className="space-y-1">
+                                  <span className="text-[8px] text-slate-500 font-bold block">Doc (Frente)</span>
+                                  <a 
+                                    href={supabase.storage.from("parceiros").getPublicUrl(ct.documento_frente_url).data.publicUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                  >
+                                    <img 
+                                      src={supabase.storage.from("parceiros").getPublicUrl(ct.documento_frente_url).data.publicUrl} 
+                                      alt="Doc Frente" 
+                                      className="w-full h-12 object-cover rounded-lg border hover:scale-105 transition-transform shadow-sm"
+                                    />
+                                  </a>
+                                </div>
+                                <div className="space-y-1">
+                                  <span className="text-[8px] text-slate-500 font-bold block">Doc (Verso)</span>
+                                  <a 
+                                    href={supabase.storage.from("parceiros").getPublicUrl(ct.documento_verso_url).data.publicUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                  >
+                                    <img 
+                                      src={supabase.storage.from("parceiros").getPublicUrl(ct.documento_verso_url).data.publicUrl} 
+                                      alt="Doc Verso" 
+                                      className="w-full h-12 object-cover rounded-lg border hover:scale-105 transition-transform shadow-sm"
+                                    />
+                                  </a>
+                                </div>
+                              </div>
+                              
+                              <div className="text-[8px] text-slate-500 font-mono space-y-0.5 border-t pt-2 leading-relaxed">
+                                <div className="truncate"><strong>Hash SHA-256:</strong> <span className="bg-slate-100 px-1 py-0.5 rounded text-navy select-all">{ct.hash_conteudo_contrato || "Legado"}</span></div>
+                                <div><strong>E-mail Verificado:</strong> {ct.codigo_verificacao_email || "—"}</div>
+                                <div className="truncate"><strong>User Agent:</strong> {ct.user_agent || "—"}</div>
+                              </div>
                             </div>
-                            {ct.ip_assinatura && (
-                              <div className="text-[9px] text-muted-foreground font-mono">{ct.ip_assinatura}</div>
-                            )}
-                          </div>
+                          )}
                         </div>
                       ))}
                     </div>
