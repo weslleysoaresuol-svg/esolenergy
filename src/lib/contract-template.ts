@@ -86,7 +86,46 @@ CLÁUSULA 12 — DO FORO
 
 E por estarem assim justas e contratadas, as partes assinam o presente contrato eletronicamente, na data abaixo, declarando ter lido, compreendido e aceito integralmente todos os seus termos.
 
+  Data: ${data}
+  Versão do contrato: ${CONTRATO_VERSAO}
+  `;
+}
+
+export function gerarTermoUsoEquipe(membro: { nome: string; cpf: string; cargo: string }) {
+  const data = new Date().toLocaleDateString("pt-BR");
+  return `TERMO DE COMPROMISSO, CONFIDENCIALIDADE (NDA), SEGURANÇA DA INFORMAÇÃO E CÓDIGO DE CONDUTA — EQUIPE INTERNA
+
+Pelo presente instrumento particular, de um lado:
+
+EMPRESA: ${EMPRESA.razao}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${EMPRESA.cnpj}, doravante denominada simplesmente "EMPRESA";
+
+e, de outro lado:
+
+COLABORADOR(A): ${membro.nome || "[NOME DO COLABORADOR]"}, inscrito(a) no CPF sob o nº ${membro.cpf || "[CPF]"}, doravante denominado(a) "COLABORADOR", com a função de ${membro.cargo || "[CARGO]"};
+
+têm entre si justo e acordado o presente Termo, que se regerá pelas condições a seguir, bem como pela legislação penal, civil e trabalhista brasileira aplicável.
+
+CLÁUSULA 1ª — DO ACESSO À PLATAFORMA E SISTEMAS
+1.1. O COLABORADOR receberá credenciais de acesso individuais e intransferíveis para o ERP e base de dados da EMPRESA. É terminantemente proibido o compartilhamento de logins, senhas ou tokens com terceiros, inclusive outros integrantes da equipe.
+1.2. O acesso às informações está sujeito à matriz de permissões atrelada ao cargo do COLABORADOR, sendo vedada qualquer tentativa de burlar ou acessar dados fora de suas atribuições.
+
+CLÁUSULA 2ª — DA CONFIDENCIALIDADE E SIGILO (NDA)
+2.1. O COLABORADOR compromete-se a manter sigilo absoluto sobre toda e qualquer informação técnica, comercial, financeira, operacional ou estratégica da EMPRESA, bem como dados pessoais e especificações de clientes, parceiros, orçamentos, projetos solares e preços B2B a que tiver acesso.
+2.2. Entende-se por Informação Confidencial tudo o que for de propriedade intelectual da EMPRESA ou por ela tratado, incluindo a base de leads, listas de contatos, fornecedores Aldo Solar e Sou Energy, códigos-fonte e especificações técnicas de kits fotovoltaicos.
+
+CLÁUSULA 3ª — DA PROTEÇÃO DE DADOS (LGPD)
+3.1. O COLABORADOR compromete-se a tratar dados pessoais em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), abstendo-se de utilizá-los para fins particulares, transferi-los a terceiros ou exportar a base de dados de clientes sem autorização expressa da diretoria.
+
+CLÁUSULA 4ª — DA PROPRIEDADE INTELECTUAL
+4.1. Toda e qualquer criação, projeto, melhoria, planilha consolidada, script ou material institucional elaborado pelo COLABORADOR em razão do exercício de suas funções pertence única e exclusivamente à EMPRESA.
+
+CLÁUSULA 5ª — DA NÃO CONCORRÊNCIA E CONDUTA ÉTICA
+5.1. O COLABORADOR não exercerá concorrência desleal nem prestará serviços comerciais ou de engenharia, diretos ou indiretos, a outras empresas atuantes no setor de energia solar fotovoltaica durante o período de seu vínculo com a EMPRESA.
+
+CLÁUSULA 6ª — DA VALIDADE JURÍDICA E ASSINATURA ELETRÔNICA
+6.1. O COLABORADOR declara ciência de que o aceite deste termo e o upload de sua selfie com o documento e foto frente/verso de seu RG/CNH constituem prova inequívoca de sua assinatura eletrônica e identidade, possuindo validade jurídica e força executiva nos termos da MP nº 2.200-2/2001 e da Lei nº 14.063/2020.
+
 Data: ${data}
-Versão do contrato: ${CONTRATO_VERSAO}
+Versão do Termo: ${CONTRATO_VERSAO}
 `;
 }

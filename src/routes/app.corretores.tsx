@@ -47,7 +47,7 @@ function AdminCorretores() {
     const { data: roles } = await supabase
       .from("user_roles")
       .select("user_id, role")
-      .in("role", ["corretor", "auxiliar", "atendente"]);
+      .eq("role", "corretor");
     const ids = (roles || []).map((r) => r.user_id);
     if (ids.length === 0) { setList([]); setLoading(false); return; }
 
@@ -102,7 +102,11 @@ function AdminCorretores() {
   };
 
   const loadConvites = async () => {
-    const { data } = await (supabase.from("convites" as any).select("*").order("created_at", { ascending: false }) as any);
+    const { data } = await (supabase
+      .from("convites" as any)
+      .select("*")
+      .eq("role_to_assign", "corretor")
+      .order("created_at", { ascending: false }) as any);
     setConvites(data || []);
   };
 
@@ -141,7 +145,7 @@ function AdminCorretores() {
       email: novoEmail.trim().toLowerCase(),
       token,
       status: "pendente",
-      role_to_assign: novoCargo,
+      role_to_assign: "corretor",
     } as any) as any);
     setEnviandoConvite(false);
     if (error) {
@@ -375,19 +379,10 @@ function AdminCorretores() {
       {activeTab === "convites" && (
         <div className="space-y-6">
           <Card className="p-5 border-0 shadow-md bg-white">
-            <h3 className="font-bold text-navy text-base mb-2">Convidar Novo Integrante / Parceiro</h3>
-            <p className="text-xs text-muted-foreground mb-4">Insira o e-mail do usuário e selecione o cargo desejado. O sistema gerará um link exclusivo de aceitação e registro com as permissões corretas.</p>
-            <form onSubmit={criarConvite} className="flex flex-col sm:flex-row gap-3 max-w-2xl">
-              <Input type="email" required placeholder="E-mail do convidado" value={novoEmail} onChange={(e) => setNovoEmail(e.target.value)} className="flex-1" />
-              <select 
-                value={novoCargo} 
-                onChange={(e) => setNovoCargo(e.target.value as any)}
-                className="h-10 text-xs px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold text-navy uppercase focus:ring-2 focus:ring-sun focus:outline-none cursor-pointer"
-              >
-                <option value="corretor">Parceiro Comercial</option>
-                <option value="auxiliar">Auxiliar Admin</option>
-                <option value="atendente">Atendente</option>
-              </select>
+            <h3 className="font-bold text-navy text-base mb-2">Convidar Novo Parceiro Comercial</h3>
+            <p className="text-xs text-muted-foreground mb-4">Insira o e-mail do integrador. O sistema gerará um link exclusivo de aceitação e assinatura do termo de parceria.</p>
+            <form onSubmit={criarConvite} className="flex gap-2 max-w-lg">
+              <Input type="email" required placeholder="E-mail do parceiro" value={novoEmail} onChange={(e) => setNovoEmail(e.target.value)} />
               <Button type="submit" disabled={enviandoConvite} className="bg-sun-deep hover:bg-sun text-navy font-bold flex gap-1.5 items-center">
                 <Send className="w-4 h-4" /> {enviandoConvite ? "Gerando..." : "Gerar Convite"}
               </Button>
@@ -405,7 +400,6 @@ function AdminCorretores() {
                     <tr>
                       <th className="p-3">Destinatário</th>
                       <th className="p-3">Token</th>
-                      <th className="p-3">Cargo/Acesso</th>
                       <th className="p-3">Status</th>
                       <th className="p-3">Gerado em</th>
                       <th className="p-3 text-right">Ação</th>
@@ -416,11 +410,6 @@ function AdminCorretores() {
                       <tr key={cv.id} className="hover:bg-slate-50">
                         <td className="p-3 font-bold text-navy">{cv.email}</td>
                         <td className="p-3 text-muted-foreground font-mono text-[10px]">{cv.token}</td>
-                        <td className="p-3">
-                          <Badge variant="outline" className="text-[10px] bg-slate-50 uppercase border-slate-200">
-                            {cv.role_to_assign === "auxiliar" ? "Auxiliar Admin" : cv.role_to_assign === "atendente" ? "Atendente" : "Parceiro"}
-                          </Badge>
-                        </td>
                         <td className="p-3">
                           <Badge variant={cv.status === "aceito" ? "default" : "secondary"} className="text-[10px]">
                             {cv.status === "aceito" ? "Aceito" : "Pendente"}

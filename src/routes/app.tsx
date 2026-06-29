@@ -185,7 +185,7 @@ function AppShell() {
     }
     if (
       !loading && user && profile && profile.onboarding_completo &&
-      role && role === "corretor" && !profile.contrato_assinado &&
+      role && role !== "admin" && !profile.contrato_assinado &&
       pathname !== "/app/contrato" && pathname !== "/app/perfil"
     ) {
       navigate({ to: "/app/contrato" });
@@ -224,7 +224,8 @@ function AppShell() {
     { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
     { to: "/app/financeiro", icon: Landmark, label: "Financeiro" },
     { to: "/app/kits", icon: Sun, label: "Kits Solares" },
-    { to: "/app/corretores", icon: UserCog, label: "Parceiros & Convites" },
+    { to: "/app/corretores", icon: Briefcase, label: "Parceiros & Convites" },
+    { to: "/app/equipe", icon: UserCog, label: "Equipe & Acessos" },
     { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
@@ -248,6 +249,42 @@ function AppShell() {
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
 
+  const vendedorNav = [
+    { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
+    { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
+  ];
+
+  const engenheiroNav = [
+    { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
+    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
+  ];
+
+  const posVendasNav = [
+    { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
+  ];
+
+  const financeiroNav = [
+    { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
+    { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
+    { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
+    { to: "/app/financeiro", icon: Landmark, label: "Financeiro" },
+    { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
+  ];
+
   const corretorNav = [
     { to: "/app", icon: Briefcase, label: "Meus Clientes", exact: true },
     { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
@@ -260,9 +297,13 @@ function AppShell() {
 
   const ROLE_LABELS: Record<string, string> = {
     admin: "Administrador",
+    corretor: "Parceiro",
     auxiliar: "Auxiliar Admin",
     atendente: "Atendente",
-    corretor: "Parceiro",
+    vendedor: "Vendedor Interno",
+    engenheiro: "Engenheiro",
+    pos_vendas: "Pós-Vendas",
+    financeiro: "Financeiro",
   };
 
   const nav = role === "admin" 
@@ -271,7 +312,15 @@ function AppShell() {
       ? auxiliarNav
       : role === "atendente"
         ? atendenteNav
-        : corretorNav;
+        : role === "vendedor"
+          ? vendedorNav
+          : role === "engenheiro"
+            ? engenheiroNav
+            : role === "pos_vendas"
+              ? posVendasNav
+              : role === "financeiro"
+                ? financeiroNav
+                : corretorNav;
 
   return (
     <div className="min-h-screen bg-slate-50 flex">

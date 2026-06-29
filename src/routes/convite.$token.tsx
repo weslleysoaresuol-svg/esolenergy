@@ -27,6 +27,7 @@ function InvitePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
+  const [roleToAssign, setRoleToAssign] = useState<string>("corretor");
 
   // Persiste token para uso após retorno do OAuth
   useEffect(() => {
@@ -41,6 +42,16 @@ function InvitePage() {
       if (error || !row) return setState({ status: "invalid", reason: "Link de convite não encontrado." });
       if (!row.valid) return setState({ status: "invalid", reason: row.reason ?? "Convite inválido." });
       setState({ status: "valid", expiresAt: row.expires_at });
+
+      // Busca o cargo deste convite
+      const { data: convData } = await supabase
+        .from("convites" as any)
+        .select("role_to_assign")
+        .eq("token", token)
+        .maybeSingle() as any;
+      if (convData?.role_to_assign) {
+        setRoleToAssign(convData.role_to_assign);
+      }
 
 
       const { data: userData } = await supabase.auth.getUser();
@@ -131,7 +142,11 @@ function InvitePage() {
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-8">
         <div className="flex justify-center mb-6"><img src={logo} alt="ESOL" className="h-14 w-auto" /></div>
         <h1 className="text-2xl font-bold text-center text-navy mb-1">Bem-vindo à ESOL Energy</h1>
-        <p className="text-sm text-center text-muted-foreground mb-2">Você foi convidado para ser um consultor parceiro.</p>
+        <p className="text-sm text-center text-muted-foreground mb-2">
+          {roleToAssign === "corretor" 
+            ? "Você foi convidado para ser um consultor parceiro." 
+            : "Você foi convidado para fazer parte da equipe interna."}
+        </p>
         <p className="text-xs text-center text-muted-foreground mb-6 inline-flex items-center justify-center gap-1 w-full">
           <Clock className="w-3 h-3" /> Link válido por mais {hoursLeft}h
         </p>
@@ -140,8 +155,12 @@ function InvitePage() {
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Próximos passos</div>
           <ol className="space-y-2 text-sm">
             <li className="flex gap-3"><UserPlus className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>1.</strong> Criar sua conta (Google ou email)</span></li>
-            <li className="flex gap-3"><CheckCircle2 className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>2.</strong> Completar seu perfil de consultor</span></li>
-            <li className="flex gap-3"><FileSignature className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>3.</strong> Ler e assinar o contrato de parceria</span></li>
+            <li className="flex gap-3"><CheckCircle2 className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>2.</strong> Completar seu perfil de acesso</span></li>
+            <li className="flex gap-3"><FileSignature className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span>
+              <strong>3.</strong> {roleToAssign === "corretor" 
+                ? "Ler e assinar o contrato de parceria" 
+                : "Ler e assinar o termo de confidencialidade (NDA)"}
+            </span></li>
           </ol>
         </div>
 

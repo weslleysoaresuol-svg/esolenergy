@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SignaturePad } from "@/components/SignaturePad";
-import { CONTRATO_VERSAO, EMPRESA, gerarContrato } from "@/lib/contract-template";
+import { CONTRATO_VERSAO, EMPRESA, gerarContrato, gerarTermoUsoEquipe } from "@/lib/contract-template";
 import { toast } from "sonner";
 import { Camera, Upload, ShieldCheck, FileCheck } from "lucide-react";
 
@@ -62,7 +62,20 @@ function ContratoPage() {
     reader.readAsDataURL(file);
   };
 
-  const contrato = gerarContrato({ nome, cpf });
+  const ROLE_LABELS: Record<string, string> = {
+    admin: "Administrador",
+    corretor: "Parceiro",
+    auxiliar: "Auxiliar Admin",
+    atendente: "Atendente",
+    vendedor: "Vendedor Interno",
+    engenheiro: "Engenheiro / Projetista",
+    pos_vendas: "Pós-Vendas & Logística",
+    financeiro: "Financeiro / Contábil",
+  };
+
+  const contrato = role === "corretor"
+    ? gerarContrato({ nome, cpf })
+    : gerarTermoUsoEquipe({ nome, cpf, cargo: ROLE_LABELS[role ?? ""] || "Colaborador" });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,9 +178,13 @@ function ContratoPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-navy">Contrato de Parceria</h1>
+        <h1 className="text-3xl font-bold text-navy">
+          {role === "corretor" ? "Contrato de Parceria" : "Termo de Confidencialidade & Segurança"}
+        </h1>
         <p className="text-muted-foreground">
-          Última etapa do seu cadastro como parceiro {EMPRESA.razao}.
+          {role === "corretor" 
+            ? `Última etapa do seu cadastro como parceiro ${EMPRESA.razao}.`
+            : `Última etapa do seu onboarding de acesso na equipe ${EMPRESA.razao}.`}
         </p>
       </div>
 

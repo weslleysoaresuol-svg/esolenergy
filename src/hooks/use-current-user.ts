@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
-export type AppRole = "admin" | "corretor" | "auxiliar" | "atendente";
+export type AppRole = "admin" | "corretor" | "auxiliar" | "atendente" | "vendedor" | "engenheiro" | "pos_vendas" | "financeiro";
 
 export type CurrentUser = {
   user: User | null;
@@ -34,9 +34,17 @@ export function useCurrentUser(): CurrentUser {
           ? "auxiliar"
           : roles.includes("atendente")
             ? "atendente"
-            : roles.includes("corretor")
-              ? "corretor"
-              : null;
+            : roles.includes("vendedor")
+              ? "vendedor"
+              : roles.includes("engenheiro")
+                ? "engenheiro"
+                : roles.includes("pos_vendas")
+                  ? "pos_vendas"
+                  : roles.includes("financeiro")
+                    ? "financeiro"
+                    : roles.includes("corretor")
+                      ? "corretor"
+                      : null;
       setRole(resolved);
       setProfile(p ?? null);
     } else {
