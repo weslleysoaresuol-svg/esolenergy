@@ -1366,7 +1366,7 @@ function AdminKits() {
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/60 space-y-2">
                 <h5 className="text-xs font-extrabold text-navy uppercase tracking-wider">Fichas Técnicas do Fabricante (PDF Oficial)</h5>
                 <div className="flex flex-wrap gap-2 text-xs">
-                  {selectedKitDetails.fabricante_modulos.toLowerCase().includes("jinko") ? (
+                  {selectedKitDetails.fabricante_modulos?.toLowerCase().includes("jinko") ? (
                     <a 
                       href="https://www.jinkosolar.com/uploads/Tiger%20Neo%2072HL4-(V)-A3-EN.pdf" 
                       target="_blank" 
@@ -1386,12 +1386,12 @@ function AdminKits() {
                     </a>
                   )}
                   <a 
-                    href={selectedKitDetails.inversor.toLowerCase().includes("deye") ? "https://www.deyeinverter.com/deyeinverter/doc/SUN-1.6K-3K-G-en.pdf" : "https://www.ginverter.com/upload/file/MIC_750-3000TL-X_Datasheet_EN_202008.pdf"}
+                    href={selectedKitDetails.inversor?.toLowerCase().includes("deye") ? "https://www.deyeinverter.com/deyeinverter/doc/SUN-1.6K-3K-G-en.pdf" : "https://www.ginverter.com/upload/file/MIC_750-3000TL-X_Datasheet_EN_202008.pdf"}
                     target="_blank" 
                     rel="noreferrer" 
                     className="bg-white hover:bg-slate-100 border p-2 rounded-xl flex items-center gap-1.5 transition text-slate-700 font-medium hover:border-navy/20 shadow-sm"
                   >
-                    📄 Datasheet Inversor {selectedKitDetails.inversor.toLowerCase().includes("deye") ? "Deye" : "Growatt"}
+                    📄 Datasheet Inversor {selectedKitDetails.inversor?.toLowerCase().includes("deye") ? "Deye" : "Growatt"}
                   </a>
                 </div>
               </div>
