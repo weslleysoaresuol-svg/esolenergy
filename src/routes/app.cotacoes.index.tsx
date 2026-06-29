@@ -28,6 +28,26 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   cancelada: { label: "Cancelada", color: "bg-rose-100 text-rose-700" },
 };
 
+const recomendarKit = (kwh: number, kitsList: any[]) => {
+  // Filtrar apenas kits válidos e ativos
+  const validKits = kitsList.filter(k => k.ativo && k.consumo_kwh_min && k.consumo_kwh_max);
+  if (validKits.length === 0) return null;
+  
+  // 1. Tentar encontrar kits onde o consumo caia dentro da faixa ideal
+  const matches = validKits.filter(k => kwh >= k.consumo_kwh_min && kwh <= k.consumo_kwh_max);
+  if (matches.length > 0) {
+    // Escolher o de menor preço de tabela B2B
+    return matches.sort((a, b) => Number(a.preco) - Number(b.preco))[0];
+  }
+  
+  // 2. Se não houver faixa exata, escolher o kit com a menor distância absoluta à faixa
+  return validKits.sort((a, b) => {
+    const distA = Math.min(Math.abs(kwh - a.consumo_kwh_min), Math.abs(kwh - a.consumo_kwh_max));
+    const distB = Math.min(Math.abs(kwh - b.consumo_kwh_min), Math.abs(kwh - b.consumo_kwh_max));
+    return distA - distB;
+  })[0];
+};
+
 function CotacoesList() {
   const { user, role } = useCurrentUser();
   const navigate = useNavigate();
@@ -41,6 +61,54 @@ function CotacoesList() {
   const [q, setQ] = useState("");
   const [clienteTipo, setClienteTipo] = useState<"existente" | "novo">("existente");
   const [novoCliente, setNovoCliente] = useState({ nome: "", telefone: "", cidade: "", estado: "SP" });
+
+  // Estados para Recomendação Inteligente de Kit
+  const [usarRecomendacao, setUsarRecomendacao] = useState(false);
+  const [valFatura, setValFatura] = useState("");
+  const [valConsumo, setValConsumo] = useState("");
+  const [kitRecomendado, setKitRecomendado] = useState<any | null>(null);
+
+  // Resetar recomendação ao fechar/abrir a janela
+  useEffect(() => {
+    if (!openNew) {
+      setUsarRecomendacao(false);
+      setValFatura("");
+      setValConsumo("");
+      setKitRecomendado(null);
+    }
+  }, [openNew]);
+
+  const updateRecommendation = (kwh: number) => {
+    const recommended = recomendarKit(kwh, kits);
+    setKitRecomendado(recommended);
+    if (recommended) {
+      setNovo((prev) => ({ ...prev, kit_id: recommended.id }));
+    }
+  };
+
+  const handleFaturaChange = (val: string) => {
+    setValFatura(val);
+    if (!val) {
+      setValConsumo("");
+      setKitRecomendado(null);
+      return;
+    }
+    const calculatedKwh = Math.round(Number(val) / 0.95);
+    setValConsumo(calculatedKwh.toString());
+    updateRecommendation(calculatedKwh);
+  };
+
+  const handleConsumoChange = (val: string) => {
+    setValConsumo(val);
+    if (!val) {
+      setValFatura("");
+      setKitRecomendado(null);
+      return;
+    }
+    const calculatedBill = (Number(val) * 0.95).toFixed(2);
+    setValFatura(calculatedBill);
+    updateRecommendation(Number(val));
+  };
 
   const load = async () => {
     setLoading(true);
@@ -265,8 +333,78 @@ function CotacoesList() {
                 </div>
               )}
             </div>
+
+            {/* Recomendação Inteligente de Kit */}
+            <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-bold text-navy uppercase flex items-center gap-1.5 cursor-pointer" onClick={() => {
+                  setUsarRecomendacao(!usarRecomendacao);
+                  if (usarRecomendacao) {
+                    setValFatura("");
+                    setValConsumo("");
+                    setKitRecomendado(null);
+                  }
+                }}>
+                  <Sparkles className="w-4 h-4 text-sun-deep" /> Recomendação Inteligente de Kit
+                </Label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsarRecomendacao(!usarRecomendacao);
+                      if (usarRecomendacao) {
+                        setValFatura("");
+                        setValConsumo("");
+                        setKitRecomendado(null);
+                      }
+                    }}
+                    className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-lg border transition-all ${usarRecomendacao ? "bg-emerald-600 border-emerald-700 text-white shadow-sm" : "bg-white text-slate-500 hover:text-navy"}`}
+                  >
+                    {usarRecomendacao ? "Ativa ⚡" : "Desativada"}
+                  </button>
+                </div>
+              </div>
+
+              {usarRecomendacao && (
+                <div className="space-y-3 pt-1">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-slate-500 font-bold uppercase">Valor da Fatura (R$)</Label>
+                      <Input 
+                        type="number" 
+                        placeholder="Ex: 450" 
+                        value={valFatura} 
+                        onChange={(e) => handleFaturaChange(e.target.value)} 
+                        className="h-9 text-xs" 
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-slate-500 font-bold uppercase">Consumo Mensal (kWh)</Label>
+                      <Input 
+                        type="number" 
+                        placeholder="Ex: 500" 
+                        value={valConsumo} 
+                        onChange={(e) => handleConsumoChange(e.target.value)} 
+                        className="h-9 text-xs" 
+                      />
+                    </div>
+                  </div>
+                  {kitRecomendado && (
+                    <div className="bg-emerald-50 border border-emerald-100 p-2.5 rounded-xl text-[11px] text-emerald-800 flex items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <Zap className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="block font-bold">Gerador Recomendado Auto:</strong>
+                        <span className="font-semibold text-navy">{kitRecomendado.nome}</span>
+                        <span className="block mt-0.5 text-emerald-700 font-medium">Preço B2B: {BRL(Number(kitRecomendado.preco))} | Consumo Ideal: {kitRecomendado.consumo_kwh_min} a {kitRecomendado.consumo_kwh_max} kWh</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div>
-              <Label>Kit solar</Label>
+              <Label className="block mb-2 text-xs font-bold text-slate-700">Kit solar (Selecione ou confirme a recomendação)</Label>
               <Select value={novo.kit_id} onValueChange={(v) => setNovo({ ...novo, kit_id: v })}>
                 <SelectTrigger className="w-full">
                   <span className="truncate block text-left">
