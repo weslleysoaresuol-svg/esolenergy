@@ -7,10 +7,10 @@ destino_dir = r"d:\Projetos Lovable\Esol Energy\esolenergy\public\kits"
 os.makedirs(destino_dir, exist_ok=True)
 
 mapa_copias = {
-    "kit_residencial_pequeno_1782596589817.png": "kit-residencial-pequeno.png",
-    "kit_residencial_grande_1782596606756.png": "kit-residencial-grande.png",
-    "kit_comercial_industrial_1782596621970.png": "kit-comercial-industrial.png",
-    "kit_rural_1782596638332.png": "kit-rural.png"
+    "kit_residencial_pequeno_1782699227854.png": "kit-residencial-pequeno.png",
+    "kit_residencial_grande_1782699242477.png": "kit-residencial-grande.png",
+    "kit_comercial_industrial_1782699255001.png": "kit-comercial-industrial.png",
+    "kit_rural_1782699269504.png": "kit-rural.png"
 }
 
 print("Iniciando cópia de imagens...")
