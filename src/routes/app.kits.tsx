@@ -11,10 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import {
   Plus, Pencil, Trash2, Sun, Zap, Star, ToggleLeft, ToggleRight, X, Check,
-  Upload, RefreshCw, Link2, FileSpreadsheet, Eye, HelpCircle
+  Upload, RefreshCw, Link2, FileSpreadsheet, Eye, HelpCircle, ChevronDown, ChevronUp, Boxes
 } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
-import { KITS_FALLBACK } from "@/lib/kits-fallback";
+import { KITS_FALLBACK, obterComponentesKit } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/app/kits")({ component: AdminKits });
 
@@ -60,6 +60,7 @@ function AdminKits() {
   const [editando, setEditando] = useState<any | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [expandedKitId, setExpandedKitId] = useState<string | null>(null);
 
   // Estados de Integração
   const [fornecedor, setFornecedor] = useState<"aldo" | "sou" | "custom">("aldo");
@@ -539,6 +540,7 @@ function AdminKits() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
                 <tr>
+                  <th className="p-3 w-8"></th>
                   <th className="p-3">Kit</th>
                   <th className="p-3">kWp</th>
                   <th className="p-3">Módulos</th>
@@ -552,78 +554,109 @@ function AdminKits() {
               </thead>
               <tbody>
                 {filtered.length === 0 && (
-                  <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">Nenhum kit encontrado.</td></tr>
+                  <tr><td colSpan={10} className="p-8 text-center text-muted-foreground">Nenhum kit encontrado.</td></tr>
                 )}
                 {filtered.map((kit) => {
                   const f = FAIXAS[kit.faixa] || FAIXAS.residencial_pequeno;
+                  const isExpanded = expandedKitId === kit.id;
                   return (
-                    <tr key={kit.id} className={`border-t ${!kit.ativo ? "opacity-50" : ""} hover:bg-slate-50`}>
-                      <td className="p-3">
-                        <div className="flex items-center gap-2">
-                          {kit.destaque && <Star className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" fill="currentColor" />}
-                          <div>
-                            <div className="font-semibold text-navy text-xs leading-snug">{kit.nome}</div>
-                            <Badge className={`${f.color} text-[9px] mt-0.5`}>{f.emoji} {f.label}</Badge>
+                    <React.Fragment key={kit.id}>
+                      <tr className={`border-t ${!kit.ativo ? "opacity-50" : ""} hover:bg-slate-50`}>
+                        <td className="p-3">
+                          <button
+                            onClick={() => setExpandedKitId(isExpanded ? null : kit.id)}
+                            className="text-muted-foreground hover:text-navy transition-colors p-1"
+                            title="Ver componentes inclusos"
+                          >
+                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          </button>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            {kit.destaque && <Star className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" fill="currentColor" />}
+                            <div>
+                              <div className="font-semibold text-navy text-xs leading-snug">{kit.nome}</div>
+                              <Badge className={`${f.color} text-[9px] mt-0.5`}>{f.emoji} {f.label}</Badge>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="p-3 font-bold text-navy">{Number(kit.potencia_kwp).toFixed(2)} kWp</td>
-                      <td className="p-3">
-                        <div className="text-xs">{kit.quantidade_modulos}× {kit.potencia_modulo_w}W</div>
-                        <div className="text-[10px] text-muted-foreground">{kit.fabricante_modulos?.split(" ").slice(0, 2).join(" ")}</div>
-                      </td>
-                      <td className="p-3">
-                        <div className="text-xs">{kit.inversor?.split(" ").slice(0, 3).join(" ")}</div>
-                        <div className="text-[10px] text-muted-foreground">{kit.tipo_inversor}</div>
-                      </td>
-                      <td className="p-3 text-xs text-muted-foreground">
-                        {kit.consumo_kwh_min && kit.consumo_kwh_max
-                          ? `${kit.consumo_kwh_min}–${kit.consumo_kwh_max} kWh`
-                          : "—"}
-                      </td>
-                      <td className="p-3 text-xs">
-                        {kit.fornecedor ? (
-                          <div>
-                            <span className="font-semibold text-navy">{kit.fornecedor}</span>
-                            {kit.url_fornecedor && (
-                              <a href={kit.url_fornecedor} target="_blank" rel="noreferrer" className="block text-[10px] text-blue-600 hover:underline mt-0.5">
-                                🛒 Comprar B2B
-                              </a>
+                        </td>
+                        <td className="p-3 font-bold text-navy">{Number(kit.potencia_kwp).toFixed(2)} kWp</td>
+                        <td className="p-3">
+                          <div className="text-xs">{kit.quantidade_modulos}× {kit.potencia_modulo_w}W</div>
+                          <div className="text-[10px] text-muted-foreground">{kit.fabricante_modulos?.split(" ").slice(0, 2).join(" ")}</div>
+                        </td>
+                        <td className="p-3">
+                          <div className="text-xs">{kit.inversor?.split(" ").slice(0, 3).join(" ")}</div>
+                          <div className="text-[10px] text-muted-foreground">{kit.tipo_inversor}</div>
+                        </td>
+                        <td className="p-3 text-xs text-muted-foreground">
+                          {kit.consumo_kwh_min && kit.consumo_kwh_max
+                            ? `${kit.consumo_kwh_min}–${kit.consumo_kwh_max} kWh`
+                            : "—"}
+                        </td>
+                        <td className="p-3 text-xs">
+                          {kit.fornecedor ? (
+                            <div>
+                              <span className="font-semibold text-navy">{kit.fornecedor}</span>
+                              {kit.url_fornecedor && (
+                                <a href={kit.url_fornecedor} target="_blank" rel="noreferrer" className="block text-[10px] text-blue-600 hover:underline mt-0.5">
+                                  🛒 Comprar B2B
+                                </a>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        <td className="p-3 font-bold text-navy">{BRL(Number(kit.preco))}</td>
+                        <td className="p-3">
+                          <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"}>
+                            {kit.ativo
+                              ? <ToggleRight className="w-6 h-6 text-emerald-500" />
+                              : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
+                          </button>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => toggleDestaque(kit)} title={kit.destaque ? "Remover destaque" : "Destacar"} className={kit.destaque ? "text-amber-500" : "text-muted-foreground hover:text-amber-400"}>
+                              <Star className="w-4 h-4" fill={kit.destaque ? "currentColor" : "none"} />
+                            </button>
+                            <button onClick={() => setEditando({ ...kit })} className="text-navy hover:text-sun-deep">
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            {confirmDelete === kit.id ? (
+                              <span className="flex gap-1">
+                                <button onClick={() => excluir(kit.id)} className="text-red-600"><Check className="w-4 h-4" /></button>
+                                <button onClick={() => setConfirmDelete(null)} className="text-muted-foreground"><X className="w-4 h-4" /></button>
+                              </span>
+                            ) : (
+                              <button onClick={() => setConfirmDelete(kit.id)} className="text-muted-foreground hover:text-red-500">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             )}
                           </div>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </td>
-                      <td className="p-3 font-bold text-navy">{BRL(Number(kit.preco))}</td>
-                      <td className="p-3">
-                        <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"}>
-                          {kit.ativo
-                            ? <ToggleRight className="w-6 h-6 text-emerald-500" />
-                            : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
-                        </button>
-                      </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => toggleDestaque(kit)} title={kit.destaque ? "Remover destaque" : "Destacar"} className={kit.destaque ? "text-amber-500" : "text-muted-foreground hover:text-amber-400"}>
-                            <Star className="w-4 h-4" fill={kit.destaque ? "currentColor" : "none"} />
-                          </button>
-                          <button onClick={() => setEditando({ ...kit })} className="text-navy hover:text-sun-deep">
-                            <Pencil className="w-4 h-4" />
-                          </button>
-                          {confirmDelete === kit.id ? (
-                            <span className="flex gap-1">
-                              <button onClick={() => excluir(kit.id)} className="text-red-600"><Check className="w-4 h-4" /></button>
-                              <button onClick={() => setConfirmDelete(null)} className="text-muted-foreground"><X className="w-4 h-4" /></button>
-                            </span>
-                          ) : (
-                            <button onClick={() => setConfirmDelete(kit.id)} className="text-muted-foreground hover:text-red-500">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr className="bg-slate-50/50">
+                          <td colSpan={10} className="p-3 border-t">
+                            <div className="bg-white border rounded-xl p-4 space-y-2 max-w-4xl mx-auto shadow-sm">
+                              <h4 className="font-bold text-navy text-xs uppercase flex items-center gap-1.5 border-b pb-1.5">
+                                <Boxes className="w-4 h-4 text-sun-deep" /> Componentes e Acessórios Reais Inclusos no Kit
+                              </h4>
+                              <div className="grid md:grid-cols-2 gap-3 text-xs leading-relaxed text-slate-700">
+                                {obterComponentesKit(kit).map((comp, idx) => (
+                                  <div key={idx} className="flex gap-2 items-start bg-slate-50/40 p-2 rounded border border-slate-100">
+                                    <span className="text-sun-deep font-bold shrink-0 mt-0.5">⚡</span>
+                                    <span>{comp}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </tbody>

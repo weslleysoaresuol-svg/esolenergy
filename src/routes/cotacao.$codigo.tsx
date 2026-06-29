@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sun, MessageCircle, ShieldCheck, Clock, CheckCircle } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
+import { obterComponentesKit } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/cotacao/$codigo")({
   head: () => ({ meta: [{ title: "Sua cotação — ESOL Energy" }] }),
@@ -103,6 +104,24 @@ function CotacaoPublica() {
               Imprimir / Salvar PDF
             </Button>
           </div>
+        </Card>
+
+        {/* Componentes inclusos */}
+        <Card className="p-6 shadow-xl space-y-4 bg-white print-no-break">
+          <h3 className="font-bold text-navy text-base flex items-center gap-2 border-b pb-2">
+            📦 Componentes e Acessórios Inclusos no Gerador
+          </h3>
+          <ul className="space-y-3">
+            {obterComponentesKit(kitData).map((item: string, idx: number) => (
+              <li key={idx} className="flex gap-2 text-xs text-slate-700 leading-relaxed items-start">
+                <span className="text-sun-deep mt-0.5 font-bold shrink-0">⚡</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-[10px] text-muted-foreground mt-2 border-t pt-2 leading-relaxed">
+            * Nota: A Esol Energy fornece apenas marcas líderes de mercado. Cabos, conectores e acessórios elétricos são certificados e dimensionados em conformidade com as normas NBR 5410 e NBR 16690.
+          </p>
         </Card>
 
         <div className="grid grid-cols-3 gap-3 text-center text-xs text-muted-foreground">

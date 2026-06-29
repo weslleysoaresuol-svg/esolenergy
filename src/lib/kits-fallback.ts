@@ -23,6 +23,48 @@ export interface KitSolar {
   ativo: boolean;
   fornecedor?: string;
   url_fornecedor?: string;
+  componentes?: string[];
+}
+
+export function obterComponentesKit(kit: any): string[] {
+  if (kit.componentes && Array.isArray(kit.componentes) && kit.componentes.length > 0) {
+    return kit.componentes;
+  }
+
+  const qtdModulos = kit.quantidade_modulos || Math.round(Number(kit.potencia_kwp) * 1000 / (kit.potencia_modulo_w || 550));
+  const moduloW = kit.potencia_modulo_w || 550;
+  const fabricante = kit.fabricante_modulos || "Jinko Solar";
+  const inversor = kit.inversor || "Deye";
+  const potencia = Number(kit.potencia_kwp || 0);
+  
+  // Determinando bitola, metragem e conectores especificamente
+  let metragemCabos = 50;
+  if (potencia > 15) metragemCabos = 100;
+  if (potencia > 40) metragemCabos = 200;
+  if (potencia > 80) metragemCabos = 400;
+
+  let bitolaCabo = "4mm²";
+  if (potencia > 6) bitolaCabo = "6mm²";
+  if (potencia > 30) bitolaCabo = "10mm²";
+
+  let conectoresMc4 = 2;
+  if (potencia > 3) conectoresMc4 = 4;
+  if (potencia > 10) conectoresMc4 = 8;
+  if (potencia > 20) conectoresMc4 = 12;
+  if (potencia > 50) conectoresMc4 = 24;
+
+  const list = [
+    `${qtdModulos}x Painéis Solares Fotovoltaicos ${fabricante} de ${moduloW}Wp (${kit.tecnologia_modulo || 'Monocristalino TOPCon'} - Eficiência de ${kit.eficiencia_modulo || '21.8'}%)`,
+    `1x Inversor Solar Interligado à Rede ${inversor} (${kit.tipo_inversor || 'On-Grid String'} com conexões Wi-Fi integradas e Garantia de ${kit.garantia_inversor_anos || '10'} anos)`,
+    `Estrutura de montagem e suporte em alumínio anodizado de alta resistência mecânica para fixação de ${qtdModulos} módulos fotovoltaicos (Telhado Cerâmico / Fibrocimento / Metálico / Laje)`,
+    `${metragemCabos}m de Cabos Elétricos Solares Flexíveis de ${bitolaCabo} (sendo ${metragemCabos / 2}m na cor preta e ${metragemCabos / 2}m na cor vermelha, c/ proteção UV)`,
+    `${conectoresMc4}x Pares de Conectores rápidos MC4 originais Staubli IP68 com isolação dupla classe II`,
+    inversor.toLowerCase().includes("micro") 
+      ? `Acessórios de ligação AC: 1x Terminal End Cap de fechamento de circuito, conector macho e fêmea AC à prova d'água`
+      : `String Box CC/CA com chave seccionadora CC, disjuntores de proteção e DPS (Dispositivo de Proteção contra Surtos) de 1000V incorporado`
+  ];
+
+  return list;
 }
 
 export const KITS_FALLBACK: KitSolar[] = [

@@ -9,6 +9,7 @@ import {
   Scale, Coins, Info, Percent, PiggyBank, ThumbsUp, AlertTriangle
 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
+import { obterComponentesKit } from "@/lib/kits-fallback";
 
 export interface PropostaViewProps {
   proposta: any;
@@ -20,6 +21,18 @@ export interface PropostaViewProps {
 }
 
 export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceitar, onRecusar }: PropostaViewProps) {
+  const componentesKit = useMemo(() => {
+    return obterComponentesKit({
+      quantidade_modulos: p.qtd_modulos,
+      potencia_kwp: p.kwp_sistema,
+      fabricante_modulos: p.kit_fabricante_modulos,
+      inversor: p.kit_inversor,
+      tecnologia_modulo: p.kit_tecnologia_modulo,
+      garantia_inversor_anos: p.kit_garantia_inversor_anos,
+      tipo_inversor: p.kit_tipo_inversor
+    });
+  }, [p]);
+
   const FINANCEIRAS = {
     solfacil: {
       nome: "Solfácil",
@@ -488,46 +501,43 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-medium">
                   <tr>
-                    <td className="p-3 font-bold text-navy">Módulos (Placas)</td>
-                    <td className="p-3 text-muted-foreground">
-                      {p.kit_fabricante_modulos || "Painéis Monocristalinos de Alta Eficiência"}
-                      {p.kit_tecnologia_modulo && <span className="block text-[10px] text-sun-deep mt-0.5">{p.kit_tecnologia_modulo}</span>}
+                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Módulos (Placas)</td>
+                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
+                      {componentesKit[0]}
                     </td>
                     <td className="p-3 text-center font-bold text-navy">{p.qtd_modulos}</td>
                     <td className="p-3 text-right text-emerald-700">{p.kit_garantia_modulos_anos || 25} anos</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-bold text-navy">Inversor Solar</td>
-                    <td className="p-3 text-muted-foreground">
-                      {p.kit_inversor || "Inversor String Inteligente com Conectividade Wi-Fi"}
-                      <span className="block text-[10px] text-slate-400 mt-0.5">Homologado Inmetro e monitoramento via aplicativo</span>
+                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Inversor Solar</td>
+                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
+                      {componentesKit[1]}
                     </td>
                     <td className="p-3 text-center font-bold text-navy">{p.qtd_inversores || 1}</td>
                     <td className="p-3 text-right text-emerald-700">{p.kit_garantia_inversor_anos || 10} anos</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-bold text-navy">Estrutura de Fixação</td>
-                    <td className="p-3 text-muted-foreground">
-                      Estrutura em Alumínio Anodizado e Aço Inox
-                      <span className="block text-[10px] text-slate-400 mt-0.5">Grampos, perfis e fixadores específicos para o seu telhado</span>
+                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Estrutura de Fixação</td>
+                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
+                      {componentesKit[2]}
                     </td>
                     <td className="p-3 text-center font-bold text-navy">1 Kit</td>
                     <td className="p-3 text-right text-emerald-700">15 anos</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-bold text-navy">Cabos & Conectores</td>
-                    <td className="p-3 text-muted-foreground">
-                      Cabo Solar Flexível 6mm² (Proteção UV e isolamento 1.8kV CC) + Conectores MC4 Staubli
+                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Cabeamento Solar</td>
+                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
+                      {componentesKit[3]}
                     </td>
                     <td className="p-3 text-center font-bold text-navy">1 Kit</td>
                     <td className="p-3 text-right text-emerald-700">10 anos</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-bold text-navy">String Box</td>
-                    <td className="p-3 text-muted-foreground">
-                      Quadro de Proteção CC/CA com DPS (Dispositivo de Proteção contra Surtos) e Disjuntores
+                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">String Box e Conectores</td>
+                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
+                      {componentesKit[5]} · Acompanha {componentesKit[4]}
                     </td>
-                    <td className="p-3 text-center font-bold text-navy">1 Un</td>
+                    <td className="p-3 text-center font-bold text-navy">1 Kit</td>
                     <td className="p-3 text-right text-emerald-700">5 anos</td>
                   </tr>
                 </tbody>
