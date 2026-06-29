@@ -1284,14 +1284,21 @@ function AdminKits() {
                         : "Tabela Comercial B2B Aldo Solar (XLSX / Distribuição Nacional)"}
                     </span>
                   </div>
-                  <div className="sm:col-span-2 pt-2 border-t border-dashed mt-1">
+                  <div className="sm:col-span-2 pt-2 border-t border-dashed mt-1 space-y-2">
+                    <a 
+                      href="/tabela-referencia-kits.csv" 
+                      download="tabela-referencia-kits.csv"
+                      className="text-[11px] text-emerald-700 hover:text-emerald-900 font-black flex items-center gap-1 hover:underline bg-emerald-50 p-2 rounded-xl border border-emerald-100"
+                    >
+                      📥 Baixar Planilha Consolidada de Origem (.CSV)
+                    </a>
                     <a 
                       href={selectedKitDetails.fornecedor === "Sou Energy" ? "https://parceiro.souenergy.com.br" : "https://www.aldo.com.br/login"}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-[11px] text-blue-600 hover:text-blue-800 font-extrabold flex items-center gap-1 hover:underline"
+                      className="text-[10px] text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-1 hover:underline pl-2"
                     >
-                      Acessar Portal do Distribuidor para download da Tabela 📥
+                      Ir para Login do Distribuidor B2B 🔑
                     </a>
                   </div>
                 </div>
