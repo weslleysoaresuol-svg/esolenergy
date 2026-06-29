@@ -580,8 +580,12 @@ function AdminKits() {
                         : "/kits/kit-comercial-industrial.png"
                 );
 
-                return (
-                  <Card key={kit.id} className={`overflow-hidden border border-slate-200/60 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col bg-white rounded-3xl ${!kit.ativo ? "opacity-60" : ""}`}>
+                 return (
+                  <Card 
+                    key={kit.id} 
+                    className={`overflow-hidden border border-slate-200/60 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col bg-white rounded-3xl cursor-pointer hover:border-navy/30 hover:-translate-y-0.5 ${!kit.ativo ? "opacity-60" : ""}`}
+                    onClick={() => setSelectedKitDetails(kit)}
+                  >
                     {/* Header Image */}
                     <div className="relative h-44 bg-slate-50 border-b flex items-center justify-center p-4">
                       <img 
@@ -633,7 +637,10 @@ function AdminKits() {
                             Detalhes
                           </button>
                           <button
-                            onClick={() => setEditando({ ...kit })}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditando({ ...kit });
+                            }}
                             className="bg-slate-100 hover:bg-slate-200 text-navy font-bold text-[10px] px-2.5 py-1.5 rounded-lg border"
                           >
                             Editar
