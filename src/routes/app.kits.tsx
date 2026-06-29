@@ -933,6 +933,74 @@ function AdminKits() {
               </div>
             )}
           </Card>
+
+          {/* Card de Documentos e Tabelas de Referência */}
+          <Card className="col-span-full p-6 border-0 shadow-md space-y-4">
+            <h3 className="font-bold text-navy text-lg flex items-center gap-2">
+              <FileSpreadsheet className="text-navy w-5 h-5" /> Portais e Downloads de Tabelas (Área do Integrador B2B)
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Como distribuidoras B2B exclusivas para integradores, a Aldo Solar e a Sou Energy exigem login de parceiro aprovado para liberação das planilhas de preços oficiais. Abaixo estão os links diretos para a área de downloads e tabelas de cada fornecedor:
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="border rounded-2xl p-4 bg-slate-50 space-y-3">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <strong className="text-sm text-navy">Aldo Solar B2B</strong>
+                  <Badge className="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold rounded-full px-2 py-0.5">XLSX / VOLT</Badge>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Acesse o portal da Aldo para baixar a planilha geral de geradores ou utilizar a ferramenta VOLT de dimensionamento.
+                </p>
+                <div className="flex gap-2">
+                  <a 
+                    href="https://www.aldo.com.br/login" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-white bg-navy hover:bg-navy-deep px-3 py-1.5 rounded-xl shadow-sm transition"
+                  >
+                    Fazer Login na Aldo 🔑
+                  </a>
+                  <a 
+                    href="https://www.aldo.com.br/volt" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-navy bg-slate-200 hover:bg-slate-300 px-3 py-1.5 rounded-xl transition"
+                  >
+                    Plataforma VOLT ⚡
+                  </a>
+                </div>
+              </div>
+
+              <div className="border rounded-2xl p-4 bg-slate-50 space-y-3">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <strong className="text-sm text-navy">Sou Energy B2B</strong>
+                  <Badge className="bg-blue-100 text-blue-800 text-[9px] font-extrabold rounded-full px-2 py-0.5">PDF / Loja</Badge>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Acesse o portal de parceiro da Sou Energy para baixar tabelas regionais em PDF e manuais dos equipamentos Deye/Risen.
+                </p>
+                <div className="flex gap-2">
+                  <a 
+                    href="https://parceiro.souenergy.com.br" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-white bg-navy hover:bg-navy-deep px-3 py-1.5 rounded-xl shadow-sm transition"
+                  >
+                    Portal do Integrador Sou 🔑
+                  </a>
+                  <a 
+                    href="https://www.souenergy.com.br/produtos/geradores" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-navy bg-slate-200 hover:bg-slate-300 px-3 py-1.5 rounded-xl transition"
+                  >
+                    Catálogo de Produtos 📦
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       )}
 
@@ -1199,6 +1267,16 @@ function AdminKits() {
                         ? "Tabela Comercial B2B Sou Energy (PDF / Região Nordeste)" 
                         : "Tabela Comercial B2B Aldo Solar (XLSX / Distribuição Nacional)"}
                     </span>
+                  </div>
+                  <div className="sm:col-span-2 pt-2 border-t border-dashed mt-1">
+                    <a 
+                      href={selectedKitDetails.fornecedor === "Sou Energy" ? "https://parceiro.souenergy.com.br" : "https://www.aldo.com.br/login"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[11px] text-blue-600 hover:text-blue-800 font-extrabold flex items-center gap-1 hover:underline"
+                    >
+                      Acessar Portal do Distribuidor para download da Tabela 📥
+                    </a>
                   </div>
                 </div>
               </div>
