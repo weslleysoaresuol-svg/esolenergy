@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DollarSign, Landmark, TrendingUp, TrendingDown, Users, Percent, CreditCard, PlusCircle, Check } from "lucide-react";
+import { DollarSign, Landmark, TrendingUp, TrendingDown, Users, Percent, CreditCard, PlusCircle, Check, Key, Settings, RefreshCw, ExternalLink, QrCode, Copy } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 import { toast } from "sonner";
+import { PaymentGatewayFactory } from "@/lib/payment-gateway";
 
 export const Route = createFileRoute("/app/financeiro")({
   head: () => ({ meta: [{ title: "Painel Financeiro — ESOL Energy" }] }),
@@ -26,6 +27,30 @@ function FinanceiroDashboard() {
   const [fornecedores, setFornecedores] = useState<any[]>([]);
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Estados dos Gateways de Pagamento
+  const [gatewaySettings, setGatewaySettings] = useState<any>({
+    gateway_ativo: "asaas",
+    asaas_api_key: "",
+    asaas_environment: "sandbox",
+    pagarme_api_key: "",
+    pagarme_environment: "sandbox"
+  });
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [clientesList, setClientesList] = useState<any[]>([]);
+  const [salvandoSettings, setSalvandoSettings] = useState(false);
+
+  // Estado para gerar cobrança manual
+  const [novaCob, setNovaCob] = useState({
+    cliente_id: "",
+    pedido_id: "",
+    valor: "",
+    metodo: "pix" as "pix" | "boleto" | "credit_card",
+    descricao: "",
+    parcelas: "1"
+  });
+  const [gerandoCob, setGerandoCob] = useState(false);
+  const [cobrançaGerada, setCobrançaGerada] = useState<any | null>(null);
 
   // Estados para novo lançamento
   const [novoLanc, setNovoLanc] = useState({
@@ -46,7 +71,10 @@ function FinanceiroDashboard() {
         { data: lan },
         { data: com },
         { data: forn },
-        { data: peds }
+        { data: peds },
+        { data: setts },
+        { data: txs },
+        { data: clis }
       ] = await Promise.all([
         (supabase.from as any)("financeiro_lancamentos")
           .select("*, parceiro:parceiro_id(nome), fornecedor:fornecedor_id(nome), pedido:pedido_id(numero)")
@@ -55,13 +83,21 @@ function FinanceiroDashboard() {
           .select("*, parceiro:parceiro_id(nome), pedido:pedido_id(numero)")
           .order("created_at", { ascending: false }),
         (supabase.from as any)("fornecedores_solar").select("*").order("nome"),
-        (supabase.from as any)("pedidos").select("id, numero, valor_total, cliente:cliente_id(nome)").order("created_at")
+        (supabase.from as any)("pedidos").select("id, numero, valor_total, cliente:cliente_id(nome)").order("created_at"),
+        supabase.from("gateway_settings").select("*").eq("id", "active_config").maybeSingle(),
+        supabase.from("gateway_transactions")
+          .select("*, cliente:cliente_id(nome, email, telefone, cpf_cnpj), pedido:pedido_id(numero)")
+          .order("created_at", { ascending: false }),
+        supabase.from("profiles").select("id, nome, email, telefone, cpf_cnpj").order("nome")
       ]);
 
       setLancamentos(lan || []);
       setComissoes(com || []);
       setFornecedores(forn || []);
       setPedidos(peds || []);
+      if (setts) setGatewaySettings(setts);
+      setTransactions(txs || []);
+      setClientesList(clis || []);
     } catch (e: any) {
       toast.error("Erro ao carregar dados: " + e.message);
     } finally {
@@ -141,18 +177,164 @@ function FinanceiroDashboard() {
     }
   };
 
-  // Baixa de comissão (mudar status para pago)
-  const pagarComissao = async (comId: string) => {
-    try {
-      const { error } = await (supabase.from as any)("parceiro_comissoes")
-        .update({ status: "pago", data_pagamento_efetivo: new Date().toISOString().split("T")[0] })
-        .eq("id", comId);
+  // Funções dos Gateways de Pagamento
+  const salvarSettings = async () => {
+    setSalvandoSettings(true);
+    const { error } = await supabase
+      .from("gateway_settings")
+      .upsert({ id: "active_config", ...gatewaySettings });
+    setSalvandoSettings(false);
+    if (error) toast.error("Erro ao salvar configurações: " + error.message);
+    else toast.success("Configuração do gateway atualizada!");
+  };
 
-      if (error) throw error;
-      toast.success("Comissão marcada como paga! Fluxo de caixa atualizado.");
+  const criarCobranca = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!novaCob.cliente_id || !novaCob.valor) return toast.error("Preencha cliente e valor");
+    setGerandoCob(true);
+
+    try {
+      const cli = clientesList.find(c => c.id === novaCob.cliente_id);
+      if (!cli) throw new Error("Cliente não encontrado");
+
+      // Instancia gateway ativo
+      const gateway = PaymentGatewayFactory.create({
+        gateway_ativo: gatewaySettings.gateway_ativo,
+        asaas_api_key: gatewaySettings.asaas_api_key,
+        asaas_environment: gatewaySettings.asaas_environment,
+        pagarme_api_key: gatewaySettings.pagarme_api_key,
+        pagarme_environment: gatewaySettings.pagarme_environment
+      });
+
+      // 1. Criar Cliente no Gateway
+      const custRes = await gateway.createCustomer({
+        nome: cli.nome || "Cliente Sem Nome",
+        email: cli.email || `${cli.id}@esol.energy`,
+        cpf_cnpj: cli.cpf_cnpj || "000.000.000-00",
+        telefone: cli.telefone || "11999999999"
+      });
+
+      // 2. Criar Cobrança no Gateway
+      const chargeRes = await gateway.createCharge({
+        externalCustomerId: custRes.customerExternalId,
+        valor: Number(novaCob.valor),
+        metodo: novaCob.metodo,
+        descricao: novaCob.descricao || `Cobrança manual ESOL Energy`,
+        parcelas: Number(novaCob.parcelas)
+      });
+
+      if (!chargeRes.success) throw new Error("Falha na geração da cobrança");
+
+      // 3. Salva no banco de dados local
+      const { data: inserted, error: dbErr } = await supabase
+        .from("gateway_transactions")
+        .insert({
+          pedido_id: novaCob.pedido_id || null,
+          cliente_id: novaCob.cliente_id,
+          gateway: gatewaySettings.gateway_ativo,
+          external_id: chargeRes.transactionId,
+          customer_external_id: custRes.customerExternalId,
+          valor: Number(novaCob.valor),
+          metodo_pagamento: novaCob.metodo,
+          status: chargeRes.status,
+          pix_qr_code: chargeRes.pixQrCode || null,
+          pix_copia_e_cola: chargeRes.pixCopiaCola || null,
+          boleto_url: chargeRes.boletoUrl || null,
+          boleto_bar_code: chargeRes.boletoBarCode || null,
+          credit_card_brand: chargeRes.creditCardBrand || null,
+          parcelas: Number(novaCob.parcelas),
+          gateway_response: chargeRes.rawResponse
+        })
+        .select()
+        .single();
+
+      if (dbErr) throw dbErr;
+
+      setCobrançaGerada({
+        ...inserted,
+        cliente: cli
+      });
+      toast.success("Cobrança criada com sucesso!");
+      setNovaCob({
+        cliente_id: "",
+        pedido_id: "",
+        valor: "",
+        metodo: "pix",
+        descricao: "",
+        parcelas: "1"
+      });
       loadData();
-    } catch (e: any) {
-      toast.error("Erro ao pagar comissão: " + e.message);
+    } catch (err: any) {
+      toast.error("Erro ao gerar cobrança: " + err.message);
+    } finally {
+      setGerandoCob(false);
+    }
+  };
+
+  const simularRecebimento = async (tx: any) => {
+    try {
+      const { error: txErr } = await supabase
+        .from("gateway_transactions")
+        .update({ status: "paid" })
+        .eq("id", tx.id);
+      if (txErr) throw txErr;
+
+      // Cria receita correspondente
+      const { error: lanErr } = await (supabase.from as any)("financeiro_lancamentos").insert({
+        tipo: "receita",
+        categoria: "instalacao",
+        valor: Number(tx.valor),
+        status: "pago",
+        data_vencimento: new Date().toISOString().split("T")[0],
+        descricao: `Cobrança Digital Conciliada (${tx.gateway.toUpperCase()} #${tx.external_id})`,
+        pedido_id: tx.pedido_id || null,
+        parceiro_id: null
+      });
+      if (lanErr) throw lanErr;
+
+      toast.success("Webhook Simulado! Pagamento recebido e fluxo de caixa conciliado.");
+      loadData();
+    } catch (err: any) {
+      toast.error("Erro na simulação de webhook: " + err.message);
+    }
+  };
+
+  const simularEstorno = async (tx: any) => {
+    try {
+      const gateway = PaymentGatewayFactory.create({
+        gateway_ativo: tx.gateway,
+        asaas_api_key: gatewaySettings.asaas_api_key,
+        asaas_environment: gatewaySettings.asaas_environment,
+        pagarme_api_key: gatewaySettings.pagarme_api_key,
+        pagarme_environment: gatewaySettings.pagarme_environment
+      });
+
+      const refundRes = await gateway.refundCharge(tx.external_id);
+      if (!refundRes.success) throw new Error("Falha no reembolso");
+
+      const { error: txErr } = await supabase
+        .from("gateway_transactions")
+        .update({ status: "refunded" })
+        .eq("id", tx.id);
+      if (txErr) throw txErr;
+
+      // Cria despesa estorno correspondente
+      const { error: lanErr } = await (supabase.from as any)("financeiro_lancamentos").insert({
+        tipo: "despesa",
+        categoria: "outro",
+        valor: Number(tx.valor),
+        status: "pago",
+        data_vencimento: new Date().toISOString().split("T")[0],
+        descricao: `Reembolso de Cobrança Digital (${tx.gateway.toUpperCase()} #${tx.external_id})`,
+        pedido_id: tx.pedido_id || null,
+        parceiro_id: null
+      });
+      if (lanErr) throw lanErr;
+
+      toast.success("Reembolso concluído e debitado no fluxo de caixa.");
+      loadData();
+    } catch (err: any) {
+      toast.error("Erro ao estornar cobrança: " + err.message);
     }
   };
 
@@ -212,6 +394,7 @@ function FinanceiroDashboard() {
         <TabsList className="bg-slate-100 p-1 rounded-xl">
           <TabsTrigger value="resumo">📊 Extrato Geral</TabsTrigger>
           <TabsTrigger value="comissoes">👥 Comissões de Consultores</TabsTrigger>
+          <TabsTrigger value="gateway_payments">💳 Cobranças Digitais</TabsTrigger>
           <TabsTrigger value="novo">➕ Novo Lançamento</TabsTrigger>
         </TabsList>
 
@@ -427,6 +610,417 @@ function FinanceiroDashboard() {
               <Button type="submit" className="bg-navy hover:bg-navy/90 text-white w-full">Registrar e Conciliar</Button>
             </form>
           </Card>
+        </TabsContent>
+
+        {/* 4. CONTROLE DE COBRANÇAS DIGITAIS (ASAAS & PAGAR.ME) */}
+        <TabsContent value="gateway_payments" className="space-y-6">
+          {/* Métricas rápidas */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <Card className="p-4 bg-white border-0 shadow">
+              <div className="text-[10px] text-muted-foreground uppercase font-bold">Total Faturado Digital</div>
+              <div className="text-xl font-bold text-navy mt-1">
+                {BRL(transactions.reduce((acc, t) => acc + Number(t.valor), 0))}
+              </div>
+              <div className="text-[9px] text-muted-foreground mt-0.5">{transactions.length} cobranças geradas</div>
+            </Card>
+            <Card className="p-4 bg-white border-0 shadow">
+              <div className="text-[10px] text-muted-foreground uppercase font-bold">Total Recebido (Pago)</div>
+              <div className="text-xl font-bold text-emerald-700 mt-1">
+                {BRL(transactions.filter(t => t.status === "paid").reduce((acc, t) => acc + Number(t.valor), 0))}
+              </div>
+              <div className="text-[9px] text-muted-foreground mt-0.5">{transactions.filter(t => t.status === "paid").length} pagamentos liquidados</div>
+            </Card>
+            <Card className="p-4 bg-white border-0 shadow">
+              <div className="text-[10px] text-muted-foreground uppercase font-bold">Aguardando Pagamento</div>
+              <div className="text-xl font-bold text-amber-700 mt-1">
+                {BRL(transactions.filter(t => t.status === "pending").reduce((acc, t) => acc + Number(t.valor), 0))}
+              </div>
+              <div className="text-[9px] text-muted-foreground mt-0.5">{transactions.filter(t => t.status === "pending").length} links ativos</div>
+            </Card>
+            <Card className="p-4 bg-white border-0 shadow">
+              <div className="text-[10px] text-muted-foreground uppercase font-bold">Estornados / Reembolsados</div>
+              <div className="text-xl font-bold text-rose-700 mt-1">
+                {BRL(transactions.filter(t => t.status === "refunded").reduce((acc, t) => acc + Number(t.valor), 0))}
+              </div>
+              <div className="text-[9px] text-muted-foreground mt-0.5">{transactions.filter(t => t.status === "refunded").length} devoluções registradas</div>
+            </Card>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* CONFIGURAÇÃO DE CREDENCIAIS ( 전략 ) */}
+            <div className="md:col-span-1 space-y-6">
+              <Card className="p-5 bg-white border-0 shadow">
+                <h3 className="font-bold text-navy text-sm mb-4 flex items-center gap-2">
+                  <Settings className="w-4 h-4 text-slate-500" /> Provedor de Pagamento
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-xs">Gateway Ativo no ERP</Label>
+                    <Select
+                      value={gatewaySettings.gateway_ativo}
+                      onValueChange={(v) => setGatewaySettings({ ...gatewaySettings, gateway_ativo: v })}
+                    >
+                      <SelectTrigger className="mt-1 font-bold text-navy h-10">
+                        <SelectValue placeholder="Selecione o gateway" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="asaas">Asaas (Recomendado)</SelectItem>
+                        <SelectItem value="pagarme">Pagar.me (V5)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="border-t pt-4 space-y-4">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-blue-700">
+                      <Key className="w-3.5 h-3.5" /> API Key (Asaas)
+                    </div>
+                    <div>
+                      <Input
+                        type="password"
+                        placeholder="Insira access_token do Asaas"
+                        value={gatewaySettings.asaas_api_key || ""}
+                        onChange={(e) => setGatewaySettings({ ...gatewaySettings, asaas_api_key: e.target.value })}
+                        className="text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[10px]">Ambiente Asaas</Label>
+                      <Select
+                        value={gatewaySettings.asaas_environment}
+                        onValueChange={(v) => setGatewaySettings({ ...gatewaySettings, asaas_environment: v })}
+                      >
+                        <SelectTrigger className="h-8 text-xs mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sandbox">Sandbox (Teste)</SelectItem>
+                          <SelectItem value="production">Produção (Real)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4 space-y-4">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-purple-700">
+                      <Key className="w-3.5 h-3.5" /> API Key (Pagar.me)
+                    </div>
+                    <div>
+                      <Input
+                        type="password"
+                        placeholder="Insira api_key do Pagar.me"
+                        value={gatewaySettings.pagarme_api_key || ""}
+                        onChange={(e) => setGatewaySettings({ ...gatewaySettings, pagarme_api_key: e.target.value })}
+                        className="text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[10px]">Ambiente Pagar.me</Label>
+                      <Select
+                        value={gatewaySettings.pagarme_environment}
+                        onValueChange={(v) => setGatewaySettings({ ...gatewaySettings, pagarme_environment: v })}
+                      >
+                        <SelectTrigger className="h-8 text-xs mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sandbox">Sandbox (Teste)</SelectItem>
+                          <SelectItem value="production">Produção (Real)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={salvarSettings}
+                    disabled={salvandoSettings}
+                    className="w-full bg-navy hover:bg-navy/90 text-white font-bold h-10 mt-2 text-xs uppercase"
+                  >
+                    {salvandoSettings ? "Salvando..." : "Salvar Configurações"}
+                  </Button>
+                </div>
+              </Card>
+
+              {/* GERAR COBRANÇA DIGITAL MANUAL */}
+              <Card className="p-5 bg-white border-0 shadow">
+                <h3 className="font-bold text-navy text-sm mb-4 flex items-center gap-2">
+                  <PlusCircle className="w-4 h-4 text-emerald-600" /> Criar Link de Cobrança
+                </h3>
+                <form onSubmit={criarCobranca} className="space-y-4">
+                  <div>
+                    <Label className="text-xs">Cliente / Destinatário</Label>
+                    <Select
+                      value={novaCob.cliente_id}
+                      onValueChange={(v) => setNovaCob({ ...novaCob, cliente_id: v })}
+                    >
+                      <SelectTrigger className="mt-1 text-xs">
+                        <SelectValue placeholder="Selecione o cliente" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {clientesList.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.nome || c.email}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs">Valor Cobrado (R$)</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        required
+                        placeholder="Ex: 5000.00"
+                        value={novaCob.valor}
+                        onChange={(e) => setNovaCob({ ...novaCob, valor: e.target.value })}
+                        className="text-xs mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Método</Label>
+                      <Select
+                        value={novaCob.metodo}
+                        onValueChange={(v) => setNovaCob({ ...novaCob, metodo: v as any })}
+                      >
+                        <SelectTrigger className="mt-1 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pix">PIX (Imediato)</SelectItem>
+                          <SelectItem value="boleto">Boleto Bancário</SelectItem>
+                          <SelectItem value="credit_card">Cartão de Crédito</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {novaCob.metodo === "credit_card" && (
+                    <div>
+                      <Label className="text-xs">Parcelamento Máximo</Label>
+                      <Select
+                        value={novaCob.parcelas}
+                        onValueChange={(v) => setNovaCob({ ...novaCob, parcelas: v })}
+                      >
+                        <SelectTrigger className="mt-1 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12].map(n => (
+                            <SelectItem key={n} value={String(n)}>{n}x sem juros</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div>
+                    <Label className="text-xs">Vincular a Pedido (Opcional)</Label>
+                    <Select
+                      value={novaCob.pedido_id}
+                      onValueChange={(v) => setNovaCob({ ...novaCob, pedido_id: v })}
+                    >
+                      <SelectTrigger className="mt-1 text-xs">
+                        <SelectValue placeholder="Nenhum" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Nenhum</SelectItem>
+                        {pedidos.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>Pedido {p.numero} ({BRL(Number(p.valor_total))})</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">Descrição da Cobrança</Label>
+                    <Input
+                      placeholder="Ex: Entrada 30% do gerador solar..."
+                      value={novaCob.descricao}
+                      onChange={(e) => setNovaCob({ ...novaCob, descricao: e.target.value })}
+                      className="text-xs mt-1"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={gerandoCob}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 text-xs uppercase"
+                  >
+                    {gerandoCob ? "Gerando..." : "Gerar Cobrança"}
+                  </Button>
+                </form>
+              </Card>
+            </div>
+
+            {/* HISTÓRICO & EXIBIÇÃO DE ÚLTIMA COBRANÇA */}
+            <div className="md:col-span-2 space-y-6">
+              {/* Box de Cobrança Recém Criada */}
+              {cobrançaGerada && (
+                <Card className="p-5 border border-emerald-300 bg-emerald-50/50 rounded-xl space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-extrabold text-navy text-sm">Cobrança Gerada com Sucesso!</h4>
+                      <p className="text-xs text-slate-500">Copie os dados de pagamento abaixo e envie ao cliente.</p>
+                    </div>
+                    <Button variant="ghost" size="xs" onClick={() => setCobrançaGerada(null)} className="text-navy font-bold">Fechar</Button>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {cobrançaGerada.metodo_pagamento === "pix" && (
+                      <div className="flex flex-col items-center justify-center p-3 bg-white rounded-xl border">
+                        {cobrançaGerada.pix_qr_code && (
+                          <img src={cobrançaGerada.pix_qr_code} alt="QR Code PIX" className="w-36 h-36" />
+                        )}
+                        <span className="text-[10px] text-muted-foreground mt-2">QR Code Pix Oficial</span>
+                      </div>
+                    )}
+
+                    <div className="space-y-3 font-semibold text-xs text-slate-700">
+                      <div><span className="text-[10px] text-slate-400 block">Cliente</span> {cobrançaGerada.cliente?.nome}</div>
+                      <div><span className="text-[10px] text-slate-400 block">Valor</span> <strong className="text-emerald-700 text-sm">{BRL(Number(cobrançaGerada.valor))}</strong></div>
+                      <div><span className="text-[10px] text-slate-400 block">Gateway</span> <Badge className="bg-slate-200 text-navy uppercase text-[9px]">{cobrançaGerada.gateway}</Badge></div>
+                      <div><span className="text-[10px] text-slate-400 block">ID Externo</span> <span className="font-mono text-[10px]">{cobrançaGerada.external_id}</span></div>
+                    </div>
+                  </div>
+
+                  {cobrançaGerada.pix_copia_e_cola && (
+                    <div className="space-y-1">
+                      <Label className="text-[10px]">Copia e Cola PIX</Label>
+                      <div className="flex gap-2">
+                        <Input readOnly value={cobrançaGerada.pix_copia_e_cola} className="text-xs font-mono bg-white flex-1" />
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            navigator.clipboard.writeText(cobrançaGerada.pix_copia_e_cola);
+                            toast.success("Copia e Cola copiado!");
+                          }}
+                          className="bg-navy text-white hover:bg-navy/90"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {cobrançaGerada.boleto_url && (
+                    <div className="flex gap-2">
+                      <a href={cobrançaGerada.boleto_url} target="_blank" rel="noopener noreferrer" className="flex-1">
+                        <Button className="w-full bg-navy text-white text-xs font-bold gap-1.5 h-9">
+                          <ExternalLink className="w-4 h-4" /> Acessar PDF do Boleto
+                        </Button>
+                      </a>
+                      {cobrançaGerada.boleto_bar_code && (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText(cobrançaGerada.boleto_bar_code);
+                            toast.success("Código de barras copiado!");
+                          }}
+                          className="text-xs text-navy font-bold border-navy/20 gap-1 h-9"
+                        >
+                          <Copy className="w-4 h-4" /> Barras
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </Card>
+              )}
+
+              {/* Histórico de Transações */}
+              <Card className="border-0 shadow overflow-hidden bg-white">
+                <div className="p-4 border-b font-bold text-navy text-sm flex justify-between items-center">
+                  <span>Histórico de Cobranças Digitais</span>
+                  <Button variant="ghost" size="sm" onClick={loadData} className="text-navy flex gap-1 items-center">
+                    <RefreshCw className="w-3.5 h-3.5" /> Atualizar
+                  </Button>
+                </div>
+
+                {transactions.length === 0 ? (
+                  <div className="p-10 text-center text-muted-foreground text-sm">Nenhuma transação digital gerada no gateway.</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left border-collapse">
+                      <thead className="bg-slate-50 text-[10px] uppercase font-bold text-navy/70 border-b">
+                        <tr>
+                          <th className="p-3">Destinatário</th>
+                          <th className="p-3">Gateway</th>
+                          <th className="p-3">Valor</th>
+                          <th className="p-3">Método</th>
+                          <th className="p-3">Status</th>
+                          <th className="p-3 text-right">Ação / Simulação</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y text-xs font-semibold">
+                        {transactions.map((tx) => (
+                          <tr key={tx.id} className="hover:bg-slate-50">
+                            <td className="p-3">
+                              <div className="font-bold text-navy">{tx.cliente?.nome || "Sem Nome"}</div>
+                              <div className="text-[10px] text-muted-foreground font-mono">{tx.external_id}</div>
+                            </td>
+                            <td className="p-3">
+                              <Badge className={tx.gateway === "asaas" ? "bg-blue-50 text-blue-700 border-blue-200 border" : "bg-purple-50 text-purple-700 border-purple-200 border"}>
+                                {tx.gateway.toUpperCase()}
+                              </Badge>
+                            </td>
+                            <td className="p-3 font-bold text-navy">{BRL(Number(tx.valor))}</td>
+                            <td className="p-3 uppercase text-[10px] text-slate-600">{tx.metodo_pagamento}</td>
+                            <td className="p-3">
+                              <Badge
+                                variant={tx.status === "paid" ? "default" : tx.status === "refunded" ? "destructive" : "secondary"}
+                                className="text-[10px]"
+                              >
+                                {tx.status === "pending" ? "Pendente" : tx.status === "paid" ? "Pago" : tx.status === "refunded" ? "Reembolsado" : tx.status}
+                              </Badge>
+                            </td>
+                            <td className="p-3 text-right space-y-1 sm:space-y-0 sm:space-x-2">
+                              {tx.status === "pending" && (
+                                <Button
+                                  size="xs"
+                                  onClick={() => simularRecebimento(tx)}
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[9px] px-2 py-1"
+                                >
+                                  Simular Webhook Recebido
+                                </Button>
+                              )}
+                              {tx.status === "paid" && (
+                                <Button
+                                  size="xs"
+                                  onClick={() => simularEstorno(tx)}
+                                  className="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-[9px] px-2 py-1"
+                                >
+                                  Estornar (Refund)
+                                </Button>
+                              )}
+                              {tx.pix_copia_e_cola && (
+                                <Button
+                                  size="xs"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(tx.pix_copia_e_cola);
+                                    toast.success("PIX copiado!");
+                                  }}
+                                  className="text-navy text-[9px] font-bold"
+                                >
+                                  Copiar Pix
+                                </Button>
+                              )}
+                              {tx.boleto_url && (
+                                <a href={tx.boleto_url} target="_blank" rel="noopener noreferrer">
+                                  <Button size="xs" variant="ghost" className="text-navy text-[9px] font-bold">
+                                    Ver Boleto
+                                  </Button>
+                                </a>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
