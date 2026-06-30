@@ -816,9 +816,42 @@ function FinalCTA() {
     nome: "",
     email: "",
     telefone: "",
-    cep: "",
     conta: bill,
   });
+
+  const [cidadeInput, setCidadeInput] = useState("");
+  const [estadoInput, setEstadoInput] = useState("");
+  const [ibgeMunicipios, setIbgeMunicipios] = useState<{ nome: string; uf: string }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    const cached = typeof window !== "undefined" ? sessionStorage.getItem("ibge_municipios") : null;
+    if (cached) {
+      try { setIbgeMunicipios(JSON.parse(cached)); } catch(e) {}
+    } else {
+      fetch("https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome")
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            const list = data.map((m: any) => ({
+              nome: m.nome,
+              uf: m.microrregiao?.mesorregiao?.UF?.sigla || m.regiao_imediata?.regiao_intermediaria?.UF?.sigla || ""
+            })).filter(x => x.uf);
+            setIbgeMunicipios(list);
+            try { sessionStorage.setItem("ibge_municipios", JSON.stringify(list)); } catch(e) {}
+          }
+        })
+        .catch(err => console.warn("Erro ao carregar lista de municipios IBGE", err));
+    }
+  }, []);
+
+  const suggestions = useMemo(() => {
+    if (!cidadeInput || cidadeInput.length < 2) return [];
+    const query = cidadeInput.toLowerCase().trim();
+    return ibgeMunicipios
+      .filter((m) => m.nome.toLowerCase().includes(query))
+      .slice(0, 5);
+  }, [cidadeInput, ibgeMunicipios]);
 
   // sincroniza valor da conta com o que o cliente já digitou nas seções anteriores
   useEffect(() => {
@@ -833,12 +866,18 @@ function FinalCTA() {
       toast.error("Nome e WhatsApp são obrigatórios");
       return;
     }
+    if (!cidadeInput.trim() || !estadoInput.trim()) {
+      toast.error("Por favor, selecione sua cidade e estado na lista.");
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.from("clientes").insert({
       nome: form.nome.trim(),
       email: form.email.trim() || null,
       telefone: form.telefone.trim(),
-      cep: form.cep.trim() || null,
+      cidade: cidadeInput.trim(),
+      estado: estadoInput.trim(),
+      valor_fatura: form.conta || null,
       observacoes: `Lead do site — conta mensal informada: ${BRL.format(form.conta || 0)}`,
       origem: "landing",
       status: "novo",
@@ -912,7 +951,51 @@ function FinalCTA() {
                     <Field label="WhatsApp" type="tel" placeholder="(11) 99999-9999" value={form.telefone} onChange={(v) => update("telefone", v)} />
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <Field label="CEP da instalação" placeholder="00000-000" value={form.cep} onChange={(v) => update("cep", v)} required={false} />
+                    <div className="relative">
+                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50 block">
+                        Cidade / Estado *
+                      </label>
+                      <div className="mt-1 flex gap-2">
+                        <input
+                          required
+                          placeholder="Buscar cidade..."
+                          value={cidadeInput}
+                          onChange={(e) => {
+                            setCidadeInput(e.target.value);
+                            setShowSuggestions(true);
+                          }}
+                          onFocus={() => setShowSuggestions(true)}
+                          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                          className="flex-1 rounded-xl bg-secondary px-4 py-3 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
+                        />
+                        <input
+                          readOnly
+                          placeholder="UF"
+                          value={estadoInput}
+                          className="w-16 rounded-xl bg-secondary px-2 py-3 text-navy font-bold text-center outline-none border-none text-sm"
+                        />
+                      </div>
+                      
+                      {showSuggestions && suggestions.length > 0 && (
+                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto divide-y text-slate-700">
+                          {suggestions.map((m, idx) => (
+                            <button
+                              key={`${m.nome}-${m.uf}-${idx}`}
+                              type="button"
+                              onClick={() => {
+                                setCidadeInput(m.nome);
+                                setEstadoInput(m.uf);
+                                setShowSuggestions(false);
+                              }}
+                              className="w-full text-left px-4 py-2.5 text-xs hover:bg-slate-50 text-slate-700 font-semibold flex justify-between items-center transition-colors"
+                            >
+                              <span>{m.nome}</span>
+                              <span className="text-[9px] border border-slate-300 font-bold px-1.5 py-0.5 rounded-full">{m.uf}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <div>
                       <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50">
                         Conta mensal (R$)
