@@ -580,6 +580,45 @@ export type Database = {
         }
         Relationships: []
       }
+      convites: {
+        Row: {
+          created_at: string
+          created_by: string
+          email: string
+          expires_at: string
+          id: string
+          role_to_assign: Database["public"]["Enums"]["app_role"]
+          status: string
+          token: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          email: string
+          expires_at?: string
+          id?: string
+          role_to_assign?: Database["public"]["Enums"]["app_role"]
+          status?: string
+          token?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          role_to_assign?: Database["public"]["Enums"]["app_role"]
+          status?: string
+          token?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       partner_invites: {
         Row: {
           created_at: string
