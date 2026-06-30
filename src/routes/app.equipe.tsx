@@ -350,7 +350,7 @@ function AdminEquipe() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left border-collapse">
-                  <thead className="bg-slate-50 text-[10px] uppercase font-bold text-navy/70 border-b">
+                  <thead className="suns-table-header text-left">
                     <tr>
                       <th className="p-3">Destinatário</th>
                       <th className="p-3">Token</th>
@@ -401,7 +401,7 @@ function AdminEquipe() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left border-collapse">
-                  <thead className="bg-slate-50 text-[10px] uppercase font-bold text-navy/70 border-b">
+                  <thead className="suns-table-header text-left">
                     <tr>
                       <th className="p-3">Colaborador</th>
                       <th className="p-3">CPF</th>

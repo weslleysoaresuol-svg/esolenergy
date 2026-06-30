@@ -246,37 +246,52 @@ function CotacoesList() {
         <Input placeholder="Buscar por cliente ou kit…" value={q} onChange={(e) => setQ(e.target.value)} />
       </Card>
 
-      <div className="grid gap-3">
-        {filtered.length === 0 && (
-          <Card className="p-10 text-center text-muted-foreground">
-            <Sparkles className="w-10 h-10 mx-auto mb-2 opacity-40" />
-            Nenhuma cotação ainda. Crie a primeira em 30 segundos.
-          </Card>
-        )}
-        {filtered.map((c) => {
-          const st = STATUS_LABEL[c.status] || STATUS_LABEL.rascunho;
-          return (
-            <Link key={c.id} to="/app/cotacoes/$id" params={{ id: c.id }}>
-              <Card className="p-4 hover:shadow-md transition cursor-pointer flex items-center gap-4">
-                {c.kit?.imagem_url ? (
-                  <img src={c.kit.imagem_url} alt="" className="w-16 h-16 object-cover rounded-lg" />
-                ) : (
-                  <div className="w-16 h-16 rounded-lg bg-sun/20 flex items-center justify-center">
-                    <Sun className="w-7 h-7 text-sun-deep" />
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-navy truncate">{c.kit?.nome || c.kit_snapshot?.nome || "Kit removido"}</div>
-                  <div className="text-sm text-muted-foreground truncate">
-                    {c.cliente?.nome} • {c.quantidade}x • {BRL(Number(c.preco_total))}
-                  </div>
-                </div>
-                <Badge className={st.color}>{st.label}</Badge>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+      {filtered.length === 0 ? (
+        <Card className="p-12 text-center border-0 shadow-md">
+          <Sparkles className="w-12 h-12 mx-auto text-muted-foreground mb-3 opacity-40" />
+          <p className="text-muted-foreground">Nenhuma cotação encontrada.</p>
+        </Card>
+      ) : (
+        <Card className="border-0 shadow-md overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="suns-table-header text-left">
+              <tr>
+                <th className="p-3">Cliente</th>
+                <th className="p-3">Kit Solar</th>
+                <th className="p-3">Qtd</th>
+                <th className="p-3">Valor Total</th>
+                <th className="p-3">Status</th>
+                <th className="p-3">Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c) => {
+                const st = STATUS_LABEL[c.status] || STATUS_LABEL.rascunho;
+                return (
+                  <tr key={c.id} className="border-t hover:bg-slate-50">
+                    <td className="p-3 font-semibold text-navy">
+                      <Link to="/app/cotacoes/$id" params={{ id: c.id }} className="hover:underline">
+                        {c.cliente?.nome || "Lead Sem Nome"}
+                      </Link>
+                    </td>
+                    <td className="p-3 text-slate-600 font-medium">
+                      {c.kit?.nome || c.kit_snapshot?.nome || "Kit personalizado"}
+                    </td>
+                    <td className="p-3 text-slate-500 font-bold">{c.quantidade}</td>
+                    <td className="p-3 font-semibold text-navy">{BRL(Number(c.preco_total))}</td>
+                    <td className="p-3">
+                      <Badge className={st.color}>{st.label}</Badge>
+                    </td>
+                    <td className="p-3 text-xs text-muted-foreground text-right sm:text-left">
+                      {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Card>
+      )}
 
       <Dialog open={openNew} onOpenChange={setOpenNew}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">

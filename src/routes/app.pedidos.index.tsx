@@ -56,25 +56,30 @@ function PedidosList() {
         <Input placeholder="Buscar por número (PED-…) ou cliente…" value={q} onChange={(e) => setQ(e.target.value)} />
       </Card>
 
-      <div className="grid md:grid-cols-4 gap-3">
+      <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
         {COLS.map((col) => {
           const items = filtered.filter((p) => p.status === col.k);
           return (
-            <div key={col.k}>
-              <div className={`${col.color} px-3 py-2 rounded-t-lg text-sm font-semibold text-navy flex justify-between`}>
-                {col.label} <span className="opacity-60">{items.length}</span>
+            <div key={col.k} className="flex flex-col">
+              <div className="bg-[#EBF0F6] px-3.5 py-2.5 rounded-t-2xl text-[10px] uppercase tracking-wider font-extrabold text-[#4F5E7B] flex justify-between items-center border border-[#E2E8F0] border-b-0 shadow-sm">
+                <span>{col.label}</span>
+                <span className="bg-[#FFFFFF] text-navy px-1.5 py-0.5 rounded-md text-[9px] font-black border border-[#E2E8F0]">
+                  {items.length}
+                </span>
               </div>
-              <div className="bg-white border border-t-0 rounded-b-lg p-2 space-y-2 min-h-[80px]">
+              <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-b-2xl p-2.5 space-y-2.5 min-h-[140px] flex-1">
                 {items.map((p) => (
-                  <Link key={p.id} to="/app/pedidos/$id" params={{ id: p.id }}>
-                    <Card className="p-2.5 hover:shadow transition cursor-pointer">
+                  <Link key={p.id} to="/app/pedidos/$id" params={{ id: p.id }} className="block">
+                    <Card className="p-3 bg-white border border-[#E2E8F0] hover:border-[#2E44B8]/40 shadow-sm hover:shadow transition duration-200 cursor-pointer rounded-xl">
                       <div className="text-xs font-bold text-navy">{p.numero}</div>
-                      <div className="text-xs text-muted-foreground truncate">{p.cliente?.nome}</div>
-                      <div className="text-sm font-semibold text-emerald-700 mt-1">{BRL(Number(p.valor_total))}</div>
+                      <div className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{p.cliente?.nome}</div>
+                      <div className="text-xs font-extrabold text-[#2E44B8] mt-1.5">{BRL(Number(p.valor_total))}</div>
                     </Card>
                   </Link>
                 ))}
-                {items.length === 0 && <div className="text-xs text-muted-foreground/50 text-center py-3">vazio</div>}
+                {items.length === 0 && (
+                  <div className="text-[10px] text-slate-400 font-medium text-center py-6 select-none">Vazio</div>
+                )}
               </div>
             </div>
           );

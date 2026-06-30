@@ -53,8 +53,9 @@ const EMPTY_KIT = {
 
 function AdminKits() {
   const { role } = useCurrentUser();
-  const [activeTab, setActiveTab] = useState<"catalogo" | "integracao">("catalogo");
   const [kits, setKits] = useState<any[]>([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showTechDetails, setShowTechDetails] = useState(false);
   const [filterFaixa, setFilterFaixa] = useState("todas");
   const [filterAtivo, setFilterAtivo] = useState("todos");
   const [q, setQ] = useState("");
@@ -369,24 +370,7 @@ function AdminKits() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-200">
-        <button
-          onClick={() => setActiveTab("catalogo")}
-          className={`px-4 py-2.5 font-bold text-sm border-b-2 transition ${activeTab === "catalogo" ? "border-navy text-navy" : "border-transparent text-muted-foreground hover:text-navy"}`}
-        >
-          <FileSpreadsheet className="w-4 h-4 inline mr-1.5" /> Catálogo de Kits
-        </button>
-        <button
-          onClick={() => setActiveTab("integracao")}
-          className={`px-4 py-2.5 font-bold text-sm border-b-2 transition ${activeTab === "integracao" ? "border-navy text-navy" : "border-transparent text-muted-foreground hover:text-navy"}`}
-        >
-          <Upload className="w-4 h-4 inline mr-1.5" /> Integrações e Importações
-        </button>
-      </div>
-
-      {activeTab === "catalogo" ? (
-        <>
+      <div className="space-y-6">
           {/* KPIs por faixa */}
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
             {Object.entries(FAIXAS).map(([k, v]) => {
@@ -547,7 +531,7 @@ function AdminKits() {
           ) : (
             <Card className="border-0 shadow-md overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
+                <thead className="suns-table-header text-left">
                   <tr>
                     <th className="p-3 w-8"></th>
                     <th className="p-3">Kit</th>
@@ -672,273 +656,142 @@ function AdminKits() {
               </table>
             </Card>
           )}
-        </>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Importador Planilha */}
-          <Card className="p-6 border-0 shadow-md space-y-4">
-            <h3 className="font-bold text-navy text-lg flex items-center gap-2">
-              <FileSpreadsheet className="text-emerald-600 w-5 h-5" /> Importar Planilha de Preços (CSV)
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Exportou uma planilha de kits do portal da Aldo, Sou Energy ou de outro distribuidor? 
-              Você pode fazer o upload do arquivo CSV diretamente para o sistema mapear e carregar.
-            </p>
 
-            <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:bg-slate-50 transition relative">
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleFileUpload}
-                ref={fileInputRef}
-                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-              />
-              <Upload className="w-10 h-10 mx-auto text-slate-400 mb-2" />
-              <div className="text-sm font-semibold text-navy">Arraste ou clique para selecionar o arquivo CSV</div>
-              <div className="text-xs text-muted-foreground mt-1">UTF-8 CSV (separado por vírgula ou ponto-e-vírgula)</div>
-            </div>
+      {/* Ferramentas Avançadas / Importação */}
+      <div className="pt-6 border-t border-slate-200 mt-6 max-w-7xl mx-auto px-1">
+        <button
+          type="button"
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className="text-xs text-slate-500 hover:text-navy font-bold flex items-center gap-1 cursor-pointer bg-transparent border-0"
+        >
+          {showAdvanced ? "▼ Ocultar Ferramentas de Importação & Carga" : "▶ Mostrar Ferramentas de Importação & Carga"}
+        </button>
+        
+        {showAdvanced && (
+          <div className="grid md:grid-cols-2 gap-6 mt-4">
+            {/* Importador Planilha */}
+            <Card className="p-6 border-0 shadow-md space-y-4">
+              <h3 className="font-bold text-navy text-lg flex items-center gap-2">
+                <FileSpreadsheet className="text-emerald-600 w-5 h-5" /> Importar Planilha de Preços (CSV)
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Exportou uma planilha de kits do portal da Aldo, Sou Energy ou de outro distribuidor? 
+                Você pode fazer o upload do arquivo CSV diretamente para o sistema mapear e carregar.
+              </p>
 
-            {fileLoaded && csvHeaders.length > 0 && (
-              <div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div className="text-xs font-bold text-navy uppercase">Mapeamento de Colunas da Planilha</div>
-                
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <Label className="text-[10px]">Nome / Descrição</Label>
-                    <select
-                      value={mapping.nome}
-                      onChange={(e) => setMapping(p => ({ ...p, nome: e.target.value }))}
-                      className="w-full bg-white border rounded px-2 py-1"
-                    >
-                      {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <Label className="text-[10px]">Potência total (kWp)</Label>
-                    <select
-                      value={mapping.potencia_kwp}
-                      onChange={(e) => setMapping(p => ({ ...p, potencia_kwp: e.target.value }))}
-                      className="w-full bg-white border rounded px-2 py-1"
-                    >
-                      {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <Label className="text-[10px]">Quantidade Módulos</Label>
-                    <select
-                      value={mapping.quantidade_modulos}
-                      onChange={(e) => setMapping(p => ({ ...p, quantidade_modulos: e.target.value }))}
-                      className="w-full bg-white border rounded px-2 py-1"
-                    >
-                      {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <Label className="text-[10px]">Marca dos Painéis</Label>
-                    <select
-                      value={mapping.fabricante_modulos}
-                      onChange={(e) => setMapping(p => ({ ...p, fabricante_modulos: e.target.value }))}
-                      className="w-full bg-white border rounded px-2 py-1"
-                    >
-                      {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <Label className="text-[10px]">Inversor</Label>
-                    <select
-                      value={mapping.inversor}
-                      onChange={(e) => setMapping(p => ({ ...p, inversor: e.target.value }))}
-                      className="w-full bg-white border rounded px-2 py-1"
-                    >
-                      {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <Label className="text-[10px]">Preço do Kit (R$)</Label>
-                    <select
-                      value={mapping.preco}
-                      onChange={(e) => setMapping(p => ({ ...p, preco: e.target.value }))}
-                      className="w-full bg-white border rounded px-2 py-1"
-                    >
-                      {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex gap-2 justify-end pt-2">
-                  <Button variant="ghost" size="sm" onClick={() => setFileLoaded(false)}>Cancelar</Button>
-                  <Button size="sm" onClick={processImport} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
-                    {saving ? "Processando..." : "Confirmar e Importar"}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Card>
-
-          {/* Carga Inicial / Popular Banco de Dados */}
-          <Card className="p-6 border-0 shadow-md space-y-4">
-            <h3 className="font-bold text-navy text-lg flex items-center gap-2">
-              <Boxes className="text-sun-deep w-5 h-5" /> Base de Dados Padrão (50 Kits)
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Carregue a listagem padrão de 50 kits fotovoltaicos reais da Esol Energy diretamente na tabela de banco de dados do seu Supabase em nuvem. Isso evita carregar kits estáticos locais em modo de desenvolvimento.
-            </p>
-
-            <div className="pt-2">
-              <Button
-                onClick={popularBancoKits}
-                disabled={isPopulating}
-                className="w-full bg-navy text-white font-semibold flex items-center justify-center gap-2"
-              >
-                <RefreshCw className={`w-4 h-4 ${isPopulating ? "animate-spin" : ""}`} />
-                {isPopulating ? "Gravando no Banco..." : "Cadastrar Kits Padrão no Supabase"}
-              </Button>
-            </div>
-          </Card>
-
-          {/* Card de Documentos e Tabelas de Referência */}
-          <Card className="col-span-full p-6 border-0 shadow-md space-y-4">
-            <h3 className="font-bold text-navy text-lg flex items-center gap-2">
-              <FileSpreadsheet className="text-navy w-5 h-5" /> Portais e Downloads de Tabelas (Área do Integrador B2B)
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Como distribuidoras B2B exclusivas para integradores, a Aldo Solar e a Sou Energy exigem login de parceiro aprovado para liberação das planilhas de preços oficiais. Abaixo estão os links diretos para a área de downloads e tabelas de cada fornecedor:
-            </p>
-
-            <div className="bg-navy/5 border border-navy/10 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1 text-center sm:text-left">
-                <strong className="text-sm text-navy block">📊 Planilha Oficial de Referência dos 50 Kits</strong>
-                <p className="text-xs text-slate-600 leading-relaxed max-w-xl">
-                  Baixe o arquivo de planilha consolidado com as especificações técnicas completas, preços B2B e links de todos os 50 kits fotovoltaicos cadastrados no banco de dados da Esol Energy.
-                </p>
-              </div>
-              <a 
-                href="/tabela-referencia-kits.csv" 
-                download="tabela-referencia-kits.csv"
-                className="bg-navy hover:bg-navy-deep text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition shrink-0"
-              >
-                Download Planilha de Kits (.CSV) 📥
-              </a>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="border rounded-2xl p-4 bg-slate-50 space-y-3">
-                <div className="flex items-center justify-between border-b pb-2">
-                  <strong className="text-sm text-navy">Aldo Solar B2B</strong>
-                  <Badge className="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold rounded-full px-2 py-0.5">XLSX / VOLT</Badge>
-                </div>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
-                  Acesse o portal da Aldo para baixar a planilha geral de geradores ou utilizar a ferramenta VOLT de dimensionamento.
-                </p>
-                <div className="flex gap-2">
-                  <a 
-                    href="https://www.aldo.com.br/login" 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-white bg-navy hover:bg-navy-deep px-3 py-1.5 rounded-xl shadow-sm transition"
-                  >
-                    Fazer Login na Aldo 🔑
-                  </a>
-                  <a 
-                    href="https://www.aldo.com.br/volt" 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-navy bg-slate-200 hover:bg-slate-300 px-3 py-1.5 rounded-xl transition"
-                  >
-                    Plataforma VOLT ⚡
-                  </a>
-                </div>
+              <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:bg-slate-50 transition relative">
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  ref={fileInputRef}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                />
+                <Upload className="w-10 h-10 mx-auto text-slate-400 mb-2" />
+                <div className="text-sm font-semibold text-navy">Arraste ou clique para selecionar o arquivo CSV</div>
+                <div className="text-xs text-muted-foreground mt-1">UTF-8 CSV (separado por vírgula ou ponto-e-vírgula)</div>
               </div>
 
-              <div className="border rounded-2xl p-4 bg-slate-50 space-y-3">
-                <div className="flex items-center justify-between border-b pb-2">
-                  <strong className="text-sm text-navy">Sou Energy B2B</strong>
-                  <Badge className="bg-blue-100 text-blue-800 text-[9px] font-extrabold rounded-full px-2 py-0.5">PDF / Loja</Badge>
-                </div>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
-                  Acesse o portal de parceiro da Sou Energy para baixar tabelas regionais em PDF e manuais dos equipamentos Deye/Risen.
-                </p>
-                <div className="flex gap-2">
-                  <a 
-                    href="https://parceiro.souenergy.com.br" 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-white bg-navy hover:bg-navy-deep px-3 py-1.5 rounded-xl shadow-sm transition"
-                  >
-                    Portal do Integrador Sou 🔑
-                  </a>
-                  <a 
-                    href="https://www.souenergy.com.br/produtos/geradores" 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-navy bg-slate-200 hover:bg-slate-300 px-3 py-1.5 rounded-xl transition"
-                  >
-                    Catálogo de Produtos 📦
-                  </a>
-                </div>
-              </div>
-            </div>
+              {fileLoaded && csvHeaders.length > 0 && (
+                <div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <div className="text-xs font-bold text-navy uppercase">Mapeamento de Colunas da Planilha</div>
+                  
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <Label className="text-[10px]">Nome / Descrição</Label>
+                      <select
+                        value={mapping.nome}
+                        onChange={(e) => setMapping(p => ({ ...p, nome: e.target.value }))}
+                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
+                      >
+                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-[10px]">Potência total (kWp)</Label>
+                      <select
+                        value={mapping.potencia_kwp}
+                        onChange={(e) => setMapping(p => ({ ...p, potencia_kwp: e.target.value }))}
+                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
+                      >
+                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-[10px]">Quantidade Módulos</Label>
+                      <select
+                        value={mapping.quantidade_modulos}
+                        onChange={(e) => setMapping(p => ({ ...p, quantidade_modulos: e.target.value }))}
+                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
+                      >
+                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-[10px]">Marca dos Painéis</Label>
+                      <select
+                        value={mapping.fabricante_modulos}
+                        onChange={(e) => setMapping(p => ({ ...p, fabricante_modulos: e.target.value }))}
+                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
+                      >
+                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-[10px]">Inversor</Label>
+                      <select
+                        value={mapping.inversor}
+                        onChange={(e) => setMapping(p => ({ ...p, inversor: e.target.value }))}
+                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
+                      >
+                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-[10px]">Preço do Kit (R$)</Label>
+                      <select
+                        value={mapping.preco}
+                        onChange={(e) => setMapping(p => ({ ...p, preco: e.target.value }))}
+                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
+                      >
+                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                      </select>
+                    </div>
+                  </div>
 
-            {/* Manuais Técnicos das Fabricantes */}
-            <div className="border-t pt-4 space-y-3">
-              <strong className="text-xs uppercase font-extrabold text-navy/70 tracking-wider block">Fichas Técnicas e Manuais Oficiais das Fabricantes (PDF)</strong>
-              <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
-                <a 
-                  href="https://www.jinkosolar.com/uploads/Tiger%20Neo%2072HL4-(V)-A3-EN.pdf" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
+                  <div className="flex gap-2 justify-end pt-2">
+                    <Button variant="ghost" size="sm" onClick={() => setFileLoaded(false)}>Cancelar</Button>
+                    <Button size="sm" onClick={processImport} disabled={saving} className="bg-[#2E44B8] hover:bg-[#1F3095] text-white font-semibold">
+                      {saving ? "Processando..." : "Confirmar e Importar"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </Card>
+
+            {/* Carga Inicial / Popular Banco de Dados */}
+            <Card className="p-6 border-0 shadow-md space-y-4">
+              <h3 className="font-bold text-navy text-lg flex items-center gap-2">
+                <Boxes className="text-sun-deep w-5 h-5" /> Base de Dados Padrão (50 Kits)
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Carregue a listagem padrão de 50 kits fotovoltaicos reais da Esol Energy diretamente na tabela de banco de dados do seu Supabase em nuvem. Isso evita carregar kits estáticos locais em modo de desenvolvimento.
+              </p>
+
+              <div className="pt-2">
+                <Button
+                  onClick={popularBancoKits}
+                  disabled={isPopulating}
+                  className="w-full bg-[#2E44B8] hover:bg-[#1F3095] text-white font-semibold flex items-center justify-center gap-2 border-0 cursor-pointer py-2.5 rounded-lg text-xs font-bold"
                 >
-                  <div>
-                    <span className="font-bold text-navy block">Jinko Solar 550W</span>
-                    <span className="text-[9px] text-slate-400">Datasheet Tiger Neo (PDF)</span>
-                  </div>
-                  <span className="text-base">📄</span>
-                </a>
-                
-                <a 
-                  href="https://www.canadiansolar.com/wp-content/uploads/2020/09/Canadian_Solar-Datasheet-CS6W-MS_EN.pdf" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
-                >
-                  <div>
-                    <span className="font-bold text-navy block">Canadian Solar 550W</span>
-                    <span className="text-[9px] text-slate-400">Datasheet HiKu6 (PDF)</span>
-                  </div>
-                  <span className="text-base">📄</span>
-                </a>
-
-                <a 
-                  href="https://www.deyeinverter.com/deyeinverter/doc/SUN-1.6K-3K-G-en.pdf" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
-                >
-                  <div>
-                    <span className="font-bold text-navy block">Deye SUN Inverters</span>
-                    <span className="text-[9px] text-slate-400">Datasheet SUN-G (PDF)</span>
-                  </div>
-                  <span className="text-base">📄</span>
-                </a>
-
-                <a 
-                  href="https://www.ginverter.com/upload/file/MIC_750-3000TL-X_Datasheet_EN_202008.pdf" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="p-2.5 bg-slate-50 border rounded-xl flex items-center justify-between hover:bg-slate-100 transition text-slate-700 hover:border-navy/20"
-                >
-                  <div>
-                    <span className="font-bold text-navy block">Growatt MIC Inverters</span>
-                    <span className="text-[9px] text-slate-400">Datasheet MIC-X (PDF)</span>
-                  </div>
-                  <span className="text-base">📄</span>
-                </a>
+                  <RefreshCw className={`w-4 h-4 ${isPopulating ? "animate-spin" : ""}`} />
+                  {isPopulating ? "Gravando no Banco..." : "Cadastrar Kits Padrão no Supabase"}
+                </Button>
               </div>
-            </div>
-          </Card>
-        </div>
-      )}
+            </Card>
+          </div>
+        )}
+      </div>
 
       {/* Modal de edição manual */}
       {editando && (
@@ -976,32 +829,10 @@ function AdminKits() {
                 <Label>Qtd. de módulos</Label>
                 <Input type="number" value={editando.quantidade_modulos} onChange={F("quantidade_modulos")} />
               </div>
-              <div>
-                <Label>Fabricante e modelo dos módulos</Label>
-                <Input value={editando.fabricante_modulos} onChange={F("fabricante_modulos")} placeholder="Jinko Solar JKM550N-72HL4" />
-              </div>
-              <div>
-                <Label>Potência do módulo (W)</Label>
-                <Input type="number" value={editando.potencia_modulo_w} onChange={F("potencia_modulo_w")} placeholder="555" />
-              </div>
-              <div>
-                <Label>Tecnologia</Label>
-                <Select value={editando.tecnologia_modulo} onValueChange={(v) => setEditando((p: any) => ({ ...p, tecnologia_modulo: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Monocristalino N-Type TOPCon">Mono N-Type TOPCon</SelectItem>
-                    <SelectItem value="Monocristalino PERC">Mono PERC</SelectItem>
-                    <SelectItem value="Monocristalino PERC Bifacial">Mono PERC Bifacial</SelectItem>
-                    <SelectItem value="Monocristalino TOPCon">Mono TOPCon</SelectItem>
-                    <SelectItem value="Monocristalino Bifacial TOPCon">Mono Bifacial TOPCon</SelectItem>
-                    <SelectItem value="Monocristalino N-Type Bifacial">Mono N-Type Bifacial</SelectItem>
-                    <SelectItem value="HJT Heterojunção">HJT Heterojunção</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Eficiência módulo (%)</Label>
-                <Input type="number" step="0.1" value={editando.eficiencia_modulo} onChange={F("eficiencia_modulo")} />
+              
+              <div className="md:col-span-2">
+                <Label>Fabricante/Marca dos Módulos</Label>
+                <Input value={editando.fabricante_modulos} onChange={F("fabricante_modulos")} placeholder="Jinko Solar, Canadian, etc." />
               </div>
 
               {/* Inversor */}
@@ -1009,42 +840,8 @@ function AdminKits() {
                 <Label>Inversor (marca e modelo)</Label>
                 <Input value={editando.inversor} onChange={F("inversor")} placeholder="Deye SUN5000G05" />
               </div>
-              <div>
-                <Label>Tipo de inversor</Label>
-                <Select value={editando.tipo_inversor} onValueChange={(v) => setEditando((p: any) => ({ ...p, tipo_inversor: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="String On-Grid">String On-Grid</SelectItem>
-                    <SelectItem value="String On-Grid Trifásico">String On-Grid Trifásico</SelectItem>
-                    <SelectItem value="Híbrido com Armazenamento">Híbrido com Armazenamento</SelectItem>
-                    <SelectItem value="Microinversor">Microinversor</SelectItem>
-                    <SelectItem value="Central Inverter On-Grid">Central Inverter On-Grid</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div />
 
-              {/* Garantias */}
-              <div>
-                <Label>Garantia módulos (anos)</Label>
-                <Input type="number" value={editando.garantia_modulos_anos} onChange={F("garantia_modulos_anos")} />
-              </div>
-              <div>
-                <Label>Garantia inversor (anos)</Label>
-                <Input type="number" value={editando.garantia_inversor_anos} onChange={F("garantia_inversor_anos")} />
-              </div>
-
-              {/* Consumo alvo */}
-              <div>
-                <Label>Consumo mín. (kWh/mês)</Label>
-                <Input type="number" value={editando.consumo_kwh_min} onChange={F("consumo_kwh_min")} placeholder="300" />
-              </div>
-              <div>
-                <Label>Consumo máx. (kWh/mês)</Label>
-                <Input type="number" value={editando.consumo_kwh_max} onChange={F("consumo_kwh_max")} placeholder="500" />
-              </div>
-
-              {/* Preço */}
+              {/* Preço e Fornecedor */}
               <div>
                 <Label>Preço do kit (R$)</Label>
                 <Input type="number" step="100" value={editando.preco} onChange={F("preco")} placeholder="23500" />
@@ -1059,21 +856,89 @@ function AdminKits() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="md:col-span-2">
-                <Label>Link do kit no Fornecedor (URL B2B)</Label>
-                <Input value={editando.url_fornecedor || ""} onChange={F("url_fornecedor")} placeholder="https://www.aldosolar.com.br/gerador..." />
-              </div>
-              <div className="md:col-span-2">
-                <Label>Componentes Inclusos (um por linha - se vazio, será gerado automaticamente)</Label>
-                <textarea
-                  className="w-full min-h-[100px] p-2.5 border rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-navy"
-                  placeholder="Ex:&#10;10x Painéis Solares Jinko 550W&#10;1x Inversor Growatt MIC 5000TL-X&#10;Estruturas de fixação para 10 painéis"
-                  value={Array.isArray(editando.componentes) ? editando.componentes.join("\n") : ""}
-                  onChange={(e) => {
-                    const lines = e.target.value.split("\n").filter(line => line.trim() !== "");
-                    setEditando((p: any) => ({ ...p, componentes: lines.length > 0 ? lines : null }));
-                  }}
-                />
+
+              {/* Detalhes Técnicos Secundários Collapsible */}
+              <div className="md:col-span-2 pt-2 border-t mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTechDetails(!showTechDetails)}
+                  className="text-xs text-[#2E44B8] hover:underline font-bold flex items-center gap-1 cursor-pointer bg-transparent border-0"
+                >
+                  {showTechDetails ? "▼ Ocultar Especificações Técnicas Adicionais" : "▶ Mostrar Especificações Técnicas Adicionais (Garantia, Tecnologia, Componentes...)"}
+                </button>
+
+                {showTechDetails && (
+                  <div className="grid md:grid-cols-2 gap-4 mt-4 animate-fade-in text-xs">
+                    <div>
+                      <Label>Potência do módulo (W)</Label>
+                      <Input type="number" value={editando.potencia_modulo_w} onChange={F("potencia_modulo_w")} placeholder="555" />
+                    </div>
+                    <div>
+                      <Label>Tecnologia do Módulo</Label>
+                      <Select value={editando.tecnologia_modulo} onValueChange={(v) => setEditando((p: any) => ({ ...p, tecnologia_modulo: v }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Monocristalino N-Type TOPCon">Mono N-Type TOPCon</SelectItem>
+                          <SelectItem value="Monocristalino PERC">Mono PERC</SelectItem>
+                          <SelectItem value="Monocristalino PERC Bifacial">Mono PERC Bifacial</SelectItem>
+                          <SelectItem value="Monocristalino TOPCon">Mono TOPCon</SelectItem>
+                          <SelectItem value="Monocristalino Bifacial TOPCon">Mono Bifacial TOPCon</SelectItem>
+                          <SelectItem value="Monocristalino N-Type Bifacial">Mono N-Type Bifacial</SelectItem>
+                          <SelectItem value="HJT Heterojunção">HJT Heterojunção</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Eficiência módulo (%)</Label>
+                      <Input type="number" step="0.1" value={editando.eficiencia_modulo} onChange={F("eficiencia_modulo")} />
+                    </div>
+                    <div>
+                      <Label>Tipo de inversor</Label>
+                      <Select value={editando.tipo_inversor} onValueChange={(v) => setEditando((p: any) => ({ ...p, tipo_inversor: v }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="String On-Grid">String On-Grid</SelectItem>
+                          <SelectItem value="String On-Grid Trifásico">String On-Grid Trifásico</SelectItem>
+                          <SelectItem value="Híbrido com Armazenamento">Híbrido com Armazenamento</SelectItem>
+                          <SelectItem value="Microinversor">Microinversor</SelectItem>
+                          <SelectItem value="Central Inverter On-Grid">Central Inverter On-Grid</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Garantia módulos (anos)</Label>
+                      <Input type="number" value={editando.garantia_modulos_anos} onChange={F("garantia_modulos_anos")} />
+                    </div>
+                    <div>
+                      <Label>Garantia inversor (anos)</Label>
+                      <Input type="number" value={editando.garantia_inversor_anos} onChange={F("garantia_inversor_anos")} />
+                    </div>
+                    <div>
+                      <Label>Consumo mín. (kWh/mês)</Label>
+                      <Input type="number" value={editando.consumo_kwh_min} onChange={F("consumo_kwh_min")} placeholder="300" />
+                    </div>
+                    <div>
+                      <Label>Consumo máx. (kWh/mês)</Label>
+                      <Input type="number" value={editando.consumo_kwh_max} onChange={F("consumo_kwh_max")} placeholder="500" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label>Link do kit no Fornecedor (URL B2B)</Label>
+                      <Input value={editando.url_fornecedor || ""} onChange={F("url_fornecedor")} placeholder="https://www.aldosolar.com.br/gerador..." />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label>Componentes Inclusos (um por linha)</Label>
+                      <textarea
+                        className="w-full min-h-[100px] p-2.5 border rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-navy"
+                        placeholder="Ex:&#10;10x Painéis Solares Jinko 550W&#10;1x Inversor Growatt MIC 5000TL-X"
+                        value={Array.isArray(editando.componentes) ? editando.componentes.join("\n") : ""}
+                        onChange={(e) => {
+                          const lines = e.target.value.split("\n").filter(line => line.trim() !== "");
+                          setEditando((p: any) => ({ ...p, componentes: lines.length > 0 ? lines : null }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col gap-3 pt-2 md:col-span-2">
                 <label className="flex items-center gap-2 cursor-pointer">

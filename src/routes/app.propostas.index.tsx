@@ -140,24 +140,6 @@ function PropostasList() {
         )}
       </Card>
 
-      {/* KPIs rápidos */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        {Object.entries(STATUS_LABEL).map(([k, v]) => {
-          const count = propostas.filter((p) => p.status === k).length;
-          if (count === 0) return null;
-          return (
-            <button
-              key={k}
-              onClick={() => setFilterStatus(filterStatus === k ? "todos" : k)}
-              className={`p-3 rounded-xl border-2 text-center transition cursor-pointer ${filterStatus === k ? "border-navy bg-navy/5" : "border-transparent bg-white shadow-sm hover:border-navy/20"}`}
-            >
-              <div className="text-xl font-extrabold text-navy">{count}</div>
-              <Badge className={`${v.color} text-[10px] mt-1`}>{v.label}</Badge>
-            </button>
-          );
-        })}
-      </div>
-
       {filtered.length === 0 ? (
         <Card className="p-12 text-center border-0 shadow-md">
           <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
@@ -166,7 +148,7 @@ function PropostasList() {
       ) : (
         <Card className="border-0 shadow-md overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase text-muted-foreground">
+            <thead className="suns-table-header text-left">
               <tr>
                 <th className="p-3">Título</th>
                 <th className="p-3">Cliente(s)</th>
