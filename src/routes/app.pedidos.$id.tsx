@@ -49,7 +49,7 @@ function PedidoDetail() {
       (supabase.from as any)("pedidos")
         .select("*, cliente:cliente_id(nome, telefone, email)")
         .eq("id", id).maybeSingle(),
-      supabase.from("kits_solares").select("*").eq("ativo", true)
+      (supabase.from as any)("kits_produtos").select("*").eq("ativo", true)
     ]);
     
     setP(ped);

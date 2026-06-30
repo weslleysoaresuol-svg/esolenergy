@@ -62,7 +62,7 @@ function PropostaDetail() {
       // Resolvendo o snapshot do kit associado à proposta
       let kitSnapshot = null;
       if (proposta.kit_id) {
-        const { data: kt } = await supabase.from("kits_solares").select("*").eq("id", proposta.kit_id).maybeSingle();
+        const { data: kt } = await (supabase.from as any)("kits_produtos").select("*").eq("id", proposta.kit_id).maybeSingle();
         kitSnapshot = kt;
       }
       if (!kitSnapshot) {

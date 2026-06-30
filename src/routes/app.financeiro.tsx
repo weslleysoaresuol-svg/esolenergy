@@ -84,8 +84,8 @@ function FinanceiroDashboard() {
           .order("created_at", { ascending: false }),
         (supabase.from as any)("fornecedores_solar").select("*").order("nome"),
         (supabase.from as any)("pedidos").select("id, numero, valor_total, cliente:cliente_id(nome)").order("created_at"),
-        supabase.from("gateway_settings").select("*").eq("id", "active_config").maybeSingle(),
-        supabase.from("gateway_transactions")
+        (supabase.from as any)("gateway_settings").select("*").eq("id", "active_config").maybeSingle(),
+        (supabase.from as any)("gateway_transactions")
           .select("*, cliente:cliente_id(nome, email, telefone, cpf_cnpj), pedido:pedido_id(numero)")
           .order("created_at", { ascending: false }),
         supabase.from("profiles").select("id, nome, email, telefone, cpf_cnpj").order("nome")
@@ -180,8 +180,7 @@ function FinanceiroDashboard() {
   // Funções dos Gateways de Pagamento
   const salvarSettings = async () => {
     setSalvandoSettings(true);
-    const { error } = await supabase
-      .from("gateway_settings")
+    const { error } = await (supabase.from as any)("gateway_settings")
       .upsert({ id: "active_config", ...gatewaySettings });
     setSalvandoSettings(false);
     if (error) toast.error("Erro ao salvar configurações: " + error.message);
@@ -226,8 +225,7 @@ function FinanceiroDashboard() {
       if (!chargeRes.success) throw new Error("Falha na geração da cobrança");
 
       // 3. Salva no banco de dados local
-      const { data: inserted, error: dbErr } = await supabase
-        .from("gateway_transactions")
+      const { data: inserted, error: dbErr } = await (supabase.from as any)("gateway_transactions")
         .insert({
           pedido_id: novaCob.pedido_id || null,
           cliente_id: novaCob.cliente_id,
@@ -273,8 +271,7 @@ function FinanceiroDashboard() {
 
   const simularRecebimento = async (tx: any) => {
     try {
-      const { error: txErr } = await supabase
-        .from("gateway_transactions")
+      const { error: txErr } = await (supabase.from as any)("gateway_transactions")
         .update({ status: "paid" })
         .eq("id", tx.id);
       if (txErr) throw txErr;
@@ -320,8 +317,7 @@ function FinanceiroDashboard() {
       const refundRes = await gateway.refundCharge(tx.external_id);
       if (!refundRes.success) throw new Error("Falha no reembolso");
 
-      const { error: txErr } = await supabase
-        .from("gateway_transactions")
+      const { error: txErr } = await (supabase.from as any)("gateway_transactions")
         .update({ status: "refunded" })
         .eq("id", tx.id);
       if (txErr) throw txErr;
