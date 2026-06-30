@@ -292,7 +292,15 @@ function FinanceiroDashboard() {
       });
       if (lanErr) throw lanErr;
 
-      toast.success("Webhook Simulado! Pagamento recebido e fluxo de caixa conciliado.");
+      // Atualiza o pedido vinculado para EXPEDIDO (pois foi pago/faturado)
+      if (tx.pedido_id) {
+        await (supabase.from as any)("pedidos").update({
+          status: "expedido",
+          comprovante_url: tx.boleto_url || tx.pix_qr_code || null
+        }).eq("id", tx.pedido_id);
+      }
+
+      toast.success("Webhook Simulado! Pagamento recebido, fluxo de caixa conciliado e pedido expedido.");
       loadData();
     } catch (err: any) {
       toast.error("Erro na simulação de webhook: " + err.message);
@@ -331,7 +339,14 @@ function FinanceiroDashboard() {
       });
       if (lanErr) throw lanErr;
 
-      toast.success("Reembolso concluído e debitado no fluxo de caixa.");
+      // Cancela o pedido correspondente ao estorno
+      if (tx.pedido_id) {
+        await (supabase.from as any)("pedidos").update({
+          status: "cancelado"
+        }).eq("id", tx.pedido_id);
+      }
+
+      toast.success("Reembolso simulado e pedido cancelado com sucesso!");
       loadData();
     } catch (err: any) {
       toast.error("Erro ao estornar cobrança: " + err.message);

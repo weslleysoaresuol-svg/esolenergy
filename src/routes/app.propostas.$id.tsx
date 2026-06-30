@@ -59,6 +59,22 @@ function PropostaDetail() {
     if (!confirm(`Confirmar pedido a partir desta proposta para ${clientePrincipal?.nome}?`)) return;
 
     try {
+      // Resolvendo o snapshot do kit associado à proposta
+      let kitSnapshot = null;
+      if (proposta.kit_id) {
+        const { data: kt } = await supabase.from("kits_solares").select("*").eq("id", proposta.kit_id).maybeSingle();
+        kitSnapshot = kt;
+      }
+      if (!kitSnapshot) {
+        kitSnapshot = {
+          nome: proposta.titulo || "Kit Solar",
+          potencia_kwp: proposta.kwp_sistema,
+          quantidade_modulos: proposta.qtd_modulos,
+          preco: proposta.preco_total,
+          inversor: proposta.potencia_inversor_kw ? `${proposta.potencia_inversor_kw} kW` : "Não especificado"
+        };
+      }
+
       const { data, error } = await (supabase.from as any)("pedidos").insert({
         parceiro_id: proposta.parceiro_id,
         cliente_id: clientePrincipal.id,
@@ -67,6 +83,7 @@ function PropostaDetail() {
         valor_total: proposta.preco_total,
         descricao: `Pedido gerado a partir da Proposta`,
         status: "novo",
+        kit_snapshot: kitSnapshot
       }).select().single();
 
       if (error) throw error;

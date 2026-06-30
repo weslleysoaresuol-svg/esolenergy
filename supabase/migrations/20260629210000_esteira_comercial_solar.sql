@@ -11,6 +11,6 @@ ALTER TABLE public.financiamentos
     ADD COLUMN IF NOT EXISTS contrato_banco_url TEXT,
     ADD COLUMN IF NOT EXISTS comprovante_financiamento_url TEXT;
 
--- ADICIONA NOVO STATUS NA ESTEIRA DE PEDIDOS: 'analise_tecnica'
--- O PostgreSQL não permite apagar/alterar diretamente um tipo ENUM existente facilmente, 
--- mas podemos garantir que os campos aceitem os novos status operacionais.
+-- ADICIONA NOVOS STATUS OPERACIONAIS NO ENUM DE PEDIDOS DO POSTGRESQL
+ALTER TYPE public.pedido_status ADD VALUE IF NOT EXISTS 'analise_tecnica';
+ALTER TYPE public.pedido_status ADD VALUE IF NOT EXISTS 'assinatura_contrato';

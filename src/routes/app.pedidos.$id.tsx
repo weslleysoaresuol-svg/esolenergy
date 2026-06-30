@@ -213,7 +213,31 @@ function PedidoDetail() {
         status: "assinatura_contrato" // Avança para assinatura do contrato
       }).eq("id", p.id);
 
-      toast.success("Substituição de kit aprovada! Seguindo para Contrato.");
+      // Recalcula comissões vinculadas
+      const { data: coms } = await (supabase.from as any)("parceiro_comissoes")
+        .select("id, percentual_comissao, total_parcelas")
+        .eq("pedido_id", p.id);
+        
+      if (coms && coms.length > 0) {
+        for (const com of coms) {
+          const novoValCom = (Number(kitSugerido.preco) * (Number(com.percentual_comissao) / 100)) / Number(com.total_parcelas);
+          await (supabase.from as any)("parceiro_comissoes")
+            .update({
+              valor_total_pedido: kitSugerido.preco,
+              valor_comissao: novoValCom
+            })
+            .eq("id", com.id);
+        }
+      }
+
+      // Atualiza valor de pagamento ao fornecedor do kit (Faturamento Direto)
+      await (supabase.from as any)("fornecedor_pagamentos")
+        .update({
+          valor_kit: Number(kitSugerido.preco) * 0.5
+        })
+        .eq("pedido_id", p.id);
+
+      toast.success("Substituição de kit aprovada, comissões recalculadas e fornecedor atualizado!");
       load();
     } catch (err: any) {
       toast.error("Erro ao aprovar substituição: " + err.message);
