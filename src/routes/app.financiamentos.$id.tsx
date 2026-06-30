@@ -122,7 +122,7 @@ function FinDetail() {
     toast.success("Link público liberado!");
   };
 
-  const link = `${window.location.origin}/financiamento/${f.codigo_publico}`;
+  const link = typeof window !== "undefined" ? `${window.location.origin}/financiamento/${f.codigo_publico}` : "";
   const copiar = async () => { await navigator.clipboard.writeText(link); toast.success("Link copiado"); };
   const whatsapp = () => {
     const msg = encodeURIComponent(`Olá ${f.cliente?.nome}, acompanhe seu financiamento aqui:\n${link}`);

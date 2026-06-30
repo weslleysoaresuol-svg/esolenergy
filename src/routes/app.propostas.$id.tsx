@@ -34,7 +34,7 @@ function PropostaDetail() {
     })();
   }, [id]);
 
-  const linkPublico = proposta ? `${window.location.origin}/proposta/${proposta.codigo_publico}` : "";
+  const linkPublico = proposta && typeof window !== "undefined" ? `${window.location.origin}/proposta/${proposta.codigo_publico}` : "";
 
   const copyLink = () => { navigator.clipboard.writeText(linkPublico); toast.success("Link copiado!"); };
   const whatsapp = (telefone: string, nome: string) => {

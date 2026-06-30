@@ -36,7 +36,7 @@ function CotacaoDetail() {
   if (!c) return <div className="p-6">Cotação não encontrada</div>;
 
   const kit = c.kit || c.kit_snapshot;
-  const linkPublico = `${window.location.origin}/cotacao/${c.codigo_publico}`;
+  const linkPublico = typeof window !== "undefined" ? `${window.location.origin}/cotacao/${c.codigo_publico}` : "";
 
   const baixarPDF = async () => {
     // Print-friendly: usa window.print num clone simples
