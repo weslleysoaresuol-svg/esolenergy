@@ -1001,7 +1001,7 @@ function FinalCTA() {
                       )}
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50">
+                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50 block">
                         Conta mensal (R$)
                       </label>
                       <input
@@ -1012,7 +1012,7 @@ function FinalCTA() {
                           setForm((f) => ({ ...f, conta: Number(e.target.value.replace(/\D/g, "")) || 0 }))
                         }
                         placeholder="Ex: 850"
-                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy font-semibold outline-none focus:ring-2 focus:ring-sun transition-all"
+                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
                       />
                       <p className="mt-1 text-[10px] text-ink/40">Já preenchemos com o valor do simulador.</p>
                     </div>
