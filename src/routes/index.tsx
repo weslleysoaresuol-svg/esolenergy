@@ -192,14 +192,14 @@ function Hero() {
   const { setBill } = useBill();
   const [val, setVal] = useState("");
   return (
-    <section id="top" className="relative pt-32 pb-24 overflow-hidden">
+    <section id="top" className="relative pt-24 sm:pt-28 pb-12 lg:py-0 lg:h-[calc(100vh-80px)] lg:min-h-[600px] lg:max-h-[800px] flex items-center overflow-hidden">
       {/* sun glow */}
       <div className="pointer-events-none absolute -top-32 -right-40 w-[640px] h-[640px] rounded-full bg-sun/30 blur-3xl animate-sun-pulse" />
       <div className="pointer-events-none absolute top-40 -left-20 w-[420px] h-[420px] rounded-full bg-navy/10 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-14 items-center">
-        <div className="animate-fade-up">
-          <div className="inline-flex items-center gap-2 rounded-full bg-sun/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-navy">
+      <div className="relative mx-auto max-w-7xl px-6 w-full grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+        <div className="animate-fade-up flex flex-col justify-center">
+          <div className="inline-flex self-start items-center gap-2 rounded-full bg-sun/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-navy">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-sun-deep opacity-75 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-sun-deep" />
@@ -207,16 +207,16 @@ function Hero() {
             Líder em eficiência fotovoltaica
           </div>
 
-          <h1 className="mt-6 font-display text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.02] text-navy text-balance">
+          <h1 className="mt-4 font-display text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-extrabold leading-[1.05] text-navy text-balance">
             Deixe o sol{" "}
             <span className="relative inline-block">
               <span className="relative z-10 text-navy">trabalhar</span>
-              <span className="absolute inset-x-0 bottom-1 h-4 bg-sun/60 -z-0 rounded-sm" />
+              <span className="absolute inset-x-0 bottom-1 h-3 bg-sun/60 -z-0 rounded-sm" />
             </span>{" "}
             por você.
           </h1>
 
-          <p className="mt-7 max-w-xl text-lg text-ink/70 leading-relaxed text-pretty">
+          <p className="mt-4 max-w-xl text-base text-ink/70 leading-relaxed text-pretty">
             Reduza sua conta de luz em até <strong className="text-navy">95%</strong> com sistemas
             fotovoltaicos premium da ESOL Energy. Engenharia, instalação e monitoramento 25 anos de garantia.
           </p>
@@ -231,7 +231,7 @@ function Hero() {
                 document.getElementById("simulador")?.scrollIntoView({ behavior: "smooth", block: "start" });
               });
             }}
-            className="mt-9 flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl shadow-deep border border-border max-w-xl"
+            className="mt-6 flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl shadow-deep border border-border max-w-xl"
           >
             <div className="flex items-center gap-3 flex-1 px-4">
               <span className="text-ink/40 font-semibold">R$</span>
@@ -267,32 +267,32 @@ function Hero() {
         </div>
 
         {/* Visual */}
-        <div className="relative animate-fade-up [animation-delay:150ms]">
-          <div className="relative rounded-[36px] overflow-hidden shadow-deep ring-1 ring-black/5">
+        <div className="relative animate-fade-up [animation-delay:150ms] w-full max-w-[500px] mx-auto lg:h-[400px]">
+          <div className="relative rounded-[28px] overflow-hidden shadow-deep ring-1 ring-black/5 h-full">
             <img
               src={heroHouse}
               alt="Residência brasileira de alto padrão com sistema solar fotovoltaico ESOL Energy"
               width={1024}
               height={1024}
-              className="w-full h-auto aspect-square object-cover"
+              className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-navy/30 via-transparent to-transparent" />
           </div>
 
           {/* floating stats */}
-          <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-deep p-5 border border-border animate-float">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-ink/50">
+          <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-deep p-4 border border-border animate-float">
+            <div className="text-[9px] font-bold uppercase tracking-widest text-ink/50">
               Economia média / 10 anos
             </div>
-            <div className="mt-1 font-display font-extrabold text-3xl text-navy">
+            <div className="mt-0.5 font-display font-extrabold text-2xl text-navy">
               R$ 184<span className="text-sun">k</span>
             </div>
           </div>
-          <div className="absolute -top-4 -right-4 bg-navy text-white rounded-2xl shadow-deep p-5 animate-float [animation-delay:1.5s]">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-sun">
+          <div className="absolute -top-4 -right-4 bg-navy text-white rounded-2xl shadow-deep p-4 animate-float [animation-delay:1.5s]">
+            <div className="text-[9px] font-bold uppercase tracking-widest text-sun">
               Geração hoje
             </div>
-            <div className="mt-1 font-display font-extrabold text-2xl">42,8 kWh</div>
+            <div className="mt-0.5 font-display font-extrabold text-xl">42,8 kWh</div>
           </div>
         </div>
       </div>
