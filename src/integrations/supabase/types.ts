@@ -1039,6 +1039,7 @@ export type Database = {
       consume_invite: { Args: { _token: string }; Returns: boolean }
       get_cotacao_publica: { Args: { _codigo: string }; Returns: Json }
       get_financiamento_publico: { Args: { _codigo: string }; Returns: Json }
+      get_parametros_landing: { Args: never; Returns: Json }
       get_parametros_publicos: { Args: never; Returns: Json }
       get_proposta_publica: { Args: { _codigo: string }; Returns: Json }
       has_role: {
