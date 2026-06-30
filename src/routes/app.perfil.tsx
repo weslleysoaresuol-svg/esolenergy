@@ -92,7 +92,7 @@ function PerfilPage() {
     toast.success("Perfil atualizado com sucesso!");
     await refresh();
     // Parceiro vai para o contrato, se ainda não assinou
-    if (role !== "admin" && !profile?.contrato_assinado) navigate({ to: "/app/contrato" });
+    if (role === "corretor" && !profile?.contrato_assinado) navigate({ to: "/app/contrato" });
     else navigate({ to: "/app" });
   };
 

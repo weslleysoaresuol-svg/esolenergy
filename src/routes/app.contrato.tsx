@@ -37,7 +37,7 @@ function ContratoPage() {
 
   useEffect(() => {
     if (!profile) return;
-    if (role === "admin" || profile.contrato_assinado) {
+    if (role === "admin" || role !== "corretor" || profile.contrato_assinado) {
       navigate({ to: "/app" });
       return;
     }

@@ -185,7 +185,7 @@ function AppShell() {
     }
     if (
       !loading && user && profile && profile.onboarding_completo &&
-      role && role !== "admin" && !profile.contrato_assinado &&
+      role && role === "corretor" && !profile.contrato_assinado &&
       pathname !== "/app/contrato" && pathname !== "/app/perfil"
     ) {
       navigate({ to: "/app/contrato" });

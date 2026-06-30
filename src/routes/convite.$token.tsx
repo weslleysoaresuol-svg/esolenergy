@@ -156,11 +156,11 @@ function InvitePage() {
           <ol className="space-y-2 text-sm">
             <li className="flex gap-3"><UserPlus className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>1.</strong> Criar sua conta (Google ou email)</span></li>
             <li className="flex gap-3"><CheckCircle2 className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>2.</strong> Completar seu perfil de acesso</span></li>
-            <li className="flex gap-3"><FileSignature className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span>
-              <strong>3.</strong> {roleToAssign === "corretor" 
-                ? "Ler e assinar o contrato de parceria" 
-                : "Ler e assinar o termo de confidencialidade (NDA)"}
-            </span></li>
+            {roleToAssign === "corretor" && (
+              <li className="flex gap-3"><FileSignature className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span>
+                <strong>3.</strong> Ler e assinar o contrato de parceria
+              </span></li>
+            )}
           </ol>
         </div>
 
