@@ -177,7 +177,6 @@ function FloatingOrcamento() {
       }`}
     >
       <span className="relative inline-flex items-center gap-2 rounded-full bg-sun text-navy px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-glow cta-halo overflow-hidden">
-        <Sparkles className="size-4" />
         Orçamento grátis
         <span aria-hidden className="pointer-events-none absolute inset-0">
           <span className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] animate-[cta-shine_2.8s_ease-in-out_infinite]" />
@@ -192,7 +191,7 @@ function Hero() {
   const { setBill } = useBill();
   const [val, setVal] = useState("");
   return (
-    <section id="top" className="relative pt-24 sm:pt-28 pb-12 lg:py-0 lg:h-[calc(100vh-80px)] lg:min-h-[600px] lg:max-h-[800px] flex items-center overflow-hidden">
+    <section id="top" className="relative pt-32 sm:pt-36 pb-16 lg:pt-32 lg:pb-16 overflow-hidden">
       {/* sun glow */}
       <div className="pointer-events-none absolute -top-32 -right-40 w-[640px] h-[640px] rounded-full bg-sun/30 blur-3xl animate-sun-pulse" />
       <div className="pointer-events-none absolute top-40 -left-20 w-[420px] h-[420px] rounded-full bg-navy/10 blur-3xl" />
