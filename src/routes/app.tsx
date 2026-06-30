@@ -67,12 +67,12 @@ function NotificacoesSino({ notificacoes, naoLidas, marcarLida, marcarTodasLidas
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="relative flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-white/80 hover:bg-white/10 transition"
+        className="relative flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-navy transition duration-200"
       >
-        <Bell className="w-4 h-4" />
+        <Bell className="w-4 h-4 text-slate-400" />
         <span>Notificações</span>
         {naoLidas > 0 && (
-          <span className="absolute top-1.5 left-5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center px-1 shadow-md animate-pulse">
+          <span className="absolute top-2 left-6 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center px-1 shadow-md animate-pulse">
             {naoLidas > 9 ? "9+" : naoLidas}
           </span>
         )}
@@ -94,7 +94,7 @@ function NotificacoesSino({ notificacoes, naoLidas, marcarLida, marcarTodasLidas
             {naoLidas > 0 && (
               <button
                 onClick={marcarTodasLidas}
-                className="text-xs text-sun-deep hover:underline flex items-center gap-1"
+                className="text-xs text-sun-deep hover:underline flex items-center gap-1 font-semibold"
               >
                 <CheckCheck className="w-3 h-3" /> Marcar todas lidas
               </button>
@@ -203,8 +203,8 @@ function AppShell() {
 
   if (!loading && user && role === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
-        <div className="max-w-md text-center bg-white rounded-2xl shadow p-8">
+      <div className="min-h-screen flex items-center justify-center p-6 suns-bg">
+        <div className="max-w-md text-center bg-white rounded-2xl shadow p-8 border border-slate-100">
           <h1 className="text-xl font-bold text-navy mb-2">Acesso pendente</h1>
           <p className="text-sm text-muted-foreground mb-6">
             Sua conta foi criada, mas ainda não está vinculada à equipe ESOL Energy. Solicite um <strong>link de convite</strong> ao administrador para concluir seu cadastro.
@@ -323,19 +323,15 @@ function AppShell() {
                 : corretorNav;
 
   return (
-    <div className="min-h-screen bg-[#F4F8F8] flex relative overflow-hidden">
-      {/* Luzes de fundo decorativas ambientais (estilo Suns Brasil) */}
-      <div className="absolute top-[-10%] right-[-5%] w-[450px] h-[450px] rounded-full bg-sun/8 blur-[130px] pointer-events-none animate-pulse" />
-      <div className="absolute bottom-[-10%] left-[20%] w-[550px] h-[550px] rounded-full bg-[#3B82F6]/6 blur-[160px] pointer-events-none animate-orbit" />
-
+    <div className="min-h-screen suns-bg flex relative overflow-hidden">
       {/* Sidebar desktop */}
-      <aside className="hidden md:flex w-64 flex-col glass-sidebar text-white p-5 shadow-2xl z-20 relative">
-        <Link to="/" className="mb-8 block transition-transform hover:scale-[1.02]">
-          <img src={logo} alt="ESOL" className="h-10 w-auto brightness-0 invert opacity-95" />
+      <aside className="hidden md:flex w-60 flex-col suns-sidebar text-navy p-5 z-20 relative">
+        <Link to="/" className="mb-8 block transition-transform hover:scale-[1.01]">
+          <img src={logo} alt="ESOL" className="h-8 w-auto opacity-95" />
         </Link>
         <div className="mb-6 px-2">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">{ROLE_LABELS[role ?? ""] || "Parceiro"}</div>
-          <div className="font-semibold truncate text-sm text-slate-100">{profile?.nome || user.email}</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{ROLE_LABELS[role ?? ""] || "Parceiro"}</div>
+          <div className="font-bold truncate text-sm text-navy">{profile?.nome || user.email}</div>
         </div>
         <nav className="space-y-1 flex-1">
           {nav.map((item: any) => {
@@ -346,40 +342,40 @@ function AppShell() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active 
-                    ? "bg-white/10 text-white font-semibold border-l-2 border-sun-deep pl-[12px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" 
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                    ? "bg-slate-100 text-navy font-bold shadow-[inset_0_1px_1px_rgba(0,0,0,0.01)]" 
+                    : "text-slate-600 hover:bg-slate-50 hover:text-navy"
                 }`}
               >
-                <item.icon className={`w-4 h-4 transition-transform duration-300 ${active ? "text-sun-deep scale-110" : "text-white/60"}`} />
+                <item.icon className={`w-4 h-4 transition-transform duration-200 ${active ? "text-[#2E44B8] scale-110" : "text-slate-400"}`} />
                 {item.label}
               </Link>
             );
           })}
 
           {/* Divisor */}
-          <div className="my-2 border-t border-white/5" />
+          <div className="my-2 border-t border-slate-100" />
 
           {/* Sino de Notificações */}
           <NotificacoesSino {...notifData} />
         </nav>
 
-        <Button onClick={signOut} variant="ghost" className="text-white/60 hover:text-white hover:bg-white/5 justify-start rounded-xl">
+        <Button onClick={signOut} variant="ghost" className="text-slate-500 hover:text-navy hover:bg-slate-50 justify-start rounded-xl font-semibold">
           <LogOut className="w-4 h-4 mr-2" />Sair
         </Button>
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 inset-x-0 bg-[#0B0F19]/90 backdrop-blur-md text-white z-40 flex items-center justify-between px-4 h-14 border-b border-white/5">
-        <img src={logo} alt="ESOL" className="h-8 w-auto brightness-0 invert" />
+      <div className="md:hidden fixed top-0 inset-x-0 bg-white text-navy z-40 flex items-center justify-between px-4 h-14 border-b border-slate-200/60 shadow-sm animate-fade-in">
+        <img src={logo} alt="ESOL" className="h-8 w-auto" />
         <div className="flex items-center gap-3">
           {/* Sino mobile */}
           <MobileBellBadge count={naoLidas} onClick={() => navigate({ to: "/app" })} />
           <select
             value={pathname}
             onChange={(e) => navigate({ to: e.target.value as any })}
-            className="bg-[#0B0F19]/80 text-white text-xs rounded-lg px-2.5 py-1 border border-white/10"
+            className="bg-white text-navy text-xs rounded-lg px-2.5 py-1 border border-slate-200"
           >
             {nav.map((n) => <option key={n.to} value={n.to}>{n.label}</option>)}
           </select>
@@ -396,7 +392,7 @@ function AppShell() {
 function MobileBellBadge({ count, onClick }: { count: number; onClick: () => void }) {
   return (
     <button onClick={onClick} className="relative p-1">
-      <Bell className="w-5 h-5 text-white" />
+      <Bell className="w-5 h-5 text-navy" />
       {count > 0 && (
         <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 animate-pulse">
           {count > 9 ? "9+" : count}

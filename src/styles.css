@@ -235,33 +235,47 @@
 /* =========================================================
    ESTILOS PREMIUM (STYLE SUNS BRASIL)
    ========================================================= */
-@keyframes orbit {
-  0% { transform: rotate(0deg) translate(25px) rotate(0deg); }
-  100% { transform: rotate(360deg) translate(25px) rotate(-360deg); }
+@utility suns-bg {
+  background-color: #F4F6FA !important;
 }
 
-@utility animate-orbit {
-  animation: orbit 25s linear infinite;
+@utility suns-sidebar {
+  background-color: #FFFFFF !important;
+  border-right: 1px solid #E2E8F0 !important;
 }
 
-@utility glass-panel {
-  background-color: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+@utility suns-card {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
 }
 
-@utility glass-sidebar {
-  background-color: rgba(11, 15, 25, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+@utility suns-table-header {
+  background-color: #EBF0F6 !important;
+  color: #4F5E7B !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 0.65rem !important;
+  letter-spacing: 0.05em !important;
 }
 
-@utility glow-soft-sun {
-  box-shadow: 0 10px 40px -10px rgba(245, 158, 11, 0.12);
+@utility suns-btn-primary {
+  background-color: #2E44B8 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+@utility suns-btn-primary:hover {
+  background-color: #1F3095 !important;
 }
 
-@utility glow-soft-blue {
-  box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.1);
+@utility suns-btn-accent {
+  background-color: #76D7C4 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+@utility suns-btn-accent:hover {
+  background-color: #5DBCAB !important;
 }

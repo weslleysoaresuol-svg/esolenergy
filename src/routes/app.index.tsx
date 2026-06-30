@@ -242,26 +242,16 @@ function AdminDashboard() {
   }, [clientes]);
 
   return (
-    <div className="space-y-6 max-w-7xl relative">
-      {/* Topo do Painel */}
-      <div className="flex items-center justify-between flex-wrap gap-4 bg-white/20 backdrop-blur-md p-5 rounded-3xl border border-white/40 shadow-sm">
-        <div>
-          <h1 className="text-3xl font-extrabold text-navy tracking-tight">Painel de Controle</h1>
-          <p className="text-xs text-muted-foreground mt-0.5 font-medium">Visão geral gerencial — {corretoresCount} parceiros ativos na equipe</p>
-        </div>
-        <div className="flex items-center gap-3 flex-wrap">
-          <Link to="/app/clientes" className="inline-flex items-center gap-2 bg-white/70 hover:bg-white text-navy px-4.5 py-2 rounded-full font-bold border border-slate-100 text-xs transition shadow-sm">
-            📂 Ver Clientes
-          </Link>
-          <Link to="/app/propostas" className="inline-flex items-center gap-2 bg-white/70 hover:bg-white text-navy px-4.5 py-2 rounded-full font-bold border border-slate-100 text-xs transition shadow-sm">
-            📝 Propostas
-          </Link>
-          
-          {/* ABA DE BI EM CAMADA DESLIZANTE (SHEET) */}
+    <div className="space-y-8 max-w-7xl mx-auto px-1 animate-fade-in">
+      {/* Título e Botão Oculto de BI */}
+      <div className="flex justify-between items-center flex-wrap gap-3">
+        <h2 className="text-xl font-bold text-navy">O que você deseja fazer agora?</h2>
+        
+        {role === "admin" && (
           <Sheet>
             <SheetTrigger asChild>
-              <Button className="inline-flex items-center gap-2 bg-gradient-to-r from-sun to-amber-500 hover:from-sun-deep hover:to-amber-600 text-navy font-bold rounded-full text-xs px-4.5 py-2 transition-all shadow-md">
-                <BarChart3 className="w-4 h-4 text-navy" /> Inteligência Comercial (BI)
+              <Button variant="ghost" className="text-slate-600 hover:text-navy hover:bg-slate-100 flex items-center gap-1.5 text-xs font-bold rounded-lg px-3.5 py-2 border border-slate-200 bg-white shadow-sm transition">
+                <BarChart3 className="w-4 h-4 text-[#2E44B8]" /> Inteligência Comercial (BI)
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-[#0B0F19]/98 border-l border-white/10 text-white p-6 shadow-2xl">
@@ -391,231 +381,117 @@ function AdminDashboard() {
               </div>
             </SheetContent>
           </Sheet>
+        )}
+      </div>
+
+      {/* Banner Central WhatsApp */}
+      <div className="w-full relative rounded-3xl overflow-hidden shadow-sm border border-slate-200/50 hover:shadow-md transition duration-300">
+        <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-800 p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <span className="text-4xl md:text-5xl">📱</span>
+            <div>
+              <div className="text-[10px] md:text-xs uppercase font-bold tracking-widest text-blue-200">Participe e receba</div>
+              <h3 className="text-xl md:text-2xl font-black mt-1 leading-tight tracking-tight">INFORMAÇÕES RELEVANTES</h3>
+              <p className="text-xs text-blue-100 font-medium mt-1">Entre em nossa comunidade do WhatsApp para novidades de kits, cotações e suporte em tempo real.</p>
+            </div>
+          </div>
+          <a
+            href="https://chat.whatsapp.com/ESOLCommunity"
+            target="_blank" rel="noreferrer"
+            className="bg-white text-blue-900 hover:bg-slate-100 px-6 py-3 rounded-full font-black text-xs transition shadow-md whitespace-nowrap"
+          >
+            CLIQUE AQUI E ACESSE
+          </a>
         </div>
       </div>
 
-      {/* ATALHOS DE ACESSO RÁPIDO */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Link to="/app/financiamentos" className="block group">
-          <Card className="p-4 border-l-4 border-l-emerald-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">Financiamento</span>
-                <span className="text-xl group-hover:scale-110 transition-transform">🏦</span>
-              </div>
-              <h4 className="font-extrabold text-navy text-sm mt-2">Bancos & Simulações</h4>
-              <p className="text-[11px] text-muted-foreground mt-1">Gerencie propostas e contratos de financiamento solar ativos.</p>
-            </div>
-            <div className="text-[11px] text-emerald-600 font-bold mt-4 flex items-center gap-1">
-              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-            </div>
-          </Card>
-        </Link>
-
-        <Link to="/app/cotacoes" className="block group">
-          <Card className="p-4 border-l-4 border-l-sun-deep bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-sun-deep bg-amber-50 px-2.5 py-0.5 rounded-full">Cotação</span>
-                <span className="text-xl group-hover:scale-110 transition-transform">☀️</span>
-              </div>
-              <h4 className="font-extrabold text-navy text-sm mt-2">Dimensionar Sistemas</h4>
-              <p className="text-[11px] text-muted-foreground mt-1">Calcule kits solares e irradiação HSP para gerar cotações comerciais.</p>
-            </div>
-            <div className="text-[11px] text-sun-deep font-bold mt-4 flex items-center gap-1">
-              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-            </div>
-          </Card>
-        </Link>
-
-        <Link to="/app/propostas" className="block group">
-          <Card className="p-4 border-l-4 border-l-indigo-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">Proposta</span>
-                <span className="text-xl group-hover:scale-110 transition-transform">📝</span>
-              </div>
-              <h4 className="font-extrabold text-navy text-sm mt-2">Gerador de Orçamentos</h4>
-              <p className="text-[11px] text-muted-foreground mt-1">Consulte propostas emitidas, envie links de assinatura e crie novos documentos.</p>
-            </div>
-            <div className="text-[11px] text-indigo-600 font-bold mt-4 flex items-center gap-1">
-              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-            </div>
-          </Card>
-        </Link>
-
-        <Link to="/app/clientes" className="block group">
-          <Card className="p-4 border-l-4 border-l-rose-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full">Clientes</span>
-                <span className="text-xl group-hover:scale-110 transition-transform">👥</span>
-              </div>
-              <h4 className="font-extrabold text-navy text-sm mt-2">Gestão de Carteira</h4>
-              <p className="text-[11px] text-muted-foreground mt-1">Acompanhe leads, histórico de contatos e atribuições da equipe de vendas.</p>
-            </div>
-            <div className="text-[11px] text-rose-600 font-bold mt-4 flex items-center gap-1">
-              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-            </div>
-          </Card>
-        </Link>
-      </div>
-
-      {/* KPIs Operacionais */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-sun flex flex-col justify-between h-28">
-          <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-[10px] font-bold uppercase tracking-wider">Aguardando Atribuição</span>
-            <Globe className="w-4 h-4 text-sun-deep" />
+      {/* 5 Cards de Atalho Sequenciais na mesma linha (Suns Brasil Style) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* Card 1 */}
+        <Card className="suns-card p-5 flex flex-col justify-between items-center text-center space-y-4 hover:shadow transition">
+          <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-2xl">
+            🐷
           </div>
-          <div>
-            <div className="text-2xl font-bold text-navy mt-2">{siteLeads.length}</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">Novos leads recebidos do site</div>
+          <div className="space-y-1">
+            <h4 className="font-extrabold text-navy text-sm leading-tight">Financiamentos convencionais</h4>
+            <p className="text-[10.5px] text-slate-500 leading-normal">Simule rapidamente nas principais financeiras do mercado solar.</p>
           </div>
+          <Link to="/app/financiamentos" className="w-full">
+            <Button className="w-full suns-btn-primary font-bold text-xs py-2 rounded-lg cursor-pointer">
+              Simular
+            </Button>
+          </Link>
         </Card>
 
-        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-blue flex flex-col justify-between h-28">
-          <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-[10px] font-bold uppercase tracking-wider">Sob Gestão</span>
-            <Users className="w-4 h-4 text-blue-600" />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-navy mt-2">{m.totalClientes}</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">Leads ativos na carteira</div>
-          </div>
-        </Card>
-
-        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-blue flex flex-col justify-between h-28">
-          <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-[10px] font-bold uppercase tracking-wider">Negociações</span>
-            <TrendingUp className="w-4 h-4 text-indigo-500" />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-navy mt-2">{m.negociacao}</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">Propostas em negociação</div>
-          </div>
-        </Card>
-
-        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-sun flex flex-col justify-between h-28">
-          <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-[10px] font-bold uppercase tracking-wider">Volume Faturado</span>
-            <DollarSign className="w-4 h-4 text-emerald-600" />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-emerald-700 mt-2">
-              {m.valorFechados.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+        {/* Card 2 */}
+        <div className="relative pt-3 flex w-full">
+          <span className="absolute top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white font-black text-[9px] px-2.5 py-0.5 rounded-full z-10 uppercase tracking-wider">
+            Novo
+          </span>
+          <Card className="suns-card p-5 flex flex-col justify-between items-center text-center space-y-4 hover:shadow transition w-full">
+            <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-2xl">
+              📄
             </div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">Projetos solar fechados</div>
+            <div className="space-y-1">
+              <h4 className="font-extrabold text-navy text-sm leading-tight">Financiamentos especiais</h4>
+              <p className="text-[10.5px] text-slate-500 leading-normal">Linhas de crédito exclusivas. Ideal para seu financiamento recusado.</p>
+            </div>
+            <Link to="/app/financiamentos" className="w-full">
+              <Button className="w-full bg-[#F1948A] hover:bg-[#E08379] text-white font-bold text-xs py-2 rounded-lg cursor-pointer border-0">
+                Solicitar
+              </Button>
+            </Link>
+          </Card>
+        </div>
+
+        {/* Card 3 */}
+        <Card className="suns-card p-5 flex flex-col justify-between items-center text-center space-y-4 hover:shadow transition">
+          <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-2xl">
+            🧮
           </div>
+          <div className="space-y-1">
+            <h4 className="font-extrabold text-navy text-sm leading-tight">Cotação de kit pronto</h4>
+            <p className="text-[10.5px] text-slate-500 leading-normal">Encontre o melhor preço de sistemas completos em poucos cliques.</p>
+          </div>
+          <Link to="/app/cotacoes" className="w-full">
+            <Button className="w-full suns-btn-primary font-bold text-xs py-2 rounded-lg cursor-pointer">
+              Começar Agora
+            </Button>
+          </Link>
+        </Card>
+
+        {/* Card 4 */}
+        <Card className="suns-card p-5 flex flex-col justify-between items-center text-center space-y-4 hover:shadow transition">
+          <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-2xl">
+            📦
+          </div>
+          <div className="space-y-1">
+            <h4 className="font-extrabold text-navy text-sm leading-tight">Cotação de kit personalizado</h4>
+            <p className="text-[10.5px] text-slate-500 leading-normal">Escolha, em detalhes, os componentes e produtos do seu kit solar.</p>
+          </div>
+          <Link to="/app/cotacoes" className="w-full">
+            <Button className="w-full suns-btn-primary font-bold text-xs py-2 rounded-lg cursor-pointer">
+              Começar Agora
+            </Button>
+          </Link>
+        </Card>
+
+        {/* Card 5 */}
+        <Card className="suns-card p-5 flex flex-col justify-between items-center text-center space-y-4 hover:shadow transition">
+          <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center text-2xl">
+            📝
+          </div>
+          <div className="space-y-1">
+            <h4 className="font-extrabold text-navy text-sm leading-tight">Geração de proposta</h4>
+            <p className="text-[10.5px] text-slate-500 leading-normal">Crie e envie propostas comerciais personalizadas para seus clientes.</p>
+          </div>
+          <Link to="/app/propostas" className="w-full">
+            <Button className="w-full suns-btn-primary font-bold text-xs py-2 rounded-lg cursor-pointer">
+              Gerar Agora
+            </Button>
+          </Link>
         </Card>
       </div>
-
-      {/* Funil Comercial - Esteira de Linha Única (Suns Brasil Style) */}
-      <Card className="border-0 shadow-sm glass-panel p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-navy text-sm flex items-center gap-2">
-            <Target className="w-5 h-5 text-sun-deep" /> Funil Comercial Simplificado
-          </h2>
-          {activeKanbanCol && (
-            <button onClick={() => setActiveKanbanCol(null)} className="text-xs text-slate-500 hover:text-navy underline">
-              Mostrar todos
-            </button>
-          )}
-        </div>
-        
-        <div className="relative flex flex-col md:flex-row items-center justify-between gap-3 pt-2">
-          {/* Linha horizontal decorativa no background */}
-          <div className="absolute top-[35px] left-8 right-8 h-[2px] bg-slate-200 hidden md:block z-0" />
-          
-          {KANBAN_COLS.map((col) => {
-            const count = clientes.filter((c) => col.statuses.includes(c.status)).length;
-            const receita = clientes
-              .filter((c) => col.statuses.includes(c.status))
-              .reduce((s, c) => s + Number(c.valor_estimado || 0), 0);
-            const isActive = activeKanbanCol === col.label;
-            return (
-              <button
-                key={col.label}
-                onClick={() => setActiveKanbanCol(isActive ? null : col.label)}
-                className={`relative z-10 w-full md:w-auto flex-1 flex flex-col items-center p-3 rounded-2xl transition-all duration-300 border ${
-                  isActive 
-                    ? "bg-white border-sun shadow-[0_4px_20px_rgba(245,158,11,0.08)] scale-105" 
-                    : "bg-white/50 border-slate-100 hover:bg-white hover:border-slate-200 hover:shadow-sm"
-                }`}
-              >
-                {/* Indicador visual circular */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm ${col.color} mb-2`}>
-                  {count}
-                </div>
-                <div className="text-xs font-semibold text-slate-800 text-center">{col.label}</div>
-                {receita > 0 && (
-                  <div className="text-[10px] text-emerald-600 font-extrabold mt-0.5">
-                    {receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </Card>
-
-      {/* Leads do site pendentes */}
-      <Card className="border-0 shadow-sm glass-panel border-l-4 border-l-sun-deep overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-white/50">
-          <div className="flex items-center gap-2">
-            <Inbox className="w-5 h-5 text-sun-deep" />
-            <h2 className="font-bold text-navy text-sm">Novos leads recebidos do site</h2>
-            {siteLeads.length > 0 && (
-              <Badge className="bg-sun text-navy font-bold">{siteLeads.length} aguardando</Badge>
-            )}
-          </div>
-          <Link to="/app/clientes" className="text-xs text-sun-deep hover:underline flex items-center gap-1 font-semibold">Ver todos <ArrowRight className="w-3 h-3" /></Link>
-        </div>
-        <div className="divide-y divide-slate-100">
-          {siteLeads.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground text-xs">Nenhum lead novo do site aguardando atribuição.</div>
-          ) : (
-            siteLeads.slice(0, 5).map((c) => (
-              <Link key={c.id} to="/app/cliente/$id" params={{ id: c.id }} className="flex items-center justify-between gap-3 p-4 hover:bg-white/80 transition-colors">
-                <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-navy text-sm flex items-center gap-2">
-                    {c.nome}
-                    <Badge variant="outline" className="text-[9px] border-sun-deep text-sun-deep px-2 py-0.5 rounded-full font-bold">Site</Badge>
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}/{c.estado || "—"}</div>
-                </div>
-                <div className="text-xs text-slate-400">{fmtDate(c.created_at)}</div>
-              </Link>
-            ))
-          )}
-        </div>
-      </Card>
-
-      {/* Clientes e Leads Recentes */}
-      <Card className="border-0 shadow-sm glass-panel overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-white/50">
-          <h2 className="font-bold text-navy text-sm">Clientes e leads recentes sob gestão</h2>
-          {activeKanbanCol && <Badge variant="outline" className="border-sun-deep text-sun-deep bg-amber-50 font-bold">Filtro: {activeKanbanCol}</Badge>}
-        </div>
-        <div className="divide-y divide-slate-100">
-          {displayedClientes.length === 0 ? (
-            <div className="p-10 text-center text-muted-foreground text-xs">Nenhum cliente sob gestão localizado nesta etapa.</div>
-          ) : (
-            displayedClientes.slice(0, 8).map((c) => (
-              <div key={c.id} className="p-4 flex items-center justify-between hover:bg-white/80 transition-colors">
-                <div>
-                  <Link to="/app/cliente/$id" params={{ id: c.id }} className="font-semibold text-sm text-navy hover:text-sun-deep transition-colors">{c.nome}</Link>
-                  <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}</div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Badge className={`${STATUS_COLOR[c.status]} rounded-full px-2.5 py-0.5 text-[10px] font-bold border-0`}>{STATUS_LABEL[c.status]}</Badge>
-                  <Link to="/app/cliente/$id" params={{ id: c.id }} className="text-xs text-sun-deep hover:underline font-bold">Ver ficha →</Link>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </Card>
     </div>
   );
 }
