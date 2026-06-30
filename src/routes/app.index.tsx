@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
@@ -51,7 +52,6 @@ function DashboardOrList() {
 function AdminDashboard() {
   const navigate = useNavigate();
   const { user } = useCurrentUser();
-  const [activeTab, setActiveTab] = useState<"crm" | "bi">("crm");
   const [clientes, setClientes] = useState<any[]>([]);
   const [propostas, setPropostas] = useState<any[]>([]);
   const [siteLeads, setSiteLeads] = useState<any[]>([]);
@@ -242,360 +242,380 @@ function AdminDashboard() {
   }, [clientes]);
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6 max-w-7xl relative">
       {/* Topo do Painel */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex items-center justify-between flex-wrap gap-4 bg-white/20 backdrop-blur-md p-5 rounded-3xl border border-white/40 shadow-sm">
         <div>
-          <h1 className="text-3xl font-bold text-navy">Painel de Controle</h1>
-          <p className="text-muted-foreground">Visão geral gerencial — {corretoresCount} parceiros ativos na equipe</p>
+          <h1 className="text-3xl font-extrabold text-navy tracking-tight">Painel de Controle</h1>
+          <p className="text-xs text-muted-foreground mt-0.5 font-medium">Visão geral gerencial — {corretoresCount} parceiros ativos na equipe</p>
         </div>
-        <div className="flex gap-2">
-          <Link to="/app/clientes" className="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-navy px-4 py-2.5 rounded-full font-semibold border text-sm transition">
+        <div className="flex items-center gap-3 flex-wrap">
+          <Link to="/app/clientes" className="inline-flex items-center gap-2 bg-white/70 hover:bg-white text-navy px-4.5 py-2 rounded-full font-bold border border-slate-100 text-xs transition shadow-sm">
             📂 Ver Clientes
           </Link>
-          <Link to="/app/propostas" className="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-navy px-4 py-2.5 rounded-full font-semibold border text-sm transition">
+          <Link to="/app/propostas" className="inline-flex items-center gap-2 bg-white/70 hover:bg-white text-navy px-4.5 py-2 rounded-full font-bold border border-slate-100 text-xs transition shadow-sm">
             📝 Propostas
           </Link>
-        </div>
-      </div>
+          
+          {/* ABA DE BI EM CAMADA DESLIZANTE (SHEET) */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button className="inline-flex items-center gap-2 bg-gradient-to-r from-sun to-amber-500 hover:from-sun-deep hover:to-amber-600 text-navy font-bold rounded-full text-xs px-4.5 py-2 transition-all shadow-md">
+                <BarChart3 className="w-4 h-4 text-navy" /> Inteligência Comercial (BI)
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-[#0B0F19]/98 border-l border-white/10 text-white p-6 shadow-2xl">
+              <SheetHeader className="pb-6 border-b border-white/5 mb-6">
+                <SheetTitle className="text-xl font-bold text-white flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-sun-deep" /> Inteligência de Vendas (BI)
+                </SheetTitle>
+                <p className="text-xs text-slate-400">Dados consolidados de conversão, faturamento e motivos de perda da Esol Energy.</p>
+              </SheetHeader>
 
-      {/* Navegação de Abas (CRM vs BI) */}
-      <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full sm:w-fit border border-slate-200/50">
-        <button
-          onClick={() => setActiveTab("crm")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === "crm" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"}`}
-        >
-          <Target className="w-4 h-4" /> CRM & Operação
-        </button>
-        <button
-          onClick={() => setActiveTab("bi")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === "bi" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"}`}
-        >
-          <BarChart3 className="w-4 h-4" /> Inteligência Comercial (BI)
-        </button>
-      </div>
-
-      {/* ABA 1: CRM & OPERAÇÃO */}
-      {activeTab === "crm" && (
-        <div className="space-y-6">
-          {/* ATALHOS DE ACESSO RÁPIDO */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link to="/app/financiamentos" className="block group">
-              <Card className="p-4 border-l-4 border-l-emerald-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">Financiamento</span>
-                    <span className="text-xl group-hover:scale-110 transition-transform">🏦</span>
+              <div className="space-y-6">
+                {/* Métricas e KPIs Financeiros */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="text-2xl font-bold text-sun-deep">{m.conversao.toFixed(1)}%</div>
+                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Taxa de Conversão</div>
                   </div>
-                  <h4 className="font-extrabold text-navy text-sm mt-2">Bancos & Simulações</h4>
-                  <p className="text-[11px] text-muted-foreground mt-1">Gerencie propostas e contratos de financiamento solar ativos.</p>
-                </div>
-                <div className="text-[11px] text-emerald-600 font-bold mt-4 flex items-center gap-1">
-                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </Card>
-            </Link>
-
-            <Link to="/app/cotacoes" className="block group">
-              <Card className="p-4 border-l-4 border-l-sun-deep bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-sun-deep bg-amber-50 px-2.5 py-0.5 rounded-full">Cotação</span>
-                    <span className="text-xl group-hover:scale-110 transition-transform">☀️</span>
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="text-2xl font-bold text-white">{BRL(m.receitaRealizada)}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Faturamento (Mês)</div>
                   </div>
-                  <h4 className="font-extrabold text-navy text-sm mt-2">Dimensionar Sistemas</h4>
-                  <p className="text-[11px] text-muted-foreground mt-1">Calcule kits solares e irradiação HSP para gerar cotações comerciais.</p>
-                </div>
-                <div className="text-[11px] text-sun-deep font-bold mt-4 flex items-center gap-1">
-                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </Card>
-            </Link>
-
-            <Link to="/app/propostas" className="block group">
-              <Card className="p-4 border-l-4 border-l-indigo-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">Proposta</span>
-                    <span className="text-xl group-hover:scale-110 transition-transform">📝</span>
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="text-2xl font-bold text-white">{BRL(m.ticketMedio)}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Ticket Médio</div>
                   </div>
-                  <h4 className="font-extrabold text-navy text-sm mt-2">Gerador de Orçamentos</h4>
-                  <p className="text-[11px] text-muted-foreground mt-1">Consulte propostas emitidas, envie links de assinatura e crie novos documentos.</p>
-                </div>
-                <div className="text-[11px] text-indigo-600 font-bold mt-4 flex items-center gap-1">
-                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </Card>
-            </Link>
-
-            <Link to="/app/clientes" className="block group">
-              <Card className="p-4 border-l-4 border-l-rose-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full">Clientes</span>
-                    <span className="text-xl group-hover:scale-110 transition-transform">👥</span>
+                  <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                    <div className="text-2xl font-bold text-emerald-400">{m.margemPct.toFixed(1)}%</div>
+                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Margem Média</div>
                   </div>
-                  <h4 className="font-extrabold text-navy text-sm mt-2">Gestão de Carteira</h4>
-                  <p className="text-[11px] text-muted-foreground mt-1">Acompanhe leads, histórico de contatos e atribuições da equipe de vendas.</p>
                 </div>
-                <div className="text-[11px] text-rose-600 font-bold mt-4 flex items-center gap-1">
-                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </Card>
-            </Link>
-          </div>
 
-          {/* KPIs Operacionais */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sun to-amber-500 flex items-center justify-center mb-3">
-                <Globe className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-2xl font-bold text-navy">{siteLeads.length}</div>
-              <div className="text-xs text-muted-foreground mt-1">Leads aguardando atribuição</div>
-            </Card>
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-3">
-                <Users className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-2xl font-bold text-navy">{m.totalClientes}</div>
-              <div className="text-xs text-muted-foreground mt-1">Leads sob gestão da equipe</div>
-            </Card>
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-3">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-2xl font-bold text-navy">{m.negociacao}</div>
-              <div className="text-xs text-muted-foreground mt-1">Negociações em andamento</div>
-            </Card>
-            <Card className="p-5 border-0 shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center mb-3">
-                <DollarSign className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-2xl font-bold text-navy">
-                {m.valorFechados.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">Volume de vendas concluídas</div>
-            </Card>
-          </div>
-
-          {/* Funil Kanban */}
-          <Card className="border-0 shadow-md p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-navy flex items-center gap-2"><Target className="w-5 h-5 text-sun-deep" />Funil de Vendas Operacional</h2>
-              {activeKanbanCol && (
-                <button onClick={() => setActiveKanbanCol(null)} className="text-xs text-muted-foreground hover:text-navy underline">
-                  Ver todos
-                </button>
-              )}
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-2">
-              {KANBAN_COLS.map((col) => {
-                const count = clientes.filter((c) => col.statuses.includes(c.status)).length;
-                const receita = clientes
-                  .filter((c) => col.statuses.includes(c.status))
-                  .reduce((s, c) => s + Number(c.valor_estimado || 0), 0);
-                const isActive = activeKanbanCol === col.label;
-                return (
-                  <button
-                    key={col.label}
-                    onClick={() => setActiveKanbanCol(isActive ? null : col.label)}
-                    className={`rounded-xl p-3 text-left transition border-2 ${isActive ? "border-navy bg-white shadow-md" : "border-transparent"} bg-slate-50 hover:bg-white hover:shadow-md`}
-                  >
-                    <div className={`w-full h-1 rounded-full ${col.color} mb-2`} />
-                    <div className="text-2xl font-extrabold text-navy">{count}</div>
-                    <div className="text-xs font-semibold text-navy/70 mt-0.5">{col.label}</div>
-                    {receita > 0 && (
-                      <div className="text-[10px] text-emerald-700 font-bold mt-1">
-                        {receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                {/* Gráfico Mensal e Funil Ponderado */}
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-sun-deep" /> Evolução de Faturamento Mensal</h3>
+                    {m.mensal.length === 0 ? (
+                      <div className="h-60 flex items-center justify-center text-slate-400 text-xs">Massa de dados insuficiente para gerar histórico.</div>
+                    ) : (
+                      <div className="h-60">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={m.mensal}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.05} />
+                            <XAxis dataKey="mes" tick={{ fill: "#94a3b8", fontSize: 9 }} />
+                            <YAxis tickFormatter={(v) => `R$ ${v/1000}k`} tick={{ fill: "#94a3b8", fontSize: 9 }} />
+                            <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} formatter={(value: any) => [`R$ ${Number(value).toLocaleString("pt-BR")}`, "Faturamento"]} />
+                            <Bar dataKey="receita" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     )}
-                  </button>
-                );
-              })}
-            </div>
-          </Card>
+                  </div>
 
-          {/* Leads do site pendentes */}
-          <Card className="border-0 shadow-md border-l-4 border-l-sun-deep">
-            <div className="flex items-center justify-between p-5 border-b">
-              <div className="flex items-center gap-2">
-                <Inbox className="w-5 h-5 text-sun-deep" />
-                <h2 className="font-bold text-navy">Novos leads recebidos do site</h2>
-                {siteLeads.length > 0 && (
-                  <Badge className="bg-sun text-navy">{siteLeads.length} aguardando</Badge>
-                )}
-              </div>
-              <Link to="/app/clientes" className="text-sm text-sun-deep hover:underline flex items-center gap-1">Ver todos <ArrowRight className="w-3 h-3" /></Link>
-            </div>
-            <div className="divide-y">
-              {siteLeads.length === 0 ? (
-                <div className="p-8 text-center text-muted-foreground text-sm">Nenhum lead novo do site aguardando atribuição de corretor.</div>
-              ) : (
-                siteLeads.slice(0, 5).map((c) => (
-                  <Link key={c.id} to="/app/cliente/$id" params={{ id: c.id }} className="flex items-center justify-between gap-3 p-4 hover:bg-sun/5 transition">
-                    <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-navy flex items-center gap-2">
-                        {c.nome}
-                        <Badge variant="outline" className="text-[10px] border-sun-deep text-sun-deep">Site</Badge>
+                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Zap className="w-4 h-4 text-sun-deep" /> Pipeline Ponderado</h3>
+                    <div className="space-y-4 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400">Volume total em negociação</span>
+                        <span className="text-lg font-bold text-white">
+                          {m.pipelineReceita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                        </span>
                       </div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}/{c.estado || "—"}</div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">{fmtDate(c.created_at)}</div>
-                  </Link>
-                ))
-              )}
-            </div>
-          </Card>
-
-          {/* Clientes e Leads Recentes */}
-          <Card className="border-0 shadow-md">
-            <div className="p-5 border-b flex justify-between items-center">
-              <h2 className="font-bold text-navy">Clientes e leads recentes sob gestão</h2>
-              {activeKanbanCol && <Badge variant="secondary">Coluna: {activeKanbanCol}</Badge>}
-            </div>
-            <div className="divide-y">
-              {displayedClientes.length === 0 ? (
-                <div className="p-10 text-center text-muted-foreground text-sm">Nenhum cliente sob gestão localizado.</div>
-              ) : (
-                displayedClientes.slice(0, 8).map((c) => (
-                  <div key={c.id} className="p-4 flex items-center justify-between hover:bg-slate-50/50 transition">
-                    <div>
-                      <Link to="/app/cliente/$id" params={{ id: c.id }} className="font-semibold text-navy hover:underline">{c.nome}</Link>
-                      <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}</div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge className={STATUS_COLOR[c.status]}>{STATUS_LABEL[c.status]}</Badge>
-                      <Link to="/app/cliente/$id" params={{ id: c.id }} className="text-xs text-sun-deep hover:underline">Ver ficha</Link>
+                      <div className="flex justify-between items-center border-t border-white/5 pt-3">
+                        <span className="text-slate-400">Faturamento provável (25%)</span>
+                        <span className="text-lg font-bold text-emerald-400">
+                          {m.receitaEsperada.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                        </span>
+                      </div>
+                      {m.tempoMedioFechamento && (
+                        <div className="flex justify-between items-center border-t border-white/5 pt-3">
+                          <span className="text-slate-400">Tempo médio de fechamento</span>
+                          <span className="font-bold text-white">{m.tempoMedioFechamento.toFixed(0)} dias</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))
-              )}
+                </div>
+
+                {/* Parceiros & Motivos Perda */}
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Users className="w-4 h-4 text-sun-deep" /> Vendedores Destaque</h3>
+                    {m.topParceiros.length === 0 ? (
+                      <div className="py-6 text-center text-slate-400 text-xs">Nenhuma venda aceita registrada.</div>
+                    ) : (
+                      <div className="space-y-3">
+                        {m.topParceiros.map((p, idx) => (
+                          <div key={p.nome} className="flex items-center justify-between border-b border-white/5 pb-2 text-xs">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-sun-deep w-5">{idx + 1}º</span>
+                              <span className="font-semibold text-slate-200">{p.nome}</span>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold text-white">{p.receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}</div>
+                              <div className="text-[10px] text-slate-400">{p.aceitas} fechados de {p.total} propostas</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-sun-deep" /> Motivos de Negócios Perdidos</h3>
+                    {m.motivoData.length === 0 ? (
+                      <div className="py-6 text-center text-slate-400 text-xs">Nenhum lead marcado como perdido.</div>
+                    ) : (
+                      <div className="space-y-3">
+                        {m.motivoData.map((d) => {
+                          const totalPerdas = m.motivoData.reduce((s, x) => s + x.value, 0);
+                          const pct = (d.value / totalPerdas) * 100;
+                          return (
+                            <div key={d.name} className="space-y-1 text-xs">
+                              <div className="flex justify-between font-semibold">
+                                <span className="text-slate-300">{d.name}</span>
+                                <span className="text-sun-deep">{d.value} perdas ({pct.toFixed(0)}%)</span>
+                              </div>
+                              <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-red-500 h-full" style={{ width: `${pct}%` }} />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
+      {/* ATALHOS DE ACESSO RÁPIDO */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Link to="/app/financiamentos" className="block group">
+          <Card className="p-4 border-l-4 border-l-emerald-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">Financiamento</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">🏦</span>
+              </div>
+              <h4 className="font-extrabold text-navy text-sm mt-2">Bancos & Simulações</h4>
+              <p className="text-[11px] text-muted-foreground mt-1">Gerencie propostas e contratos de financiamento solar ativos.</p>
+            </div>
+            <div className="text-[11px] text-emerald-600 font-bold mt-4 flex items-center gap-1">
+              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Card>
-        </div>
-      )}
+        </Link>
 
-      {/* ABA 2: INTELIGÊNCIA COMERCIAL (BI) */}
-      {activeTab === "bi" && (
-        <div className="space-y-6">
-          {/* Métricas e KPIs Financeiros */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-4 border-0 shadow-md">
-              <div className="text-2xl font-bold text-navy">{m.conversao.toFixed(1)}%</div>
-              <div className="text-xs text-muted-foreground mt-1">Taxa de Conversão</div>
-            </Card>
-            <Card className="p-4 border-0 shadow-md">
-              <div className="text-2xl font-bold text-navy">{BRL(m.receitaRealizada)}</div>
-              <div className="text-xs text-muted-foreground mt-1">Faturamento Realizado (Mês)</div>
-            </Card>
-            <Card className="p-4 border-0 shadow-md">
-              <div className="text-2xl font-bold text-navy">{BRL(m.ticketMedio)}</div>
-              <div className="text-xs text-muted-foreground mt-1">Ticket Médio por Projeto</div>
-            </Card>
-            <Card className="p-4 border-0 shadow-md bg-emerald-50/20 border border-emerald-100">
-              <div className="text-2xl font-bold text-emerald-700">{m.margemPct.toFixed(1)}%</div>
-              <div className="text-xs text-muted-foreground mt-1">Margem Média Estimada</div>
-            </Card>
+        <Link to="/app/cotacoes" className="block group">
+          <Card className="p-4 border-l-4 border-l-sun-deep bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-sun-deep bg-amber-50 px-2.5 py-0.5 rounded-full">Cotação</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">☀️</span>
+              </div>
+              <h4 className="font-extrabold text-navy text-sm mt-2">Dimensionar Sistemas</h4>
+              <p className="text-[11px] text-muted-foreground mt-1">Calcule kits solares e irradiação HSP para gerar cotações comerciais.</p>
+            </div>
+            <div className="text-[11px] text-sun-deep font-bold mt-4 flex items-center gap-1">
+              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </Card>
+        </Link>
+
+        <Link to="/app/propostas" className="block group">
+          <Card className="p-4 border-l-4 border-l-indigo-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">Proposta</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">📝</span>
+              </div>
+              <h4 className="font-extrabold text-navy text-sm mt-2">Gerador de Orçamentos</h4>
+              <p className="text-[11px] text-muted-foreground mt-1">Consulte propostas emitidas, envie links de assinatura e crie novos documentos.</p>
+            </div>
+            <div className="text-[11px] text-indigo-600 font-bold mt-4 flex items-center gap-1">
+              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </Card>
+        </Link>
+
+        <Link to="/app/clientes" className="block group">
+          <Card className="p-4 border-l-4 border-l-rose-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full">Clientes</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">👥</span>
+              </div>
+              <h4 className="font-extrabold text-navy text-sm mt-2">Gestão de Carteira</h4>
+              <p className="text-[11px] text-muted-foreground mt-1">Acompanhe leads, histórico de contatos e atribuições da equipe de vendas.</p>
+            </div>
+            <div className="text-[11px] text-rose-600 font-bold mt-4 flex items-center gap-1">
+              Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </Card>
+        </Link>
+      </div>
+
+      {/* KPIs Operacionais */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-sun flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Aguardando Atribuição</span>
+            <Globe className="w-4 h-4 text-sun-deep" />
           </div>
+          <div>
+            <div className="text-2xl font-bold text-navy mt-2">{siteLeads.length}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Novos leads recebidos do site</div>
+          </div>
+        </Card>
 
-          {/* Gráfico Mensal e Funil Ponderado */}
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card className="md:col-span-2 border-0 shadow-md p-5 space-y-4">
-              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-sun-deep" /> Evolução de Faturamento Mensal (BRL)</h3>
-              {m.mensal.length === 0 ? (
-                <div className="h-64 flex items-center justify-center text-muted-foreground text-xs">Massa de dados insuficiente para gerar histórico mensal.</div>
-              ) : (
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={m.mensal}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-                      <XAxis dataKey="mes" tick={{ fill: "#64748b", fontSize: 10 }} />
-                      <YAxis tickFormatter={(v) => `R$ ${v/1000}k`} tick={{ fill: "#64748b", fontSize: 10 }} />
-                      <Tooltip formatter={(value: any) => [`R$ ${Number(value).toLocaleString("pt-BR")}`, "Faturamento"]} />
-                      <Bar dataKey="receita" fill="#001F5C" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-blue flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Sob Gestão</span>
+            <Users className="w-4 h-4 text-blue-600" />
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-navy mt-2">{m.totalClientes}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Leads ativos na carteira</div>
+          </div>
+        </Card>
+
+        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-blue flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Negociações</span>
+            <TrendingUp className="w-4 h-4 text-indigo-500" />
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-navy mt-2">{m.negociacao}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Propostas em negociação</div>
+          </div>
+        </Card>
+
+        <Card className="p-5 border-0 shadow-sm glass-panel glow-soft-sun flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Volume Faturado</span>
+            <DollarSign className="w-4 h-4 text-emerald-600" />
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-emerald-700 mt-2">
+              {m.valorFechados.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+            </div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Projetos solar fechados</div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Funil Comercial - Esteira de Linha Única (Suns Brasil Style) */}
+      <Card className="border-0 shadow-sm glass-panel p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-bold text-navy text-sm flex items-center gap-2">
+            <Target className="w-5 h-5 text-sun-deep" /> Funil Comercial Simplificado
+          </h2>
+          {activeKanbanCol && (
+            <button onClick={() => setActiveKanbanCol(null)} className="text-xs text-slate-500 hover:text-navy underline">
+              Mostrar todos
+            </button>
+          )}
+        </div>
+        
+        <div className="relative flex flex-col md:flex-row items-center justify-between gap-3 pt-2">
+          {/* Linha horizontal decorativa no background */}
+          <div className="absolute top-[35px] left-8 right-8 h-[2px] bg-slate-200 hidden md:block z-0" />
+          
+          {KANBAN_COLS.map((col) => {
+            const count = clientes.filter((c) => col.statuses.includes(c.status)).length;
+            const receita = clientes
+              .filter((c) => col.statuses.includes(c.status))
+              .reduce((s, c) => s + Number(c.valor_estimado || 0), 0);
+            const isActive = activeKanbanCol === col.label;
+            return (
+              <button
+                key={col.label}
+                onClick={() => setActiveKanbanCol(isActive ? null : col.label)}
+                className={`relative z-10 w-full md:w-auto flex-1 flex flex-col items-center p-3 rounded-2xl transition-all duration-300 border ${
+                  isActive 
+                    ? "bg-white border-sun shadow-[0_4px_20px_rgba(245,158,11,0.08)] scale-105" 
+                    : "bg-white/50 border-slate-100 hover:bg-white hover:border-slate-200 hover:shadow-sm"
+                }`}
+              >
+                {/* Indicador visual circular */}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm ${col.color} mb-2`}>
+                  {count}
                 </div>
-              )}
-            </Card>
+                <div className="text-xs font-semibold text-slate-800 text-center">{col.label}</div>
+                {receita > 0 && (
+                  <div className="text-[10px] text-emerald-600 font-extrabold mt-0.5">
+                    {receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
 
-            <Card className="border-0 shadow-md p-5 space-y-4">
-              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><Zap className="w-4 h-4 text-sun-deep" /> Pipeline Ponderado</h3>
-              <div className="space-y-4">
+      {/* Leads do site pendentes */}
+      <Card className="border-0 shadow-sm glass-panel border-l-4 border-l-sun-deep overflow-hidden">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-white/50">
+          <div className="flex items-center gap-2">
+            <Inbox className="w-5 h-5 text-sun-deep" />
+            <h2 className="font-bold text-navy text-sm">Novos leads recebidos do site</h2>
+            {siteLeads.length > 0 && (
+              <Badge className="bg-sun text-navy font-bold">{siteLeads.length} aguardando</Badge>
+            )}
+          </div>
+          <Link to="/app/clientes" className="text-xs text-sun-deep hover:underline flex items-center gap-1 font-semibold">Ver todos <ArrowRight className="w-3 h-3" /></Link>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {siteLeads.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground text-xs">Nenhum lead novo do site aguardando atribuição.</div>
+          ) : (
+            siteLeads.slice(0, 5).map((c) => (
+              <Link key={c.id} to="/app/cliente/$id" params={{ id: c.id }} className="flex items-center justify-between gap-3 p-4 hover:bg-white/80 transition-colors">
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-navy text-sm flex items-center gap-2">
+                    {c.nome}
+                    <Badge variant="outline" className="text-[9px] border-sun-deep text-sun-deep px-2 py-0.5 rounded-full font-bold">Site</Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}/{c.estado || "—"}</div>
+                </div>
+                <div className="text-xs text-slate-400">{fmtDate(c.created_at)}</div>
+              </Link>
+            ))
+          )}
+        </div>
+      </Card>
+
+      {/* Clientes e Leads Recentes */}
+      <Card className="border-0 shadow-sm glass-panel overflow-hidden">
+        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-white/50">
+          <h2 className="font-bold text-navy text-sm">Clientes e leads recentes sob gestão</h2>
+          {activeKanbanCol && <Badge variant="outline" className="border-sun-deep text-sun-deep bg-amber-50 font-bold">Filtro: {activeKanbanCol}</Badge>}
+        </div>
+        <div className="divide-y divide-slate-100">
+          {displayedClientes.length === 0 ? (
+            <div className="p-10 text-center text-muted-foreground text-xs">Nenhum cliente sob gestão localizado nesta etapa.</div>
+          ) : (
+            displayedClientes.slice(0, 8).map((c) => (
+              <div key={c.id} className="p-4 flex items-center justify-between hover:bg-white/80 transition-colors">
                 <div>
-                  <span className="text-xs text-muted-foreground">Volume total em negociação</span>
-                  <div className="text-2xl font-extrabold text-navy">
-                    {m.pipelineReceita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-                  </div>
+                  <Link to="/app/cliente/$id" params={{ id: c.id }} className="font-semibold text-sm text-navy hover:text-sun-deep transition-colors">{c.nome}</Link>
+                  <div className="text-xs text-muted-foreground mt-0.5">{c.telefone} · {c.cidade || "—"}</div>
                 </div>
-                <div className="border-t pt-4">
-                  <span className="text-xs text-muted-foreground">Faturamento provável (25% conversão)</span>
-                  <div className="text-2xl font-extrabold text-emerald-700">
-                    {m.receitaEsperada.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-                  </div>
+                <div className="flex items-center gap-3">
+                  <Badge className={`${STATUS_COLOR[c.status]} rounded-full px-2.5 py-0.5 text-[10px] font-bold border-0`}>{STATUS_LABEL[c.status]}</Badge>
+                  <Link to="/app/cliente/$id" params={{ id: c.id }} className="text-xs text-sun-deep hover:underline font-bold">Ver ficha →</Link>
                 </div>
-                {m.tempoMedioFechamento && (
-                  <div className="border-t pt-4 flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Tempo médio para fechar</span>
-                    <span className="font-bold text-navy">{m.tempoMedioFechamento.toFixed(0)} dias</span>
-                  </div>
-                )}
               </div>
-            </Card>
-          </div>
-
-          {/* Parceiros & Motivos Perda */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-0 shadow-md p-5 space-y-4">
-              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><Users className="w-4 h-4 text-sun-deep" /> Performance por Parceiro (Top Vendedores)</h3>
-              {m.topParceiros.length === 0 ? (
-                <div className="py-10 text-center text-muted-foreground text-xs">Nenhuma venda aceita registrada para corretores.</div>
-              ) : (
-                <div className="space-y-3">
-                  {m.topParceiros.map((p, idx) => (
-                    <div key={p.nome} className="flex items-center justify-between border-b pb-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-navy w-5">{idx + 1}º</span>
-                        <span className="font-semibold text-slate-700">{p.nome}</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-navy">{p.receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}</div>
-                        <div className="text-[10px] text-muted-foreground">{p.aceitas} fechados de {p.total} propostas</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Card>
-
-            <Card className="border-0 shadow-md p-5 space-y-4">
-              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-sun-deep" /> Motivos de Negócios Perdidos</h3>
-              {m.motivoData.length === 0 ? (
-                <div className="py-10 text-center text-muted-foreground text-xs">Nenhum lead marcado como "perdido" com motivo especificado.</div>
-              ) : (
-                <div className="space-y-3">
-                  {m.motivoData.map((d) => {
-                    const totalPerdas = m.motivoData.reduce((s, x) => s + x.value, 0);
-                    const pct = (d.value / totalPerdas) * 100;
-                    return (
-                      <div key={d.name} className="space-y-1 text-xs">
-                        <div className="flex justify-between font-semibold">
-                          <span className="text-slate-700">{d.name}</span>
-                          <span className="text-navy">{d.value} perdas ({pct.toFixed(0)}%)</span>
-                        </div>
-                        <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-red-500 h-full" style={{ width: `${pct}%` }} />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </Card>
-          </div>
+            ))
+          )}
         </div>
-      )}
+      </Card>
     </div>
   );
 }

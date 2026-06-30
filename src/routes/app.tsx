@@ -323,13 +323,19 @@ function AppShell() {
                 : corretorNav;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-[#F4F8F8] flex relative overflow-hidden">
+      {/* Luzes de fundo decorativas ambientais (estilo Suns Brasil) */}
+      <div className="absolute top-[-10%] right-[-5%] w-[450px] h-[450px] rounded-full bg-sun/8 blur-[130px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-[-10%] left-[20%] w-[550px] h-[550px] rounded-full bg-[#3B82F6]/6 blur-[160px] pointer-events-none animate-orbit" />
+
       {/* Sidebar desktop */}
-      <aside className="hidden md:flex w-64 flex-col bg-navy text-white p-5">
-        <Link to="/" className="mb-8"><img src={logo} alt="ESOL" className="h-10 w-auto brightness-0 invert" /></Link>
+      <aside className="hidden md:flex w-64 flex-col glass-sidebar text-white p-5 shadow-2xl z-20 relative">
+        <Link to="/" className="mb-8 block transition-transform hover:scale-[1.02]">
+          <img src={logo} alt="ESOL" className="h-10 w-auto brightness-0 invert opacity-95" />
+        </Link>
         <div className="mb-6 px-2">
-          <div className="text-xs uppercase tracking-wider text-white/50">{ROLE_LABELS[role ?? ""] || "Parceiro"}</div>
-          <div className="font-semibold truncate">{profile?.nome || user.email}</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">{ROLE_LABELS[role ?? ""] || "Parceiro"}</div>
+          <div className="font-semibold truncate text-sm text-slate-100">{profile?.nome || user.email}</div>
         </div>
         <nav className="space-y-1 flex-1">
           {nav.map((item: any) => {
@@ -340,27 +346,32 @@ function AppShell() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${active ? "bg-sun text-navy" : "text-white/80 hover:bg-white/10"}`}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  active 
+                    ? "bg-white/10 text-white font-semibold border-l-2 border-sun-deep pl-[12px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" 
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                }`}
               >
-                <item.icon className="w-4 h-4" />{item.label}
+                <item.icon className={`w-4 h-4 transition-transform duration-300 ${active ? "text-sun-deep scale-110" : "text-white/60"}`} />
+                {item.label}
               </Link>
             );
           })}
 
           {/* Divisor */}
-          <div className="my-2 border-t border-white/10" />
+          <div className="my-2 border-t border-white/5" />
 
           {/* Sino de Notificações */}
           <NotificacoesSino {...notifData} />
         </nav>
 
-        <Button onClick={signOut} variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 justify-start">
+        <Button onClick={signOut} variant="ghost" className="text-white/60 hover:text-white hover:bg-white/5 justify-start rounded-xl">
           <LogOut className="w-4 h-4 mr-2" />Sair
         </Button>
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 inset-x-0 bg-navy text-white z-40 flex items-center justify-between px-4 h-14">
+      <div className="md:hidden fixed top-0 inset-x-0 bg-[#0B0F19]/90 backdrop-blur-md text-white z-40 flex items-center justify-between px-4 h-14 border-b border-white/5">
         <img src={logo} alt="ESOL" className="h-8 w-auto brightness-0 invert" />
         <div className="flex items-center gap-3">
           {/* Sino mobile */}
@@ -368,14 +379,14 @@ function AppShell() {
           <select
             value={pathname}
             onChange={(e) => navigate({ to: e.target.value as any })}
-            className="bg-navy-deep text-white text-sm rounded px-2 py-1 border border-white/20"
+            className="bg-[#0B0F19]/80 text-white text-xs rounded-lg px-2.5 py-1 border border-white/10"
           >
             {nav.map((n) => <option key={n.to} value={n.to}>{n.label}</option>)}
           </select>
         </div>
       </div>
 
-      <main className="flex-1 md:p-8 p-4 pt-20 md:pt-8 overflow-x-hidden">
+      <main className="flex-1 md:p-8 p-4 pt-20 md:pt-8 overflow-x-hidden relative z-10">
         <Outlet />
       </main>
     </div>

@@ -231,3 +231,37 @@
     print-color-adjust: exact !important;
   }
 }
+
+/* =========================================================
+   ESTILOS PREMIUM (STYLE SUNS BRASIL)
+   ========================================================= */
+@keyframes orbit {
+  0% { transform: rotate(0deg) translate(25px) rotate(0deg); }
+  100% { transform: rotate(360deg) translate(25px) rotate(-360deg); }
+}
+
+@utility animate-orbit {
+  animation: orbit 25s linear infinite;
+}
+
+@utility glass-panel {
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+@utility glass-sidebar {
+  background-color: rgba(11, 15, 25, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@utility glow-soft-sun {
+  box-shadow: 0 10px 40px -10px rgba(245, 158, 11, 0.12);
+}
+
+@utility glow-soft-blue {
+  box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.1);
+}
