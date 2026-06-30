@@ -7,6 +7,7 @@ import portfolioResidential from "@/assets/portfolio-residential.jpg";
 import portfolioCommercial from "@/assets/portfolio-commercial.jpg";
 import portfolioIndustrial from "@/assets/portfolio-industrial.jpg";
 import portfolioRural from "@/assets/portfolio-rural.jpg";
+import heroHouse from "@/assets/hero-house.jpg";
 import { Loader2, Zap, Sun, ShieldCheck, TrendingUp, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -191,97 +192,107 @@ function Hero() {
   const { setBill } = useBill();
   const [val, setVal] = useState("");
   return (
-    <section id="top" className="relative pt-28 sm:pt-36 pb-20 sm:pb-28 overflow-hidden">
-      {/* ambient glows */}
-      <div className="pointer-events-none absolute -top-40 -right-40 w-[720px] h-[720px] rounded-full bg-sun/30 blur-3xl animate-sun-pulse" />
-      <div className="pointer-events-none absolute top-40 -left-32 w-[480px] h-[480px] rounded-full bg-navy/10 blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.04]" style={{
-        backgroundImage: "radial-gradient(circle at 1px 1px, var(--navy) 1px, transparent 0)",
-        backgroundSize: "28px 28px",
-      }} />
+    <section id="top" className="relative pt-32 pb-24 overflow-hidden">
+      {/* sun glow */}
+      <div className="pointer-events-none absolute -top-32 -right-40 w-[640px] h-[640px] rounded-full bg-sun/30 blur-3xl animate-sun-pulse" />
+      <div className="pointer-events-none absolute top-40 -left-20 w-[420px] h-[420px] rounded-full bg-navy/10 blur-3xl" />
 
-      <div className="relative mx-auto max-w-5xl px-5 sm:px-6 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/80 backdrop-blur border border-sun/40 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-navy animate-fade-up">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-sun-deep opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-sun-deep" />
-          </span>
-          Engenharia solar de alta performance
-        </div>
-
-        <h1 className="mt-7 font-display text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-extrabold leading-[1.0] text-navy text-balance animate-fade-up [animation-delay:60ms]">
-          Deixe o sol{" "}
-          <span className="relative inline-block">
-            <span className="relative z-10">trabalhar</span>
-            <span className="absolute inset-x-0 bottom-1 sm:bottom-2 h-3 sm:h-5 bg-sun/70 -z-0 rounded-sm" />
-          </span>{" "}
-          por você.
-        </h1>
-
-        <p className="mt-7 max-w-2xl mx-auto text-base sm:text-lg text-ink/70 leading-relaxed text-pretty animate-fade-up [animation-delay:140ms]">
-          Reduza sua conta de luz em até <strong className="text-navy">95%</strong> com sistemas
-          fotovoltaicos premium. Engenharia, instalação e 25 anos de garantia.
-        </p>
-
-        {/* mini lead form — calcula e propaga o valor para o simulador */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const n = Number(val.replace(/\D/g, ""));
-            if (n >= 100) setBill(Math.min(n, 50000));
-            requestAnimationFrame(() => {
-              document.getElementById("simulador")?.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-          }}
-          className="mt-9 mx-auto flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl sm:rounded-full shadow-deep border border-border max-w-xl animate-fade-up [animation-delay:220ms]"
-        >
-          <div className="flex items-center gap-3 flex-1 px-4 sm:px-5">
-            <span className="text-ink/40 font-bold text-lg">R$</span>
-            <input
-              value={val}
-              onChange={(e) => setVal(e.target.value.replace(/\D/g, ""))}
-              inputMode="numeric"
-              placeholder="Quanto vem na sua conta de luz?"
-              className="w-full py-3 bg-transparent outline-none text-navy font-medium placeholder:text-ink/30"
-              aria-label="Valor da conta de luz"
-            />
+      <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-14 items-center">
+        <div className="animate-fade-up">
+          <div className="inline-flex items-center gap-2 rounded-full bg-sun/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-navy">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-sun-deep opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-sun-deep" />
+            </span>
+            Líder em eficiência fotovoltaica
           </div>
-          <button
-            type="submit"
-            className="relative group inline-flex items-center justify-center gap-2 rounded-xl sm:rounded-full bg-sun px-6 py-4 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all whitespace-nowrap shadow-glow cta-halo overflow-hidden"
-          >
-            <span className="relative z-10">Calcular economia →</span>
-            <span aria-hidden className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] animate-[cta-shine_2.8s_ease-in-out_infinite]" />
-          </button>
-        </form>
 
-        <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs sm:text-sm text-ink/60 animate-fade-up [animation-delay:300ms]">
-          <span className="inline-flex items-center gap-1.5"><ShieldCheck className="size-4 text-sun-deep" /> 25 anos de garantia</span>
-          <span className="inline-flex items-center gap-1.5"><Zap className="size-4 text-sun-deep" /> Equipamentos Tier 1</span>
-          <span className="inline-flex items-center gap-1.5"><TrendingUp className="size-4 text-sun-deep" /> Payback médio 3–5 anos</span>
+          <h1 className="mt-6 font-display text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.02] text-navy text-balance">
+            Deixe o sol{" "}
+            <span className="relative inline-block">
+              <span className="relative z-10 text-navy">trabalhar</span>
+              <span className="absolute inset-x-0 bottom-1 h-4 bg-sun/60 -z-0 rounded-sm" />
+            </span>{" "}
+            por você.
+          </h1>
+
+          <p className="mt-7 max-w-xl text-lg text-ink/70 leading-relaxed text-pretty">
+            Reduza sua conta de luz em até <strong className="text-navy">95%</strong> com sistemas
+            fotovoltaicos premium da ESOL Energy. Engenharia, instalação e monitoramento 25 anos de garantia.
+          </p>
+
+          {/* mini lead form — calcula e propaga o valor para o simulador */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const n = Number(val.replace(/\D/g, ""));
+              if (n >= 100) setBill(Math.min(n, 50000));
+              requestAnimationFrame(() => {
+                document.getElementById("simulador")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              });
+            }}
+            className="mt-9 flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl shadow-deep border border-border max-w-xl"
+          >
+            <div className="flex items-center gap-3 flex-1 px-4">
+              <span className="text-ink/40 font-semibold">R$</span>
+              <input
+                value={val}
+                onChange={(e) => setVal(e.target.value.replace(/\D/g, ""))}
+                inputMode="numeric"
+                placeholder="Valor da sua conta de luz"
+                className="w-full py-3 bg-transparent outline-none text-navy font-medium placeholder:text-ink/30"
+              />
+            </div>
+            <button
+              type="submit"
+              className="relative group inline-flex items-center justify-center gap-2 rounded-xl bg-sun px-6 py-4 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all whitespace-nowrap shadow-glow cta-halo overflow-hidden"
+            >
+              <span className="relative z-10">Calcular economia →</span>
+              <span aria-hidden className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] animate-[cta-shine_2.8s_ease-in-out_infinite]" />
+            </button>
+          </form>
+
+          <div className="mt-5 flex items-center gap-4 text-xs text-ink/50">
+            <div className="flex -space-x-2">
+              {["#FFC107", "#0A2A5E", "#FFC107", "#0A2A5E"].map((c, i) => (
+                <div
+                  key={i}
+                  className="size-7 rounded-full ring-2 ring-white"
+                  style={{ background: c }}
+                />
+              ))}
+            </div>
+            <span className="font-medium">+1.200 famílias e empresas economizando hoje</span>
+          </div>
         </div>
 
-        {/* abstract sun visual */}
-        <div className="relative mt-16 sm:mt-20 mx-auto max-w-3xl animate-fade-up [animation-delay:380ms]">
-          <div className="relative aspect-[16/6] rounded-[40px] bg-gradient-to-br from-navy via-navy-deep to-navy overflow-hidden border border-navy/20">
-            <div className="absolute inset-0 opacity-[0.08]" style={{
-              backgroundImage: "linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)",
-              backgroundSize: "32px 32px",
-            }} />
-            <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-sun/40 blur-3xl animate-sun-pulse" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center">
-              <Sun className="size-20 sm:size-28 text-sun drop-shadow-[0_0_40px_rgba(255,193,7,0.6)]" strokeWidth={1.2} />
+        {/* Visual */}
+        <div className="relative animate-fade-up [animation-delay:150ms]">
+          <div className="relative rounded-[36px] overflow-hidden shadow-deep ring-1 ring-black/5">
+            <img
+              src={heroHouse}
+              alt="Residência brasileira de alto padrão com sistema solar fotovoltaico ESOL Energy"
+              width={1024}
+              height={1024}
+              className="w-full h-auto aspect-square object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/30 via-transparent to-transparent" />
+          </div>
+
+          {/* floating stats */}
+          <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-deep p-5 border border-border animate-float">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-ink/50">
+              Economia média / 10 anos
             </div>
-            <div className="absolute bottom-5 left-5 right-5 flex flex-wrap items-center justify-between gap-3 text-white/90">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-sun">Sua usina solar</div>
-                <div className="font-display font-extrabold text-xl sm:text-2xl">Independência energética em 30 dias</div>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">Geração 25 anos</div>
-                <div className="font-display font-extrabold text-2xl text-sun">−95% conta</div>
-              </div>
+            <div className="mt-1 font-display font-extrabold text-3xl text-navy">
+              R$ 184<span className="text-sun">k</span>
             </div>
+          </div>
+          <div className="absolute -top-4 -right-4 bg-navy text-white rounded-2xl shadow-deep p-5 animate-float [animation-delay:1.5s]">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-sun">
+              Geração hoje
+            </div>
+            <div className="mt-1 font-display font-extrabold text-2xl">42,8 kWh</div>
           </div>
         </div>
       </div>
