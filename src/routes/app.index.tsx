@@ -5,19 +5,16 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
-  FileSpreadsheet, Send, Loader2
+  FileSpreadsheet
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, Legend
 } from "recharts";
-import { calcularProposta, BRL } from "@/lib/proposta-calc";
-import { KITS_FALLBACK } from "@/lib/kits-fallback";
+import { BRL } from "@/lib/proposta-calc";
 
 export const Route = createFileRoute("/app/")(
   { component: DashboardOrList }
@@ -61,215 +58,6 @@ function AdminDashboard() {
   const [params, setParams] = useState<any>(null);
   const [activeKanbanCol, setActiveKanbanCol] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Estados do Cadastro Expresso de Leads na Home
-  const [fastName, setFastName] = useState("");
-  const [fastPhone, setFastPhone] = useState("");
-  const [fastBill, setFastBill] = useState("");
-  const [fastKwh, setFastKwh] = useState("");
-  const [fastEndereco, setFastEndereco] = useState("");
-  const [fastImovelTipo, setFastImovelTipo] = useState<"residencial" | "comercial" | "industrial" | "rural">("residencial");
-  const [fastInputMode, setFastInputMode] = useState<"fatura" | "kwh">("fatura");
-  const [fastSaving, setFastSaving] = useState(false);
-
-  // Cidade e Estado (Autocomplete do IBGE)
-  const [fastCidade, setFastCidade] = useState("");
-  const [fastEstado, setFastEstado] = useState("");
-  const [ibgeMunicipios, setIbgeMunicipios] = useState<{ nome: string; uf: string }[]>([]);
-  const [showSugestions, setShowSugestions] = useState(false);
-
-  useEffect(() => {
-    // Tenta carregar municípios do sessionStorage ou busca do IBGE
-    const cached = typeof window !== "undefined" ? sessionStorage.getItem("ibge_municipios") : null;
-    if (cached) {
-      try { setIbgeMunicipios(JSON.parse(cached)); } catch(e) {}
-    } else {
-      fetch("https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome")
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            const list = data.map((m: any) => ({
-              nome: m.nome,
-              uf: m.microrregiao?.mesorregiao?.UF?.sigla || m.regiao_imediata?.regiao_intermediaria?.UF?.sigla || ""
-            })).filter(x => x.uf);
-            setIbgeMunicipios(list);
-            try { sessionStorage.setItem("ibge_municipios", JSON.stringify(list)); } catch(e) {}
-          }
-        })
-        .catch(err => console.warn("Erro ao carregar lista de municipios IBGE", err));
-    }
-  }, []);
-
-  const sugestoesCidades = useMemo(() => {
-    if (!fastCidade || fastCidade.length < 2) return [];
-    const query = fastCidade.toLowerCase().trim();
-    return ibgeMunicipios
-      .filter((m) => m.nome.toLowerCase().includes(query))
-      .slice(0, 5);
-  }, [fastCidade, ibgeMunicipios]);
-
-  const handleFastSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-    if (!fastName || !fastPhone) {
-      toast.error("Nome e Telefone/WhatsApp são obrigatórios!");
-      return;
-    }
-    if (!fastCidade || !fastEstado) {
-      toast.error("Município e Estado (UF) são necessários para o dimensionamento!");
-      return;
-    }
-    
-    setFastSaving(true);
-    try {
-      // 1. Carrega parâmetros comerciais do banco (ou fallback)
-      let paramsComerciais = {
-        hsp_norte: 4.5, hsp_nordeste: 5.0, hsp_centro_oeste: 4.8, hsp_sudeste: 4.5, hsp_sul: 4.0,
-        preco_wp_residencial_pequeno: 2.8, preco_wp_residencial_grande: 2.5,
-        preco_wp_comercial_pequeno: 2.2, preco_wp_comercial_grande: 2.0, preco_wp_industrial: 1.8,
-        tarifa_kwh_default: 0.95, perdas_sistema: 0.15, inflacao_energetica: 0.08, vida_util_anos: 25,
-        potencia_modulo_w: 550, area_por_modulo_m2: 2.5,
-        custo_equipamentos_pct: 0.5, custo_instalacao_pct: 0.15, custo_frete_pct: 0.05, custo_impostos_pct: 0.1, custo_comissao_pct: 0.05, margem_alvo_pct: 0.15,
-        validade_proposta_dias: 15,
-        capacidade_instaladores_kwp_mes: 120
-      };
-      
-      try {
-        const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
-        if (pr) paramsComerciais = { ...paramsComerciais, ...pr };
-      } catch (errRpc) {}
-
-      const tarifaKwh = paramsComerciais.tarifa_kwh_default || 0.95;
-      
-      let billVal = 0;
-      let consumoEstimado = 0;
-      if (fastInputMode === "fatura") {
-        billVal = Number(fastBill) || 0;
-        consumoEstimado = billVal > 0 ? Math.round(billVal / tarifaKwh) : 500;
-      } else {
-        consumoEstimado = Number(fastKwh) || 500;
-        billVal = Math.round(consumoEstimado * tarifaKwh);
-      }
-      
-      // 2. Cadastra o cliente expressamente
-      const { data: client, error: errClient } = await supabase.from("clientes").insert({
-        nome: fastName.trim(),
-        telefone: fastPhone.trim(),
-        valor_fatura: billVal > 0 ? billVal : null,
-        consumo_kwh: consumoEstimado,
-        imovel_tipo: fastImovelTipo,
-        status: "novo",
-        origem: "manual",
-        cidade: fastCidade.trim(),
-        estado: fastEstado.trim().toUpperCase(),
-        endereco: fastEndereco.trim() || null,
-        corretor_id: user.id
-      }).select().single();
-
-      if (errClient) {
-        toast.error("Erro ao salvar lead: " + errClient.message);
-        setFastSaving(false);
-        return;
-      }
-      
-      // Roda o cálculo do dimensionamento comercial automático usando o estado real do lead e tipo de imóvel
-      const calculo = calcularProposta({
-        consumo_kwh: consumoEstimado,
-        tarifa_kwh: tarifaKwh,
-        estado: fastEstado.trim().toUpperCase(),
-        tipo: fastImovelTipo
-      }, paramsComerciais);
-
-      // Carrega Kits fotovoltaicos do Supabase (ou fallback) e mescla para ter todos os 50
-      let loadedKits = [...KITS_FALLBACK];
-      try {
-        const { data: dbKits } = await supabase.from("kits_produtos" as any).select("*");
-        if (dbKits && dbKits.length > 0) {
-          let merged = [...dbKits];
-          if (dbKits.length < 20) {
-            const codes = new Set(dbKits.map((k: any) => k.codigo));
-            const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
-            merged = [...merged, ...missing];
-          }
-          loadedKits = merged as any;
-        }
-      } catch(e) {}
-
-      // Encontra o kit adequado mais econômico para o cliente
-      const adequados = loadedKits.filter((k) => k.potencia_kwp >= calculo.kwp_sistema);
-      const kitRecomendado = adequados.length > 0 
-        ? adequados.sort((a, b) => a.preco - b.preco)[0]
-        : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
-
-      const expDate = new Date();
-      expDate.setDate(expDate.getDate() + (paramsComerciais.validade_proposta_dias || 15));
-
-      // 3. Cria a Proposta
-      const precoFinal = kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total;
-      const kwpFinal = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : calculo.kwp_sistema;
-      const qtdModulosFinal = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : calculo.qtd_modulos;
-      const { data: prop, error: errProp } = await supabase.from("propostas").insert({
-        titulo: `Proposta Solar ${fastImovelTipo === "residencial" ? "Residencial" : fastImovelTipo === "comercial" ? "Comercial" : fastImovelTipo === "industrial" ? "Industrial" : "Rural"} - ${client.nome}`,
-        parceiro_id: user.id,
-        kwp_sistema: kwpFinal,
-        preco_total: precoFinal,
-        codigo_publico: crypto.randomUUID(),
-        expires_at: expDate.toISOString(),
-        status: "enviada",
-        kit_id: kitRecomendado?.id || null,
-        tipo_instalacao: fastImovelTipo,
-        consumo_kwh: consumoEstimado,
-        tarifa_kwh: tarifaKwh,
-        estado: fastEstado.trim().toUpperCase(),
-        cidade: fastCidade.trim(),
-        regiao: calculo.regiao,
-        hsp: calculo.hsp,
-        qtd_modulos: qtdModulosFinal,
-        potencia_modulo_w: calculo.potencia_modulo_w,
-        qtd_inversores: calculo.qtd_inversores,
-        potencia_inversor_kw: calculo.potencia_inversor_kw,
-        area_necessaria_m2: calculo.area_necessaria_m2,
-        geracao_mensal_kwh: calculo.geracao_mensal_kwh,
-        economia_mensal: calculo.economia_mensal,
-        economia_anual: calculo.economia_anual,
-        economia_25_anos: calculo.economia_25_anos,
-        payback_meses: calculo.payback_meses,
-        co2_evitado_ton: calculo.co2_evitado_ton,
-        arvores_equivalentes: calculo.arvores_equivalentes,
-        preco_por_wp: +(precoFinal / (kwpFinal * 1000)).toFixed(2),
-        validade_dias: paramsComerciais.validade_proposta_dias || 15,
-        condicoes_pagamento: "À vista 5% desconto · Financiamento via parceiros bancários",
-        observacoes: "Criada instantaneamente pelo painel de controle expresso"
-      } as any).select().single();
-
-      if (errProp) {
-        console.error("Erro ao criar proposta expressa na home:", errProp);
-        navigate({ to: "/app/cliente/$id", params: { id: client.id } });
-      } else {
-        // Vincula o cliente à proposta
-        await supabase.from("proposta_clientes").insert({
-          proposta_id: prop.id,
-          cliente_id: client.id
-        });
-        
-        toast.success("Lead e Proposta gerados instantaneamente!");
-        setFastName("");
-        setFastPhone("");
-        setFastBill("");
-        setFastKwh("");
-        setFastEndereco("");
-        setFastCidade("");
-        setFastEstado("");
-        
-        // Redireciona diretamente para o envio
-        navigate({ to: "/app/propostas/$id", params: { id: prop.id } });
-      }
-    } catch (err) {
-      toast.error("Falha no processo de gravação rápida.");
-    } finally {
-      setFastSaving(false);
-    }
-  };
 
   useEffect(() => {
     (async () => {
@@ -490,174 +278,72 @@ function AdminDashboard() {
       {/* ABA 1: CRM & OPERAÇÃO */}
       {activeTab === "crm" && (
         <div className="space-y-6">
-          {/* CARD DE CAPTURA & PROPOSTA INSTANTÂNEA */}
-          <Card className="p-5 border-l-4 border-l-sun-deep bg-white shadow-md">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-              <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-sun-deep animate-pulse" />
+          {/* ATALHOS DE ACESSO RÁPIDO */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link to="/app/financiamentos" className="block group">
+              <Card className="p-4 border-l-4 border-l-emerald-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
                 <div>
-                  <h3 className="font-extrabold text-navy text-sm">Proposta</h3>
-                  <p className="text-[11px] text-muted-foreground">Cadastre o cliente e gere a proposta para WhatsApp em uma única ação.</p>
-                </div>
-              </div>
-              
-              {/* Botões Segmented Control: Tipo de Imóvel */}
-              <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/40 w-full sm:w-auto">
-                {(["residencial", "comercial", "industrial", "rural"] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setFastImovelTipo(t)}
-                    className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold uppercase transition-all ${fastImovelTipo === t ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                  >
-                    {t === "residencial" ? "🏡 Residencial" : t === "comercial" ? "🏢 Comercial" : t === "industrial" ? "🏭 Industrial" : "🌾 Rural"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <form onSubmit={handleFastSubmit} className="space-y-4">
-              {/* Linha 1: Contato e Endereço */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Nome do Cliente *</label>
-                  <Input
-                    required
-                    placeholder="Ex: João da Silva"
-                    value={fastName}
-                    onChange={(e) => setFastName(e.target.value)}
-                    className="h-9 text-xs"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">WhatsApp / Telefone *</label>
-                  <Input
-                    required
-                    placeholder="Ex: (11) 99999-9999"
-                    value={fastPhone}
-                    onChange={(e) => setFastPhone(e.target.value)}
-                    className="h-9 text-xs"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Endereço (Opcional)</label>
-                  <Input
-                    placeholder="Ex: Rua das Flores, 123"
-                    value={fastEndereco}
-                    onChange={(e) => setFastEndereco(e.target.value)}
-                    className="h-9 text-xs"
-                  />
-                </div>
-                
-                {/* Campo Autocompletável de Município e Estado */}
-                <div className="space-y-1 relative">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Município / Estado *</label>
-                  <div className="flex gap-1">
-                    <Input
-                      required
-                      placeholder="Buscar cidade..."
-                      value={fastCidade}
-                      onChange={(e) => {
-                        setFastCidade(e.target.value);
-                        setShowSugestions(true);
-                      }}
-                      onFocus={() => setShowSugestions(true)}
-                      onBlur={() => setTimeout(() => setShowSugestions(false), 200)}
-                      className="h-9 text-xs flex-1"
-                    />
-                    <Input
-                      readOnly
-                      placeholder="UF"
-                      value={fastEstado}
-                      className="h-9 text-xs w-11 bg-slate-50 text-center font-bold text-navy border"
-                    />
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">Financiamento</span>
+                    <span className="text-xl group-hover:scale-110 transition-transform">🏦</span>
                   </div>
-
-                  {/* Dropdown de sugestões do IBGE */}
-                  {showSugestions && sugestoesCidades.length > 0 && (
-                    <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto divide-y">
-                      {sugestoesCidades.map((m, idx) => (
-                        <button
-                          key={`${m.nome}-${m.uf}-${idx}`}
-                          type="button"
-                          onClick={() => {
-                            setFastCidade(m.nome);
-                            setFastEstado(m.uf);
-                            setShowSugestions(false);
-                          }}
-                          className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 text-slate-700 font-semibold flex justify-between items-center"
-                        >
-                          <span>{m.nome}</span>
-                          <Badge variant="outline" className="text-[9px] border-slate-300 font-bold">{m.uf}</Badge>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <h4 className="font-extrabold text-navy text-sm mt-2">Bancos & Simulações</h4>
+                  <p className="text-[11px] text-muted-foreground mt-1">Gerencie propostas e contratos de financiamento solar ativos.</p>
                 </div>
-              </div>
+                <div className="text-[11px] text-emerald-600 font-bold mt-4 flex items-center gap-1">
+                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Card>
+            </Link>
 
-              {/* Linha 2: Consumo Alternável e Envio */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end pt-2 border-t border-slate-100">
-                {/* Seletor de Tipo de Consumo (Fatura vs kWh) */}
-                <div className="space-y-1">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Preencher energia por</label>
-                  <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200/50">
-                    <button
-                      type="button"
-                      onClick={() => setFastInputMode("fatura")}
-                      className={`flex-1 py-1 rounded-md text-[10px] font-bold transition-all ${fastInputMode === "fatura" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                    >
-                      💰 Fatura (R$)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFastInputMode("kwh")}
-                      className={`flex-1 py-1 rounded-md text-[10px] font-bold transition-all ${fastInputMode === "kwh" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy"}`}
-                    >
-                      ⚡ Consumo (kWh)
-                    </button>
+            <Link to="/app/cotacoes" className="block group">
+              <Card className="p-4 border-l-4 border-l-sun-deep bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-sun-deep bg-amber-50 px-2.5 py-0.5 rounded-full">Cotação</span>
+                    <span className="text-xl group-hover:scale-110 transition-transform">☀️</span>
                   </div>
+                  <h4 className="font-extrabold text-navy text-sm mt-2">Dimensionar Sistemas</h4>
+                  <p className="text-[11px] text-muted-foreground mt-1">Calcule kits solares e irradiação HSP para gerar cotações comerciais.</p>
                 </div>
-
-                {/* Input Dinâmico conforme Seleção */}
-                <div className="space-y-1">
-                  {fastInputMode === "fatura" ? (
-                    <>
-                      <label className="text-[10px] text-slate-500 font-bold uppercase">Valor da Fatura Média (R$)</label>
-                      <Input
-                        type="number"
-                        placeholder="Ex: 450"
-                        value={fastBill}
-                        onChange={(e) => setFastBill(e.target.value)}
-                        className="h-9 text-xs font-bold text-navy"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <label className="text-[10px] text-slate-500 font-bold uppercase">Consumo Médio Mensal (kWh)</label>
-                      <Input
-                        type="number"
-                        placeholder="Ex: 500"
-                        value={fastKwh}
-                        onChange={(e) => setFastKwh(e.target.value)}
-                        className="h-9 text-xs font-bold text-navy"
-                      />
-                    </>
-                  )}
+                <div className="text-[11px] text-sun-deep font-bold mt-4 flex items-center gap-1">
+                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                 </div>
+              </Card>
+            </Link>
 
-                {/* Botão Principal de Envio */}
-                <Button
-                  type="submit"
-                  disabled={fastSaving}
-                  className="bg-sun hover:bg-sun-deep text-navy font-extrabold h-9 text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all animate-pulse"
-                >
-                  {fastSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-navy" /> : <Send className="w-3.5 h-3.5 text-navy" />}
-                  {fastSaving ? "Salvando..." : "Salvar & Criar Proposta 🚀"}
-                </Button>
-              </div>
-            </form>
-          </Card>
+            <Link to="/app/propostas" className="block group">
+              <Card className="p-4 border-l-4 border-l-indigo-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">Proposta</span>
+                    <span className="text-xl group-hover:scale-110 transition-transform">📝</span>
+                  </div>
+                  <h4 className="font-extrabold text-navy text-sm mt-2">Gerador de Orçamentos</h4>
+                  <p className="text-[11px] text-muted-foreground mt-1">Consulte propostas emitidas, envie links de assinatura e crie novos documentos.</p>
+                </div>
+                <div className="text-[11px] text-indigo-600 font-bold mt-4 flex items-center gap-1">
+                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Card>
+            </Link>
+
+            <Link to="/app/clientes" className="block group">
+              <Card className="p-4 border-l-4 border-l-rose-500 bg-white hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full">Clientes</span>
+                    <span className="text-xl group-hover:scale-110 transition-transform">👥</span>
+                  </div>
+                  <h4 className="font-extrabold text-navy text-sm mt-2">Gestão de Carteira</h4>
+                  <p className="text-[11px] text-muted-foreground mt-1">Acompanhe leads, histórico de contatos e atribuições da equipe de vendas.</p>
+                </div>
+                <div className="text-[11px] text-rose-600 font-bold mt-4 flex items-center gap-1">
+                  Acessar Painel <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Card>
+            </Link>
+          </div>
 
           {/* KPIs Operacionais */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
