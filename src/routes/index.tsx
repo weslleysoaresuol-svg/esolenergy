@@ -43,18 +43,16 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 
 function Landing() {
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
-  // Shared bill value: Hero input → Simulator slider
-  const [heroBill, setHeroBill] = useState("");
   return (
     <div className="min-h-screen bg-paper text-ink antialiased selection:bg-sun selection:text-navy">
       <Nav onOpenTracking={() => setIsTrackingOpen(true)} />
-      <Hero heroBill={heroBill} setHeroBill={setHeroBill} />
+      <Hero />
       <LogosStrip />
       <MetricsBar />
-      <Simulator initialBill={heroBill ? Math.min(5000, Math.max(200, Number(heroBill))) : 800} />
+      <Simulator />
       <Solutions />
       <Process />
-      <TrustSignals />
+      <Portfolio />
       <Testimonials />
       <FAQ />
       <FinalCTA />
@@ -89,6 +87,7 @@ function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
           <a href="#simulador" className="hover:text-sun-deep transition-colors">Simulador</a>
           <a href="#solucoes" className="hover:text-sun-deep transition-colors">Soluções</a>
           <a href="#processo" className="hover:text-sun-deep transition-colors">Processo</a>
+          <a href="#portfolio" className="hover:text-sun-deep transition-colors">Projetos</a>
           <a href="#faq" className="hover:text-sun-deep transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-3">
@@ -119,128 +118,107 @@ function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
 }
 
 /* ============================ HERO ============================ */
-function Hero({ heroBill, setHeroBill }: { heroBill: string; setHeroBill: (v: string) => void }) {
+function Hero() {
+  const [bill, setBill] = useState("");
   return (
-    <section id="top" className="relative pt-32 pb-28 overflow-hidden">
-      {/* Premium layered glow background */}
-      <div className="pointer-events-none absolute -top-32 -right-40 w-[800px] h-[800px] rounded-full bg-sun/25 blur-[120px] animate-sun-pulse" />
-      <div className="pointer-events-none absolute top-60 -left-32 w-[500px] h-[500px] rounded-full bg-navy/8 blur-[100px]" />
-      <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-sun/30 to-transparent" />
+    <section id="top" className="relative pt-32 pb-24 overflow-hidden">
+      {/* sun glow */}
+      <div className="pointer-events-none absolute -top-32 -right-40 w-[640px] h-[640px] rounded-full bg-sun/30 blur-3xl animate-sun-pulse" />
+      <div className="pointer-events-none absolute top-40 -left-20 w-[420px] h-[420px] rounded-full bg-navy/10 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
+      <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-14 items-center">
         <div className="animate-fade-up">
-          {/* Live badge */}
-          <div className="inline-flex items-center gap-2.5 rounded-full bg-navy/5 border border-navy/10 backdrop-blur px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-navy">
+          <div className="inline-flex items-center gap-2 rounded-full bg-sun/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-navy">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-sun-deep opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-sun-deep" />
             </span>
-            Sistema ativo em toda região
+            Líder em eficiência fotovoltaica
           </div>
 
-          <h1 className="mt-7 font-display text-5xl md:text-6xl lg:text-[72px] font-extrabold leading-[1.01] text-navy text-balance tracking-tight">
-            Livre da conta
-            <br/>
-            de luz.{" "}
+          <h1 className="mt-6 font-display text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.02] text-navy text-balance">
+            Deixe o sol{" "}
             <span className="relative inline-block">
-              <span className="relative z-10">Para sempre.</span>
-              <span className="absolute inset-x-0 -bottom-1 h-5 bg-sun/50 -z-0 rounded-sm skew-x-1" />
-            </span>
+              <span className="relative z-10 text-navy">trabalhar</span>
+              <span className="absolute inset-x-0 bottom-1 h-4 bg-sun/60 -z-0 rounded-sm" />
+            </span>{" "}
+            por você.
           </h1>
 
-          <p className="mt-7 max-w-[500px] text-lg text-ink/65 leading-relaxed text-pretty">
-            Reduza sua conta de luz em até{" "}
-            <strong className="text-navy font-bold">95%</strong>{" "}
-            com sistemas fotovoltaicos de engenharia premium.
-            25 anos de garantia. Financiamento que cabe no bolso.
+          <p className="mt-7 max-w-xl text-lg text-ink/70 leading-relaxed text-pretty">
+            Reduza sua conta de luz em até <strong className="text-navy">95%</strong> com sistemas
+            fotovoltaicos premium da ESOL Energy. Engenharia, instalação e monitoramento 25 anos de garantia.
           </p>
 
-          {/* Hero smart input */}
-          <div className="mt-10 max-w-[540px]">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-ink/40 mb-2">Quanto você paga hoje?</p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const el = document.getElementById("simulador");
-                el?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="flex flex-col sm:flex-row gap-0 bg-white rounded-2xl shadow-[0_8px_48px_-8px_rgba(10,42,94,0.18)] border border-border overflow-hidden"
+          {/* mini lead form */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const el = document.getElementById("simulador");
+              el?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="mt-9 flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl shadow-deep border border-border max-w-xl"
+          >
+            <div className="flex items-center gap-3 flex-1 px-4">
+              <span className="text-ink/40 font-semibold">R$</span>
+              <input
+                value={bill}
+                onChange={(e) => setBill(e.target.value.replace(/\D/g, ""))}
+                inputMode="numeric"
+                placeholder="Valor da sua conta de luz"
+                className="w-full py-3 bg-transparent outline-none text-navy font-medium placeholder:text-ink/30"
+              />
+            </div>
+            <button
+              type="submit"
+              className="group inline-flex items-center justify-center gap-2 rounded-xl bg-sun px-6 py-4 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all whitespace-nowrap shadow-glow"
             >
-              <div className="flex items-center gap-3 flex-1 px-5 py-1">
-                <span className="text-lg font-bold text-ink/30">R$</span>
-                <input
-                  value={heroBill}
-                  onChange={(e) => setHeroBill(e.target.value.replace(/\D/g, ""))}
-                  inputMode="numeric"
-                  placeholder="Ex: 500, 800, 1.200..."
-                  className="w-full py-4 bg-transparent outline-none text-navy text-lg font-semibold placeholder:text-ink/25 placeholder:font-normal"
-                />
-              </div>
-              <button
-                type="submit"
-                className="group inline-flex items-center justify-center gap-2.5 bg-sun hover:bg-sun-deep px-7 py-4 text-sm font-extrabold uppercase tracking-wider text-navy transition-all whitespace-nowrap"
-              >
-                Ver minha economia
-                <span className="transition-transform group-hover:translate-x-1 text-base">→</span>
-              </button>
-            </form>
-            <p className="mt-2.5 text-[11px] text-ink/40 ml-1">Grátis, sem compromisso. Resultado em segundos.</p>
-          </div>
+              Calcular economia
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </button>
+          </form>
 
-          {/* Social proof row */}
-          <div className="mt-8 flex items-center gap-5">
-            <div className="flex -space-x-2.5">
-              {["#FFC107","#0A2A5E","#FFC107","#0A2A5E","#FFC107"].map((c, i) => (
-                <div key={i} className="size-8 rounded-full ring-2 ring-white flex items-center justify-center text-[10px] font-extrabold text-white" style={{ background: c }}>
-                  {i < 2 ? "" : ""}
-                </div>
+          <div className="mt-5 flex items-center gap-4 text-xs text-ink/50">
+            <div className="flex -space-x-2">
+              {["#FFC107", "#0A2A5E", "#FFC107", "#0A2A5E"].map((c, i) => (
+                <div
+                  key={i}
+                  className="size-7 rounded-full ring-2 ring-white"
+                  style={{ background: c }}
+                />
               ))}
             </div>
-            <div>
-              <div className="flex items-center gap-1">
-                {[1,2,3,4,5].map(s => <span key={s} className="text-sun text-sm">★</span>)}
-                <span className="text-xs font-bold text-navy ml-1">4.9/5</span>
-              </div>
-              <p className="text-[11px] text-ink/50 mt-0.5">Mais de 1.200 famílias e empresas atendidas</p>
-            </div>
+            <span className="font-medium">+1.200 famílias e empresas economizando hoje</span>
           </div>
         </div>
 
-        {/* Right visual: premium glass card stack */}
-        <div className="relative animate-fade-up [animation-delay:200ms] hidden lg:block">
-          <div className="relative rounded-[40px] overflow-hidden shadow-[0_32px_80px_-16px_rgba(10,42,94,0.35)] ring-1 ring-navy/8">
+        {/* Visual */}
+        <div className="relative animate-fade-up [animation-delay:150ms]">
+          <div className="relative rounded-[36px] overflow-hidden shadow-deep ring-1 ring-black/5">
             <img
               src={heroHouse}
-              alt="Casa com sistema solar fotovoltaico ESOL Energy instalado"
+              alt="Residência brasileira de alto padrão com sistema solar fotovoltaico ESOL Energy"
               width={1024}
               height={1024}
-              className="w-full aspect-square object-cover"
+              className="w-full h-auto aspect-square object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/40 via-transparent to-transparent" />
-            {/* Energy generation overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 text-white">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-sun">Geração em tempo real</div>
-                <div className="mt-1 font-display font-extrabold text-3xl">42,8 <span className="text-lg font-semibold text-white/70">kWh hoje</span></div>
-                <div className="mt-2 h-1.5 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-sun rounded-full w-[72%] animate-pulse" />
-                </div>
-                <div className="mt-1 text-[10px] text-white/60">72% da cota diária gerada</div>
-              </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/30 via-transparent to-transparent" />
+          </div>
+
+          {/* floating stats */}
+          <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-deep p-5 border border-border animate-float">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-ink/50">
+              Economia média / 10 anos
+            </div>
+            <div className="mt-1 font-display font-extrabold text-3xl text-navy">
+              R$ 184<span className="text-sun">k</span>
             </div>
           </div>
-
-          {/* Floating economy card */}
-          <div className="absolute -bottom-5 -left-8 bg-white rounded-2xl shadow-deep p-5 border border-border animate-float">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Economia / 10 anos</div>
-            <div className="mt-1 font-display font-extrabold text-3xl text-navy">R$ 184<span className="text-sun">k</span></div>
-            <div className="mt-1 text-[10px] text-emerald-600 font-bold">↑ Acima do projetado</div>
-          </div>
-
-          {/* CO2 badge */}
-          <div className="absolute -top-5 -right-4 bg-emerald-600 text-white rounded-2xl shadow-deep px-5 py-4 animate-float [animation-delay:2s]">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-200">CO₂ evitado</div>
-            <div className="mt-0.5 font-display font-extrabold text-xl">18,4 ton</div>
+          <div className="absolute -top-4 -right-4 bg-navy text-white rounded-2xl shadow-deep p-5 animate-float [animation-delay:1.5s]">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-sun">
+              Geração hoje
+            </div>
+            <div className="mt-1 font-display font-extrabold text-2xl">42,8 kWh</div>
           </div>
         </div>
       </div>
@@ -312,20 +290,13 @@ const DEFAULT_FINANCEIRAS = [
   { id: "5", nome: "Banco do Brasil", taxa_juros_mes: 0.95, prazo_maximo_meses: 96, taxa_aprovacao_media: 65, ativo: true }
 ];
 
-function Simulator({ initialBill }: { initialBill: number }) {
-  const [bill, setBill] = useState(initialBill);
+function Simulator() {
+  const [bill, setBill] = useState(800);
   const [type, setType] = useState("residencial");
   const [simulatorMode, setSimulatorMode] = useState<"economia" | "financiamento">("economia");
   const [financeiras, setFinanceiras] = useState<any[]>(DEFAULT_FINANCEIRAS);
   const [selectedBankId, setSelectedBankId] = useState("1");
   const [selectedTerm, setSelectedTerm] = useState(60);
-
-  // Sync initialBill prop → slider whenever the Hero form fires
-  useEffect(() => {
-    if (initialBill && initialBill >= 200) {
-      setBill(Math.min(5000, Math.max(200, initialBill)));
-    }
-  }, [initialBill]);
 
   useEffect(() => {
     (async () => {
@@ -579,33 +550,29 @@ function Solutions() {
       img: portfolioResidential,
       tag: "Residencial",
       title: "Sua casa livre da inflação energética",
-      desc: "Sistemas de 2 a 15 kWp dimensionados por engenheiros certificados. Economia real, sem surpresas.",
+      desc: "Sistemas de 2 a 15 kWp com instalação em 48h. Conforto sem medo da conta.",
       meta: "A partir de R$ 199/mês",
-      icon: "🏡",
     },
     {
       img: portfolioCommercial,
       tag: "Comercial",
       title: "Aumente a margem do seu negócio",
-      desc: "Transforme custo fixo em ativo permanente. Retorno médio em 3 a 5 anos e valorização imediata do imóvel.",
-      meta: "Retorno em ~3 a 5 anos",
-      icon: "🏢",
+      desc: "Transforme custo fixo em ativo. Retorno em 3 anos e valorização imediata.",
+      meta: "Retorno em ~3 anos",
     },
     {
       img: portfolioIndustrial,
       tag: "Industrial",
       title: "Usinas de alta potência",
-      desc: "Plantas customizadas com engenharia de alta tensão, monitoramento SCADA e geração distribuída.",
+      desc: "Plantas customizadas com monitoramento SCADA e geração distribuída.",
       meta: "Alta Tensão A4",
-      icon: "🏭",
     },
     {
       img: portfolioRural,
       tag: "Rural",
       title: "Independência para o agronegócio",
-      desc: "Energia garantida para irrigação, beneficiamento e armazenagem com linhas Pronaf/BNDES.",
+      desc: "Energia para irrigação, beneficiamento e armazenagem. Linhas Pronaf/BNDES.",
       meta: "Financiamento facilitado",
-      icon: "🌱",
     },
   ];
   return (
@@ -630,34 +597,34 @@ function Solutions() {
           {items.map((it) => (
             <article
               key={it.tag}
-              className="group relative rounded-3xl overflow-hidden border border-border bg-white hover:shadow-[0_20px_60px_-10px_rgba(10,42,94,0.18)] hover:-translate-y-1 transition-all duration-500"
+              className="group relative rounded-3xl overflow-hidden border border-border bg-white hover:shadow-deep transition-all duration-500"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <img
                   src={it.img}
-                  alt={`Solução ${it.tag} ESOL Energy`}
+                  alt={`Projeto ${it.tag} ESOL Energy`}
                   loading="lazy"
                   width={1280}
                   height={800}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/75 via-navy/20 to-transparent" />
-                <span className="absolute top-5 left-5 inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-navy">
-                  {it.icon} {it.tag}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent" />
+                <span className="absolute top-5 left-5 inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-navy">
+                  {it.tag}
                 </span>
-                <span className="absolute bottom-5 right-5 text-white text-xs font-bold bg-white/15 backdrop-blur-sm border border-white/25 rounded-full px-3 py-1">
+                <span className="absolute bottom-5 left-5 text-white/80 text-xs font-semibold uppercase tracking-wider">
                   {it.meta}
                 </span>
               </div>
               <div className="p-8">
                 <h3 className="font-display font-extrabold text-2xl text-navy">{it.title}</h3>
-                <p className="mt-3 text-ink/65 leading-relaxed text-pretty">{it.desc}</p>
+                <p className="mt-3 text-ink/65 text-pretty">{it.desc}</p>
                 <a
                   href="#orcamento"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-sun-deep group-hover:gap-3 transition-all"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-navy group-hover:text-sun-deep transition-colors"
                 >
-                  Solicitar projeto gratuito
-                  <span className="size-6 rounded-full bg-sun/20 flex items-center justify-center text-navy transition-transform group-hover:translate-x-1">→</span>
+                  Solicitar projeto
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
                 </a>
               </div>
             </article>
@@ -671,126 +638,88 @@ function Solutions() {
 /* ============================ PROCESS ============================ */
 function Process() {
   const steps = [
-    { n: "01", t: "Simulação", d: "Em 30 segundos você vê sua economia estimada, sistema ideal e condições de parcelamento.", icon: "⚡" },
-    { n: "02", t: "Análise técnica", d: "Nossos engenheiros avaliam o telhado via satélite e realizam visita técnica in loco gratuitamente.", icon: "📐" },
-    { n: "03", t: "Projeto e homologação", d: "Cuidamos de 100% da burocracia: ART, protocolos e vistoria na concessionária. Você só assina.", icon: "📋" },
-    { n: "04", t: "Instalação", d: "Equipe certificada, equipamentos Tier 1 e garantia de 25 anos de geração. Tudo em contrato.", icon: "☀️" },
+    { n: "01", t: "Simulação", d: "Em 30s você vê sua economia estimada." },
+    { n: "02", t: "Análise técnica", d: "Engenheiros avaliam telhado via satélite e in loco." },
+    { n: "03", t: "Projeto e homologação", d: "Cuidamos de toda burocracia com a concessionária." },
+    { n: "04", t: "Instalação em 48h", d: "Equipe própria, equipamentos Tier 1, garantia 25 anos." },
   ];
   return (
-    <section id="processo" className="py-28 px-6 bg-navy relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
-      <div className="pointer-events-none absolute -top-20 right-20 w-[400px] h-[400px] rounded-full bg-sun/15 blur-[80px]" />
-      <div className="relative mx-auto max-w-7xl">
+    <section id="processo" className="py-28 px-6 bg-paper">
+      <div className="mx-auto max-w-7xl">
         <div className="text-center mb-16">
-          <span className="text-sun font-bold tracking-[0.18em] text-xs uppercase">
+          <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">
             Como funciona
           </span>
-          <h2 className="mt-3 font-display font-extrabold text-4xl md:text-5xl text-white leading-tight text-balance max-w-3xl mx-auto">
-            Do interesse à energia limpa,{" "}
-            <span className="text-sun">passo a passo.</span>
+          <h2 className="mt-3 font-display font-extrabold text-4xl md:text-5xl text-navy leading-tight text-balance max-w-3xl mx-auto">
+            Do interesse à energia limpa em poucos dias.
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 relative">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
           {steps.map((s, i) => (
             <div
               key={s.n}
-              className="group relative rounded-3xl bg-white/5 backdrop-blur border border-white/10 p-8 hover:bg-white/10 hover:border-sun/50 transition-all duration-500"
+              className="relative rounded-3xl bg-white p-8 border border-border hover:border-sun hover:shadow-glow transition-all duration-500"
             >
-              <div className="text-4xl mb-4">{s.icon}</div>
-              <div className="font-display font-extrabold text-5xl text-sun/25 leading-none absolute top-6 right-6">{s.n}</div>
-              <h3 className="font-display font-extrabold text-xl text-white">{s.t}</h3>
-              <p className="mt-3 text-sm text-white/55 leading-relaxed">{s.d}</p>
+              <div className="font-display font-extrabold text-6xl text-sun/30 leading-none">
+                {s.n}
+              </div>
+              <h3 className="mt-4 font-display font-extrabold text-xl text-navy">{s.t}</h3>
+              <p className="mt-2 text-sm text-ink/65">{s.d}</p>
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-10 -right-3 text-sun/60 text-2xl z-10">→</div>
+                <div className="hidden lg:block absolute top-12 -right-3 text-sun text-2xl">→</div>
               )}
             </div>
           ))}
-        </div>
-
-        <div className="mt-14 text-center">
-          <a
-            href="#orcamento"
-            className="inline-flex items-center gap-3 bg-sun hover:bg-sun-deep text-navy font-extrabold text-sm uppercase tracking-wider px-8 py-4 rounded-full transition-all shadow-[0_8px_32px_-4px_rgba(255,193,7,0.5)]"
-          >
-            Começar agora — é gratuito
-            <span>→</span>
-          </a>
-          <p className="mt-3 text-white/40 text-xs">Sem compromisso. Proposta técnica gratuita.</p>
         </div>
       </div>
     </section>
   );
 }
 
-/* ============================ TRUST SIGNALS ============================ */
-function TrustSignals() {
-  const signals = [
-    {
-      icon: "🛡️",
-      title: "25 Anos de Garantia",
-      desc: "Garantia de geração dos painéis por contrato. Inversores com 10 anos. Instalação com 5 anos.",
-      highlight: "Contrato assinado",
-    },
-    {
-      icon: "⚙️",
-      title: "Tecnologia Tier 1",
-      desc: "Apenas painéis e inversores das marcas líderes globais: Jinko, Canadian Solar, Growatt, Solis.",
-      highlight: "Equipamentos homologados INMETRO",
-    },
-    {
-      icon: "📐",
-      title: "Engenharia Certificada",
-      desc: "Todos os projetos são assinados por engenheiros eletricistas com ART emitida e registrada no CREA.",
-      highlight: "ART em todo projeto",
-    },
-    {
-      icon: "🏛️",
-      title: "Homologação Total",
-      desc: "Cuidamos de 100% do processo junto à concessionária: projeto, protocolo, vistoria e ligação.",
-      highlight: "Zero burocracia para você",
-    },
-    {
-      icon: "💳",
-      title: "Financiamento Facilitado",
-      desc: "Parcelas que podem ser menores que sua conta atual. Trabalhamos com Solfácil, BV, Santander e Sicredi.",
-      highlight: "Aprovação em até 48h",
-    },
-    {
-      icon: "📊",
-      title: "Monitoramento Online",
-      desc: "Acompanhe a geração do seu sistema em tempo real pelo celular. Alertas automáticos de performance.",
-      highlight: "App gratuito incluso",
-    },
+/* ============================ PORTFOLIO ============================ */
+function Portfolio() {
+  const works = [
+    { img: portfolioIndustrial, t: "Indústria Metalúrgica · 1.2 MWp", l: "Joinville/SC" },
+    { img: portfolioCommercial, t: "Edifício Corporativo · 320 kWp", l: "São Paulo/SP" },
+    { img: portfolioResidential, t: "Condomínio Alto Padrão · 18 kWp", l: "Goiânia/GO" },
+    { img: portfolioRural, t: "Fazenda de Soja · 540 kWp", l: "Sorriso/MT" },
   ];
   return (
-    <section className="py-28 px-6 bg-white">
+    <section id="portfolio" className="py-28 px-6 bg-white">
       <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-16">
-          <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">Por que a ESOL</span>
-          <h2 className="mt-3 font-display font-extrabold text-4xl md:text-5xl text-navy leading-tight text-balance max-w-3xl mx-auto">
-            Compromisso real.
-            <br/>
-            <span className="text-sun-deep">Do projeto à geração.</span>
-          </h2>
-          <p className="mt-5 text-ink/60 max-w-xl mx-auto text-pretty">
-            Cada instalação é tratada como se fosse na nossa própria casa. Engenharia séria, materiais certificados e suporte de longo prazo.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+          <div>
+            <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">
+              Projetos entregues
+            </span>
+            <h2 className="mt-3 font-display font-extrabold text-4xl md:text-5xl text-navy leading-tight text-balance">
+              Mais de 12 MWp gerando agora.
+            </h2>
+          </div>
         </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {signals.map((s) => (
-            <div
-              key={s.title}
-              className="group rounded-3xl border border-border bg-paper p-8 hover:bg-white hover:border-sun/40 hover:shadow-[0_16px_48px_-8px_rgba(10,42,94,0.12)] hover:-translate-y-1 transition-all duration-500"
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {works.map((w) => (
+            <figure
+              key={w.t}
+              className="group relative rounded-2xl overflow-hidden border border-border"
             >
-              <div className="text-4xl mb-5">{s.icon}</div>
-              <h3 className="font-display font-extrabold text-xl text-navy">{s.title}</h3>
-              <p className="mt-3 text-sm text-ink/65 leading-relaxed">{s.desc}</p>
-              <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-sun/15 px-3 py-1.5 text-[11px] font-bold text-navy tracking-wide">
-                <span className="text-emerald-600">✓</span> {s.highlight}
-              </div>
-            </div>
+              <img
+                src={w.img}
+                alt={w.t}
+                loading="lazy"
+                width={1280}
+                height={960}
+                className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/30 to-transparent" />
+              <figcaption className="absolute bottom-5 left-5 right-5 text-white">
+                <div className="font-display font-extrabold text-sm">{w.t}</div>
+                <div className="text-[11px] uppercase tracking-widest text-sun font-bold mt-1">
+                  {w.l}
+                </div>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>
