@@ -191,7 +191,7 @@ function Hero() {
   const { setBill } = useBill();
   const [val, setVal] = useState("");
   return (
-    <section id="top" className="relative pt-32 sm:pt-36 pb-16 lg:pt-32 lg:pb-16 overflow-hidden">
+    <section id="top" className="relative pt-36 sm:pt-40 pb-16 lg:pt-44 lg:pb-20 overflow-hidden">
       {/* sun glow */}
       <div className="pointer-events-none absolute -top-32 -right-40 w-[640px] h-[640px] rounded-full bg-sun/30 blur-3xl animate-sun-pulse" />
       <div className="pointer-events-none absolute top-40 -left-20 w-[420px] h-[420px] rounded-full bg-navy/10 blur-3xl" />
