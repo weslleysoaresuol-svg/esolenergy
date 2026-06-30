@@ -312,7 +312,7 @@ function LogosStrip() {
   const loop = [...items, ...items];
   return (
     <section className="border-y border-border bg-white/60 backdrop-blur">
-      <div className="mx-auto max-w-7xl px-6 py-6 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 py-4 overflow-hidden">
         <div className="flex gap-12 animate-marquee whitespace-nowrap">
           {loop.map((t, i) => (
             <div key={i} className="flex items-center gap-3 text-sm font-semibold text-ink/50">
@@ -340,7 +340,7 @@ function MetricsBar() {
         backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
         backgroundSize: "32px 32px",
       }} />
-      <div className="relative mx-auto max-w-7xl px-6 py-12 sm:py-14 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div className="relative mx-auto max-w-7xl px-6 py-8 sm:py-10 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
         {metrics.map((m) => (
           <div key={m.l} className="flex flex-col">
             <div className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-sun">{m.v}</div>
@@ -450,7 +450,7 @@ function Simulator() {
   const parcelaMenor = financeParcela > 0 && financeParcela < bill;
 
   return (
-    <section id="simulador" ref={sectionRef} className="py-20 sm:py-28 px-5 sm:px-6 bg-paper relative">
+    <section id="simulador" ref={sectionRef} className="py-12 sm:py-16 px-5 sm:px-6 bg-paper relative">
       <div className="mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           <div>
@@ -667,9 +667,9 @@ function Solutions() {
     },
   ];
   return (
-    <section id="solucoes" className="py-20 sm:py-28 px-5 sm:px-6 bg-white">
+    <section id="solucoes" className="py-12 sm:py-16 px-5 sm:px-6 bg-white">
       <div className="mx-auto max-w-7xl">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 sm:mb-14">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-8 sm:mb-10">
           <div className="max-w-2xl">
             <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">
               Soluções sob medida
@@ -735,9 +735,9 @@ function Process() {
     { n: "04", t: "Instalação", d: "Equipe própria, equipamentos Tier 1, 25 anos de garantia." },
   ];
   return (
-    <section id="processo" className="py-20 sm:py-28 px-5 sm:px-6 bg-paper">
+    <section id="processo" className="py-12 sm:py-16 px-5 sm:px-6 bg-paper">
       <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-12 sm:mb-16">
+        <div className="text-center mb-8 sm:mb-10">
           <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">
             Como funciona
           </span>
@@ -778,9 +778,9 @@ function FAQ() {
     { q: "Vocês cuidam da homologação na concessionária?", a: "Sim. Cuidamos de 100% do processo: projeto, ART, protocolos e vistoria. Você só assina." },
   ];
   return (
-    <section id="faq" className="py-20 sm:py-28 px-5 sm:px-6 bg-white">
+    <section id="faq" className="py-12 sm:py-16 px-5 sm:px-6 bg-white">
       <div className="mx-auto max-w-4xl">
-        <div className="text-center mb-12 sm:mb-14">
+        <div className="text-center mb-8 sm:mb-10">
           <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">Dúvidas</span>
           <h2 className="mt-3 font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-navy text-balance">
             Perguntas frequentes.
@@ -893,7 +893,7 @@ function FinalCTA() {
   };
 
   return (
-    <section id="orcamento" className="py-20 sm:py-28 px-5 sm:px-6 bg-paper">
+    <section id="orcamento" className="py-12 sm:py-16 px-5 sm:px-6 bg-paper">
       <div className="mx-auto max-w-6xl">
         <div className="relative rounded-[32px] sm:rounded-[40px] overflow-hidden bg-navy text-white shadow-deep">
           <div className="absolute inset-0 opacity-[0.06]" style={{
@@ -902,7 +902,7 @@ function FinalCTA() {
           }} />
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-sun/30 blur-3xl animate-sun-pulse" />
 
-          <div className="relative grid lg:grid-cols-2 gap-10 lg:gap-12 p-7 sm:p-10 lg:p-16">
+          <div className="relative grid lg:grid-cols-2 gap-10 lg:gap-12 p-6 sm:p-8 lg:p-12">
             <div>
               <span className="inline-block text-sun font-bold tracking-[0.18em] text-xs uppercase">
                 Comece agora
@@ -1069,7 +1069,7 @@ function Field({
 function Footer() {
   return (
     <footer className="bg-navy-deep text-white">
-      <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 grid md:grid-cols-4 gap-10">
+      <div className="mx-auto max-w-7xl px-6 py-10 sm:py-12 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
           <img src={logo} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto brightness-0 invert opacity-90" width={137} height={60} />
           <p className="mt-5 max-w-sm text-white/60 text-sm leading-relaxed">
