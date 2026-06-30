@@ -480,8 +480,8 @@ function Simulator() {
             </ul>
           </div>
 
-          <div className="rounded-3xl bg-white p-6 sm:p-8 lg:p-10 shadow-deep border border-border">
-            <div className="space-y-6 sm:space-y-7">
+          <div className="rounded-3xl bg-white p-5 sm:p-6 shadow-deep border border-border">
+            <div className="space-y-4">
               {/* Modo */}
               <div className="grid grid-cols-2 gap-2 p-1 bg-secondary rounded-xl">
                 <button
@@ -539,7 +539,7 @@ function Simulator() {
                   step={50}
                   value={Math.min(Math.max(bill, 200), 10000)}
                   onChange={(e) => setBill(Number(e.target.value))}
-                  className="mt-3 w-full accent-sun cursor-pointer"
+                  className="mt-2.5 w-full accent-sun cursor-pointer"
                   aria-label="Valor da conta de luz"
                 />
                 <div className="mt-1 flex justify-between text-[10px] font-semibold text-ink/40">
@@ -549,9 +549,9 @@ function Simulator() {
               </div>
 
               {mode === "economia" ? (
-                <div className="rounded-2xl bg-navy text-white p-6 relative overflow-hidden">
+                <div className="rounded-2xl bg-navy text-white p-4 relative overflow-hidden">
                   <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
-                  <div className="relative grid grid-cols-2 gap-5">
+                  <div className="relative grid grid-cols-2 gap-4">
                     <Stat label="Economia anual" value={BRL.format(result.yearly)} accent />
                     <Stat label={`Em ${params.vida_util_anos} anos`} value={BRL.format(result.total25)} />
                     <Stat label="Sistema ideal" value={`${result.systemKwp} kWp`} />
@@ -566,7 +566,7 @@ function Simulator() {
                       <select
                         value={selectedBankId}
                         onChange={(e) => setSelectedBankId(e.target.value)}
-                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-navy outline-none"
+                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-navy outline-none"
                       >
                         {financeiras.map((fin) => (
                           <option key={fin.id} value={fin.id}>{fin.nome}</option>
@@ -578,7 +578,7 @@ function Simulator() {
                       <select
                         value={selectedTerm}
                         onChange={(e) => setSelectedTerm(Number(e.target.value))}
-                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-navy outline-none"
+                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-navy outline-none"
                       >
                         {[24, 36, 48, 60, 72, 84, 96, 120]
                           .filter((t) => t <= (selectedBank?.prazo_maximo_meses || 120))
@@ -589,9 +589,9 @@ function Simulator() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl bg-navy text-white p-6 relative overflow-hidden">
+                  <div className="rounded-2xl bg-navy text-white p-4 relative overflow-hidden">
                     <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
-                    <div className="relative space-y-4">
+                    <div className="relative space-y-3">
                       <div className="flex justify-between items-center gap-3 flex-wrap">
                         <Stat label="Parcela estimada" value={`${BRL.format(financeParcela)}/mês`} accent />
                         {parcelaMenor && (
@@ -600,7 +600,7 @@ function Simulator() {
                           </span>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-3">
+                      <div className="grid grid-cols-2 gap-3 border-t border-white/10 pt-2.5">
                         <Stat label="Investimento" value={BRL.format(result.precoTotal)} />
                         <Stat label="Aprovação média" value={`${selectedBank?.taxa_aprovacao_media || 80}%`} />
                       </div>
@@ -611,7 +611,7 @@ function Simulator() {
 
               <a
                 href="#orcamento"
-                className="relative block w-full text-center rounded-xl bg-sun py-4 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow cta-halo overflow-hidden"
+                className="relative block w-full text-center rounded-xl bg-sun py-3 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow cta-halo overflow-hidden"
               >
                 <span className="relative z-10">Quero garantir essa economia →</span>
                 <span aria-hidden className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] animate-[cta-shine_2.8s_ease-in-out_infinite]" />
@@ -627,7 +627,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
   return (
     <div>
       <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">{label}</div>
-      <div className={`mt-1 font-display font-extrabold text-2xl ${accent ? "text-sun" : "text-white"}`}>
+      <div className={`mt-0.5 font-display font-extrabold text-xl ${accent ? "text-sun" : "text-white"}`}>
         {value}
       </div>
     </div>
@@ -690,7 +690,7 @@ function Solutions() {
               key={it.tag}
               className="group relative rounded-3xl overflow-hidden border border-border bg-white hover:shadow-deep transition-all duration-500"
             >
-              <div className="relative aspect-[16/10] overflow-hidden">
+              <div className="relative aspect-[16/9] lg:aspect-[16/8] overflow-hidden">
                 <img
                   src={it.img}
                   alt={`Solução ${it.tag} ESOL Energy`}
@@ -707,12 +707,12 @@ function Solutions() {
                   {it.meta}
                 </span>
               </div>
-              <div className="p-6 sm:p-8">
-                <h3 className="font-display font-extrabold text-xl sm:text-2xl text-navy">{it.title}</h3>
-                <p className="mt-3 text-ink/65 text-pretty">{it.desc}</p>
+              <div className="p-5 sm:p-6">
+                <h3 className="font-display font-extrabold text-xl text-navy">{it.title}</h3>
+                <p className="mt-2 text-sm text-ink/65 text-pretty">{it.desc}</p>
                 <a
                   href="#orcamento"
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-navy group-hover:text-sun-deep transition-colors"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-navy group-hover:text-sun-deep transition-colors"
                 >
                   Quero esta solução
                   <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -750,7 +750,7 @@ function Process() {
           {steps.map((s, i) => (
             <div
               key={s.n}
-              className="relative rounded-3xl bg-white p-6 sm:p-8 border border-border hover:border-sun hover:shadow-glow transition-all duration-500"
+              className="relative rounded-3xl bg-white p-5 sm:p-6 border border-border hover:border-sun hover:shadow-glow transition-all duration-500"
             >
               <div className="font-display font-extrabold text-5xl sm:text-6xl text-sun/30 leading-none">
                 {s.n}
@@ -792,13 +792,13 @@ function FAQ() {
               key={i}
               className="group rounded-2xl bg-paper border border-border open:shadow-deep open:border-sun/40 transition-all"
             >
-              <summary className="cursor-pointer list-none flex items-center justify-between gap-4 p-5 sm:p-6 font-display font-bold text-navy text-base sm:text-lg">
+              <summary className="cursor-pointer list-none flex items-center justify-between gap-4 p-4 sm:p-5 font-display font-bold text-navy text-base sm:text-lg">
                 {item.q}
                 <span className="grid place-items-center size-8 rounded-full bg-sun text-navy text-xl font-extrabold shrink-0 transition-transform group-open:rotate-45">
                   +
                 </span>
               </summary>
-              <p className="px-5 sm:px-6 pb-5 sm:pb-6 text-ink/70 leading-relaxed -mt-2">{item.a}</p>
+              <p className="px-4 sm:px-5 pb-4 sm:pb-5 text-ink/70 leading-relaxed -mt-2">{item.a}</p>
             </details>
           ))}
         </div>
@@ -930,7 +930,7 @@ function FinalCTA() {
               </ul>
             </div>
 
-            <form onSubmit={onSubmit} className="rounded-3xl bg-white p-6 sm:p-8 text-ink shadow-2xl">
+            <form onSubmit={onSubmit} className="rounded-3xl bg-white p-5 sm:p-6 text-ink shadow-2xl">
               {sent ? (
                 <div className="text-center py-10">
                   <div className="mx-auto size-16 rounded-full bg-sun grid place-items-center text-navy text-3xl font-extrabold">
@@ -944,7 +944,7 @@ function FinalCTA() {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <Field label="Nome completo" placeholder="Ex: João Silva" value={form.nome} onChange={(v) => update("nome", v)} />
                   <div className="grid sm:grid-cols-2 gap-4">
                     <Field label="E-mail" type="email" placeholder="voce@email.com" value={form.email} onChange={(v) => update("email", v)} required={false} />
@@ -966,13 +966,13 @@ function FinalCTA() {
                           }}
                           onFocus={() => setShowSuggestions(true)}
                           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                          className="flex-1 rounded-xl bg-secondary px-4 py-3 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
+                          className="flex-1 rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
                         />
                         <input
                           readOnly
                           placeholder="UF"
                           value={estadoInput}
-                          className="w-16 rounded-xl bg-secondary px-2 py-3 text-navy font-bold text-center outline-none border-none text-sm"
+                          className="w-16 rounded-xl bg-secondary px-2 py-2.5 text-navy font-bold text-center outline-none border-none text-sm"
                         />
                       </div>
                       
@@ -1008,7 +1008,7 @@ function FinalCTA() {
                           setForm((f) => ({ ...f, conta: Number(e.target.value.replace(/\D/g, "")) || 0 }))
                         }
                         placeholder="Ex: 850"
-                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-3 text-navy font-semibold outline-none focus:ring-2 focus:ring-sun transition-all"
+                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy font-semibold outline-none focus:ring-2 focus:ring-sun transition-all"
                       />
                       <p className="mt-1 text-[10px] text-ink/40">Já preenchemos com o valor do simulador.</p>
                     </div>
@@ -1016,7 +1016,7 @@ function FinalCTA() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="relative mt-2 w-full rounded-xl bg-sun py-4 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow disabled:opacity-60 cta-halo overflow-hidden"
+                    className="relative mt-1 w-full rounded-xl bg-sun py-3 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow disabled:opacity-60 cta-halo overflow-hidden"
                   >
                     <span className="relative z-10">{loading ? "Enviando…" : "Quero economizar agora →"}</span>
                     {!loading && (
@@ -1059,7 +1059,7 @@ function Field({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-xl bg-secondary px-4 py-3 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all"
+        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all"
       />
     </div>
   );
