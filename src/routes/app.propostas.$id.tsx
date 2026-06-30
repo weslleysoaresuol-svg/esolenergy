@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { PropostaView } from "@/components/PropostaView";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, Copy, MessageCircle, Mail, Printer, Trash2 } from "lucide-react";
+import { ChevronLeft, Copy, MessageCircle, Mail, Printer, Trash2, ShoppingCart, Landmark, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { BRL } from "@/lib/proposta-calc";
 
 export const Route = createFileRoute("/app/propostas/$id")({ component: PropostaDetail });
 
@@ -53,6 +54,66 @@ function PropostaDetail() {
     navigate({ to: "/app/propostas" });
   }
 
+  const gerarPedido = async () => {
+    if (!clientePrincipal) return;
+    if (!confirm(`Confirmar pedido a partir desta proposta para ${clientePrincipal?.nome}?`)) return;
+
+    try {
+      const { data, error } = await (supabase.from as any)("pedidos").insert({
+        parceiro_id: proposta.parceiro_id,
+        cliente_id: clientePrincipal.id,
+        origem: "proposta",
+        origem_id: proposta.id,
+        valor_total: proposta.preco_total,
+        descricao: `Pedido gerado a partir da Proposta`,
+        status: "novo",
+      }).select().single();
+
+      if (error) throw error;
+
+      await (supabase.from as any)("timeline_cliente").insert({
+        cliente_id: clientePrincipal.id, 
+        parceiro_id: proposta.parceiro_id,
+        tipo: "pedido", 
+        referencia_id: data.id,
+        titulo: `Pedido ${data.numero} criado a partir da proposta`,
+        descricao: `Valor: ${BRL(Number(proposta.preco_total))}`,
+      });
+
+      toast.success(`Pedido ${data.numero} criado com sucesso!`);
+      navigate({ to: "/app/pedidos/$id", params: { id: data.id } });
+    } catch (err: any) {
+      toast.error("Erro ao gerar pedido: " + err.message);
+    }
+  };
+
+  const solicitarFinanciamento = async () => {
+    if (!clientePrincipal) return;
+    try {
+      const { data, error } = await (supabase.from as any)("financiamentos").insert({
+        parceiro_id: proposta.parceiro_id,
+        cliente_id: clientePrincipal.id,
+        valor_solicitado: proposta.preco_total,
+        status: "aguardando_documentos",
+      }).select().single();
+      if (error) throw error;
+
+      await (supabase.from as any)("timeline_cliente").insert({
+        cliente_id: clientePrincipal.id, 
+        parceiro_id: proposta.parceiro_id,
+        tipo: "financiamento", 
+        referencia_id: data.id,
+        titulo: "Financiamento solicitado via Proposta",
+        descricao: `Valor: ${BRL(Number(proposta.preco_total))}`,
+      });
+
+      toast.success("Solicitação de Financiamento iniciada!");
+      navigate({ to: "/app/financiamentos/$id", params: { id: data.id } });
+    } catch (err: any) {
+      toast.error("Erro ao solicitar financiamento: " + err.message);
+    }
+  };
+
   if (!proposta) return <div className="text-center py-12 text-muted-foreground">Carregando…</div>;
 
   const clientePrincipal = clientes[0];
@@ -68,7 +129,7 @@ function PropostaDetail() {
       </div>
 
       <Card className="p-5 border-0 shadow-md print:hidden">
-        <div className="flex items-start gap-3 flex-wrap">
+        <div className="flex items-start gap-4 flex-wrap">
           <div className="flex-1 min-w-[260px]">
             <div className="text-xs uppercase tracking-wider text-sun-deep font-bold mb-1">Link público da proposta</div>
             <div className="flex gap-2">
@@ -76,6 +137,14 @@ function PropostaDetail() {
               <Button size="sm" onClick={copyLink}><Copy className="w-4 h-4 mr-1" />Copiar</Button>
             </div>
             <p className="text-xs text-muted-foreground mt-1">Expira em {new Date(proposta.expires_at).toLocaleDateString("pt-BR")}</p>
+          </div>
+          <div className="flex gap-2 self-end w-full sm:w-auto pt-2 sm:pt-0">
+            <Button onClick={gerarPedido} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex gap-1.5 items-center flex-1 sm:flex-initial h-10 text-xs uppercase">
+              <ShoppingCart className="w-4 h-4" /> Gerar Pedido
+            </Button>
+            <Button onClick={solicitarFinanciamento} className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex gap-1.5 items-center flex-1 sm:flex-initial h-10 text-xs uppercase">
+              <Landmark className="w-4 h-4" /> Financiar
+            </Button>
           </div>
         </div>
 

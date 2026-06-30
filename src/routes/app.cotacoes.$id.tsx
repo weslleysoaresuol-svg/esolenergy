@@ -152,6 +152,31 @@ function CotacaoDetail() {
     }
   };
 
+  const solicitarFinanciamento = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await (supabase.from as any)("financiamentos").insert({
+        parceiro_id: user.id,
+        cliente_id: c.cliente_id,
+        valor_solicitado: c.preco_total,
+        status: "aguardando_documentos",
+      }).select().single();
+      if (error) throw error;
+
+      await (supabase.from as any)("timeline_cliente").insert({
+        cliente_id: c.cliente_id, parceiro_id: user.id,
+        tipo: "financiamento", referencia_id: data.id,
+        titulo: "Financiamento solicitado via Cotação",
+        descricao: `${kit.nome} — ${BRL(Number(c.preco_total))}`,
+      });
+
+      toast.success("Solicitação de Financiamento iniciada!");
+      navigate({ to: "/app/financiamentos/$id", params: { id: data.id } });
+    } catch (err: any) {
+      toast.error("Erro ao solicitar financiamento: " + err.message);
+    }
+  };
+
   const compartilharWhatsApp = () => {
     const msg = encodeURIComponent(`Olá ${c.cliente?.nome}! Segue a cotação do seu kit solar:\n\n☀️ ${kit.nome}\n💰 ${BRL(Number(c.preco_total))}\n\nVeja todos os detalhes:\n${linkPublico}`);
     const tel = (c.cliente?.telefone || "").replace(/\D/g, "");
@@ -217,10 +242,13 @@ function CotacaoDetail() {
               <Button onClick={gerarProposta} className="w-full justify-start bg-violet-600 hover:bg-violet-700">
                 <FileSpreadsheet className="w-4 h-4 mr-2" /> Gerar Proposta Completa
               </Button>
-              <Button onClick={gerarPedido} className="w-full justify-start bg-emerald-600 hover:bg-emerald-700"
+              <Button onClick={gerarPedido} className="w-full justify-start bg-emerald-600 hover:bg-emerald-700 font-bold"
                 disabled={c.status === "convertida_pedido"}>
                 {c.status === "convertida_pedido" ? <Check className="w-4 h-4 mr-2" /> : <ShoppingCart className="w-4 h-4 mr-2" />}
                 {c.status === "convertida_pedido" ? "Pedido já gerado" : "Gerar Pedido"}
+              </Button>
+              <Button onClick={solicitarFinanciamento} className="w-full justify-start bg-blue-600 hover:bg-blue-700 font-bold">
+                <Landmark className="w-4 h-4 mr-2" /> Solicitar Financiamento
               </Button>
             </div>
           </Card>

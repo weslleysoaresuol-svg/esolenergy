@@ -55,9 +55,7 @@ function NovaProposta() {
   const [usuarioAlterouKit, setUsuarioAlterouKit] = useState(false);
   const [selectedFinanceirasIds, setSelectedFinanceirasIds] = useState<string[]>([]);
 
-  const [perfilCliente, setPerfilCliente] = useState<"completo" | "cotacao" | "financiamento">(
-    modo === "cotacao" ? "cotacao" : modo === "financiamento" ? "financiamento" : "completo"
-  );
+  const [perfilCliente, setPerfilCliente] = useState<"completo" | "cotacao" | "financiamento">("completo");
 
   // Estados do Roteiro de Vendas & Foco da Proposta
   const [preferenciaFoco, setPreferenciaFoco] = useState<"ambos" | "vista" | "financiado" | "cartao">(
@@ -756,48 +754,9 @@ function NovaProposta() {
         <div className="flex items-center gap-3">
           <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
           <div>
-            <h1 className="text-xl font-extrabold text-navy leading-tight">Painel de Vendas</h1>
-            <p className="text-[10px] text-muted-foreground">Selecione o perfil do cliente para definir o fluxo de geração</p>
+            <h1 className="text-xl font-extrabold text-navy leading-tight">Nova Proposta Comercial</h1>
+            <p className="text-[10px] text-muted-foreground">Wizard estruturado para dimensionamento técnico e comercial solar</p>
           </div>
-        </div>
-
-        {/* Categorização Inicial dos Três Perfis de Clientes */}
-        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50 flex-wrap">
-          <button
-            type="button"
-            onClick={() => {
-              setPerfilCliente("financiamento");
-              setPreferenciaFoco("financiado");
-              setUsarScriptVendas(true);
-              setScriptStep(1);
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${perfilCliente === "financiamento" ? "bg-gradient-to-r from-sun to-amber-500 text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
-          >
-            🏦 Financiamento (Foco Parcela)
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPerfilCliente("cotacao");
-              setPreferenciaFoco("vista");
-              setUsarScriptVendas(false);
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${perfilCliente === "cotacao" ? "bg-navy text-white shadow-sm" : "text-slate-500 hover:text-navy"}`}
-          >
-            ⚡ Cotação Rápida (Expresso)
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPerfilCliente("completo");
-              setPreferenciaFoco("ambos");
-              setUsarScriptVendas(false);
-              setStep(1);
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${perfilCliente === "completo" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-slate-500 hover:text-navy"}`}
-          >
-            📋 Proposta Completa (Técnico)
-          </button>
         </div>
       </div>
 
