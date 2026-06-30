@@ -66,12 +66,7 @@ function AdminKits() {
   const [selectedKitDetails, setSelectedKitDetails] = useState<any | null>(null);
 
   // Estados de Integração
-  const [fornecedor, setFornecedor] = useState<"aldo" | "sou" | "custom">("aldo");
-  const [apiUrl, setApiUrl] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [apiSecret, setApiSecret] = useState("");
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncLogs, setSyncLogs] = useState<string[]>([]);
+  const [isPopulating, setIsPopulating] = useState(false);
 
   // Estados de Importação CSV
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -91,42 +86,12 @@ function AdminKits() {
   const load = async () => {
     try {
       const { data, error } = await supabase.from("kits_produtos" as any).select("*").order("potencia_kwp");
-      if (error || !data || data.length === 0) {
-        console.warn("Tabela kits_produtos vazia ou inacessível. Usando fallback estático...");
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        console.warn("Tabela kits_produtos vazia. Usando fallback estático...");
         setKits(KITS_FALLBACK);
       } else {
-        // Se o banco possuir menos de 20 kits, mesclamos com o fallback para garantir a lista completa de 50
-        let merged = [...data];
-        if (data.length < 20) {
-          const codes = new Set(data.map((k: any) => k.codigo));
-          const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
-          // Adapta campos de fallback para bater com colunas do banco
-          const missingMapped = missing.map(m => ({
-            id: m.id,
-            codigo: m.id,
-            faixa: m.faixa,
-            nome: m.nome,
-            potencia_kwp: m.potencia_kwp,
-            quantidade_modulos: m.quantidade_modulos,
-            fabricante_modulos: m.fabricante_modulos,
-            potencia_modulo_w: m.potencia_modulo_w,
-            tecnologia_modulo: m.tecnologia_modulo,
-            eficiencia_modulo: m.eficiencia_modulo,
-            inversor: m.inversor,
-            tipo_inversor: m.tipo_inversor,
-            garantia_modulos_anos: m.garantia_modulos_anos,
-            garantia_inversor_anos: m.garantia_inversor_anos,
-            preco: m.preco,
-            consumo_kwh_min: m.consumo_kwh_min,
-            consumo_kwh_max: m.consumo_kwh_max,
-            destaque: m.destaque,
-            ativo: m.ativo,
-            fornecedor: m.fornecedor,
-            url_fornecedor: m.url_fornecedor
-          }));
-          merged = [...merged, ...missingMapped];
-        }
-        setKits(merged);
+        setKits(data);
       }
     } catch (err) {
       console.warn("Falha de conexão com kits_produtos. Usando fallback estático...", err);
@@ -337,128 +302,55 @@ function AdminKits() {
   };
 
   // Sincronização via API / WebService do Distribuidor
-  const handleApiSync = async () => {
-    setIsSyncing(true);
-    setSyncLogs([]);
-    const log = (msg: string) => setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
+  // Popula banco de dados com os kits padrão
+  const popularBancoKits = async () => {
+    setIsPopulating(true);
+    try {
+      const { data: existing, error: errExist } = await supabase.from("kits_produtos" as any).select("codigo");
+      if (errExist) throw errExist;
 
-    log(`Iniciando sincronização com distribuidor ${fornecedor.toUpperCase()}...`);
-    
-    // Simulação robusta e realista de comunicação com endpoints da Aldo Solar / Sou Energy
-    setTimeout(() => {
-      log("Conectando ao WebService de Catálogo de Preços...");
-    }, 800);
+      const existingCodes = new Set((existing || []).map((k: any) => k.codigo));
+      const missing = KITS_FALLBACK.filter((k) => !existingCodes.has(k.id));
 
-    setTimeout(() => {
-      log("Autenticação efetuada com sucesso. Token gerado.");
-    }, 1800);
-
-    setTimeout(() => {
-      log("Buscando lista de Kits Fotovoltaicos ativos (Tabela FOB/CIF)...");
-    }, 2800);
-
-    setTimeout(async () => {
-      log("Download concluído. 12 kits fotovoltaicos reais mapeados.");
-      log("Processando dados e atualizando banco local...");
-      
-      // Vamos inserir alguns kits reais do fornecedor selecionado no banco
-      const mockKitsAldo = [
-        {
-          faixa: "residencial_pequeno",
-          nome: `Kit Solar Aldo | 4.4 kWp | 8x Canadian 550W | Inversor Deye 4kW`,
-          potencia_kwp: 4.4,
-          quantidade_modulos: 8,
-          fabricante_modulos: "Canadian Solar 550W",
-          inversor: "Deye SUN4000G05",
-          preco: 14950.00,
-          tecnologia_modulo: "Monocristalino TOPCon",
-          tipo_inversor: "String On-Grid",
-          ativo: true,
-          destaque: true
-        },
-        {
-          faixa: "residencial_grande",
-          nome: `Kit Solar Aldo | 8.8 kWp | 16x Jinko 550W | Inversor Deye 8kW`,
-          potencia_kwp: 8.8,
-          quantidade_modulos: 16,
-          fabricante_modulos: "Jinko Solar 550W",
-          inversor: "Deye SUN8000G05",
-          preco: 28400.00,
-          tecnologia_modulo: "Monocristalino N-Type TOPCon",
-          tipo_inversor: "String On-Grid",
-          ativo: true,
-          destaque: false
-        },
-        {
-          faixa: "comercial_pequeno",
-          nome: `Kit Solar Aldo | 16.5 kWp | 30x Jinko 550W | Inversor Sungrow 15kW`,
-          potencia_kwp: 16.5,
-          quantidade_modulos: 30,
-          fabricante_modulos: "Jinko Solar 550W N-Type",
-          inversor: "Sungrow SG15RT",
-          preco: 59300.00,
-          tecnologia_modulo: "Monocristalino TOPCon",
-          tipo_inversor: "String On-Grid Trifásico",
-          ativo: true,
-          destaque: true
-        }
-      ];
-
-      const mockKitsSou = [
-        {
-          faixa: "residencial_pequeno",
-          nome: `Kit Solar Sou Energy | 3.3 kWp | 6x Trina 550W | Inversor Solis 3kW`,
-          potencia_kwp: 3.3,
-          quantidade_modulos: 6,
-          fabricante_modulos: "Trina Vertex S+ 550W",
-          inversor: "Solis 3G-3kW",
-          preco: 12200.00,
-          tecnologia_modulo: "Monocristalino TOPCon",
-          tipo_inversor: "String On-Grid",
-          ativo: true,
-          destaque: true
-        },
-        {
-          faixa: "residencial_grande",
-          nome: `Kit Solar Sou Energy | 6.6 kWp | 12x Canadian 550W | Inversor Solis 6kW`,
-          potencia_kwp: 6.6,
-          quantidade_modulos: 12,
-          fabricante_modulos: "Canadian Solar 550W",
-          inversor: "Solis 3G-6kW",
-          preco: 22800.00,
-          tecnologia_modulo: "Monocristalino TOPCon",
-          tipo_inversor: "String On-Grid",
-          ativo: true,
-          destaque: false
-        },
-        {
-          faixa: "comercial_pequeno",
-          nome: `Kit Solar Sou Energy | 22.0 kWp | 40x Canadian 550W | Inversor Solis 20kW`,
-          potencia_kwp: 22.0,
-          quantidade_modulos: 40,
-          fabricante_modulos: "Canadian Solar 550W",
-          inversor: "Solis 3G-20kW",
-          preco: 74200.00,
-          tecnologia_modulo: "Monocristalino TOPCon",
-          tipo_inversor: "String On-Grid Trifásico",
-          ativo: true,
-          destaque: true
-        }
-      ];
-
-      const kitsToInsert = fornecedor === "aldo" ? mockKitsAldo : mockKitsSou;
-
-      try {
-        await supabase.from("kits_produtos" as any).insert(kitsToInsert);
-        log("Tabelas de preços atualizadas com sucesso!");
-        toast.success(`Kits atualizados via integração com a ${fornecedor === "aldo" ? "Aldo Solar" : "Sou Energy"}!`);
-        load();
-      } catch (err: any) {
-        log(`Erro ao salvar no banco local: ${err.message}`);
+      if (missing.length === 0) {
+        toast.info("Todos os 50 kits fotovoltaicos padrão já estão cadastrados no banco!");
+        return;
       }
 
-      setIsSyncing(false);
-    }, 4500);
+      const mapped = missing.map((m) => ({
+        codigo: m.id,
+        faixa: m.faixa,
+        nome: m.nome,
+        potencia_kwp: Number(m.potencia_kwp),
+        quantidade_modulos: Number(m.quantidade_modulos),
+        fabricante_modulos: m.fabricante_modulos,
+        potencia_modulo_w: Number(m.potencia_modulo_w),
+        tecnologia_modulo: m.tecnologia_modulo,
+        eficiencia_modulo: Number(m.eficiencia_modulo),
+        inversor: m.inversor,
+        tipo_inversor: m.tipo_inversor,
+        garantia_modulos_anos: Number(m.garantia_modulos_anos),
+        garantia_inversor_anos: Number(m.garantia_inversor_anos),
+        preco: Number(m.preco),
+        consumo_kwh_min: m.consumo_kwh_min ? Number(m.consumo_kwh_min) : null,
+        consumo_kwh_max: m.consumo_kwh_max ? Number(m.consumo_kwh_max) : null,
+        destaque: m.destaque,
+        ativo: m.ativo,
+        fornecedor: m.fornecedor || "Aldo Solar",
+        url_fornecedor: m.url_fornecedor || null,
+        componentes: m.componentes || null
+      }));
+
+      const { error: errInsert } = await supabase.from("kits_produtos" as any).insert(mapped);
+      if (errInsert) throw errInsert;
+
+      toast.success(`${mapped.length} novos kits padrão cadastrados no banco com sucesso!`);
+      load();
+    } catch (e: any) {
+      toast.error("Erro ao popular banco: " + e.message);
+    } finally {
+      setIsPopulating(false);
+    }
   };
 
   const F = (field: string) => (e: any) => setEditando((prev: any) => ({ ...prev, [field]: e.target.value }));
@@ -883,62 +775,25 @@ function AdminKits() {
             )}
           </Card>
 
-          {/* Integração Automática */}
+          {/* Carga Inicial / Popular Banco de Dados */}
           <Card className="p-6 border-0 shadow-md space-y-4">
             <h3 className="font-bold text-navy text-lg flex items-center gap-2">
-              <Link2 className="text-sun-deep w-5 h-5" /> Integração Automática (API/WebService)
+              <Boxes className="text-sun-deep w-5 h-5" /> Base de Dados Padrão (50 Kits)
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Configure credenciais de integrador para se comunicar direto com os distribuidores oficiais Aldo Solar ou Sou Energy. Os preços e o catálogo de kits serão atualizados automaticamente.
+              Carregue a listagem padrão de 50 kits fotovoltaicos reais da Esol Energy diretamente na tabela de banco de dados do seu Supabase em nuvem. Isso evita carregar kits estáticos locais em modo de desenvolvimento.
             </p>
 
-            <div className="space-y-3">
-              <div>
-                <Label className="text-xs">Distribuidor Parceiro</Label>
-                <Select value={fornecedor} onValueChange={(v: any) => setFornecedor(v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="aldo">Aldo Solar (Plataforma VOLT API)</SelectItem>
-                    <SelectItem value="sou">Sou Energy (Portal API)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-xs">URL Endpoint do WebService</Label>
-                <Input
-                  value={apiUrl}
-                  onChange={(e) => setApiUrl(e.target.value)}
-                  placeholder={fornecedor === "aldo" ? "https://api.aldo.com.br/volt/v1/kits" : "https://parceiro.souenergy.com.br/api/kits"}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs">Chave da API (Key)</Label>
-                  <Input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="••••••••••••" />
-                </div>
-                <div>
-                  <Label className="text-xs">API Secret / Senha</Label>
-                  <Input type="password" value={apiSecret} onChange={(e) => setApiSecret(e.target.value)} placeholder="••••••••••••" />
-                </div>
-              </div>
-
+            <div className="pt-2">
               <Button
-                onClick={handleApiSync}
-                disabled={isSyncing || !apiUrl}
+                onClick={popularBancoKits}
+                disabled={isPopulating}
                 className="w-full bg-navy text-white font-semibold flex items-center justify-center gap-2"
               >
-                <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
-                {isSyncing ? "Sincronizando..." : "Sincronizar Catálogo Agora"}
+                <RefreshCw className={`w-4 h-4 ${isPopulating ? "animate-spin" : ""}`} />
+                {isPopulating ? "Gravando no Banco..." : "Cadastrar Kits Padrão no Supabase"}
               </Button>
             </div>
-
-            {syncLogs.length > 0 && (
-              <div className="bg-slate-900 text-slate-300 rounded-lg p-3 font-mono text-[10px] space-y-1 max-h-40 overflow-y-auto">
-                {syncLogs.map((log, index) => <div key={index}>{log}</div>)}
-              </div>
-            )}
           </Card>
 
           {/* Card de Documentos e Tabelas de Referência */}

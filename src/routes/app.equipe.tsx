@@ -140,7 +140,9 @@ function AdminEquipe() {
     e.preventDefault();
     if (!novoEmail) return;
     setEnviandoConvite(true);
-    const token = crypto.randomUUID();
+    const token = typeof crypto !== "undefined" && crypto.randomUUID 
+      ? crypto.randomUUID() 
+      : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-");
     const { error } = await (supabase.from("convites" as any).insert({
       email: novoEmail.trim().toLowerCase(),
       token,

@@ -138,18 +138,12 @@ function NovoCliente() {
           tipo: f.imovel_tipo || "residencial"
         }, paramsComerciais);
 
-        // Carrega Kits fotovoltaicos do Supabase (ou fallback) e mescla para ter todos os 50
+        // Carrega Kits fotovoltaicos do Supabase (ou fallback)
         let loadedKits = [...KITS_FALLBACK];
         try {
           const { data: dbKits } = await supabase.from("kits_produtos" as any).select("*");
           if (dbKits && dbKits.length > 0) {
-            let merged = [...dbKits];
-            if (dbKits.length < 20) {
-              const codes = new Set(dbKits.map((k: any) => k.codigo));
-              const missing = KITS_FALLBACK.filter((k) => !codes.has(k.id) && !codes.has(k.codigo));
-              merged = [...merged, ...missing];
-            }
-            loadedKits = merged as any;
+            loadedKits = dbKits;
           }
         } catch(e) {}
 
@@ -171,7 +165,7 @@ function NovoCliente() {
           parceiro_id: user.id,
           kwp_sistema: kwpFinal,
           preco_total: precoFinal,
-          codigo_publico: crypto.randomUUID(),
+          codigo_publico: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-"),
           expires_at: expDate.toISOString(),
           status: "enviada",
           kit_id: kitRecomendado?.id || null,

@@ -114,20 +114,11 @@ function NovaProposta() {
       // 3. Kits Solares
       try {
         const { data: ks, error } = await supabase.from("kits_produtos" as any).select("*");
-        // Kits: ordenados por pot\u00eancia crescente + fallback tamb\u00e9m ordenado
         if (error || !ks || ks.length === 0) {
-          console.warn("Tabela kits_produtos vazia ou inacess\u00edvel. Usando fallback est\u00e1tico...");
+          console.warn("Tabela kits_produtos vazia. Usando fallback estático...");
           setKits([...KITS_FALLBACK].sort((a, b) => a.potencia_kwp - b.potencia_kwp));
         } else {
-          let merged = [...ks].sort((a: any, b: any) => Number(a.potencia_kwp) - Number(b.potencia_kwp));
-          if (ks.length < 20) {
-            const codes = new Set(ks.map((k: any) => k.codigo));
-            const missing = KITS_FALLBACK
-              .filter((k) => !codes.has(k.id) && !codes.has(k.codigo))
-              .sort((a, b) => a.potencia_kwp - b.potencia_kwp);
-            merged = [...merged, ...missing];
-          }
-          setKits(merged);
+          setKits([...ks].sort((a: any, b: any) => Number(a.potencia_kwp) - Number(b.potencia_kwp)));
         }
       } catch (err) {
         console.warn("Falha de conexão com kits_produtos. Usando fallback estático...", err);
@@ -582,7 +573,7 @@ function NovaProposta() {
         parceiro_id: user.id,
         kwp_sistema: kwp,
         preco_total: precoTotal,
-        codigo_publico: crypto.randomUUID(),
+        codigo_publico: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-"),
         expires_at: expDate.toISOString(),
         status: "enviada",
         kit_id: kitRecomendado?.id || null,
@@ -714,7 +705,7 @@ function NovaProposta() {
           tarifa_kwh: tarifa || 0.85,
           estado: scriptEstado.trim().toUpperCase(),
           cidade: scriptCidade.trim(),
-          codigo_publico: crypto.randomUUID(),
+          codigo_publico: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-"),
           validade_dias: params.validade_proposta_dias || 15,
           preco_por_wp: +(precoTotal / (kwp * 1000)).toFixed(2)
         } as any)
