@@ -294,7 +294,7 @@ function AdminKits() {
       setCsvRows([]);
       setCsvHeaders([]);
       load();
-      setActiveTab("catalogo");
+      
     } catch (e: any) {
       toast.error("Erro na importação: " + e.message);
     } finally {
