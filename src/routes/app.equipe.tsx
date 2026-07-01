@@ -71,8 +71,8 @@ function AdminEquipe() {
   const loadEquipe = async () => {
     setLoading(true);
     // Filtra todas as roles internas
-    const { data: roles } = await supabase
-      .from("user_roles")
+    const { data: roles } = await (supabase
+      .from("user_roles") as any)
       .select("user_id, role")
       .in("role", ["admin", "auxiliar", "atendente", "vendedor", "engenheiro", "pos_vendas", "financeiro"]);
     const ids = (roles || []).map((r) => r.user_id);
