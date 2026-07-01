@@ -23,7 +23,7 @@ export function useCurrentUser(): CurrentUser {
     const { data: u } = await supabase.auth.getUser();
     setUser(u.user ?? null);
     if (u.user) {
-      const [{ data: r }, { data: p }] = await Promise.all([
+      let [{ data: r }, { data: p }] = await Promise.all([
         supabase.from("user_roles").select("role").eq("user_id", u.user.id),
         supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
       ]);
