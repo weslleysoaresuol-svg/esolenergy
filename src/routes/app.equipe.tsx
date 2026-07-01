@@ -696,8 +696,13 @@ function AdminEquipe() {
                   <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                     <select
                       value={membroSel.role}
+                      disabled={membroSel.role === "admin"}
                       onChange={async (e) => {
                         const novaRole = e.target.value;
+                        if (membroSel.role === "admin" || novaRole === "admin") {
+                          toast.error("🛡️ Acesso negado: Contas administrativas não podem ser alteradas ou criadas no painel.");
+                          return;
+                        }
                         try {
                           // 1. Remove qualquer cargo anterior deste usuário
                           await supabase.from("user_roles").delete().eq("user_id", membroSel.id);
@@ -711,14 +716,14 @@ function AdminEquipe() {
                             if (error) throw error;
                           }
                           
-                          toast.success("Cargo de acesso atualizado!");
+                          toast.success("Cargo de acesso acesso atualizado!");
                           setMembroSel((prev: any) => ({ ...prev, role: novaRole }));
                           loadEquipe();
                         } catch (err: any) {
                           toast.error("Erro ao alterar cargo: " + err.message);
                         }
                       }}
-                      className="text-xs px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-bold text-navy uppercase cursor-pointer focus:ring-2 focus:ring-sun focus:outline-none"
+                      className="text-xs px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-bold text-navy uppercase cursor-pointer focus:ring-2 focus:ring-sun focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="pendente">Pendente (Acesso Suspenso)</option>
                       <option value="auxiliar">Auxiliar Admin</option>
@@ -730,7 +735,9 @@ function AdminEquipe() {
                       <option value="admin">Administrador</option>
                     </select>
                     <span className="text-[10px] text-slate-500 italic">
-                      Selecione o cargo para alterar o nível de permissão corporativa e liberar o acesso deste integrante.
+                      {membroSel.role === "admin" 
+                        ? "🛡️ Cargos administrativos são protegidos contra alterações por motivos de segurança corporativa." 
+                        : "Selecione o cargo para alterar o nível de permissão corporativa e liberar o acesso deste integrante."}
                     </span>
                   </div>
                 </div>
