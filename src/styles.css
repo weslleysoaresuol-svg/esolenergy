@@ -279,3 +279,27 @@
     background-color: #5DBCAB !important;
   }
 }
+
+@utility suns-glass-backdrop {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+@utility suns-skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.5s infinite linear !important;
+}
+
+@utility suns-btn-danger {
+  background-color: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  color: #991b1b !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease-in-out !important;
+  &:hover {
+    background-color: #fee2e2 !important;
+  }
+}
+

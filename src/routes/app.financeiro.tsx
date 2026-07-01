@@ -415,11 +415,11 @@ function FinanceiroDashboard() {
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="bg-slate-100 p-1 rounded-xl">
-          <TabsTrigger value="resumo">📊 Extrato Geral</TabsTrigger>
-          <TabsTrigger value="comissoes">👥 Comissões de Consultores</TabsTrigger>
-          <TabsTrigger value="gateway_payments">💳 Cobranças Digitais</TabsTrigger>
-          <TabsTrigger value="novo">➕ Novo Lançamento</TabsTrigger>
+        <TabsList className="bg-slate-100 p-1.5 rounded-xl border border-slate-200/50">
+          <TabsTrigger value="resumo">Extrato Geral</TabsTrigger>
+          <TabsTrigger value="comissoes">Comissões de Consultores</TabsTrigger>
+          <TabsTrigger value="gateway_payments">Cobranças Digitais</TabsTrigger>
+          <TabsTrigger value="novo">Novo Lançamento</TabsTrigger>
         </TabsList>
 
         {/* 1. EXTRATO DE LANÇAMENTOS */}
@@ -431,7 +431,7 @@ function FinanceiroDashboard() {
             ) : (
               <table className="w-full text-sm text-left border-collapse">
                 <thead>
-                  <tr className="border-b text-xs text-muted-foreground uppercase">
+                  <tr className="suns-table-header">
                     <th className="p-3">Data</th>
                     <th className="p-3">Tipo</th>
                     <th className="p-3">Categoria</th>
@@ -484,7 +484,7 @@ function FinanceiroDashboard() {
             ) : (
               <table className="w-full text-sm text-left border-collapse">
                 <thead>
-                  <tr className="border-b text-xs text-muted-foreground uppercase">
+                  <tr className="suns-table-header">
                     <th className="p-3">Consultor</th>
                     <th className="p-3">Pedido</th>
                     <th className="p-3">Parcela</th>
@@ -547,8 +547,8 @@ function FinanceiroDashboard() {
                   <Select value={novoLanc.tipo} onValueChange={(v) => setNovoLanc({ ...novoLanc, tipo: v, categoria: v === "receita" ? "instalacao" : "outro" })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="receita">📈 Receita (Entrada)</SelectItem>
-                      <SelectItem value="despesa">📉 Despesa (Saída)</SelectItem>
+                      <SelectItem value="receita">Receita (Entrada)</SelectItem>
+                      <SelectItem value="despesa">Despesa (Saída)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -559,16 +559,16 @@ function FinanceiroDashboard() {
                     <SelectContent>
                       {novoLanc.tipo === "receita" ? (
                         <>
-                          <SelectItem value="instalacao">🛠️ Serviço de Instalação</SelectItem>
-                          <SelectItem value="outro"> Outros Recebimentos</SelectItem>
+                          <SelectItem value="instalacao">Serviço de Instalação</SelectItem>
+                          <SelectItem value="outro">Outros Recebimentos</SelectItem>
                         </>
                       ) : (
                         <>
-                          <SelectItem value="fornecedor">📦 Aldo / Sou (Kit de Placas)</SelectItem>
-                          <SelectItem value="comissao">👥 Comissão de Consultores</SelectItem>
-                          <SelectItem value="mão_de_obra"> Mão de Obra de Engenharia</SelectItem>
-                          <SelectItem value="imposto">🏛️ Imposto / Taxa</SelectItem>
-                          <SelectItem value="outro"> Outras Despesas</SelectItem>
+                          <SelectItem value="fornecedor">Aldo / Sou (Kit de Placas)</SelectItem>
+                          <SelectItem value="comissao">Comissão de Consultores</SelectItem>
+                          <SelectItem value="mão_de_obra">Mão de Obra de Engenharia</SelectItem>
+                          <SelectItem value="imposto">Imposto / Taxa</SelectItem>
+                          <SelectItem value="outro">Outras Despesas</SelectItem>
                         </>
                       )}
                     </SelectContent>
@@ -954,7 +954,7 @@ function FinanceiroDashboard() {
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left border-collapse">
-                      <thead className="bg-slate-50 text-[10px] uppercase font-bold text-navy/70 border-b">
+                      <thead className="suns-table-header">
                         <tr>
                           <th className="p-3">Destinatário</th>
                           <th className="p-3">Gateway</th>

@@ -377,7 +377,7 @@ function AdminClientes() {
               <button
                 type="submit"
                 disabled={savingLead}
-                className="bg-[#76D7C4] hover:bg-[#5DBCAB] text-white px-8 py-2.5 rounded-full font-bold text-xs shadow-sm transition disabled:opacity-50"
+                className="suns-btn-accent px-8 py-2.5 rounded-full font-bold text-xs shadow-sm transition disabled:opacity-50"
               >
                 {savingLead ? "Salvando..." : "Salvar dados"}
               </button>

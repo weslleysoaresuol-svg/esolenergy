@@ -513,7 +513,7 @@ function AdminCorretores() {
                 {/* Status + Comissão */}
                 <div className="flex items-center gap-3 flex-wrap">
                   <Badge variant={parceiroSel.ativo ? "default" : "secondary"}>
-                    {parceiroSel.ativo ? "✅ Ativo" : "⛔ Inativo"}
+                    {parceiroSel.ativo ? "Ativo" : "Inativo"}
                   </Badge>
                   <span className="text-sm text-muted-foreground">
                     Comissão: <strong className="text-navy">{parceiroSel.comissao_percent || 0}%</strong>

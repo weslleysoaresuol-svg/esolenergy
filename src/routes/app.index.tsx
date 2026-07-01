@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
-  FileSpreadsheet
+  FileSpreadsheet, Phone, Mail
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
@@ -276,13 +276,13 @@ function AdminDashboard() {
 
     // Motivos Perda
     const MOTIVO_PERDA_LABELS: Record<string, string> = {
-      preco: "💰 Preço alto",
-      concorrente: "🏢 Concorrente",
-      prazo: "⏱️ Prazo",
-      financiamento_reprovado: "🏦 Financiamento",
-      desistiu: "🚫 Desistência",
-      nao_atendeu: "📵 Não atendeu",
-      outro: "📝 Outro",
+      preco: "Preço alto",
+      concorrente: "Concorrente",
+      prazo: "Prazo de entrega",
+      financiamento_reprovado: "Financiamento reprovado",
+      desistiu: "Desistência voluntária",
+      nao_atendeu: "Sem contato / Não atendeu",
+      outro: "Outros motivos",
     };
     const perdidos = clientes.filter((c) => c.status === "perdido" && c.motivo_perda);
     const porMotivo: Record<string, number> = {};
@@ -495,8 +495,8 @@ function AdminDashboard() {
       {(role === "admin" || role === "auxiliar" || role === "atendente") && siteLeads.length > 0 && (
         <Card className="border border-amber-200 bg-amber-50/20 p-6 rounded-3xl shadow-sm relative overflow-hidden space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xl animate-pulse">
-              🎯
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xl">
+              <Target className="w-5 h-5 text-amber-600 stroke-[1.8] animate-pulse" />
             </div>
             <div>
               <h3 className="font-extrabold text-navy text-sm">Novos Leads da Página Inicial Pendentes</h3>
@@ -515,10 +515,23 @@ function AdminDashboard() {
                     </Badge>
                   </div>
                   <div className="text-[10.5px] text-slate-500 space-y-1">
-                    <div>📞 {lead.telefone}</div>
-                    {lead.email && <div>✉️ {lead.email}</div>}
-                    {lead.consumo_kwh && <div>⚡ Consumo: {lead.consumo_kwh} kWh/mês</div>}
-                    <div className="text-[9px] text-slate-400">Recebido em {new Date(lead.created_at).toLocaleDateString("pt-BR")}</div>
+                    <div className="flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-slate-400 stroke-[1.5]" />
+                      <span>{lead.telefone}</span>
+                    </div>
+                    {lead.email && (
+                      <div className="flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5 text-slate-400 stroke-[1.5]" />
+                        <span className="truncate">{lead.email}</span>
+                      </div>
+                    )}
+                    {lead.consumo_kwh && (
+                      <div className="flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5 text-amber-500 stroke-[1.5]" />
+                        <span>Consumo: {lead.consumo_kwh} kWh/mês</span>
+                      </div>
+                    )}
+                    <div className="text-[9px] text-slate-400 pt-0.5">Recebido em {new Date(lead.created_at).toLocaleDateString("pt-BR")}</div>
                   </div>
                 </div>
 

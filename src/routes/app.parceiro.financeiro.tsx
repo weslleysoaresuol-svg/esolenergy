@@ -107,7 +107,9 @@ function ParceiroFinanceiroDashboard() {
 
       {/* Informativo de Prazos/Gatilhos */}
       <Card className="p-5 bg-gradient-to-br from-blue-50/50 to-slate-50 border border-slate-200/50">
-        <h2 className="font-bold text-navy text-sm mb-2 flex items-center gap-1.5">📢 Como funcionam as comissões?</h2>
+        <h2 className="font-bold text-navy text-sm mb-2 flex items-center gap-1.5">
+          <HelpCircle className="w-4 h-4 text-[#2E44B8] stroke-[1.8]" /> Como funcionam as comissões?
+        </h2>
         <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
           Para garantir a saúde financeira e segurança das operações da **Esol Energy**, seu comissionamento é pago em dois gatilhos:
           <br />
@@ -125,7 +127,7 @@ function ParceiroFinanceiroDashboard() {
         ) : (
           <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="border-b text-xs text-muted-foreground uppercase">
+              <tr className="suns-table-header">
                 <th className="p-3">Data</th>
                 <th className="p-3">Pedido</th>
                 <th className="p-3">Parcela</th>
@@ -144,8 +146,8 @@ function ParceiroFinanceiroDashboard() {
                   <td className="p-3 font-bold text-navy">{c.pedido?.numero}</td>
                   <td className="p-3">Parc. {c.parcela}/{c.total_parcelas}</td>
                   <td className="p-3 text-xs">
-                    <Badge variant="outline" className="bg-slate-50">
-                      {c.parcela === 1 ? "🔒 Entrada / Financ. Aprovado" : "🛠️ Instalação Física Pronta"}
+                    <Badge variant="outline" className="bg-slate-50 text-[10px] text-slate-600 font-bold border-slate-200">
+                      {c.parcela === 1 ? "Entrada / Financ. Aprovado" : "Instalação Física Pronta"}
                     </Badge>
                   </td>
                   <td className="p-3 text-xs text-muted-foreground">{BRL(Number(c.valor_total_pedido))}</td>

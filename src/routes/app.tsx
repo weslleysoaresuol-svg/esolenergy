@@ -8,6 +8,7 @@ import {
   LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog,
   Plus, FileText, Link2, FileSpreadsheet, BarChart3, Settings,
   Bell, CheckCheck, X, ExternalLink, Sun, ShoppingCart, Landmark, Zap,
+  CheckCircle2, Clock, AlertTriangle, Target
 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
@@ -16,18 +17,27 @@ export const Route = createFileRoute("/app")({
   component: AppShell,
 });
 
-const TIPO_ICON: Record<string, string> = {
-  novo_lead:            "🎯",
-  proposta_aceita:      "🎉",
-  proposta_visualizada: "👀",
-  lead_frio:            "⏰",
-  proposta_expirando:   "⚠️",
-};
-
 const TIPO_LINK: Record<string, (dados: any) => string> = {
   novo_lead:            (d) => d.cliente_id ? `/app/cliente/${d.cliente_id}` : "/app",
   proposta_aceita:      (d) => d.proposta_id ? `/app/propostas/${d.proposta_id}` : "/app/propostas",
   proposta_visualizada: (d) => d.proposta_id ? `/app/propostas/${d.proposta_id}` : "/app/propostas",
+};
+
+const getNotifIcon = (tipo: string) => {
+  switch (tipo) {
+    case "novo_lead":
+      return <Target className="w-4 h-4 text-amber-600 stroke-[1.8]" />;
+    case "proposta_aceita":
+      return <CheckCircle2 className="w-4 h-4 text-emerald-600 stroke-[1.8]" />;
+    case "proposta_visualizada":
+      return <ExternalLink className="w-4 h-4 text-blue-600 stroke-[1.8]" />;
+    case "lead_frio":
+      return <Clock className="w-4 h-4 text-indigo-600 stroke-[1.8]" />;
+    case "proposta_expirando":
+      return <AlertTriangle className="w-4 h-4 text-rose-600 stroke-[1.8]" />;
+    default:
+      return <Bell className="w-4 h-4 text-slate-400 stroke-[1.8]" />;
+  }
 };
 
 function NotificacoesSino({ notificacoes, naoLidas, marcarLida, marcarTodasLidas, excluirNotificacao }: ReturnType<typeof useNotificacoes>) {
@@ -79,9 +89,9 @@ function NotificacoesSino({ notificacoes, naoLidas, marcarLida, marcarTodasLidas
       </button>
 
       {open && (
-        <div className="absolute left-full top-0 ml-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden">
+        <div className="absolute left-full top-0 ml-2 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-left-2 duration-200">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b bg-slate-50">
+          <div className="flex items-center justify-between px-4 py-3 border-b bg-slate-50/50">
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-navy" />
               <span className="font-bold text-navy text-sm">Notificações</span>
@@ -102,7 +112,7 @@ function NotificacoesSino({ notificacoes, naoLidas, marcarLida, marcarTodasLidas
           </div>
 
           {/* Lista */}
-          <div className="max-h-[440px] overflow-y-auto divide-y divide-slate-50">
+          <div className="max-h-[440px] overflow-y-auto divide-y divide-slate-100/50">
             {notificacoes.length === 0 ? (
               <div className="py-10 text-center text-muted-foreground text-sm">
                 <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
@@ -113,24 +123,24 @@ function NotificacoesSino({ notificacoes, naoLidas, marcarLida, marcarTodasLidas
               notificacoes.map((n) => (
                 <div
                   key={n.id}
-                  className={`group flex gap-3 p-3 hover:bg-slate-50 transition cursor-pointer ${!n.lida ? "bg-blue-50/60" : ""}`}
+                  className={`group flex gap-3 p-3 hover:bg-slate-50 transition cursor-pointer ${!n.lida ? "bg-blue-50/40" : ""}`}
                   onClick={() => handleClick(n)}
                 >
                   {/* Ícone */}
-                  <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-lg ${!n.lida ? "bg-navy/10" : "bg-slate-100"}`}>
-                    {TIPO_ICON[n.tipo] || "🔔"}
+                  <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center ${!n.lida ? "bg-white border border-slate-100 shadow-xs" : "bg-slate-50 border border-slate-100/50"}`}>
+                    {getNotifIcon(n.tipo)}
                   </div>
 
                   {/* Conteúdo */}
                   <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-semibold leading-snug ${!n.lida ? "text-navy" : "text-slate-700"}`}>
+                    <div className={`text-xs font-bold leading-snug ${!n.lida ? "text-navy" : "text-slate-700"}`}>
                       {n.titulo}
                     </div>
-                    <div className="text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    <div className="text-[10px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
                       {n.mensagem}
                     </div>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] text-muted-foreground">{fmtTime(n.created_at)}</span>
+                      <span className="text-[9px] text-slate-400">{fmtTime(n.created_at)}</span>
                       {!n.lida && (
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
                       )}
