@@ -105,14 +105,23 @@ function InvitePage() {
 
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
-        // Se o usuário já é admin (ou já é parceiro), não consome o convite — apenas avisa e direciona
+        // Se o usuário está logado com e-mail diferente do convite, desloga automaticamente para evitar conflito de conta
+        if (emailPreenchido && userData.user.email?.toLowerCase() !== emailPreenchido.toLowerCase()) {
+          toast.warning(`Você está logado como ${userData.user.email}. Este convite foi gerado para ${emailPreenchido}. Fazendo logout...`);
+          await supabase.auth.signOut();
+          window.location.reload();
+          return;
+        }
+
+        // Se o usuário já possui um cargo ativo no sistema, direciona ele direto para a aplicação
         const { data: existingRoles } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", userData.user.id);
         const roles = (existingRoles ?? []).map((r: any) => r.role);
+        
         if (roles.includes("admin")) {
-          toast.info("Você já é administrador. Use o link em outro navegador ou aba anônima para cadastrar o parceiro.");
+          toast.info("Você já é administrador e possui acesso total.");
           try { localStorage.removeItem("pending_invite_token"); } catch {}
           navigate({ to: "/app" });
           return;
@@ -122,10 +131,12 @@ function InvitePage() {
           navigate({ to: "/app" });
           return;
         }
+        
+        // Consome o convite caso ele esteja cadastrado mas ainda não tenha cargo associado
         const { error: rpcErr } = await supabase.rpc("consume_invite", { _token: token });
         if (!rpcErr) {
           try { localStorage.removeItem("pending_invite_token"); } catch {}
-          toast.success("Convite aceito!");
+          toast.success("Convite aceito com sucesso!");
           navigate({ to: "/app" });
         }
       }
