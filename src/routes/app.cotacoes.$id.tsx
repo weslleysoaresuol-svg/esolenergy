@@ -5,7 +5,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Download, FileSpreadsheet, ShoppingCart, Share2, MessageCircle, Mail, Copy, Sun, Check } from "lucide-react";
+import { ArrowLeft, Download, FileSpreadsheet, ShoppingCart, Share2, MessageCircle, Mail, Copy, Sun, Check, Landmark } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 import { toast } from "sonner";
 

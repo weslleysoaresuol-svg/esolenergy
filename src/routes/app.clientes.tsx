@@ -69,7 +69,7 @@ function AdminClientes() {
 
     // Carrega a lista de corretores para o filtro
     (async () => {
-      const { data } = await supabase.from("profiles").select("id, nome").eq("role", "corretor");
+      const { data } = await (supabase.from as any)("profiles").select("id, nome").eq("role", "corretor");
       setCorretores(data || []);
     })();
 
@@ -119,7 +119,7 @@ function AdminClientes() {
 
       const ufNome = ufsList.find((x) => x.sigla === uf)?.nome || uf;
 
-      const { error } = await supabase.from("clientes").insert({
+      const { error } = await (supabase.from as any)("clientes").insert({
         id: randomId,
         nome,
         email: email || null,
