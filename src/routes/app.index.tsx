@@ -51,7 +51,7 @@ function DashboardOrList() {
 
 function AdminDashboard() {
   const navigate = useNavigate();
-  const { user } = useCurrentUser();
+  const { user, role } = useCurrentUser();
   const [clientes, setClientes] = useState<any[]>([]);
   const [propostas, setPropostas] = useState<any[]>([]);
   const [siteLeads, setSiteLeads] = useState<any[]>([]);
