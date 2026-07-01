@@ -11,7 +11,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   TrendingUp, DollarSign, Users, Target, Link2, FileText, ClipboardCopy, Send,
   Search, Phone, Mail, MapPin, Banknote, QrCode, ShieldCheck, AlertTriangle,
-  CheckCircle2, XCircle, ChevronRight, User, Star, Calendar
+  CheckCircle2, XCircle, ChevronRight, User, Star, Calendar, Check, MessageCircle
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/corretores")({
@@ -43,6 +43,7 @@ function AdminCorretores() {
   const [parceiroSel, setParceiroSel] = useState<any>(null);
   const [contratosParceiro, setContratosParceiro] = useState<any[]>([]);
   const [loadingDrawer, setLoadingDrawer] = useState(false);
+  const [ultimoConvite, setUltimoConvite] = useState<{ link: string; email: string; cargo: string } | null>(null);
 
   useEffect(() => {
     if (loadingUser || role !== "admin") return;
@@ -128,12 +129,51 @@ function AdminCorretores() {
   };
 
   const loadConvites = async () => {
-    const { data } = await (supabase
-      .from("convites" as any)
-      .select("*")
-      .eq("role_to_assign", "corretor")
-      .order("created_at", { ascending: false }) as any);
-    setConvites(data || []);
+    let unificados: any[] = [];
+
+    // 1. Tenta carregar da tabela 'convites'
+    try {
+      const { data } = await (supabase
+        .from("convites" as any)
+        .select("*")
+        .eq("role_to_assign", "corretor")
+        .order("created_at", { ascending: false }) as any);
+      if (data) {
+        unificados = [...data];
+      }
+    } catch (err) {
+      // Silencia erro
+    }
+
+    // 2. Carrega da tabela 'partner_invites'
+    try {
+      const { data: partnersData } = await supabase
+        .from("partner_invites")
+        .select("*")
+        .eq("role_to_assign", "corretor")
+        .order("created_at", { ascending: false });
+      if (partnersData) {
+        const mapeados = partnersData.map((x: any) => ({
+          id: x.id,
+          token: x.token,
+          email: x.note?.replace("Parceiro: ", "") || x.note || "Convidado",
+          role_to_assign: x.role_to_assign || "corretor",
+          status: x.used_at ? "aceito" : "pendente",
+          created_at: x.created_at,
+          used_at: x.used_at
+        }));
+        const tokensExistentes = new Set(unificados.map(u => u.token));
+        mapeados.forEach(m => {
+          if (!tokensExistentes.has(m.token)) {
+            unificados.push(m);
+          }
+        });
+      }
+    } catch (err) {
+      // Silencia erro
+    }
+
+    setConvites(unificados.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
   };
 
   const loadContratos = async () => {
@@ -163,16 +203,46 @@ function AdminCorretores() {
     const token = typeof crypto !== "undefined" && crypto.randomUUID 
       ? crypto.randomUUID() 
       : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-");
+    
+    let dbError = null;
+
+    // Tenta gravar na tabela convites
     const { error } = await (supabase.from("convites" as any).insert({
       email: novoEmail.trim().toLowerCase(),
       token,
       status: "pendente",
       role_to_assign: "corretor",
     } as any) as any);
+
+    dbError = error;
+
+    // Fallback caso a tabela convites não exista
+    if (error && (error.message.includes("schema cache") || error.message.includes("does not exist") || error.code === "P0002" || error.code === "42P01")) {
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        const { error: fallbackError } = await supabase.from("partner_invites").insert({
+          token,
+          note: `Parceiro: ${novoEmail.trim().toLowerCase()}`,
+          role_to_assign: "corretor" as any,
+          created_by: userData.user?.id
+        });
+        dbError = fallbackError;
+      } catch (err: any) {
+        dbError = err;
+      }
+    }
+
     setEnviandoConvite(false);
-    if (error) {
-      toast.error("Erro ao criar convite: " + error.message);
+
+    if (dbError) {
+      toast.error("Erro ao criar convite: " + dbError.message);
     } else {
+      const link = `${window.location.origin}/convite/${token}`;
+      setUltimoConvite({
+        link,
+        email: novoEmail.trim().toLowerCase(),
+        cargo: "corretor"
+      });
       toast.success("Convite gerado com sucesso!");
       setNovoEmail("");
       loadConvites();
@@ -410,6 +480,68 @@ function AdminCorretores() {
               </Button>
             </form>
           </Card>
+
+          {ultimoConvite && (
+            <Card className="p-5 border border-emerald-200 bg-emerald-50/20 rounded-2xl shadow-xs space-y-4 animate-fade-in">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                    <Check className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-navy text-sm">Convite de Acesso Gerado!</h4>
+                    <p className="text-[11px] text-slate-500">Compartilhe o link abaixo com o parceiro para cadastro.</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setUltimoConvite(null)} 
+                  className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg text-xs"
+                >
+                  Ocultar
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <Input readOnly value={ultimoConvite.link} className="text-xs font-mono bg-white flex-1 border-slate-200 h-9" />
+                  <Button
+                    size="sm"
+                    onClick={() => copiarLink(ultimoConvite.link.split('/').pop() || '')}
+                    className="bg-navy hover:bg-navy/90 text-white font-bold h-9 text-xs shrink-0 flex gap-1 items-center px-3"
+                  >
+                    <ClipboardCopy className="w-3.5 h-3.5" /> Copiar Link
+                  </Button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const subject = encodeURIComponent("Convite de Parceria Comercial - ESOL Energy");
+                      const body = encodeURIComponent(`Olá!\n\nVocê foi convidado para acessar o sistema da ESOL Energy como consultor parceiro comercial.\n\nPara aceitar este convite, criar sua conta e assinar o respectivo termo de parceria digital, clique no link de convite oficial abaixo:\n\n${ultimoConvite.link}\n\nAtenciosamente,\nESOL Energy`);
+                      window.open(`mailto:${ultimoConvite.email}?subject=${subject}&body=${body}`, "_self");
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-200 h-8 text-[10px] rounded-lg cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Mail className="w-3.5 h-3.5" /> Enviar por E-mail
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const text = encodeURIComponent(`Olá! Você foi convidado para se tornar parceiro da ESOL Energy. Clique no link abaixo para criar sua conta e assinar o termo de parceria:\n\n${ultimoConvite.link}`);
+                      window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+                    }}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8 text-[10px] rounded-lg cursor-pointer border-0 flex items-center gap-1.5"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" /> Enviar por WhatsApp
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
 
           <Card className="border-0 shadow-md overflow-hidden bg-white">
             <div className="p-5 border-b font-bold text-navy text-sm">Histórico de Convites Emitidos</div>

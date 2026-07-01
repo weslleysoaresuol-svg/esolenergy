@@ -43,15 +43,38 @@ function InvitePage() {
       if (!row.valid) return setState({ status: "invalid", reason: row.reason ?? "Convite inválido." });
       setState({ status: "valid", expiresAt: row.expires_at });
 
-      // Busca o cargo deste convite
-      const { data: convData } = await supabase
-        .from("convites" as any)
-        .select("role_to_assign")
-        .eq("token", token)
-        .maybeSingle() as any;
-      if (convData?.role_to_assign) {
-        setRoleToAssign(convData.role_to_assign);
+      // Busca o cargo deste convite em ambas as tabelas (tratando indisponibilidade de schema cache)
+      let cargo = "corretor";
+      
+      try {
+        const { data: convData } = await supabase
+          .from("convites" as any)
+          .select("role_to_assign")
+          .eq("token", token)
+          .maybeSingle() as any;
+        if (convData?.role_to_assign) {
+          cargo = convData.role_to_assign;
+        }
+      } catch (err) {
+        // Silencia erro caso a tabela convites não exista no banco
       }
+
+      try {
+        if (cargo === "corretor") {
+          const { data: partnerData } = await supabase
+            .from("partner_invites")
+            .select("role_to_assign")
+            .eq("token", token)
+            .maybeSingle();
+          if (partnerData?.role_to_assign) {
+            cargo = partnerData.role_to_assign;
+          }
+        }
+      } catch (err) {
+        // Silencia erro de conexão
+      }
+      
+      setRoleToAssign(cargo);
 
 
       const { data: userData } = await supabase.auth.getUser();
