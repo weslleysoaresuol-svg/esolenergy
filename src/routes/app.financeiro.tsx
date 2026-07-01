@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DollarSign, Landmark, TrendingUp, TrendingDown, Users, Percent, CreditCard, PlusCircle, Check, Key, Settings, RefreshCw, ExternalLink, QrCode, Copy } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 import { toast } from "sonner";
-import { PaymentGatewayFactory } from "@/lib/payment-gateway";
+import { useServerFn } from "@tanstack/react-start";
+import { criarCobrancaServerFn, estornarCobrancaServerFn } from "@/lib/payments.functions";
 
 export const Route = createFileRoute("/app/financeiro")({
   head: () => ({ meta: [{ title: "Painel Financeiro — ESOL Energy" }] }),
@@ -28,14 +29,14 @@ function FinanceiroDashboard() {
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Estados dos Gateways de Pagamento
+  // Configurações não-sensíveis do gateway (chaves ficam apenas no servidor via secrets)
   const [gatewaySettings, setGatewaySettings] = useState<any>({
     gateway_ativo: "asaas",
-    asaas_api_key: "",
     asaas_environment: "sandbox",
-    pagarme_api_key: "",
     pagarme_environment: "sandbox"
   });
+  const criarCobrancaSrv = useServerFn(criarCobrancaServerFn);
+  const estornarCobrancaSrv = useServerFn(estornarCobrancaServerFn);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [clientesList, setClientesList] = useState<any[]>([]);
   const [salvandoSettings, setSalvandoSettings] = useState(false);
@@ -218,33 +219,28 @@ function FinanceiroDashboard() {
       const cli = clientesList.find(c => c.id === novaCob.cliente_id);
       if (!cli) throw new Error("Cliente não encontrado");
 
-      // Instancia gateway ativo
-      const gateway = PaymentGatewayFactory.create({
-        gateway_ativo: gatewaySettings.gateway_ativo,
-        asaas_api_key: gatewaySettings.asaas_api_key,
-        asaas_environment: gatewaySettings.asaas_environment,
-        pagarme_api_key: gatewaySettings.pagarme_api_key,
-        pagarme_environment: gatewaySettings.pagarme_environment
-      });
-
-      // 1. Criar Cliente no Gateway
-      const custRes = await gateway.createCustomer({
-        nome: cli.nome || "Cliente Sem Nome",
-        email: cli.email || `${cli.id}@esol.energy`,
-        cpf_cnpj: cli.cpf_cnpj || "000.000.000-00",
-        telefone: cli.telefone || "11999999999"
-      });
-
-      // 2. Criar Cobrança no Gateway
-      const chargeRes = await gateway.createCharge({
-        externalCustomerId: custRes.customerExternalId,
-        valor: Number(novaCob.valor),
-        metodo: novaCob.metodo,
-        descricao: novaCob.descricao || `Cobrança manual ESOL Energy`,
-        parcelas: Number(novaCob.parcelas)
+      // Chama servidor: credenciais ficam apenas em process.env (secrets)
+      const { customerExternalId, charge: chargeRes } = await criarCobrancaSrv({
+        data: {
+          gateway: gatewaySettings.gateway_ativo,
+          customer: {
+            nome: cli.nome || "Cliente Sem Nome",
+            email: cli.email || `${cli.id}@esol.energy`,
+            cpf_cnpj: cli.cpf_cnpj || "000.000.000-00",
+            telefone: cli.telefone || "11999999999",
+          },
+          charge: {
+            valor: Number(novaCob.valor),
+            metodo: novaCob.metodo,
+            descricao: novaCob.descricao || `Cobrança manual ESOL Energy`,
+            parcelas: Number(novaCob.parcelas),
+          },
+        },
       });
 
       if (!chargeRes.success) throw new Error("Falha na geração da cobrança");
+      const custRes = { customerExternalId };
+
 
       // 3. Salva no banco de dados local
       const { data: inserted, error: dbErr } = await (supabase.from as any)("gateway_transactions")
@@ -328,16 +324,11 @@ function FinanceiroDashboard() {
 
   const simularEstorno = async (tx: any) => {
     try {
-      const gateway = PaymentGatewayFactory.create({
-        gateway_ativo: tx.gateway,
-        asaas_api_key: gatewaySettings.asaas_api_key,
-        asaas_environment: gatewaySettings.asaas_environment,
-        pagarme_api_key: gatewaySettings.pagarme_api_key,
-        pagarme_environment: gatewaySettings.pagarme_environment
+      const refundRes = await estornarCobrancaSrv({
+        data: { gateway: tx.gateway, transactionId: tx.external_id },
       });
-
-      const refundRes = await gateway.refundCharge(tx.external_id);
       if (!refundRes.success) throw new Error("Falha no reembolso");
+
 
       const { error: txErr } = await (supabase.from as any)("gateway_transactions")
         .update({ status: "refunded" })
@@ -705,17 +696,12 @@ function FinanceiroDashboard() {
 
                   <div className="border-t pt-4 space-y-4">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-blue-700">
-                      <Key className="w-3.5 h-3.5" /> API Key (Asaas)
+                      <Key className="w-3.5 h-3.5" /> Credenciais (Asaas)
                     </div>
-                    <div>
-                      <Input
-                        type="password"
-                        placeholder="Insira access_token do Asaas"
-                        value={gatewaySettings.asaas_api_key || ""}
-                        onChange={(e) => setGatewaySettings({ ...gatewaySettings, asaas_api_key: e.target.value })}
-                        className="text-xs"
-                      />
-                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      As chaves de API são armazenadas <strong>somente no servidor</strong> como
+                      secrets (<code>ASAAS_API_KEY</code>). Nenhuma credencial trafega pelo navegador.
+                    </p>
                     <div>
                       <Label className="text-[10px]">Ambiente Asaas</Label>
                       <Select
@@ -735,17 +721,11 @@ function FinanceiroDashboard() {
 
                   <div className="border-t pt-4 space-y-4">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-purple-700">
-                      <Key className="w-3.5 h-3.5" /> API Key (Pagar.me)
+                      <Key className="w-3.5 h-3.5" /> Credenciais (Pagar.me)
                     </div>
-                    <div>
-                      <Input
-                        type="password"
-                        placeholder="Insira api_key do Pagar.me"
-                        value={gatewaySettings.pagarme_api_key || ""}
-                        onChange={(e) => setGatewaySettings({ ...gatewaySettings, pagarme_api_key: e.target.value })}
-                        className="text-xs"
-                      />
-                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      Configuradas via secret <code>PAGARME_API_KEY</code> no servidor.
+                    </p>
                     <div>
                       <Label className="text-[10px]">Ambiente Pagar.me</Label>
                       <Select
@@ -762,6 +742,7 @@ function FinanceiroDashboard() {
                       </Select>
                     </div>
                   </div>
+
 
                   <Button
                     onClick={salvarSettings}
