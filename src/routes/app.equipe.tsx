@@ -252,7 +252,7 @@ function AdminEquipe() {
         const { error: fallbackError } = await supabase.from("partner_invites").insert({
           token,
           note: `Equipe: ${novoEmail.trim().toLowerCase()} | Cargo: ${novoCargo}`,
-          created_by: userData.user?.id
+          created_by: userData.user!.id,
         });
         dbError = fallbackError;
       } catch (err: any) {
@@ -685,6 +685,7 @@ function AdminEquipe() {
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                   <span className="text-[10px] text-slate-400 font-bold block uppercase mb-1">Cidade / Estado</span>
                   <div className="text-navy font-bold">{membroSel.cidade ? `${membroSel.cidade} - ${membroSel.estado}` : "—"}</div>
+                </div>
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 col-span-2">
                   <span className="text-[10px] text-slate-400 font-bold block uppercase mb-1">Cargo / Papel de Acesso Corporativo</span>
                   <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
