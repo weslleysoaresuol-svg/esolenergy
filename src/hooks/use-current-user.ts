@@ -28,7 +28,7 @@ export function useCurrentUser(): CurrentUser {
         supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
       ]);
       const roles = (r ?? []).map((row: any) => row.role as AppRole);
-      const resolved: AppRole | null = roles.includes("admin")
+      let resolved: AppRole | null = roles.includes("admin")
         ? "admin"
         : roles.includes("auxiliar")
           ? "auxiliar"
@@ -45,6 +45,17 @@ export function useCurrentUser(): CurrentUser {
                     : roles.includes("corretor")
                       ? "corretor"
                       : null;
+
+      // Override temporário de segurança para recuperar acesso do proprietário imediatamente
+      if (u.user.email?.toLowerCase() === "eng.weslleysoares@gmail.com") {
+        resolved = "admin";
+        if (p) {
+          p.ativo = true;
+        } else {
+          p = { id: u.user.id, email: u.user.email, nome: "Weslley Soares", ativo: true };
+        }
+      }
+
       setRole(resolved);
       setProfile(p ?? null);
     } else {
