@@ -16,6 +16,7 @@ import {
   PieChart, Pie, Cell, Legend
 } from "recharts";
 import { BRL } from "@/lib/proposta-calc";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/")(
   { component: DashboardOrList }
@@ -45,84 +46,190 @@ const KANBAN_COLS = [
 ];
 
 function DashboardOrList() {
-  const { role } = useCurrentUser();
-  return role === "admin" ? <AdminDashboard /> : <CorretorClientes />;
+  const { role, loading } = useCurrentUser();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-navy rounded-full animate-spin" />
+        <span className="text-sm font-semibold text-slate-400">Carregando painel...</span>
+      </div>
+    );
+  }
+
+  return role && role !== "corretor" ? <AdminDashboard /> : <CorretorClientes />;
 }
 
 function AdminDashboard() {
   const navigate = useNavigate();
-  const { user } = useCurrentUser();
+  const { user, role, profile } = useCurrentUser();
   const [clientes, setClientes] = useState<any[]>([]);
   const [propostas, setPropostas] = useState<any[]>([]);
   const [siteLeads, setSiteLeads] = useState<any[]>([]);
+  const [partners, setPartners] = useState<any[]>([]);
   const [params, setParams] = useState<any>(null);
   const [activeKanbanCol, setActiveKanbanCol] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        // Busca primária de clientes
-        const { data: list, error: errList } = await supabase
+  const loadData = async () => {
+    try {
+      // Busca primária de clientes
+      const { data: list, error: errList } = await supabase
+        .from("clientes")
+        .select("*, profiles:corretor_id(nome)")
+        .order("updated_at", { ascending: false });
+
+      let all: any[] = [];
+      if (errList) {
+        console.error("Erro ao carregar clientes com join no dashboard (tentando fallback):", errList);
+        const { data: fallbackList, error: errFallback } = await supabase
           .from("clientes")
-          .select("*, profiles:corretor_id(nome)")
+          .select("*")
           .order("updated_at", { ascending: false });
-
-        let all: any[] = [];
-        if (errList) {
-          console.error("Erro ao carregar clientes com join no dashboard (tentando fallback):", errList);
-          const { data: fallbackList, error: errFallback } = await supabase
-            .from("clientes")
-            .select("*")
-            .order("updated_at", { ascending: false });
-          
-          if (!errFallback && fallbackList) {
-            all = fallbackList;
-          }
-        } else if (list) {
-          all = list;
-        }
-
-        // Busca de propostas
-        const { data: ps, error: errPs } = await supabase
-          .from("propostas")
-          .select("*, parceiro:parceiro_id(nome)")
-          .order("created_at");
-
-        let finalPropostas: any[] = [];
-        if (errPs) {
-          console.error("Erro ao carregar propostas com join no dashboard (tentando fallback):", errPs);
-          const { data: fallbackPs } = await supabase
-            .from("propostas")
-            .select("*")
-            .order("created_at");
-          finalPropostas = fallbackPs || [];
-        } else {
-          finalPropostas = ps || [];
-        }
-
-        // Busca de parâmetros
-        let prData: any = null;
-        try {
-          const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
-          prData = pr;
-        } catch (errRpc) {
-          console.error("Erro na RPC get_parametros_publicos:", errRpc);
-        }
-
-        const leads = all.filter((c) => c.origem === "landing" && !c.corretor_id);
         
-        setClientes(all);
-        setSiteLeads(leads);
-        setPropostas(finalPropostas);
-        if (prData) setParams(prData);
-      } catch (err) {
-        console.error("Erro grave ao iniciar dados do dashboard:", err);
-      } finally {
-        setLoading(false);
+        if (!errFallback && fallbackList) {
+          all = fallbackList;
+        }
+      } else if (list) {
+        all = list;
       }
-    })();
+
+      // Busca de propostas
+      const { data: ps, error: errPs } = await supabase
+        .from("propostas")
+        .select("*, parceiro:parceiro_id(nome)")
+        .order("created_at");
+
+      let finalPropostas: any[] = [];
+      if (errPs) {
+        console.error("Erro ao carregar propostas com join no dashboard (tentando fallback):", errPs);
+        const { data: fallbackPs } = await supabase
+          .from("propostas")
+          .select("*")
+          .order("created_at");
+        finalPropostas = fallbackPs || [];
+      } else {
+        finalPropostas = ps || [];
+      }
+
+      // Busca de parâmetros
+      let prData: any = null;
+      try {
+        const { data: pr } = await (supabase.rpc as any)("get_parametros_publicos");
+        prData = pr;
+      } catch (errRpc) {
+        console.error("Erro na RPC get_parametros_publicos:", errRpc);
+      }
+
+      // Busca de parceiros (corretores) para direcionamento
+      const { data: cRoles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "corretor");
+      const cIds = (cRoles || []).map((r: any) => r.user_id);
+      let partnersList: any[] = [];
+      if (cIds.length > 0) {
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("id, nome")
+          .in("id", cIds)
+          .eq("ativo", true);
+        partnersList = profs || [];
+      }
+
+      const leads = all.filter((c) => c.origem === "landing" && !c.corretor_id);
+      
+      setClientes(all);
+      setSiteLeads(leads);
+      setPropostas(finalPropostas);
+      setPartners(partnersList);
+      if (prData) setParams(prData);
+    } catch (err) {
+      console.error("Erro grave ao iniciar dados do dashboard:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  const handleClaimLead = async (lead: any) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from("clientes")
+        .update({
+          corretor_id: user.id,
+          status: "contato",
+          updated_at: new Date().toISOString()
+        } as any)
+        .eq("id", lead.id);
+
+      if (error) throw error;
+
+      // Log na timeline
+      await supabase.from("timeline_cliente").insert({
+        cliente_id: lead.id,
+        parceiro_id: user.id,
+        tipo: "historico",
+        titulo: "Lead Assumido",
+        descricao: `O lead do site foi assumido para atendimento por ${profile?.nome || user.email || "Equipe ESOL"}.`,
+        metadata: { autor_id: user.id }
+      } as any);
+
+      toast.success("Lead assumido com sucesso!");
+      loadData();
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Erro ao assumir lead: " + err.message);
+    }
+  };
+
+  const handleAssignLead = async (lead: any, partnerId: string) => {
+    if (!user) return;
+    try {
+      const partner = partners.find((p) => p.id === partnerId);
+      const partnerName = partner ? partner.nome : "parceiro";
+
+      const { error } = await supabase
+        .from("clientes")
+        .update({
+          corretor_id: partnerId,
+          status: "novo",
+          updated_at: new Date().toISOString()
+        } as any)
+        .eq("id", lead.id);
+
+      if (error) throw error;
+
+      // Log na timeline
+      await supabase.from("timeline_cliente").insert({
+        cliente_id: lead.id,
+        parceiro_id: user.id,
+        tipo: "historico",
+        titulo: "Lead Direcionado",
+        descricao: `O lead do site foi direcionado para o parceiro ${partnerName}.`,
+        metadata: { direcionado_para: partnerId, autor_id: user.id }
+      } as any);
+
+      // Cria notificação realtime para o parceiro
+      await supabase.from("notificacoes" as any).insert({
+        user_id: partnerId,
+        tipo: "novo_lead",
+        titulo: "🎯 Novo Lead Direcionado!",
+        mensagem: `Você recebeu o lead do site: ${lead.nome}. Inicie o contato!`,
+        dados: { cliente_id: lead.id }
+      });
+
+      toast.success(`Lead direcionado para ${partnerName}!`);
+      loadData();
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Erro ao direcionar lead: " + err.message);
+    }
+  };
 
   const m = useMemo(() => {
     const totalProp = propostas.length;
@@ -383,6 +490,72 @@ function AdminDashboard() {
           </Sheet>
         )}
       </div>
+
+      {/* Leads do Site Pendentes (Apenas para Admin, Auxiliar, Atendente) */}
+      {(role === "admin" || role === "auxiliar" || role === "atendente") && siteLeads.length > 0 && (
+        <Card className="border border-amber-200 bg-amber-50/20 p-6 rounded-3xl shadow-sm relative overflow-hidden space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xl animate-pulse">
+              🎯
+            </div>
+            <div>
+              <h3 className="font-extrabold text-navy text-sm">Novos Leads da Página Inicial Pendentes</h3>
+              <p className="text-[11px] text-slate-500">Há {siteLeads.length} lead{siteLeads.length > 1 ? "s" : ""} aguardando atendimento ou direcionamento para algum parceiro corretor.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {siteLeads.map((lead) => (
+              <div key={lead.id} className="bg-white rounded-2xl border border-slate-200/60 p-4 space-y-3 flex flex-col justify-between hover:shadow-sm transition">
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-start">
+                    <span className="font-extrabold text-navy text-xs">{lead.nome}</span>
+                    <Badge variant="outline" className="bg-slate-50 text-[9px] uppercase font-bold text-slate-500 py-0.5 px-2 border border-slate-200">
+                      {lead.cidade || "N/D"} - {lead.estado || "SP"}
+                    </Badge>
+                  </div>
+                  <div className="text-[10.5px] text-slate-500 space-y-1">
+                    <div>📞 {lead.telefone}</div>
+                    {lead.email && <div>✉️ {lead.email}</div>}
+                    {lead.consumo_kwh && <div>⚡ Consumo: {lead.consumo_kwh} kWh/mês</div>}
+                    <div className="text-[9px] text-slate-400">Recebido em {new Date(lead.created_at).toLocaleDateString("pt-BR")}</div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2 border-t border-slate-100">
+                  <Button
+                    size="sm"
+                    onClick={() => handleClaimLead(lead)}
+                    className="flex-1 bg-navy hover:bg-navy-deep text-white font-bold text-[10px] py-1 h-8 rounded-lg cursor-pointer transition border-0"
+                  >
+                    Atender Lead
+                  </Button>
+                  
+                  <div className="flex-1 relative">
+                    <select
+                      onChange={(e) => {
+                        const partnerId = e.target.value;
+                        if (partnerId) {
+                          handleAssignLead(lead, partnerId);
+                          e.target.value = ""; // Reset
+                        }
+                      }}
+                      className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 text-slate-600 font-bold text-[10px] px-2 py-1 h-8 rounded-lg cursor-pointer transition appearance-none text-center"
+                    >
+                      <option value="">Direcionar...</option>
+                      {partners.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Banner Central WhatsApp */}
       <div className="w-full relative rounded-3xl overflow-hidden shadow-sm border border-slate-200/50 hover:shadow-md transition duration-300">

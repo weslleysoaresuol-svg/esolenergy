@@ -52,7 +52,7 @@ const EMPTY_KIT = {
 };
 
 function AdminKits() {
-  const { role } = useCurrentUser();
+  const { role, loading } = useCurrentUser();
   const [kits, setKits] = useState<any[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showTechDetails, setShowTechDetails] = useState(false);
@@ -101,6 +101,15 @@ function AdminKits() {
   };
 
   useEffect(() => { load(); }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-navy rounded-full animate-spin" />
+        <span className="text-sm font-semibold text-slate-400">Carregando permissões...</span>
+      </div>
+    );
+  }
 
   if (role !== "admin") return <div className="text-center py-12 text-muted-foreground">Acesso restrito ao administrador.</div>;
 

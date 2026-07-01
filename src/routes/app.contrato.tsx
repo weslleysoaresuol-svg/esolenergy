@@ -18,7 +18,7 @@ export const Route = createFileRoute("/app/contrato")({
 });
 
 function ContratoPage() {
-  const { user, profile, role, refresh } = useCurrentUser();
+  const { user, profile, role, refresh, loading } = useCurrentUser();
   const navigate = useNavigate();
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
@@ -36,14 +36,14 @@ function ContratoPage() {
   const [docVersoPreview, setDocVersoPreview] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!profile) return;
+    if (loading || !profile) return;
     if (role === "admin" || role !== "corretor" || profile.contrato_assinado) {
       navigate({ to: "/app" });
       return;
     }
     setNome(profile.nome || "");
     setCpf(profile.cpf_cnpj || "");
-  }, [profile, role, navigate]);
+  }, [loading, profile, role, navigate]);
 
   const handleFileChange = (file: File, type: "selfie" | "frente" | "verso") => {
     const reader = new FileReader();

@@ -20,7 +20,7 @@ export const Route = createFileRoute("/app/financeiro")({
 });
 
 function FinanceiroDashboard() {
-  const { user, role } = useCurrentUser();
+  const { user, role, loading } = useCurrentUser();
   const [tab, setTab] = useState("resumo");
   const [lancamentos, setLancamentos] = useState<any[]>([]);
   const [comissoes, setComissoes] = useState<any[]>([]);
@@ -110,6 +110,15 @@ function FinanceiroDashboard() {
       loadData();
     }
   }, [user, role]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-navy rounded-full animate-spin" />
+        <span className="text-sm font-semibold text-slate-400">Carregando dados financeiros...</span>
+      </div>
+    );
+  }
 
   if (role !== "admin") {
     return (
