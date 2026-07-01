@@ -39,15 +39,28 @@ function CotacaoDetail() {
   const linkPublico = typeof window !== "undefined" ? `${window.location.origin}/cotacao/${c.codigo_publico}` : "";
 
   const baixarPDF = async () => {
-    // Print-friendly: usa window.print num clone simples
+    // Print-friendly: cria um documento seguro sem interpolar HTML de dados.
     const w = window.open("", "_blank");
     if (!w || !printRef.current) return;
-    w.document.write(`<html><head><title>Cotação ${kit.nome}</title>
-      <script src="https://cdn.tailwindcss.com"></script></head>
-      <body class="p-8">${printRef.current.innerHTML}
-      <script>window.onload=()=>{window.print();}</script></body></html>`);
-    w.document.close();
+    const doc = w.document;
+    doc.open();
+    doc.write("<!DOCTYPE html><html><head></head><body></body></html>");
+    doc.close();
+    // Title via textContent (evita quebra de tag <title> via kit.nome)
+    const titleEl = doc.createElement("title");
+    titleEl.textContent = `Cotação ${kit?.nome ?? ""}`;
+    doc.head.appendChild(titleEl);
+    // Tailwind via <link>/<script> tag criada por DOM (sem raw HTML)
+    const script = doc.createElement("script");
+    script.src = "https://cdn.tailwindcss.com";
+    doc.head.appendChild(script);
+    // Corpo: clone do nó React já renderizado (não é HTML controlado pelo usuário)
+    doc.body.className = "p-8";
+    const clone = printRef.current.cloneNode(true) as HTMLElement;
+    doc.body.appendChild(clone);
+    w.onload = () => w.print();
   };
+
 
   const gerarProposta = async () => {
     // Encaminha pro wizard pré-preenchido (consumo estimado por kWp do kit)
