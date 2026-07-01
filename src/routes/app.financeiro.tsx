@@ -20,7 +20,7 @@ export const Route = createFileRoute("/app/financeiro")({
 });
 
 function FinanceiroDashboard() {
-  const { user, role, loading } = useCurrentUser();
+  const { user, role, loading: authLoading } = useCurrentUser();
   const [tab, setTab] = useState("resumo");
   const [lancamentos, setLancamentos] = useState<any[]>([]);
   const [comissoes, setComissoes] = useState<any[]>([]);
