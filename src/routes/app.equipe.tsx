@@ -529,10 +529,45 @@ function AdminEquipe() {
                           </Badge>
                         </td>
                         <td className="p-3 text-muted-foreground">{new Date(cv.created_at).toLocaleDateString("pt-BR")}</td>
-                        <td className="p-3 text-right">
-                          <Button size="sm" variant="ghost" onClick={() => copiarLink(cv.token)} className="text-sun-deep hover:text-navy flex gap-1 items-center justify-end w-full">
-                            <ClipboardCopy className="w-3.5 h-3.5" /> Copiar Link
-                          </Button>
+                        <td className="p-3">
+                          <div className="flex gap-1.5 justify-end">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => copiarLink(cv.token)} 
+                              className="text-navy hover:text-navy/80 hover:bg-slate-100 p-1.5 h-8 w-8 rounded-lg cursor-pointer"
+                              title="Copiar Link"
+                            >
+                              <ClipboardCopy className="w-4 h-4" />
+                            </Button>
+                            
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => {
+                                const subject = encodeURIComponent("Convite de Acesso - ESOL Energy");
+                                const body = encodeURIComponent(`Olá!\n\nVocê foi convidado para acessar o sistema da ESOL Energy com a permissão de ${ROLE_LABELS[cv.role_to_assign] || cv.role_to_assign}.\n\nPara concluir seu cadastro e criar sua conta, clique no link de convite oficial abaixo:\n\n${window.location.origin}/convite/${cv.token}\n\nAtenciosamente,\nESOL Energy`);
+                                window.open(`mailto:${cv.email}?subject=${subject}&body=${body}`, "_self");
+                              }} 
+                              className="text-slate-500 hover:text-navy hover:bg-slate-100 p-1.5 h-8 w-8 rounded-lg cursor-pointer"
+                              title="Enviar por E-mail"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </Button>
+                            
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => {
+                                const text = encodeURIComponent(`Olá! Você foi convidado para acessar o sistema da ESOL Energy. Clique no link abaixo para criar sua conta:\n\n${window.location.origin}/convite/${cv.token}`);
+                                window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+                              }} 
+                              className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 p-1.5 h-8 w-8 rounded-lg cursor-pointer"
+                              title="Enviar por WhatsApp"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
