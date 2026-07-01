@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_approvals: {
+        Row: {
+          approved_by: string
+          created_at: string
+          id: string
+          new_admin_id: string
+        }
+        Insert: {
+          approved_by: string
+          created_at?: string
+          id?: string
+          new_admin_id: string
+        }
+        Update: {
+          approved_by?: string
+          created_at?: string
+          id?: string
+          new_admin_id?: string
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           area_telhado: number | null
