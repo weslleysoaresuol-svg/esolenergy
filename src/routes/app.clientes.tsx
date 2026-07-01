@@ -69,7 +69,7 @@ function AdminClientes() {
 
     // Carrega a lista de corretores para o filtro
     (async () => {
-      const { data } = await supabase.from("profiles").select("id, nome").eq("role", "corretor");
+      const { data } = await (supabase.from as any)("profiles").select("id, nome").eq("role", "corretor");
       setCorretores(data || []);
     })();
 
