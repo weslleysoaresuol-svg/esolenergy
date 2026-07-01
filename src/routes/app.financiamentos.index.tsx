@@ -441,7 +441,8 @@ function FinanciamentosList() {
                     </Link>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
           </tbody>
         </table>
         {filtered.length === 0 && (
