@@ -244,7 +244,7 @@ function AdminCorretores() {
         const { error: fallbackError } = await supabase.from("partner_invites").insert({
           token,
           note: `Parceiro: ${novoEmail.trim().toLowerCase()} | Cargo: corretor`,
-          created_by: userData.user?.id
+          created_by: userData.user!.id,
         });
         dbError = fallbackError;
       } catch (err: any) {
