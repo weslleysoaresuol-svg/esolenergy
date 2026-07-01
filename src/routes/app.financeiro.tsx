@@ -29,14 +29,14 @@ function FinanceiroDashboard() {
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Estados dos Gateways de Pagamento
+  // Configurações não-sensíveis do gateway (chaves ficam apenas no servidor via secrets)
   const [gatewaySettings, setGatewaySettings] = useState<any>({
     gateway_ativo: "asaas",
-    asaas_api_key: "",
     asaas_environment: "sandbox",
-    pagarme_api_key: "",
     pagarme_environment: "sandbox"
   });
+  const criarCobrancaSrv = useServerFn(criarCobrancaServerFn);
+  const estornarCobrancaSrv = useServerFn(estornarCobrancaServerFn);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [clientesList, setClientesList] = useState<any[]>([]);
   const [salvandoSettings, setSalvandoSettings] = useState(false);
