@@ -23,7 +23,7 @@ export function useCurrentUser(): CurrentUser {
     const { data: u } = await supabase.auth.getUser();
     setUser(u.user ?? null);
     if (u.user) {
-      let [{ data: r }, { data: p }] = await Promise.all([
+      const [{ data: r }, { data: p }] = await Promise.all([
         supabase.from("user_roles").select("role").eq("user_id", u.user.id),
         supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
       ]);
@@ -47,17 +47,18 @@ export function useCurrentUser(): CurrentUser {
                       : null;
 
       // Override temporário de segurança para recuperar acesso do proprietário imediatamente
+      let effectiveProfile: any | null = p ?? null;
       if (u.user.email?.toLowerCase() === "eng.weslleysoares@gmail.com") {
         resolved = "admin";
         if (p) {
-          p.ativo = true;
+          effectiveProfile = { ...p, ativo: true };
         } else {
-          p = { id: u.user.id, email: u.user.email, nome: "Weslley Soares", ativo: true };
+          effectiveProfile = { id: u.user.id, email: u.user.email, nome: "Weslley Soares", ativo: true };
         }
       }
 
       setRole(resolved);
-      setProfile(p ?? null);
+      setProfile(effectiveProfile);
     } else {
       setRole(null);
       setProfile(null);
