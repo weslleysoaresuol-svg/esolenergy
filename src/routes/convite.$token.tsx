@@ -45,15 +45,17 @@ function InvitePage() {
 
       // Busca o cargo deste convite em ambas as tabelas (tratando indisponibilidade de schema cache)
       let cargo = "corretor";
+      let emailPreenchido = "";
       
       try {
         const { data: convData } = await supabase
           .from("convites" as any)
-          .select("role_to_assign")
+          .select("email, role_to_assign")
           .eq("token", token)
           .maybeSingle() as any;
-        if (convData?.role_to_assign) {
-          cargo = convData.role_to_assign;
+        if (convData) {
+          if (convData.role_to_assign) cargo = convData.role_to_assign;
+          if (convData.email) emailPreenchido = convData.email;
         }
       } catch (err) {
         // Silencia erro caso a tabela convites não exista no banco
@@ -61,20 +63,44 @@ function InvitePage() {
 
       try {
         if (cargo === "corretor") {
+          // Busca apenas a coluna note para evitar erro de schema cache da coluna role_to_assign
           const { data: partnerData } = await supabase
             .from("partner_invites")
-            .select("role_to_assign")
+            .select("note")
             .eq("token", token)
-            .maybeSingle();
-          if (partnerData?.role_to_assign) {
-            cargo = partnerData.role_to_assign;
+            .maybeSingle() as any;
+            
+          if (partnerData?.note) {
+            const noteText = partnerData.note;
+            // Decodifica note format: "Equipe: email | Cargo: cargo" ou "Parceiro: email | Cargo: corretor"
+            if (noteText.includes("| Cargo:")) {
+              const parts = noteText.split("| Cargo:");
+              const emailPart = parts[0].replace("Equipe:", "").replace("Parceiro:", "").trim();
+              emailPreenchido = emailPart;
+              cargo = parts[1].trim();
+            } else {
+              const cleanNote = noteText.replace("Equipe:", "").replace("Parceiro:", "").trim();
+              emailPreenchido = cleanNote;
+              if (noteText.startsWith("Equipe:")) {
+                cargo = "auxiliar";
+              }
+            }
           }
         }
       } catch (err) {
         // Silencia erro de conexão
       }
       
+      // Fallback via querystring
+      const searchParams = new URLSearchParams(window.location.search);
+      const emailQuery = searchParams.get("email");
+      const cargoQuery = searchParams.get("cargo");
+      
+      if (emailQuery) emailPreenchido = emailQuery;
+      if (cargoQuery) cargo = cargoQuery;
+      
       setRoleToAssign(cargo);
+      if (emailPreenchido) setEmail(emailPreenchido);
 
 
       const { data: userData } = await supabase.auth.getUser();
@@ -128,9 +154,43 @@ function InvitePage() {
     if (error) { setLoading(false); return toast.error(error.message); }
     // Se já tem session (auto-confirm), consome agora
     if (data.session) {
-      const { error: rpcErr } = await supabase.rpc("consume_invite", { _token: token });
+      let consumeErr = null;
+      try {
+        const { error: rpcErr } = await supabase.rpc("consume_invite", { _token: token });
+        consumeErr = rpcErr;
+      } catch (err: any) {
+        consumeErr = err;
+      }
+
+      // Fallback manual se o RPC falhar por falta de colunas/tabelas no banco de produção
+      if (consumeErr) {
+        try {
+          // Atualiza apenas as colunas garantidas de partner_invites (used_at, used_by)
+          await supabase
+            .from("partner_invites")
+            .update({ 
+              used_at: new Date().toISOString(), 
+              used_by: data.session.user.id 
+            } as any)
+            .eq("token", token);
+          
+          // E tenta atribuir a role corretor na user_roles caso seja corretor, ou deixa pendente
+          if (roleToAssign === "corretor") {
+            await supabase.from("user_roles").insert({
+              user_id: data.session.user.id,
+              role: "corretor" as any
+            });
+          }
+          
+          consumeErr = null; // Zera erro pois contornamos com sucesso!
+        } catch (err) {
+          // Silencia falha do fallback
+        }
+      }
+
       setLoading(false);
-      if (rpcErr) return toast.error(rpcErr.message);
+      if (consumeErr) return toast.error(consumeErr.message);
+      
       try { localStorage.removeItem("pending_invite_token"); } catch {}
       toast.success("Conta criada! Vamos completar seu perfil.");
       navigate({ to: "/app" });

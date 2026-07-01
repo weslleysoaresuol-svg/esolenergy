@@ -150,18 +150,38 @@ function AdminCorretores() {
       const { data: partnersData } = await supabase
         .from("partner_invites")
         .select("*")
-        .eq("role_to_assign", "corretor")
         .order("created_at", { ascending: false });
       if (partnersData) {
-        const mapeados = partnersData.map((x: any) => ({
-          id: x.id,
-          token: x.token,
-          email: x.note?.replace("Parceiro: ", "") || x.note || "Convidado",
-          role_to_assign: x.role_to_assign || "corretor",
-          status: x.used_at ? "aceito" : "pendente",
-          created_at: x.created_at,
-          used_at: x.used_at
-        }));
+        // Filtra registros que são de parceiro (começam com "Parceiro:" ou não começam com "Equipe:")
+        const parceiroInvites = partnersData.filter((x: any) => {
+          return x.note?.startsWith("Parceiro:") || !x.note?.startsWith("Equipe:") || x.role_to_assign === "corretor";
+        });
+
+        const mapeados = parceiroInvites.map((x: any) => {
+          let email = "Convidado";
+          let cargo = "corretor";
+          
+          if (x.note) {
+            const noteText = x.note;
+            if (noteText.includes("| Cargo:")) {
+              const parts = noteText.split("| Cargo:");
+              email = parts[0].replace("Parceiro:", "").trim();
+              cargo = parts[1].trim();
+            } else {
+              email = noteText.replace("Parceiro:", "").trim();
+            }
+          }
+
+          return {
+            id: x.id,
+            token: x.token,
+            email,
+            role_to_assign: x.role_to_assign || cargo,
+            status: x.used_at ? "aceito" : "pendente",
+            created_at: x.created_at,
+            used_at: x.used_at
+          };
+        });
         const tokensExistentes = new Set(unificados.map(u => u.token));
         mapeados.forEach(m => {
           if (!tokensExistentes.has(m.token)) {
@@ -220,10 +240,10 @@ function AdminCorretores() {
     if (error && (error.message.includes("schema cache") || error.message.includes("does not exist") || error.code === "P0002" || error.code === "42P01")) {
       try {
         const { data: userData } = await supabase.auth.getUser();
+        // Não passamos 'role_to_assign' no insert para evitar erro de schema cache se a coluna física não existir em produção!
         const { error: fallbackError } = await supabase.from("partner_invites").insert({
           token,
-          note: `Parceiro: ${novoEmail.trim().toLowerCase()}`,
-          role_to_assign: "corretor" as any,
+          note: `Parceiro: ${novoEmail.trim().toLowerCase()} | Cargo: corretor`,
           created_by: userData.user?.id
         });
         dbError = fallbackError;

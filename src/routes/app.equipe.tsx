@@ -97,31 +97,38 @@ function AdminEquipe() {
 
   const loadEquipe = async () => {
     setLoading(true);
-    // Filtra todas as roles internas
-    const { data: roles } = await (supabase
-      .from("user_roles") as any)
-      .select("user_id, role")
-      .in("role", ["admin", "auxiliar", "atendente", "vendedor", "engenheiro", "pos_vendas", "financeiro"]);
-    const ids = (roles || []).map((r: any) => r.user_id);
-    if (ids.length === 0) { setList([]); setLoading(false); return; }
+    try {
+      // 1. Carrega todas as roles
+      const { data: rolesData } = await supabase
+        .from("user_roles")
+        .select("user_id, role");
+        
+      const roleMap = new Map((rolesData || []).map((r: any) => [r.user_id, r.role]));
 
-    const roleMap = new Map((roles || []).map((r: any) => [r.user_id, r.role]));
+      // 2. Carrega todos os perfis
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("*");
 
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("*")
-      .in("id", ids);
+      if (profiles) {
+        const stats = profiles.map((p) => {
+          const userRole = roleMap.get(p.id) || "pendente"; // Fica "pendente" se não tiver role
+          return {
+            ...p,
+            role: userRole,
+          };
+        })
+        // Filtra apenas membros de equipe (não corretor)
+        .filter((p) => p.role !== "corretor")
+        .sort((a, b) => a.nome?.localeCompare(b.nome ?? "") ?? 0);
 
-    const stats = (profiles || []).map((p) => {
-      const userRole = roleMap.get(p.id) || "auxiliar";
-      return {
-        ...p,
-        role: userRole,
-      };
-    }).sort((a, b) => a.nome?.localeCompare(b.nome ?? "") ?? 0);
-
-    setList(stats);
-    setLoading(false);
+        setList(stats);
+      }
+    } catch (err: any) {
+      toast.error("Erro ao carregar equipe: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadConvites = async () => {
@@ -146,18 +153,38 @@ function AdminEquipe() {
       const { data: partnersData } = await supabase
         .from("partner_invites")
         .select("*")
-        .neq("role_to_assign", "corretor")
         .order("created_at", { ascending: false });
       if (partnersData) {
-        const mapeados = partnersData.map((x: any) => ({
-          id: x.id,
-          token: x.token,
-          email: x.note?.replace("Equipe: ", "") || "Convidado",
-          role_to_assign: x.role_to_assign,
-          status: x.used_at ? "aceito" : "pendente",
-          created_at: x.created_at,
-          used_at: x.used_at
-        }));
+        // Filtra apenas registros que são de equipe (começam com "Equipe:")
+        const equipeInvites = partnersData.filter((x: any) => {
+          return x.note?.startsWith("Equipe:") || (x.role_to_assign && x.role_to_assign !== "corretor");
+        });
+
+        const mapeados = equipeInvites.map((x: any) => {
+          let email = "Convidado";
+          let cargo = "auxiliar";
+          
+          if (x.note) {
+            const noteText = x.note;
+            if (noteText.includes("| Cargo:")) {
+              const parts = noteText.split("| Cargo:");
+              email = parts[0].replace("Equipe:", "").trim();
+              cargo = parts[1].trim();
+            } else {
+              email = noteText.replace("Equipe:", "").trim();
+            }
+          }
+
+          return {
+            id: x.id,
+            token: x.token,
+            email,
+            role_to_assign: x.role_to_assign || cargo,
+            status: x.used_at ? "aceito" : "pendente",
+            created_at: x.created_at,
+            used_at: x.used_at
+          };
+        });
         // Unifica removendo duplicados por token
         const tokensExistentes = new Set(unificados.map(u => u.token));
         mapeados.forEach(m => {
@@ -221,10 +248,10 @@ function AdminEquipe() {
     if (error && (error.message.includes("schema cache") || error.message.includes("does not exist") || error.code === "P0002" || error.code === "42P01")) {
       try {
         const { data: userData } = await supabase.auth.getUser();
+        // Não passamos 'role_to_assign' no insert para evitar erro de schema cache se a coluna física não existir em produção!
         const { error: fallbackError } = await supabase.from("partner_invites").insert({
           token,
-          note: `Equipe: ${novoEmail.trim().toLowerCase()}`,
-          role_to_assign: novoCargo as any,
+          note: `Equipe: ${novoEmail.trim().toLowerCase()} | Cargo: ${novoCargo}`,
           created_by: userData.user?.id
         });
         dbError = fallbackError;
@@ -658,6 +685,48 @@ function AdminEquipe() {
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                   <span className="text-[10px] text-slate-400 font-bold block uppercase mb-1">Cidade / Estado</span>
                   <div className="text-navy font-bold">{membroSel.cidade ? `${membroSel.cidade} - ${membroSel.estado}` : "—"}</div>
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 col-span-2">
+                  <span className="text-[10px] text-slate-400 font-bold block uppercase mb-1">Cargo / Papel de Acesso Corporativo</span>
+                  <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                    <select
+                      value={membroSel.role}
+                      onChange={async (e) => {
+                        const novaRole = e.target.value;
+                        try {
+                          // 1. Remove qualquer cargo anterior deste usuário
+                          await supabase.from("user_roles").delete().eq("user_id", membroSel.id);
+                          
+                          // 2. Se for diferente de pendente, insere o novo cargo
+                          if (novaRole !== "pendente") {
+                            const { error } = await supabase.from("user_roles").insert({
+                              user_id: membroSel.id,
+                              role: novaRole as any
+                            });
+                            if (error) throw error;
+                          }
+                          
+                          toast.success("Cargo de acesso atualizado!");
+                          setMembroSel((prev: any) => ({ ...prev, role: novaRole }));
+                          loadEquipe();
+                        } catch (err: any) {
+                          toast.error("Erro ao alterar cargo: " + err.message);
+                        }
+                      }}
+                      className="text-xs px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg font-bold text-navy uppercase cursor-pointer focus:ring-2 focus:ring-sun focus:outline-none"
+                    >
+                      <option value="pendente">Pendente (Acesso Suspenso)</option>
+                      <option value="auxiliar">Auxiliar Admin</option>
+                      <option value="atendente">Atendente</option>
+                      <option value="vendedor">Vendedor Interno</option>
+                      <option value="engenheiro">Engenheiro / Projetista</option>
+                      <option value="pos_vendas">Pós-Vendas & Logística</option>
+                      <option value="financeiro">Financeiro / Contábil</option>
+                      <option value="admin">Administrador</option>
+                    </select>
+                    <span className="text-[10px] text-slate-500 italic">
+                      Selecione o cargo para alterar o nível de permissão corporativa e liberar o acesso deste integrante.
+                    </span>
+                  </div>
                 </div>
               </div>
 
