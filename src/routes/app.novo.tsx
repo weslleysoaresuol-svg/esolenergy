@@ -143,7 +143,7 @@ function NovoCliente() {
         try {
           const { data: dbKits } = await supabase.from("kits_produtos" as any).select("*");
           if (dbKits && dbKits.length > 0) {
-            loadedKits = dbKits;
+            loadedKits = dbKits as any;
           }
         } catch(e) {}
 

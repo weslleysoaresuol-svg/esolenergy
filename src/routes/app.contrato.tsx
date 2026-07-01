@@ -141,7 +141,7 @@ function ContratoPage() {
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
 
-      const { error: insErr } = await supabase.from("contratos_parceria").insert({
+      const { error: insErr } = await (supabase.from as any)("contratos_parceria").insert({
         user_id: user.id,
         versao: CONTRATO_VERSAO,
         conteudo: contrato,

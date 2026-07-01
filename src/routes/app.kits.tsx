@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
@@ -303,7 +303,7 @@ function AdminKits() {
       setCsvRows([]);
       setCsvHeaders([]);
       load();
-      setActiveTab("catalogo");
+      
     } catch (e: any) {
       toast.error("Erro na importação: " + e.message);
     } finally {
@@ -1186,6 +1186,7 @@ function AdminKits() {
           </Card>
         </div>
       )}
+      </div>
     </div>
   );
 }

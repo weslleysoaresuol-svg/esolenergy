@@ -105,6 +105,19 @@ function FinanceiroDashboard() {
     }
   };
 
+  const pagarComissao = async (id: string) => {
+    try {
+      const { error } = await (supabase.from as any)("parceiro_comissoes")
+        .update({ status: "pago", data_pagamento: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+      toast.success("Comissão marcada como paga");
+      loadData();
+    } catch (e: any) {
+      toast.error("Erro ao pagar comissão: " + e.message);
+    }
+  };
+
   useEffect(() => {
     if (user && role === "admin") {
       loadData();
@@ -882,7 +895,7 @@ function FinanceiroDashboard() {
                       <h4 className="font-extrabold text-navy text-sm">Cobrança Gerada com Sucesso!</h4>
                       <p className="text-xs text-slate-500">Copie os dados de pagamento abaixo e envie ao cliente.</p>
                     </div>
-                    <Button variant="ghost" size="xs" onClick={() => setCobrançaGerada(null)} className="text-navy font-bold">Fechar</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setCobrançaGerada(null)} className="text-navy font-bold">Fechar</Button>
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -995,7 +1008,7 @@ function FinanceiroDashboard() {
                             <td className="p-3 text-right space-y-1 sm:space-y-0 sm:space-x-2">
                               {tx.status === "pending" && (
                                 <Button
-                                  size="xs"
+                                  size="sm"
                                   onClick={() => simularRecebimento(tx)}
                                   className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[9px] px-2 py-1"
                                 >
@@ -1004,7 +1017,7 @@ function FinanceiroDashboard() {
                               )}
                               {tx.status === "paid" && (
                                 <Button
-                                  size="xs"
+                                  size="sm"
                                   onClick={() => simularEstorno(tx)}
                                   className="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-[9px] px-2 py-1"
                                 >
@@ -1013,7 +1026,7 @@ function FinanceiroDashboard() {
                               )}
                               {tx.pix_copia_e_cola && (
                                 <Button
-                                  size="xs"
+                                  size="sm"
                                   variant="ghost"
                                   onClick={() => {
                                     navigator.clipboard.writeText(tx.pix_copia_e_cola);
@@ -1026,7 +1039,7 @@ function FinanceiroDashboard() {
                               )}
                               {tx.boleto_url && (
                                 <a href={tx.boleto_url} target="_blank" rel="noopener noreferrer">
-                                  <Button size="xs" variant="ghost" className="text-navy text-[9px] font-bold">
+                                  <Button size="sm" variant="ghost" className="text-navy text-[9px] font-bold">
                                     Ver Boleto
                                   </Button>
                                 </a>

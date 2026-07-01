@@ -295,7 +295,7 @@ function FinanciamentosList() {
       const emailCliente = simType === "pf" ? pfEmail : pjEmail;
       const telefoneCliente = simType === "pf" ? pfTelefone : pjTelefone;
 
-      await supabase.from("clientes").update({
+      await (supabase.from as any)("clientes").update({
         cpf_cnpj: docCliente || null,
         email: emailCliente || null,
         telefone: telefoneCliente || null,
@@ -441,7 +441,8 @@ function FinanciamentosList() {
                     </Link>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
           </tbody>
         </table>
         {filtered.length === 0 && (

@@ -128,9 +128,9 @@ function CotacoesList() {
     if (mergedKits.length < 20) {
       const codes = new Set(mergedKits.map((k: any) => k.codigo));
       const missing = KITS_FALLBACK
-        .filter((k) => !codes.has(k.id) && !codes.has(k.codigo))
-        .sort((a, b) => a.potencia_kwp - b.potencia_kwp);
-      mergedKits = [...mergedKits, ...missing];
+        .filter((k: any) => !codes.has(k.id) && !codes.has(k.codigo))
+        .sort((a: any, b: any) => a.potencia_kwp - b.potencia_kwp);
+      mergedKits = [...mergedKits, ...(missing as any[])];
     }
     setKits(mergedKits);
     setLoading(false);
