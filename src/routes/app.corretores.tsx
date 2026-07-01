@@ -30,6 +30,27 @@ function AdminCorretores() {
   const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState("");
 
+  // Estados dos convites
+  const [convites, setConvites] = useState<any[]>([]);
+  const [novoEmail, setNovoEmail] = useState("");
+  const [novoCargo, setNovoCargo] = useState<"corretor" | "auxiliar" | "atendente">("corretor");
+  const [enviandoConvite, setEnviandoConvite] = useState(false);
+
+  // Estados dos termos/contratos
+  const [contratos, setContratos] = useState<any[]>([]);
+
+  // Drawer de detalhe do parceiro
+  const [parceiroSel, setParceiroSel] = useState<any>(null);
+  const [contratosParceiro, setContratosParceiro] = useState<any[]>([]);
+  const [loadingDrawer, setLoadingDrawer] = useState(false);
+
+  useEffect(() => {
+    if (loadingUser || role !== "admin") return;
+    if (activeTab === "lista") loadParceiros();
+    if (activeTab === "convites") loadConvites();
+    if (activeTab === "contratos") loadContratos();
+  }, [activeTab, loadingUser, role]);
+
   if (loadingUser) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
@@ -46,20 +67,6 @@ function AdminCorretores() {
       </div>
     );
   }
-
-  // Estados dos convites
-  const [convites, setConvites] = useState<any[]>([]);
-  const [novoEmail, setNovoEmail] = useState("");
-  const [novoCargo, setNovoCargo] = useState<"corretor" | "auxiliar" | "atendente">("corretor");
-  const [enviandoConvite, setEnviandoConvite] = useState(false);
-
-  // Estados dos termos/contratos
-  const [contratos, setContratos] = useState<any[]>([]);
-
-  // Drawer de detalhe do parceiro
-  const [parceiroSel, setParceiroSel] = useState<any>(null);
-  const [contratosParceiro, setContratosParceiro] = useState<any[]>([]);
-  const [loadingDrawer, setLoadingDrawer] = useState(false);
 
   const loadParceiros = async () => {
     setLoading(true);
@@ -136,12 +143,6 @@ function AdminCorretores() {
       .order("assinado_em", { ascending: false });
     setContratos(data || []);
   };
-
-  useEffect(() => {
-    if (activeTab === "lista") loadParceiros();
-    if (activeTab === "convites") loadConvites();
-    if (activeTab === "contratos") loadContratos();
-  }, [activeTab]);
 
   const toggle = async (id: string, ativo: boolean) => {
     await supabase.from("profiles").update({ ativo: !ativo }).eq("id", id);

@@ -56,6 +56,27 @@ function AdminEquipe() {
   const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState("");
 
+  // Estados dos convites
+  const [convites, setConvites] = useState<any[]>([]);
+  const [novoEmail, setNovoEmail] = useState("");
+  const [novoCargo, setNovoCargo] = useState<string>("auxiliar");
+  const [enviandoConvite, setEnviandoConvite] = useState(false);
+
+  // Estados dos termos/contratos
+  const [contratos, setContratos] = useState<any[]>([]);
+
+  // Drawer de detalhe do colaborador
+  const [membroSel, setMembroSel] = useState<any>(null);
+  const [contratosMembro, setContratosMembro] = useState<any[]>([]);
+  const [loadingDrawer, setLoadingDrawer] = useState(false);
+
+  useEffect(() => {
+    if (loadingUser || role !== "admin") return;
+    if (activeTab === "lista") loadEquipe();
+    if (activeTab === "convites") loadConvites();
+    if (activeTab === "contratos") loadContratos();
+  }, [activeTab, loadingUser, role]);
+
   if (loadingUser) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
@@ -72,20 +93,6 @@ function AdminEquipe() {
       </div>
     );
   }
-
-  // Estados dos convites
-  const [convites, setConvites] = useState<any[]>([]);
-  const [novoEmail, setNovoEmail] = useState("");
-  const [novoCargo, setNovoCargo] = useState<string>("auxiliar");
-  const [enviandoConvite, setEnviandoConvite] = useState(false);
-
-  // Estados dos termos/contratos
-  const [contratos, setContratos] = useState<any[]>([]);
-
-  // Drawer de detalhe do colaborador
-  const [membroSel, setMembroSel] = useState<any>(null);
-  const [contratosMembro, setContratosMembro] = useState<any[]>([]);
-  const [loadingDrawer, setLoadingDrawer] = useState(false);
 
   const loadEquipe = async () => {
     setLoading(true);
@@ -133,6 +140,7 @@ function AdminEquipe() {
       .select("user_id")
       .neq("role", "corretor");
     const ids = (roles || []).map((r) => r.user_id);
+    if (ids.length === 0) { setContratos([]); return; }
 
     const { data } = await supabase
       .from("contratos_parceria")
@@ -141,12 +149,6 @@ function AdminEquipe() {
       .order("assinado_em", { ascending: false });
     setContratos(data || []);
   };
-
-  useEffect(() => {
-    if (activeTab === "lista") loadEquipe();
-    if (activeTab === "convites") loadConvites();
-    if (activeTab === "contratos") loadContratos();
-  }, [activeTab]);
 
   const toggleStatus = async (id: string, ativo: boolean) => {
     await supabase.from("profiles").update({ ativo: !ativo }).eq("id", id);
