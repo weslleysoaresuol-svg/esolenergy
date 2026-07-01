@@ -47,17 +47,18 @@ export function useCurrentUser(): CurrentUser {
                       : null;
 
       // Override temporário de segurança para recuperar acesso do proprietário imediatamente
+      let effectiveProfile: any | null = p ?? null;
       if (u.user.email?.toLowerCase() === "eng.weslleysoares@gmail.com") {
         resolved = "admin";
         if (p) {
-          p.ativo = true;
+          effectiveProfile = { ...p, ativo: true };
         } else {
-          p = { id: u.user.id, email: u.user.email, nome: "Weslley Soares", ativo: true };
+          effectiveProfile = { id: u.user.id, email: u.user.email, nome: "Weslley Soares", ativo: true };
         }
       }
 
       setRole(resolved);
-      setProfile(p ?? null);
+      setProfile(effectiveProfile);
     } else {
       setRole(null);
       setProfile(null);
