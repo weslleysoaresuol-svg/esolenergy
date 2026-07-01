@@ -265,9 +265,9 @@
   color: #FFFFFF !important;
   font-weight: 700 !important;
   transition: all 0.2s ease-in-out !important;
-}
-@utility suns-btn-primary:hover {
-  background-color: #1F3095 !important;
+  &:hover {
+    background-color: #1F3095 !important;
+  }
 }
 
 @utility suns-btn-accent {
@@ -275,7 +275,7 @@
   color: #FFFFFF !important;
   font-weight: 700 !important;
   transition: all 0.2s ease-in-out !important;
-}
-@utility suns-btn-accent:hover {
-  background-color: #5DBCAB !important;
+  &:hover {
+    background-color: #5DBCAB !important;
+  }
 }
