@@ -105,6 +105,19 @@ function FinanceiroDashboard() {
     }
   };
 
+  const pagarComissao = async (id: string) => {
+    try {
+      const { error } = await (supabase.from as any)("parceiro_comissoes")
+        .update({ status: "pago", data_pagamento: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+      toast.success("Comissão marcada como paga");
+      loadData();
+    } catch (e: any) {
+      toast.error("Erro ao pagar comissão: " + e.message);
+    }
+  };
+
   useEffect(() => {
     if (user && role === "admin") {
       loadData();
