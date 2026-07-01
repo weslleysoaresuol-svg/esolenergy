@@ -356,18 +356,12 @@ function FinanciamentosList() {
           <p className="text-xs text-muted-foreground mt-0.5">Nesta área, você pode gerenciar simulações e solicitações de financiamentos para seus clientes.</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <button
+          <Button
             onClick={() => { setSimType("pf"); setWizardStep(1); setOpenNew(true); }}
-            className="bg-[#2E44B8] hover:bg-[#1F3095] text-white font-bold rounded-full text-xs px-5 py-2.5 transition shadow cursor-pointer border-0"
+            className="bg-[#2E44B8] hover:bg-[#1F3095] text-white font-bold rounded-full text-xs px-5 py-2.5 transition shadow cursor-pointer border-0 flex items-center gap-1.5"
           >
-            Financiamentos convencionais
-          </button>
-          <button
-            onClick={() => { setSimType("pj"); setWizardStep(1); setOpenNew(true); }}
-            className="bg-[#2E44B8] hover:bg-[#1F3095] text-white font-bold rounded-full text-xs px-5 py-2.5 transition shadow cursor-pointer border-0"
-          >
-            Financiamentos especiais
-          </button>
+            <Plus className="w-4 h-4" /> Solicitar Financiamento
+          </Button>
         </div>
       </div>
 
@@ -448,7 +442,7 @@ function FinanciamentosList() {
         {filtered.length === 0 && (
           <div className="p-12 text-center text-slate-400 text-sm flex flex-col items-center gap-2">
             <Landmark className="w-8 h-8 opacity-30" />
-            <span>Nenhum financiamento cadastrado. Crie uma simulação nos botões acima.</span>
+            <span>Nenhum financiamento cadastrado. Crie uma simulação no botão acima.</span>
           </div>
         )}
       </Card>
@@ -459,22 +453,44 @@ function FinanciamentosList() {
       {/* DIALOG DE SIMULAÇÃO PF / PJ (Estilo prints da Suns Brasil) */}
       <Dialog open={openNew} onOpenChange={setOpenNew}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white p-8 rounded-3xl shadow-2xl border border-slate-100">
-          <DialogHeader className="border-b pb-4 flex flex-row items-center justify-between">
+          <DialogHeader className="border-b pb-4">
             <DialogTitle className="font-extrabold text-[#2E44B8] text-lg">
-              Simulação de financiamento para {simType === "pf" ? "Pessoa Física" : "Pessoa Jurídica"}
+              Solicitar Financiamento
             </DialogTitle>
-            <button
-              type="button"
-              onClick={() => { setSimType(simType === "pf" ? "pj" : "pf"); setWizardStep(1); }}
-              className="text-xs text-[#2E44B8] hover:underline font-bold bg-[#EBF0F6] px-3.5 py-1.5 rounded-full border-0 cursor-pointer"
-            >
-              Deseja solicitar para {simType === "pf" ? "Pessoa Jurídica?" : "Pessoa Física?"}
-            </button>
+            <p className="text-xs text-muted-foreground mt-0.5">Preencha as informações do cliente para solicitar a simulação de crédito.</p>
           </DialogHeader>
 
           {wizardStep === 1 ? (
             /* =================== PASSO 1 / 2 =================== */
             <form onSubmit={handleNextStep} className="space-y-6 pt-4 text-xs font-semibold text-slate-700">
+              {/* Seletor PF / PJ */}
+              <div className="flex justify-center mb-6 pt-2">
+                <div className="bg-slate-100 p-1 rounded-xl flex gap-1 w-full max-w-md border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => { setSimType("pf"); }}
+                    className={`flex-1 py-2 px-4 rounded-lg text-xs font-bold transition-all ${
+                      simType === "pf"
+                        ? "bg-[#2E44B8] text-white shadow"
+                        : "text-slate-600 hover:text-navy hover:bg-slate-200/50"
+                    } border-0 cursor-pointer`}
+                  >
+                    Pessoa Física (PF)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setSimType("pj"); }}
+                    className={`flex-1 py-2 px-4 rounded-lg text-xs font-bold transition-all ${
+                      simType === "pj"
+                        ? "bg-[#2E44B8] text-white shadow"
+                        : "text-slate-600 hover:text-navy hover:bg-slate-200/50"
+                    } border-0 cursor-pointer`}
+                  >
+                    Pessoa Jurídica (CNPJ)
+                  </button>
+                </div>
+              </div>
+
               {/* Proponente e Pedido */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid md:grid-cols-2 gap-4">
                 <div>
@@ -881,7 +897,7 @@ function FinanciamentosList() {
             /* =================== PASSO 2 / 2 =================== */
             <form onSubmit={handleSubmitSimulation} className="space-y-6 pt-4 text-xs font-semibold text-slate-700 animate-fade-in">
               <div>
-                <h3 className="font-extrabold text-[#2E44B8] text-sm mb-4">Dados da simulação (Passo 2/2)</h3>
+                <h3 className="font-extrabold text-[#2E44B8] text-sm mb-4">Dados da simulação — {simType === "pf" ? "Pessoa Física" : "Pessoa Jurídica"} (Passo 2/2)</h3>
                 
                 {simType === "pf" ? (
                   /* Passo 2 PF - Endereço do Cliente */

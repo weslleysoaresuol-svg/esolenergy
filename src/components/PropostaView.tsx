@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { BRL, NUM } from "@/lib/proposta-calc";
+import { supabase } from "@/integrations/supabase/client";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -33,40 +34,95 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     });
   }, [p]);
 
-  const FINANCEIRAS = {
-    solfacil: {
-      nome: "Solfácil",
-      taxaNominal: 1.19,
-      cetMensal: 1.29,
-      cetAnual: 16.62,
-      label: "Solfácil Solar",
-      info: "Fintech especialista em energia solar. Sem taxa de abertura de crédito (TAC)."
-    },
-    bv: {
-      nome: "BV Financeira",
-      taxaNominal: 1.29,
-      cetMensal: 1.39,
-      cetAnual: 18.02,
-      label: "Banco BV",
-      info: "Crédito ágil com carência de até 120 dias para o primeiro pagamento."
-    },
-    santander: {
-      nome: "Santander",
-      taxaNominal: 1.35,
-      cetMensal: 1.45,
-      cetAnual: 18.86,
-      label: "Santander",
-      info: "Financiamento tradicional em boleto ou débito direto."
-    },
-    sicredi: {
-      nome: "Sicredi",
-      taxaNominal: 1.15,
-      cetMensal: 1.24,
-      cetAnual: 15.94,
-      label: "Sicredi (Cooperativa)",
-      info: "Condições diferenciadas exclusivas para associados da cooperativa."
-    }
-  };
+  const [bancos, setBancos] = useState<any[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await supabase.from("financeiras_solar").select("*").eq("ativo", true);
+        if (data && data.length > 0) {
+          setBancos(data);
+        }
+      } catch (err) {
+        console.error("Falha ao carregar financeiras", err);
+      }
+    })();
+  }, []);
+
+  const FINANCEIRAS = useMemo(() => {
+    const base = {
+      solfacil: {
+        id: "solfacil",
+        nome: "Solfácil",
+        taxaNominal: 1.19,
+        cetMensal: 1.39,
+        cetAnual: 18.02,
+        label: "Solfácil Solar",
+        info: "Fintech especialista em energia solar. Sem taxa de abertura de crédito (TAC)."
+      },
+      bv: {
+        id: "bv",
+        nome: "Banco BV",
+        taxaNominal: 1.29,
+        cetMensal: 1.48,
+        cetAnual: 19.32,
+        label: "Banco BV",
+        info: "Crédito ágil com carência de até 120 dias para o primeiro pagamento."
+      },
+      santander: {
+        id: "santander",
+        nome: "Santander",
+        taxaNominal: 1.39,
+        cetMensal: 1.59,
+        cetAnual: 20.86,
+        label: "Santander",
+        info: "Financiamento tradicional em boleto ou débito direto."
+      },
+      sicredi: {
+        id: "sicredi",
+        nome: "Sicredi",
+        taxaNominal: 0.99,
+        cetMensal: 1.15,
+        cetAnual: 14.71,
+        label: "Sicredi (Cooperativa)",
+        info: "Condições diferenciadas exclusivas para associados da cooperativa."
+      }
+    };
+
+    if (bancos.length === 0) return base;
+
+    const dict: Record<string, any> = { ...base };
+    bancos.forEach((b) => {
+      const cleanKey = b.nome.toLowerCase()
+        .replace(/banco/g, "")
+        .replace(/financeira/g, "")
+        .replace(/solar/g, "")
+        .replace(/green/g, "")
+        .replace(/energia/g, "")
+        .replace(/verde/g, "")
+        .trim()
+        .replace(/\s+/g, "");
+
+      const cetM = Number(b.taxa_cet_mes || b.taxa_juros_mes);
+      const jurosNom = Number(b.taxa_juros_mes);
+      const cetAnualCalculado = +((Math.pow(1 + (cetM / 100), 12) - 1) * 100).toFixed(2);
+
+      const obj = {
+        id: b.id,
+        nome: b.nome,
+        taxaNominal: jurosNom,
+        cetMensal: cetM,
+        cetAnual: cetAnualCalculado,
+        label: b.nome,
+        info: `Taxa CET de ${cetM}% a.m. Prazo de até ${b.prazo_maximo_meses} meses.`
+      };
+
+      dict[b.id] = obj;
+      dict[cleanKey] = obj;
+    });
+
+    return dict;
+  }, [bancos]);
 
   // Extração das tags de faturamento da proposta
   const condText = p.condicoes_pagamento || "";

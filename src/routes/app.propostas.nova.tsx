@@ -381,10 +381,11 @@ function NovaProposta() {
       const chosenFinanceiras = financeiras.filter((f) => selectedFinanceirasIds.includes(f.id));
       if (chosenFinanceiras.length > 0) {
         const financingTexts = chosenFinanceiras.map((fin) => {
-          const rate = Number(fin.taxa_juros_mes) / 100;
+          const taxaUsada = Number(fin.taxa_cet_mes || fin.taxa_juros_mes);
+          const rate = taxaUsada / 100;
           const n = Math.min(60, fin.prazo_maximo_meses);
           const pmt = (calculo.preco_total * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
-          return `· ${fin.nome}: ${n}x de ${BRL(Math.round(pmt))}/mês (Taxa: ${fin.taxa_juros_mes}% a.m.)`;
+          return `· ${fin.nome}: ${n}x de ${BRL(Math.round(pmt))}/mês (Taxa CET: ${taxaUsada}% a.m.)`;
         });
         finalCondicoes = `À vista (5% desc.): ${BRL(calculo.preco_total * 0.95)}\n` +
           `Financiamento Sugerido:\n` +

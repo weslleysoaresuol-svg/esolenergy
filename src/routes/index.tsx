@@ -356,11 +356,22 @@ function MetricsBar() {
 
 /* ============================ SIMULADOR ============================ */
 const DEFAULT_FINANCEIRAS = [
-  { id: "1", nome: "Solfácil", taxa_juros_mes: 1.29, prazo_maximo_meses: 120, taxa_aprovacao_media: 85, ativo: true },
-  { id: "2", nome: "BV Financeira", taxa_juros_mes: 1.39, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
-  { id: "3", nome: "Santander", taxa_juros_mes: 1.49, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
-  { id: "4", nome: "Sicredi", taxa_juros_mes: 1.09, prazo_maximo_meses: 120, taxa_aprovacao_media: 70, ativo: true },
-  { id: "5", nome: "Banco do Brasil", taxa_juros_mes: 0.95, prazo_maximo_meses: 96, taxa_aprovacao_media: 65, ativo: true },
+  { id: "1", nome: "Solfácil", taxa_juros_mes: 1.19, taxa_cet_mes: 1.39, prazo_maximo_meses: 120, taxa_aprovacao_media: 88, ativo: true },
+  { id: "2", nome: "Banco BV Solar", taxa_juros_mes: 1.29, taxa_cet_mes: 1.48, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
+  { id: "3", nome: "Santander Solar", taxa_juros_mes: 1.39, taxa_cet_mes: 1.59, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
+  { id: "4", nome: "Sicredi Energia Verde", taxa_juros_mes: 0.99, taxa_cet_mes: 1.15, prazo_maximo_meses: 120, taxa_aprovacao_media: 85, ativo: true },
+  { id: "5", nome: "Sicoob EcoCrédito", taxa_juros_mes: 1.05, taxa_cet_mes: 1.22, prazo_maximo_meses: 96, taxa_aprovacao_media: 82, ativo: true },
+  { id: "6", nome: "Banco do Brasil Agro/Solar", taxa_juros_mes: 0.95, taxa_cet_mes: 1.12, prazo_maximo_meses: 120, taxa_aprovacao_media: 70, ativo: true },
+  { id: "7", nome: "Bradesco Financiamento Solar", taxa_juros_mes: 1.25, taxa_cet_mes: 1.44, prazo_maximo_meses: 72, taxa_aprovacao_media: 72, ativo: true },
+  { id: "8", nome: "Itaú CrediSolar", taxa_juros_mes: 1.35, taxa_cet_mes: 1.55, prazo_maximo_meses: 60, taxa_aprovacao_media: 70, ativo: true },
+  { id: "9", nome: "Porto Seguro Solar (PortoBank)", taxa_juros_mes: 1.20, taxa_cet_mes: 1.38, prazo_maximo_meses: 84, taxa_aprovacao_media: 78, ativo: true },
+  { id: "10", nome: "Ailos Solar", taxa_juros_mes: 1.08, taxa_cet_mes: 1.25, prazo_maximo_meses: 96, taxa_aprovacao_media: 80, ativo: true },
+  { id: "11", nome: "Caixa Econômica Federal (CEF)", taxa_juros_mes: 1.15, taxa_cet_mes: 1.32, prazo_maximo_meses: 60, taxa_aprovacao_media: 82, ativo: true },
+  { id: "12", nome: "Banco do Nordeste (BNB)", taxa_juros_mes: 0.80, taxa_cet_mes: 0.95, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
+  { id: "13", nome: "Banco da Amazônia (BASA)", taxa_juros_mes: 0.85, taxa_cet_mes: 1.00, prazo_maximo_meses: 96, taxa_aprovacao_media: 70, ativo: true },
+  { id: "14", nome: "Crefisa Solar", taxa_juros_mes: 1.89, taxa_cet_mes: 2.12, prazo_maximo_meses: 48, taxa_aprovacao_media: 85, ativo: true },
+  { id: "15", nome: "BNDES Finame Baixo Carbono", taxa_juros_mes: 0.75, taxa_cet_mes: 0.88, prazo_maximo_meses: 120, taxa_aprovacao_media: 60, ativo: true },
+  { id: "16", nome: "Desenvolve SP (Economia Verde)", taxa_juros_mes: 0.90, taxa_cet_mes: 1.05, prazo_maximo_meses: 84, taxa_aprovacao_media: 65, ativo: true }
 ];
 
 function Simulator() {
@@ -441,7 +452,7 @@ function Simulator() {
 
   const financeParcela = useMemo(() => {
     if (!selectedBank) return 0;
-    const rate = selectedBank.taxa_juros_mes / 100;
+    const rate = (selectedBank.taxa_cet_mes || selectedBank.taxa_juros_mes) / 100;
     const n = Math.min(selectedTerm, selectedBank.prazo_maximo_meses);
     const pmt = (result.precoTotal * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
     return Math.round(pmt);
