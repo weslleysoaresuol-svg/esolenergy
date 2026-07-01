@@ -541,7 +541,7 @@ function AdminCorretores() {
                     onClick={() => {
                       const subject = encodeURIComponent("Convite de Parceria Comercial - ESOL Energy");
                       const body = encodeURIComponent(`Olá!\n\nVocê foi convidado para acessar o sistema da ESOL Energy como consultor parceiro comercial.\n\nPara aceitar este convite, criar sua conta e assinar o respectivo termo de parceria digital, clique no link de convite oficial abaixo:\n\n${ultimoConvite.link}\n\nAtenciosamente,\nESOL Energy`);
-                      window.open(`mailto:${ultimoConvite.email}?subject=${subject}&body=${body}`, "_self");
+                      window.open(`mailto:${ultimoConvite.email}?subject=${subject}&body=${body}`, "_blank");
                     }}
                     className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-200 h-8 text-[10px] rounded-lg cursor-pointer flex items-center gap-1.5"
                   >
@@ -608,7 +608,7 @@ function AdminCorretores() {
                               onClick={() => {
                                 const subject = encodeURIComponent("Convite de Parceria Comercial - ESOL Energy");
                                 const body = encodeURIComponent(`Olá!\n\nVocê foi convidado para acessar o sistema da ESOL Energy como consultor parceiro comercial.\n\nPara aceitar este convite, criar sua conta e assinar o respectivo termo de parceria digital, clique no link de convite oficial abaixo:\n\n${window.location.origin}/convite/${cv.token}\n\nAtenciosamente,\nESOL Energy`);
-                                window.open(`mailto:${cv.email}?subject=${subject}&body=${body}`, "_self");
+                                window.open(`mailto:${cv.email}?subject=${subject}&body=${body}`, "_blank");
                               }} 
                               className="text-slate-500 hover:text-navy hover:bg-slate-100 p-1.5 h-8 w-8 rounded-lg cursor-pointer"
                               title="Enviar por E-mail"

@@ -218,6 +218,11 @@ function AdminEquipe() {
   };
 
   const toggleStatus = async (id: string, ativo: boolean) => {
+    // Bloqueia desativação de administrador por questões de segurança
+    if (membroSel?.role === "admin" && ativo) {
+      toast.error("🛡️ Acesso negado: Administradores não podem ser desativados pelo painel.");
+      return;
+    }
     await supabase.from("profiles").update({ ativo: !ativo }).eq("id", id);
     toast.success(!ativo ? "Colaborador ativado" : "Colaborador desativado");
     loadEquipe();
@@ -501,7 +506,7 @@ function AdminEquipe() {
                     onClick={() => {
                       const subject = encodeURIComponent("Convite de Acesso - ESOL Energy");
                       const body = encodeURIComponent(`Olá!\n\nVocê foi convidado para acessar o sistema da ESOL Energy com a permissão de ${ROLE_LABELS[ultimoConvite.cargo] || ultimoConvite.cargo}.\n\nPara concluir seu cadastro e criar sua conta, clique no link de convite oficial abaixo:\n\n${ultimoConvite.link}\n\nAtenciosamente,\nESOL Energy`);
-                      window.open(`mailto:${ultimoConvite.email}?subject=${subject}&body=${body}`, "_self");
+                      window.open(`mailto:${ultimoConvite.email}?subject=${subject}&body=${body}`, "_blank");
                     }}
                     className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-200 h-8 text-[10px] rounded-lg cursor-pointer flex items-center gap-1.5"
                   >
@@ -574,7 +579,7 @@ function AdminEquipe() {
                               onClick={() => {
                                 const subject = encodeURIComponent("Convite de Acesso - ESOL Energy");
                                 const body = encodeURIComponent(`Olá!\n\nVocê foi convidado para acessar o sistema da ESOL Energy com a permissão de ${ROLE_LABELS[cv.role_to_assign] || cv.role_to_assign}.\n\nPara concluir seu cadastro e criar sua conta, clique no link de convite oficial abaixo:\n\n${window.location.origin}/convite/${cv.token}\n\nAtenciosamente,\nESOL Energy`);
-                                window.open(`mailto:${cv.email}?subject=${subject}&body=${body}`, "_self");
+                                window.open(`mailto:${cv.email}?subject=${subject}&body=${body}`, "_blank");
                               }} 
                               className="text-slate-500 hover:text-navy hover:bg-slate-100 p-1.5 h-8 w-8 rounded-lg cursor-pointer"
                               title="Enviar por E-mail"
@@ -805,22 +810,32 @@ function AdminEquipe() {
                 )}
               </Card>
 
-              {/* Botões de Ações */}
-              <div className="flex gap-2 pt-4 border-t">
-                <Button
-                  onClick={() => toggleStatus(membroSel.id, membroSel.ativo)}
-                  variant={membroSel.ativo ? "destructive" : "outline"}
-                  className="flex-1 font-bold text-xs uppercase h-10"
-                >
-                  {membroSel.ativo ? "Desativar Acesso" : "Ativar Acesso"}
-                </Button>
-                <Button
-                  onClick={() => setMembroSel(null)}
-                  variant="secondary"
-                  className="px-6 font-bold text-xs uppercase h-10"
-                >
-                  Fechar
-                </Button>
+               {/* Botões de Ações */}
+              <div className="space-y-3 pt-4 border-t">
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => toggleStatus(membroSel.id, membroSel.ativo)}
+                    disabled={membroSel.role === "admin"}
+                    variant={membroSel.ativo ? "destructive" : "outline"}
+                    className="flex-1 font-bold text-xs uppercase h-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {membroSel.role === "admin" 
+                      ? "Desativação Bloqueada (Admin)" 
+                      : membroSel.ativo ? "Desativar Acesso" : "Ativar Acesso"}
+                  </Button>
+                  <Button
+                    onClick={() => setMembroSel(null)}
+                    variant="secondary"
+                    className="px-6 font-bold text-xs uppercase h-10"
+                  >
+                    Fechar
+                  </Button>
+                </div>
+                {membroSel.role === "admin" && (
+                  <p className="text-[10px] text-rose-500 font-bold text-center">
+                    🛡️ Contas administrativas não podem ser desativadas no painel por razões de segurança.
+                  </p>
+                )}
               </div>
             </div>
           </DialogContent>
