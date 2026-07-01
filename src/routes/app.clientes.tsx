@@ -119,7 +119,7 @@ function AdminClientes() {
 
       const ufNome = ufsList.find((x) => x.sigla === uf)?.nome || uf;
 
-      const { error } = await supabase.from("clientes").insert({
+      const { error } = await (supabase.from as any)("clientes").insert({
         id: randomId,
         nome,
         email: email || null,
