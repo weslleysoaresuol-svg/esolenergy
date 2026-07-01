@@ -172,7 +172,7 @@ function AdminEquipe() {
             .from("admin_approvals" as any)
             .select("new_admin_id");
           if (todasApps) {
-            for (const a of todasApps as Array<{ new_admin_id: string }>) {
+            for (const a of todasApps as unknown as Array<{ new_admin_id: string }>) {
               contagem[a.new_admin_id] = (contagem[a.new_admin_id] || 0) + 1;
             }
           }
