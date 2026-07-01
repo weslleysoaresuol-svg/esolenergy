@@ -252,7 +252,7 @@ function AdminEquipe() {
         const { error: fallbackError } = await supabase.from("partner_invites").insert({
           token,
           note: `Equipe: ${novoEmail.trim().toLowerCase()} | Cargo: ${novoCargo}`,
-          created_by: userData.user?.id
+          created_by: userData.user?.id ?? null,
         });
         dbError = fallbackError;
       } catch (err: any) {
