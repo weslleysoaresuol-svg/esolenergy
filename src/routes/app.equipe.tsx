@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   TrendingUp, Users, Target, Link2, FileText, ClipboardCopy, Send,
   Search, Mail, MapPin, ShieldCheck, AlertTriangle, CheckCircle2,
@@ -49,10 +50,28 @@ const ROLE_DESCRIPTIONS: Record<string, string> = {
 };
 
 function AdminEquipe() {
+  const { role, loading: loadingUser } = useCurrentUser();
   const [activeTab, setActiveTab] = useState<"lista" | "convites" | "contratos">("lista");
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState("");
+
+  if (loadingUser) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-navy rounded-full animate-spin" />
+        <span className="text-sm font-semibold text-slate-400">Carregando dados da equipe...</span>
+      </div>
+    );
+  }
+
+  if (role !== "admin") {
+    return (
+      <div className="p-6 text-center text-rose-600 font-semibold">
+        Acesso restrito apenas para administradores do sistema.
+      </div>
+    );
+  }
 
   // Estados dos convites
   const [convites, setConvites] = useState<any[]>([]);

@@ -14,9 +14,26 @@ export const Route = createFileRoute("/app/parceiro/financeiro")({
 });
 
 function ParceiroFinanceiroDashboard() {
-  const { user } = useCurrentUser();
+  const { user, role, loading: loadingUser } = useCurrentUser();
   const [comissoes, setComissoes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  if (loadingUser) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-navy rounded-full animate-spin" />
+        <span className="text-sm font-semibold text-slate-400">Carregando comissões...</span>
+      </div>
+    );
+  }
+
+  if (role !== "corretor" && role !== "admin") {
+    return (
+      <div className="p-6 text-center text-rose-600 font-semibold">
+        Acesso restrito apenas para consultores parceiros.
+      </div>
+    );
+  }
 
   const loadComissoes = async () => {
     if (!user) return;

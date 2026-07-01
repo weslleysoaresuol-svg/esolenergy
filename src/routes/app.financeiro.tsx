@@ -120,7 +120,7 @@ function FinanceiroDashboard() {
   };
 
   useEffect(() => {
-    if (user && role === "admin") {
+    if (user && (role === "admin" || role === "financeiro")) {
       loadData();
     }
   }, [user, role]);
@@ -134,10 +134,10 @@ function FinanceiroDashboard() {
     );
   }
 
-  if (role !== "admin") {
+  if (role !== "admin" && role !== "financeiro") {
     return (
       <div className="p-6 text-center text-rose-600 font-semibold">
-        Acesso restrito apenas para administradores do sistema.
+        Acesso restrito apenas para administradores ou departamento financeiro.
       </div>
     );
   }

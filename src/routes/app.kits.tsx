@@ -111,7 +111,10 @@ function AdminKits() {
     );
   }
 
-  if (role !== "admin") return <div className="text-center py-12 text-muted-foreground">Acesso restrito ao administrador.</div>;
+  const canViewKits = ["admin", "auxiliar", "engenheiro", "pos_vendas"].includes(role ?? "");
+  if (!canViewKits) return <div className="text-center py-12 text-muted-foreground">Acesso restrito ao administrador ou equipe técnica.</div>;
+
+  const canEditKits = ["admin", "auxiliar"].includes(role ?? "");
 
   const filtered = kits.filter((k) => {
     const matchFaixa = filterFaixa === "todas" || k.faixa === filterFaixa;
@@ -372,11 +375,13 @@ function AdminKits() {
           <h1 className="text-3xl font-bold text-navy flex items-center gap-2"><Sun className="text-sun-deep" />Kits Fotovoltaicos</h1>
           <p className="text-muted-foreground">Cadastre, importe planilhas de fornecedores ou integre APIs em tempo real.</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => setEditando({ ...EMPTY_KIT })} className="bg-sun hover:bg-sun-deep text-navy font-semibold">
-            <Plus className="w-4 h-4 mr-1" />Novo kit manual
-          </Button>
-        </div>
+        {canEditKits && (
+          <div className="flex gap-2">
+            <Button onClick={() => setEditando({ ...EMPTY_KIT })} className="bg-sun hover:bg-sun-deep text-navy font-semibold">
+              <Plus className="w-4 h-4 mr-1" />Novo kit manual
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="space-y-6">
@@ -521,15 +526,17 @@ function AdminKits() {
                           >
                             Detalhes
                           </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditando({ ...kit });
-                            }}
-                            className="bg-slate-100 hover:bg-slate-200 text-navy font-bold text-[10px] px-2.5 py-1.5 rounded-lg border"
-                          >
-                            Editar
-                          </button>
+                          {canEditKits && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditando({ ...kit });
+                              }}
+                              className="bg-slate-100 hover:bg-slate-200 text-navy font-bold text-[10px] px-2.5 py-1.5 rounded-lg border"
+                            >
+                              Editar
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -612,28 +619,47 @@ function AdminKits() {
                           </td>
                           <td className="p-3 font-bold text-navy">{BRL(Number(kit.preco))}</td>
                           <td className="p-3">
-                            <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"}>
-                              {kit.ativo
-                                ? <ToggleRight className="w-6 h-6 text-emerald-500" />
-                                : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
-                            </button>
+                            {canEditKits ? (
+                              <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"}>
+                                {kit.ativo
+                                  ? <ToggleRight className="w-6 h-6 text-emerald-500" />
+                                  : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
+                              </button>
+                            ) : (
+                              <div>
+                                {kit.ativo
+                                  ? <Badge className="bg-emerald-50 text-emerald-700 text-[10px] border-emerald-200">Ativo</Badge>
+                                  : <Badge className="bg-slate-50 text-slate-700 text-[10px] border-slate-200">Inativo</Badge>}
+                              </div>
+                            )}
                           </td>
                           <td className="p-3">
                             <div className="flex items-center gap-1">
-                              <button onClick={() => toggleDestaque(kit)} title={kit.destaque ? "Remover destaque" : "Destacar"} className={kit.destaque ? "text-amber-500" : "text-muted-foreground hover:text-amber-400"}>
-                                <Star className="w-4 h-4" fill={kit.destaque ? "currentColor" : "none"} />
-                              </button>
-                              <button onClick={() => setEditando({ ...kit })} className="text-navy hover:text-sun-deep">
-                                <Pencil className="w-4 h-4" />
-                              </button>
-                              {confirmDelete === kit.id ? (
-                                <span className="flex gap-1">
-                                  <button onClick={() => excluir(kit.id)} className="text-red-600"><Check className="w-4 h-4" /></button>
-                                  <button onClick={() => setConfirmDelete(null)} className="text-muted-foreground"><X className="w-4 h-4" /></button>
-                                </span>
+                              {canEditKits ? (
+                                <>
+                                  <button onClick={() => toggleDestaque(kit)} title={kit.destaque ? "Remover destaque" : "Destacar"} className={kit.destaque ? "text-amber-500" : "text-muted-foreground hover:text-amber-400"}>
+                                    <Star className="w-4 h-4" fill={kit.destaque ? "currentColor" : "none"} />
+                                  </button>
+                                  <button onClick={() => setEditando({ ...kit })} className="text-navy hover:text-sun-deep" title="Editar Kit">
+                                    <Pencil className="w-4 h-4" />
+                                  </button>
+                                  {confirmDelete === kit.id ? (
+                                    <span className="flex gap-1">
+                                      <button onClick={() => excluir(kit.id)} className="text-red-600"><Check className="w-4 h-4" /></button>
+                                      <button onClick={() => setConfirmDelete(null)} className="text-muted-foreground"><X className="w-4 h-4" /></button>
+                                    </span>
+                                  ) : (
+                                    <button onClick={() => setConfirmDelete(kit.id)} className="text-muted-foreground hover:text-red-500" title="Excluir Kit">
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </>
                               ) : (
-                                <button onClick={() => setConfirmDelete(kit.id)} className="text-muted-foreground hover:text-red-500">
-                                  <Trash2 className="w-4 h-4" />
+                                <button
+                                  onClick={() => setSelectedKitDetails(kit)}
+                                  className="text-navy hover:underline text-[11px] font-bold"
+                                >
+                                  Ver Detalhes
                                 </button>
                               )}
                             </div>

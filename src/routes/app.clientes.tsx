@@ -69,8 +69,22 @@ function AdminClientes() {
 
     // Carrega a lista de corretores para o filtro
     (async () => {
-      const { data } = await (supabase.from as any)("profiles").select("id, nome").eq("role", "corretor");
-      setCorretores(data || []);
+      try {
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("user_id")
+          .eq("role", "corretor");
+        const ids = (roles || []).map((r: any) => r.user_id);
+        if (ids.length > 0) {
+          const { data: profs } = await supabase
+            .from("profiles")
+            .select("id, nome")
+            .in("id", ids);
+          setCorretores(profs || []);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar corretores para filtro:", err);
+      }
     })();
 
     // Carrega UFs do IBGE
