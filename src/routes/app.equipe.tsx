@@ -275,9 +275,13 @@ function AdminEquipe() {
   };
 
   const toggleStatus = async (id: string, ativo: boolean) => {
-    // Bloqueia desativação de administrador por questões de segurança
-    if (membroSel?.role === "admin" && ativo) {
-      toast.error("🛡️ Acesso negado: Administradores não podem ser desativados pelo painel.");
+    // Busca a role do colaborador correspondente ao ID na lista de perfis para blindagem total
+    const membro = list.find((u) => u.id === id);
+    const roleDoMembro = membro?.role || (membroSel?.id === id ? membroSel.role : null);
+
+    // Bloqueia desativação ou ativação manual de administradores por segurança
+    if (roleDoMembro === "admin") {
+      toast.error("🛡️ Acesso negado: Administradores não podem ser ativados ou desativados manualmente pelo painel.");
       return;
     }
     await supabase.from("profiles").update({ ativo: !ativo }).eq("id", id);
