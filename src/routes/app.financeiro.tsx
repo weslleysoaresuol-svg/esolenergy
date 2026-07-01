@@ -219,33 +219,28 @@ function FinanceiroDashboard() {
       const cli = clientesList.find(c => c.id === novaCob.cliente_id);
       if (!cli) throw new Error("Cliente não encontrado");
 
-      // Instancia gateway ativo
-      const gateway = PaymentGatewayFactory.create({
-        gateway_ativo: gatewaySettings.gateway_ativo,
-        asaas_api_key: gatewaySettings.asaas_api_key,
-        asaas_environment: gatewaySettings.asaas_environment,
-        pagarme_api_key: gatewaySettings.pagarme_api_key,
-        pagarme_environment: gatewaySettings.pagarme_environment
-      });
-
-      // 1. Criar Cliente no Gateway
-      const custRes = await gateway.createCustomer({
-        nome: cli.nome || "Cliente Sem Nome",
-        email: cli.email || `${cli.id}@esol.energy`,
-        cpf_cnpj: cli.cpf_cnpj || "000.000.000-00",
-        telefone: cli.telefone || "11999999999"
-      });
-
-      // 2. Criar Cobrança no Gateway
-      const chargeRes = await gateway.createCharge({
-        externalCustomerId: custRes.customerExternalId,
-        valor: Number(novaCob.valor),
-        metodo: novaCob.metodo,
-        descricao: novaCob.descricao || `Cobrança manual ESOL Energy`,
-        parcelas: Number(novaCob.parcelas)
+      // Chama servidor: credenciais ficam apenas em process.env (secrets)
+      const { customerExternalId, charge: chargeRes } = await criarCobrancaSrv({
+        data: {
+          gateway: gatewaySettings.gateway_ativo,
+          customer: {
+            nome: cli.nome || "Cliente Sem Nome",
+            email: cli.email || `${cli.id}@esol.energy`,
+            cpf_cnpj: cli.cpf_cnpj || "000.000.000-00",
+            telefone: cli.telefone || "11999999999",
+          },
+          charge: {
+            valor: Number(novaCob.valor),
+            metodo: novaCob.metodo,
+            descricao: novaCob.descricao || `Cobrança manual ESOL Energy`,
+            parcelas: Number(novaCob.parcelas),
+          },
+        },
       });
 
       if (!chargeRes.success) throw new Error("Falha na geração da cobrança");
+      const custRes = { customerExternalId };
+
 
       // 3. Salva no banco de dados local
       const { data: inserted, error: dbErr } = await (supabase.from as any)("gateway_transactions")
