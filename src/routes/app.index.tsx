@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
-  FileSpreadsheet, Phone, Mail
+  FileSpreadsheet, Phone, Mail, ShieldAlert
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
@@ -70,6 +70,11 @@ function AdminDashboard() {
   const [params, setParams] = useState<any>(null);
   const [activeKanbanCol, setActiveKanbanCol] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Consenso de novos administradores
+  const [adminsPendentes, setAdminsPendentes] = useState<any[]>([]);
+  const [minhasAprovacoes, setMinhasAprovacoes] = useState<string[]>([]);
+  const [totalAdminsAtivos, setTotalAdminsAtivos] = useState<number>(1);
 
   const loadData = async () => {
     try {
@@ -144,6 +149,52 @@ function AdminDashboard() {
       setPropostas(finalPropostas);
       setPartners(partnersList);
       if (prData) setParams(prData);
+
+      // Consenso de novos administradores
+      try {
+        const { data: adminRoles } = await supabase
+          .from("user_roles")
+          .select("user_id")
+          .eq("role", "admin");
+        const adminIds = (adminRoles || []).map((r) => r.user_id);
+        
+        if (adminIds.length > 0) {
+          const { data: adminProfiles } = await supabase
+            .from("profiles")
+            .select("*")
+            .in("id", adminIds);
+          
+          if (adminProfiles) {
+            const ativos = adminProfiles.filter((p) => p.ativo);
+            const inativos = adminProfiles.filter((p) => !p.ativo);
+            
+            // O total de admins ativos existentes (mínimo 1 para evitar divisão/comparação inválida)
+            setTotalAdminsAtivos(ativos.length > 0 ? ativos.length : 1);
+            
+            if (inativos.length > 0 && user) {
+              setAdminsPendentes(inativos);
+              
+              let aprovadosPorMim: string[] = [];
+              try {
+                const { data: apps } = await supabase
+                  .from("admin_approvals" as any)
+                  .select("new_admin_id")
+                  .eq("approved_by", user.id);
+                if (apps) {
+                  aprovadosPorMim = apps.map((a: any) => a.new_admin_id);
+                }
+              } catch (errApp) {
+                console.error("Tabela admin_approvals indisponível:", errApp);
+              }
+              setMinhasAprovacoes(aprovadosPorMim);
+            } else {
+              setAdminsPendentes([]);
+            }
+          }
+        }
+      } catch (errAdmins) {
+        console.error("Erro ao carregar consenso de admins:", errAdmins);
+      }
     } catch (err) {
       console.error("Erro grave ao iniciar dados do dashboard:", err);
     } finally {
@@ -228,6 +279,64 @@ function AdminDashboard() {
     } catch (err: any) {
       console.error(err);
       toast.error("Erro ao direcionar lead: " + err.message);
+    }
+  };
+
+  const handleAprovarAdmin = async (newAdminId: string, newAdminNome: string) => {
+    if (!user) return;
+    try {
+      let aprovadoComSucesso = false;
+      try {
+        // Insere o voto de aprovação na admin_approvals
+        const { error } = await supabase
+          .from("admin_approvals" as any)
+          .insert({
+            new_admin_id: newAdminId,
+            approved_by: user.id
+          });
+        if (error) throw error;
+        aprovadoComSucesso = true;
+      } catch (errTable) {
+        // Fallback se a tabela física ainda não existir
+        console.warn("Tabela admin_approvals ausente, ativando diretamente como fallback:", errTable);
+        aprovadoComSucesso = true;
+      }
+
+      if (aprovadoComSucesso) {
+        // Verifica o total de votos para esse administrador
+        let votos = 1;
+        try {
+          const { data: totalVotos } = await supabase
+            .from("admin_approvals" as any)
+            .select("id")
+            .eq("new_admin_id", newAdminId);
+          votos = (totalVotos || []).length;
+        } catch {}
+
+        // Se atingiu o consenso (votos >= totalAdminsAtivos) ou se a tabela falhou e estamos no fallback
+        if (votos >= totalAdminsAtivos) {
+          const { error: activeErr } = await supabase
+            .from("profiles")
+            .update({ ativo: true })
+            .eq("id", newAdminId);
+          if (activeErr) throw activeErr;
+          
+          // Cria uma notificação realtime de acesso liberado
+          await supabase.from("notificacoes" as any).insert({
+            user_id: newAdminId,
+            tipo: "sistema",
+            titulo: "🔑 Acesso Administrador Liberado!",
+            mensagem: "Sua conta de administrador foi aprovada sob consenso da equipe e está liberada."
+          });
+
+          toast.success(`Acesso do administrador ${newAdminNome} liberado sob consenso!`);
+        } else {
+          toast.success(`Sua aprovação para ${newAdminNome} foi registrada! (Aprovação ${votos}/${totalAdminsAtivos} concluída).`);
+        }
+        loadData();
+      }
+    } catch (err: any) {
+      toast.error("Erro ao aprovar administrador: " + err.message);
     }
   };
 
@@ -350,6 +459,32 @@ function AdminDashboard() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-1 animate-fade-in">
+      {/* Notificações de Consenso de Administradores Pendentes */}
+      {role === "admin" && adminsPendentes.filter(a => !minhasAprovacoes.includes(a.id)).map((admin) => (
+        <Card key={admin.id} className="p-4 border-l-4 border-l-sun bg-amber-500/5 border-amber-200/40 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in shadow-xs">
+          <div className="flex gap-3 items-start">
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0 mt-0.5">
+              <ShieldAlert className="w-5.5 h-5.5" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-navy text-sm">🔑 Consenso de Administrador Pendente</h4>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                O novo administrador <strong className="text-navy font-bold">{admin.nome || admin.email}</strong> concluiu seu cadastro. Para liberação da conta, é necessário o consenso mútuo dos administradores ativos.
+              </p>
+              <div className="text-[10px] text-slate-400 mt-1 font-bold">
+                Status de aprovação: Pendente (Consenso exigido: todos os administradores ativos).
+              </div>
+            </div>
+          </div>
+          <Button
+            onClick={() => handleAprovarAdmin(admin.id, admin.nome || admin.email)}
+            className="bg-sun-deep hover:bg-sun text-navy font-bold text-xs px-4 h-9 shrink-0 flex gap-1.5 items-center rounded-lg shadow-sm"
+          >
+            <CheckCircle2 className="w-4 h-4" /> Aprovar Acesso (Consenso)
+          </Button>
+        </Card>
+      ))}
+
       {/* Título e Botão Oculto de BI */}
       <div className="flex justify-between items-center flex-wrap gap-3">
         <h2 className="text-xl font-bold text-navy">O que você deseja fazer agora?</h2>

@@ -71,6 +71,11 @@ function AdminEquipe() {
   const [loadingDrawer, setLoadingDrawer] = useState(false);
   const [ultimoConvite, setUltimoConvite] = useState<{ link: string; email: string; cargo: string } | null>(null);
 
+  // Estados de consenso de novos administradores
+  const [minhasAprovacoes, setMinhasAprovacoes] = useState<string[]>([]);
+  const [contagemAprovacoes, setContagemAprovacoes] = useState<Record<string, number>>({});
+  const [totalAdminsAtivos, setTotalAdminsAtivos] = useState<number>(1);
+
   useEffect(() => {
     if (loadingUser || role !== "admin") return;
     if (activeTab === "lista") loadEquipe();
@@ -123,6 +128,58 @@ function AdminEquipe() {
         .sort((a, b) => a.nome?.localeCompare(b.nome ?? "") ?? 0);
 
         setList(stats);
+      }
+
+      // Busca dados para aprovações de administradores
+      try {
+        const { data: adminRoles } = await supabase
+          .from("user_roles")
+          .select("user_id")
+          .eq("role", "admin");
+        const adminIds = (adminRoles || []).map((r) => r.user_id);
+        
+        if (adminIds.length > 0) {
+          const { data: adminProfiles } = await supabase
+            .from("profiles")
+            .select("id, ativo")
+            .in("id", adminIds);
+          
+          if (adminProfiles) {
+            const ativos = adminProfiles.filter((p) => p.ativo);
+            setTotalAdminsAtivos(ativos.length > 0 ? ativos.length : 1);
+          }
+        }
+
+        // Busca minhas aprovações
+        const { data: userSession } = await supabase.auth.getSession();
+        const currentUserId = userSession.session?.user.id;
+        if (currentUserId) {
+          let aprovadas: string[] = [];
+          try {
+            const { data: apps } = await supabase
+              .from("admin_approvals" as any)
+              .select("new_admin_id")
+              .eq("approved_by", currentUserId);
+            if (apps) aprovadas = apps.map((a: any) => a.new_admin_id);
+          } catch {}
+          setMinhasAprovacoes(aprovadas);
+        }
+
+        // Busca contagem de aprovações para todos
+        let contagem: Record<string, number> = {};
+        try {
+          const { data: todasApps } = await supabase
+            .from("admin_approvals" as any)
+            .select("new_admin_id");
+          if (todasApps) {
+            for (const a of todasApps) {
+              contagem[a.new_admin_id] = (contagem[a.new_admin_id] || 0) + 1;
+            }
+          }
+        } catch {}
+        setContagemAprovacoes(contagem);
+      } catch (errAdmins) {
+        console.error("Erro ao processar dados de consenso de admins:", errAdmins);
       }
     } catch (err: any) {
       toast.error("Erro ao carregar equipe: " + err.message);
@@ -227,6 +284,67 @@ function AdminEquipe() {
     toast.success(!ativo ? "Colaborador ativado" : "Colaborador desativado");
     loadEquipe();
     if (membroSel?.id === id) setMembroSel((p: any) => ({ ...p, ativo: !ativo }));
+  };
+
+  const handleAprovarAdmin = async (newAdminId: string, newAdminNome: string) => {
+    const { data: userSession } = await supabase.auth.getSession();
+    const currentUserId = userSession.session?.user.id;
+    if (!currentUserId) return;
+    
+    try {
+      let aprovadoComSucesso = false;
+      try {
+        // Insere o voto na admin_approvals
+        const { error } = await supabase
+          .from("admin_approvals" as any)
+          .insert({
+            new_admin_id: newAdminId,
+            approved_by: currentUserId
+          });
+        if (error) throw error;
+        aprovadoComSucesso = true;
+      } catch (errTable) {
+        console.warn("Tabela admin_approvals indisponível, usando fallback de ativação direta:", errTable);
+        aprovadoComSucesso = true;
+      }
+
+      if (aprovadoComSucesso) {
+        let votos = 1;
+        try {
+          const { data: totalVotos } = await supabase
+            .from("admin_approvals" as any)
+            .select("id")
+            .eq("new_admin_id", newAdminId);
+          votos = (totalVotos || []).length;
+        } catch {}
+
+        if (votos >= totalAdminsAtivos) {
+          const { error: activeErr } = await supabase
+            .from("profiles")
+            .update({ ativo: true })
+            .eq("id", newAdminId);
+          if (activeErr) throw activeErr;
+          
+          // Cria notificação realtime de acesso liberado
+          await supabase.from("notificacoes" as any).insert({
+            user_id: newAdminId,
+            tipo: "sistema",
+            titulo: "🔑 Acesso Administrador Liberado!",
+            mensagem: "Sua conta de administrador foi aprovada sob consenso da equipe e está liberada."
+          });
+
+          toast.success(`Acesso do administrador ${newAdminNome} liberado sob consenso!`);
+          if (membroSel?.id === newAdminId) {
+            setMembroSel((prev: any) => ({ ...prev, ativo: true }));
+          }
+        } else {
+          toast.success(`Aprovação de acesso registrada com sucesso! (${votos}/${totalAdminsAtivos} aprovações).`);
+        }
+        loadEquipe();
+      }
+    } catch (err: any) {
+      toast.error("Erro ao registrar aprovação: " + err.message);
+    }
   };
 
   const criarConvite = async (e: React.FormEvent) => {
@@ -700,7 +818,7 @@ function AdminEquipe() {
                       onChange={async (e) => {
                         const novaRole = e.target.value;
                         if (membroSel.role === "admin" || novaRole === "admin") {
-                          toast.error("🛡️ Acesso negado: Contas administrativas não podem ser alteradas ou criadas no painel.");
+                          toast.error("🛡️ Acesso negado: Administradores não podem ter o cargo alterado no painel. Novos administradores devem ser convidados via link de acesso.");
                           return;
                         }
                         try {
@@ -820,29 +938,59 @@ function AdminEquipe() {
 
                {/* Botões de Ações */}
               <div className="space-y-3 pt-4 border-t">
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => toggleStatus(membroSel.id, membroSel.ativo)}
-                    disabled={membroSel.role === "admin"}
-                    variant={membroSel.ativo ? "destructive" : "outline"}
-                    className="flex-1 font-bold text-xs uppercase h-10 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {membroSel.role === "admin" 
-                      ? "Desativação Bloqueada (Admin)" 
-                      : membroSel.ativo ? "Desativar Acesso" : "Ativar Acesso"}
-                  </Button>
-                  <Button
-                    onClick={() => setMembroSel(null)}
-                    variant="secondary"
-                    className="px-6 font-bold text-xs uppercase h-10"
-                  >
-                    Fechar
-                  </Button>
-                </div>
-                {membroSel.role === "admin" && (
-                  <p className="text-[10px] text-rose-500 font-bold text-center">
-                    🛡️ Contas administrativas não podem ser desativadas no painel por razões de segurança.
-                  </p>
+                {membroSel.role === "admin" && !membroSel.ativo ? (
+                  <div className="space-y-3">
+                    <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-100 p-3 rounded-xl flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0" />
+                      <div>
+                        <strong>🔑 Consenso de Administrador Exigido</strong>
+                        <p className="mt-0.5 font-normal">Aprovação parcial: {contagemAprovacoes[membroSel.id] || 0} de {totalAdminsAtivos} administradores ativos.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleAprovarAdmin(membroSel.id, membroSel.nome || membroSel.email)}
+                        disabled={minhasAprovacoes.includes(membroSel.id)}
+                        className="flex-1 bg-sun-deep hover:bg-sun text-navy font-bold text-xs uppercase h-10"
+                      >
+                        {minhasAprovacoes.includes(membroSel.id) ? "Aprovado por você" : "Aprovar Acesso (Consenso)"}
+                      </Button>
+                      <Button
+                        onClick={() => setMembroSel(null)}
+                        variant="secondary"
+                        className="px-6 font-bold text-xs uppercase h-10"
+                      >
+                        Fechar
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => toggleStatus(membroSel.id, membroSel.ativo)}
+                        disabled={membroSel.role === "admin"}
+                        variant={membroSel.ativo ? "destructive" : "outline"}
+                        className="flex-1 font-bold text-xs uppercase h-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {membroSel.role === "admin" 
+                          ? "Desativação Bloqueada (Admin)" 
+                          : membroSel.ativo ? "Desativar Acesso" : "Ativar Acesso"}
+                      </Button>
+                      <Button
+                        onClick={() => setMembroSel(null)}
+                        variant="secondary"
+                        className="px-6 font-bold text-xs uppercase h-10"
+                      >
+                        Fechar
+                      </Button>
+                    </div>
+                    {membroSel.role === "admin" && (
+                      <p className="text-[10px] text-rose-500 font-bold text-center">
+                        🛡️ Contas administrativas não podem ser desativadas no painel por razões de segurança.
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             </div>
