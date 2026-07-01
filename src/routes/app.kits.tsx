@@ -1177,6 +1177,7 @@ function AdminKits() {
           </Card>
         </div>
       )}
+      </div>
     </div>
   );
 }
