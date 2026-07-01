@@ -324,16 +324,11 @@ function FinanceiroDashboard() {
 
   const simularEstorno = async (tx: any) => {
     try {
-      const gateway = PaymentGatewayFactory.create({
-        gateway_ativo: tx.gateway,
-        asaas_api_key: gatewaySettings.asaas_api_key,
-        asaas_environment: gatewaySettings.asaas_environment,
-        pagarme_api_key: gatewaySettings.pagarme_api_key,
-        pagarme_environment: gatewaySettings.pagarme_environment
+      const refundRes = await estornarCobrancaSrv({
+        data: { gateway: tx.gateway, transactionId: tx.external_id },
       });
-
-      const refundRes = await gateway.refundCharge(tx.external_id);
       if (!refundRes.success) throw new Error("Falha no reembolso");
+
 
       const { error: txErr } = await (supabase.from as any)("gateway_transactions")
         .update({ status: "refunded" })
