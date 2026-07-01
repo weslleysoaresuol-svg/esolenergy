@@ -696,17 +696,12 @@ function FinanceiroDashboard() {
 
                   <div className="border-t pt-4 space-y-4">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-blue-700">
-                      <Key className="w-3.5 h-3.5" /> API Key (Asaas)
+                      <Key className="w-3.5 h-3.5" /> Credenciais (Asaas)
                     </div>
-                    <div>
-                      <Input
-                        type="password"
-                        placeholder="Insira access_token do Asaas"
-                        value={gatewaySettings.asaas_api_key || ""}
-                        onChange={(e) => setGatewaySettings({ ...gatewaySettings, asaas_api_key: e.target.value })}
-                        className="text-xs"
-                      />
-                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      As chaves de API são armazenadas <strong>somente no servidor</strong> como
+                      secrets (<code>ASAAS_API_KEY</code>). Nenhuma credencial trafega pelo navegador.
+                    </p>
                     <div>
                       <Label className="text-[10px]">Ambiente Asaas</Label>
                       <Select
@@ -726,17 +721,11 @@ function FinanceiroDashboard() {
 
                   <div className="border-t pt-4 space-y-4">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-purple-700">
-                      <Key className="w-3.5 h-3.5" /> API Key (Pagar.me)
+                      <Key className="w-3.5 h-3.5" /> Credenciais (Pagar.me)
                     </div>
-                    <div>
-                      <Input
-                        type="password"
-                        placeholder="Insira api_key do Pagar.me"
-                        value={gatewaySettings.pagarme_api_key || ""}
-                        onChange={(e) => setGatewaySettings({ ...gatewaySettings, pagarme_api_key: e.target.value })}
-                        className="text-xs"
-                      />
-                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      Configuradas via secret <code>PAGARME_API_KEY</code> no servidor.
+                    </p>
                     <div>
                       <Label className="text-[10px]">Ambiente Pagar.me</Label>
                       <Select
@@ -753,6 +742,7 @@ function FinanceiroDashboard() {
                       </Select>
                     </div>
                   </div>
+
 
                   <Button
                     onClick={salvarSettings}
