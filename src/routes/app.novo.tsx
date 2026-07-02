@@ -147,6 +147,16 @@ function NovoCliente() {
           }
         } catch(e) {}
 
+        const validKits = loadedKits.filter((k: any) => k.ativo !== false && k.consumo_kwh_min && k.consumo_kwh_max);
+        const matchingKits = validKits.filter((k: any) => consumoKwh >= Number(k.consumo_kwh_min) && consumoKwh <= Number(k.consumo_kwh_max));
+        const kitRecomendado = (matchingKits.length > 0 ? matchingKits : validKits)
+          .sort((a: any, b: any) => Number(a.preco) - Number(b.preco))[0];
+        const precoFinal = kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total;
+        const kwpFinal = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : calculo.kwp_sistema;
+        const qtdModulosFinal = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : calculo.qtd_modulos;
+        const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        const kitIdParaDB = kitRecomendado?.id && UUID_REGEX.test(kitRecomendado.id) ? kitRecomendado.id : null;
+
         // Executa o cálculo final com overrides do kit recomendado e comissão do parceiro
         const finalCalculo = calcularProposta({
           consumo_kwh: consumoKwh,
@@ -171,7 +181,7 @@ function NovoCliente() {
           codigo_publico: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-"),
           expires_at: expDate.toISOString(),
           status: "enviada",
-          kit_id: kitRecomendado?.id || null,
+          kit_id: kitIdParaDB,
           tipo_instalacao: f.imovel_tipo || "residencial",
           consumo_kwh: consumoKwh,
           tarifa_kwh: tarifaKwh,
