@@ -880,13 +880,7 @@ function Process() {
 
 /* ============================ FAQ ============================ */
 function FAQ() {
-  const qs = [
-    { q: "Quanto custa um sistema solar residencial?", a: "Sistemas residenciais começam em torno de R$ 14 mil, com parcelas em até 84x. O valor exato depende do consumo, telhado e região — nosso engenheiro envia proposta gratuita." },
-    { q: "Em quanto tempo recupero o investimento?", a: "O payback médio é de 3 a 5 anos. Após esse período, são mais 20 anos de energia praticamente gratuita." },
-    { q: "Funciona em dias nublados e à noite?", a: "Sim. O sistema gera mesmo com nuvens (em menor escala) e, à noite, você usa o crédito gerado durante o dia via compensação na rede." },
-    { q: "Qual a garantia dos equipamentos?", a: "Painéis com 25 anos de garantia de geração, inversores com 10 anos e instalação com 5 anos. Tudo em contrato." },
-    { q: "Vocês cuidam da homologação na concessionária?", a: "Sim. Cuidamos de 100% do processo: projeto, ART, protocolos e vistoria. Você só assina." },
-  ];
+  const qs = FAQ_ITEMS;
   return (
     <section id="faq" className="py-12 sm:py-16 px-5 sm:px-6 bg-white">
       <div className="mx-auto max-w-4xl">
