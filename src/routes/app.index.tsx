@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
-  FileSpreadsheet, Phone, Mail, ShieldAlert, SlidersHorizontal, Lock, Unlock, Settings2, RefreshCw, Gauge
+  FileSpreadsheet, Phone, Mail, ShieldAlert, SlidersHorizontal, Lock, Unlock, Settings2, RefreshCw, Gauge, Save
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
@@ -365,7 +365,7 @@ function AdminDashboard() {
 
   const handleToggleFreezeCommission = async (corretorId: string, frozen: boolean) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("profiles")
         .update({ comissao_congelada: frozen })
         .eq("id", corretorId);

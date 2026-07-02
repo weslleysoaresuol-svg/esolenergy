@@ -300,7 +300,7 @@ function NovaProposta() {
       const custoEquip = +(preco * params.custo_equipamentos_pct).toFixed(2);
       const custoInstal = +(preco * params.custo_instalacao_pct).toFixed(2);
       const custoFrete = +(preco * params.custo_frete_pct).toFixed(2);
-      const custoImp = +(preco * params.custo_impostos_pct).toFixed(2);
+      const custoImp = +(preco * (params.custo_impostos_pct ?? 0)).toFixed(2);
       const custoComis = +(preco * params.custo_comissao_pct).toFixed(2);
       const custosTotais = custoEquip + custoInstal + custoFrete + custoImp + custoComis;
       const margemReal = +(preco - custosTotais).toFixed(2);
@@ -321,7 +321,7 @@ function NovaProposta() {
       base.custo_equipamentos = custoEquip;
       base.custo_instalacao = custoInstal;
       base.custo_frete = custoFrete;
-      base.custo_impostos = custoImp;
+      (base as any).custo_impostos = custoImp;
       base.custo_comissao = custoComis;
       base.custos_totais = custosTotais;
       base.margem_real = margemReal;
@@ -1261,7 +1261,7 @@ function NovaProposta() {
                   <CostRow label="Equipamentos" value={calculo.custo_equipamentos} />
                   <CostRow label="Instalação" value={calculo.custo_instalacao} />
                   <CostRow label="Frete" value={calculo.custo_frete} />
-                  <CostRow label="Impostos" value={calculo.custo_impostos} />
+                  <CostRow label="Impostos" value={(calculo as any).custo_impostos ?? calculo.custo_impostos_compra} />
                   <CostRow label="Comissão" value={calculo.custo_comissao} />
                   <CostRow label="Custos totais" value={calculo.custos_totais} bold />
                   <div className="col-span-full bg-white rounded p-3 mt-1 flex justify-between items-center border border-emerald-300">
