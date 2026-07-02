@@ -701,7 +701,12 @@ function AdminDashboard() {
             onClick={() => handleAprovarAdmin(admin.id, admin.nome || admin.email)}
             className="bg-sun-deep hover:bg-sun text-navy font-bold text-xs px-4 h-9 shrink-0 flex gap-1.5 items-center rounded-lg shadow-sm"
           >
-            <CheckCircle2 className="w-4 h-4" />      {/* Título e Abas do Administrador (Suns Brasil Style) */}
+            <CheckCircle2 className="w-4 h-4" /> Aprovar
+          </Button>
+        </Card>
+      ))}
+
+      {/* Título e Abas do Administrador (Suns Brasil Style) */}
       <div className="flex justify-between items-center flex-wrap gap-3 pb-2 border-b border-slate-100">
         <div>
           <h2 className="text-xl font-black text-navy uppercase tracking-tight flex items-center gap-2">
