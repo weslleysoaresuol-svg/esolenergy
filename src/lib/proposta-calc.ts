@@ -136,6 +136,10 @@ export interface CalculoInput {
   tipo: TipoInstalacao;
   /** Tipo de ligação elétrica do cliente (para custo de disponibilidade correto) */
   ligacao?: "mono" | "tri";
+  preco_override?: number;
+  kwp_override?: number;
+  qtd_modulos_override?: number;
+  comissao_percent_override?: number;
 }
 
 export interface CalculoResultado {
@@ -209,8 +213,8 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
 
   // Arredonda para cima ao múltiplo do módulo
   const modulosFloat = (kwpIdeal * 1000) / p.potencia_modulo_w;
-  const qtd_modulos = Math.max(2, Math.ceil(modulosFloat));
-  const kwp_sistema = +(qtd_modulos * p.potencia_modulo_w / 1000).toFixed(2);
+  const qtd_modulos = input.qtd_modulos_override ?? Math.max(2, Math.ceil(modulosFloat));
+  const kwp_sistema = input.kwp_override ?? +(qtd_modulos * p.potencia_modulo_w / 1000).toFixed(2);
 
   // Inversor: 1 por até 8 kWp, +1 a cada 8 kWp acima
   const qtd_inversores = Math.max(1, Math.ceil(kwp_sistema / 8));
@@ -258,8 +262,10 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   }
   const economia_ajustada_25_anos = +acumuladoAjustado.toFixed(2);
 
-  const preco_por_wp = precoPorWp(p, input.tipo, kwp_sistema);
-  const preco_total = +(kwp_sistema * 1000 * preco_por_wp).toFixed(2);
+  const preco_por_wp = input.preco_override 
+    ? (kwp_sistema > 0 ? +(input.preco_override / (kwp_sistema * 1000)).toFixed(2) : 0)
+    : precoPorWp(p, input.tipo, kwp_sistema);
+  const preco_total = input.preco_override ?? +(kwp_sistema * 1000 * preco_por_wp).toFixed(2);
 
   const payback_meses = economia_mensal > 0 ? +(preco_total / economia_mensal).toFixed(1) : 0;
   const payback_ajustado_meses = economia_ajustada_mensal > 0
@@ -286,7 +292,10 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   // Impostos de compra: usa novo campo, cai para o legado se não existir
   const impostos_compra_pct = p.custo_impostos_compra_pct ?? p.custo_impostos_pct ?? 0.03;
   const custo_impostos_compra = +(preco_total * impostos_compra_pct).toFixed(2);
-  const custo_comissao = +(preco_total * p.custo_comissao_pct).toFixed(2);
+  const comissao_pct = input.comissao_percent_override !== undefined && input.comissao_percent_override !== null
+    ? input.comissao_percent_override / 100
+    : p.custo_comissao_pct;
+  const custo_comissao = +(preco_total * comissao_pct).toFixed(2);
 
   const custos_brutos = custo_equipamentos + custo_instalacao + custo_frete + custo_impostos_compra + custo_comissao;
   const margem_bruta = +(preco_total - custos_brutos).toFixed(2);

@@ -28,7 +28,7 @@ const UFS = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","P
 
 function NovaProposta() {
   const navigate = useNavigate();
-  const { user, role } = useCurrentUser();
+  const { user, role, profile } = useCurrentUser();
   const { cliente: clienteIdPreSel, modo, consumo: consumoPreSel, cotacao: cotacaoIdPreSel } = Route.useSearch();
   const [step, setStep] = useState(1);
   const [params, setParams] = useState<Parametros | null>(null);
@@ -271,70 +271,30 @@ function NovaProposta() {
 
   const calculo = useMemo(() => {
     if (!params) return null;
-    const base = calcularProposta({ consumo_kwh: consumo, tarifa_kwh: tarifa, estado, tipo }, params);
     
     const selectedKit = kits.find((k) => k.id === selectedKitId);
-    if (selectedKit) {
-      const kwp = Number(selectedKit.potencia_kwp);
-      const modulos = Number(selectedKit.quantidade_modulos);
-      const preco = Number(selectedKit.preco);
-      
-      const hsp = base.hsp;
-      const eficiencia = 1 - params.perdas_sistema;
-      
-      const geracao = +(kwp * hsp * 30 * eficiencia).toFixed(0);
-      const econMensal = +(Math.min(geracao, consumo) * tarifa).toFixed(2);
-      const econAnual = +(econMensal * 12).toFixed(2);
-      
-      let acumulado = 0;
-      for (let ano = 0; ano < params.vida_util_anos; ano++) {
-        acumulado += econAnual * Math.pow(1 + params.inflacao_energetica, ano);
-      }
-      const econ25 = +acumulado.toFixed(2);
-      
-      const payback = econMensal > 0 ? +(preco / econMensal).toFixed(1) : 0;
-      const area = +(modulos * params.area_por_modulo_m2).toFixed(1);
-      const precoWp = +(preco / (kwp * 1000)).toFixed(2);
-      const co2 = +(geracao * 12 * params.vida_util_anos * 0.084 / 1000).toFixed(2);
-      
-      const custoEquip = +(preco * params.custo_equipamentos_pct).toFixed(2);
-      const custoInstal = +(preco * params.custo_instalacao_pct).toFixed(2);
-      const custoFrete = +(preco * params.custo_frete_pct).toFixed(2);
-      const custoImp = +(preco * (params.custo_impostos_pct ?? 0)).toFixed(2);
-      const custoComis = +(preco * params.custo_comissao_pct).toFixed(2);
-      const custosTotais = custoEquip + custoInstal + custoFrete + custoImp + custoComis;
-      const margemReal = +(preco - custosTotais).toFixed(2);
-      const margemPct = +(margemReal / preco).toFixed(4);
+    const kitOverrides = selectedKit ? {
+      preco_override: Number(selectedKit.preco),
+      kwp_override: Number(selectedKit.potencia_kwp),
+      qtd_modulos_override: Number(selectedKit.quantidade_modulos),
+    } : {};
 
-      base.kwp_sistema = kwp;
-      base.qtd_modulos = modulos;
-      base.preco_total = preco;
-      base.preco_por_wp = precoWp;
-      base.geracao_mensal_kwh = geracao;
-      base.economia_mensal = econMensal;
-      base.economia_anual = econAnual;
-      base.economia_25_anos = econ25;
-      base.payback_meses = payback;
-      base.area_necessaria_m2 = area;
-      base.co2_evitado_ton = co2;
-      base.arvores_equivalentes = Math.round(co2 * 7);
-      base.custo_equipamentos = custoEquip;
-      base.custo_instalacao = custoInstal;
-      base.custo_frete = custoFrete;
-      (base as any).custo_impostos = custoImp;
-      base.custo_comissao = custoComis;
-      base.custos_totais = custosTotais;
-      base.margem_real = margemReal;
-      base.margem_pct = margemPct;
-      
-      // Se houver fabricante e inversor, sobrescrever para exibição
-      if (selectedKit.fabricante_modulos) {
-        base.potencia_modulo_w = Number(selectedKit.fabricante_modulos.replace(/\D/g, "")) || params.potencia_modulo_w;
-      }
+    const base = calcularProposta({ 
+      consumo_kwh: consumo, 
+      tarifa_kwh: tarifa, 
+      estado, 
+      tipo,
+      ligacao: tipoConexao === "trifasico" ? "tri" : "mono",
+      comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
+      ...kitOverrides
+    }, params);
+    
+    if (selectedKit && selectedKit.fabricante_modulos) {
+      base.potencia_modulo_w = Number(selectedKit.fabricante_modulos.replace(/\D/g, "")) || params.potencia_modulo_w;
     }
     
     return { ...base, ...overrides };
-  }, [params, consumo, tarifa, estado, tipo, overrides, selectedKitId, kits]);
+  }, [params, consumo, tarifa, estado, tipo, overrides, selectedKitId, kits, tipoConexao, profile]);
 
   const setOverride = (k: string, v: number) => setOverrides((o) => ({ ...o, [k]: v }));
 
@@ -392,6 +352,7 @@ function NovaProposta() {
           financingTexts.join("\n") + `\n\n` + condicoes;
       }
 
+      const selectedKit = kits.find((k) => k.id === selectedKitId);
       const payload = {
         parceiro_id: user.id,
         titulo: titulo || `Proposta solar`,
@@ -432,6 +393,23 @@ function NovaProposta() {
         kit_tecnologia_modulo: selectedKit ? selectedKit.tecnologia_modulo : null,
         kit_garantia_modulos_anos: selectedKit ? Number(selectedKit.garantia_modulos_anos) : null,
         kit_garantia_inversor_anos: selectedKit ? Number(selectedKit.garantia_inversor_anos) : null,
+
+        // Espelho financeiro gravado no ato da geração
+        fornecedor: selectedKit ? (selectedKit.fornecedor || "Aldo Solar") : null,
+        custo_equipamentos: calculo.custo_equipamentos,
+        custo_instalacao: calculo.custo_instalacao,
+        custo_frete: calculo.custo_frete,
+        custo_impostos_compra: calculo.custo_impostos_compra,
+        custo_comissao: calculo.custo_comissao,
+        custo_tributacao_empresa: calculo.custo_tributacao_empresa,
+        custo_marketing: calculo.custo_marketing,
+        custo_engenharia_fixo: calculo.custo_engenharia_fixo,
+        custo_overhead: calculo.custo_overhead,
+        custo_garantia: calculo.custo_garantia,
+        custos_operacionais_totais: calculo.custos_operacionais_totais,
+        lucro_liquido_real: calculo.lucro_liquido_real,
+        lucro_liquido_pct: calculo.lucro_liquido_pct,
+        margem_bruta: calculo.margem_bruta,
       };
       let prop: any = null;
       try {
@@ -526,7 +504,7 @@ function NovaProposta() {
       }
 
       // 2. Roda cálculo de dimensionamento
-      const baseResult = calcularProposta({ 
+      const baseResultDummy = calcularProposta({ 
         consumo_kwh: consumoEstimado, 
         tarifa_kwh: tarifaKwh, 
         estado: scriptEstado.trim().toUpperCase(), 
@@ -540,15 +518,27 @@ function NovaProposta() {
         : null;
 
       const kitRecomendado = manualKit || (
-        loadedKits.filter((k) => k.potencia_kwp >= baseResult.kwp_sistema).length > 0
-          ? loadedKits.filter((k) => k.potencia_kwp >= baseResult.kwp_sistema).sort((a, b) => a.preco - b.preco)[0]
+        loadedKits.filter((k) => k.potencia_kwp >= baseResultDummy.kwp_sistema).length > 0
+          ? loadedKits.filter((k) => k.potencia_kwp >= baseResultDummy.kwp_sistema).sort((a, b) => a.preco - b.preco)[0]
           : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0]
       );
 
-      const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResult.preco_total;
-      const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResult.kwp_sistema;
-      const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResult.qtd_modulos;
+      const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResultDummy.preco_total;
+      const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResultDummy.kwp_sistema;
+      const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResultDummy.qtd_modulos;
       
+      const finalCalculo = calcularProposta({
+        consumo_kwh: consumoEstimado,
+        tarifa_kwh: tarifaKwh,
+        estado: scriptEstado.trim().toUpperCase(),
+        tipo,
+        ligacao: tipoConexao === "trifasico" ? "tri" : "mono",
+        preco_override: precoTotal,
+        kwp_override: kwp,
+        qtd_modulos_override: qtdModulos,
+        comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
+      }, params);
+
       // Juros e condições
       const tagDoc = perfilCliente === "cotacao" 
         ? "[DOC:COTACAO]" 
@@ -583,24 +573,39 @@ function NovaProposta() {
         tarifa_kwh: tarifaKwh,
         estado: scriptEstado.trim().toUpperCase(),
         cidade: scriptCidade.trim(),
-        regiao: baseResult.regiao,
-        hsp: baseResult.hsp,
+        regiao: finalCalculo.regiao,
+        hsp: finalCalculo.hsp,
         qtd_modulos: qtdModulos,
-        potencia_modulo_w: baseResult.potencia_modulo_w,
-        qtd_inversores: baseResult.qtd_inversores,
-        potencia_inversor_kw: baseResult.potencia_inversor_kw,
-        area_necessaria_m2: baseResult.area_necessaria_m2,
-        geracao_mensal_kwh: baseResult.geracao_mensal_kwh,
-        economia_mensal: baseResult.economia_mensal,
-        economia_anual: baseResult.economia_anual,
-        economia_25_anos: baseResult.economia_25_anos,
-        payback_meses: baseResult.payback_meses,
-        co2_evitado_ton: baseResult.co2_evitado_ton,
-        arvores_equivalentes: baseResult.arvores_equivalentes,
+        potencia_modulo_w: finalCalculo.potencia_modulo_w,
+        qtd_inversores: finalCalculo.qtd_inversores,
+        potencia_inversor_kw: finalCalculo.potencia_inversor_kw,
+        area_necessaria_m2: finalCalculo.area_necessaria_m2,
+        geracao_mensal_kwh: finalCalculo.geracao_mensal_kwh,
+        economia_mensal: finalCalculo.economia_mensal,
+        economia_anual: finalCalculo.economia_anual,
+        economia_25_anos: finalCalculo.economia_25_anos,
+        payback_meses: finalCalculo.payback_meses,
+        co2_evitado_ton: finalCalculo.co2_evitado_ton,
+        arvores_equivalentes: finalCalculo.arvores_equivalentes,
         preco_por_wp: +(precoTotal / (kwp * 1000)).toFixed(2),
         validade_dias: params.validade_proposta_dias || 15,
         condicoes_pagamento: finalCondicoes,
-        observacoes: "Gerada pelo Roteiro Guiado de Fechamento de Elite"
+        observacoes: "Gerada pelo Roteiro Guiado de Fechamento de Elite",
+        fornecedor: kitRecomendado ? (kitRecomendado.fornecedor || "Aldo Solar") : null,
+        custo_equipamentos: finalCalculo.custo_equipamentos,
+        custo_instalacao: finalCalculo.custo_instalacao,
+        custo_frete: finalCalculo.custo_frete,
+        custo_impostos_compra: finalCalculo.custo_impostos_compra,
+        custo_comissao: finalCalculo.custo_comissao,
+        custo_tributacao_empresa: finalCalculo.custo_tributacao_empresa,
+        custo_marketing: finalCalculo.custo_marketing,
+        custo_engenharia_fixo: finalCalculo.custo_engenharia_fixo,
+        custo_overhead: finalCalculo.custo_overhead,
+        custo_garantia: finalCalculo.custo_garantia,
+        custos_operacionais_totais: finalCalculo.custos_operacionais_totais,
+        lucro_liquido_real: finalCalculo.lucro_liquido_real,
+        lucro_liquido_pct: finalCalculo.lucro_liquido_pct,
+        margem_bruta: finalCalculo.margem_bruta
       } as any).select().single();
 
       if (errProp) {
@@ -656,7 +661,7 @@ function NovaProposta() {
 
       // 2. Dimensiona sistema solar
       const kwh = Number(scriptKwh) || 300;
-      const baseResult = calcularProposta({
+      const baseResultDummy = calcularProposta({
         consumo_kwh: kwh,
         tarifa_kwh: tarifa || params.tarifa_kwh_default || 0.95,
         estado: scriptEstado.trim().toUpperCase(),
@@ -665,14 +670,26 @@ function NovaProposta() {
 
       // Encontra melhor kit comercial
       let loadedKits = kits.length > 0 ? kits : KITS_FALLBACK;
-      const adequados = loadedKits.filter((k) => k.potencia_kwp >= baseResult.kwp_sistema);
+      const adequados = loadedKits.filter((k) => k.potencia_kwp >= baseResultDummy.kwp_sistema);
       const kitRecomendado = adequados.length > 0 
         ? adequados.sort((a, b) => a.preco - b.preco)[0]
         : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
 
-      const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResult.preco_total;
-      const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResult.kwp_sistema;
-      const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResult.qtd_modulos;
+      const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResultDummy.preco_total;
+      const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResultDummy.kwp_sistema;
+      const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResultDummy.qtd_modulos;
+
+      const finalCalculo = calcularProposta({
+        consumo_kwh: kwh,
+        tarifa_kwh: tarifa || params.tarifa_kwh_default || 0.95,
+        estado: scriptEstado.trim().toUpperCase(),
+        tipo,
+        ligacao: tipoConexao === "trifasico" ? "tri" : "mono",
+        preco_override: precoTotal,
+        kwp_override: kwp,
+        qtd_modulos_override: qtdModulos,
+        comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
+      }, params);
 
       // 3. Monta condições de pagamento
       const tagDoc = "[DOC:FIN_AGUARDANDO]";
@@ -691,13 +708,13 @@ function NovaProposta() {
           kwp_sistema: kwp,
           qtd_modulos: qtdModulos,
           preco_total: precoTotal,
-          economia_mensal: baseResult.economia_mensal,
-          economia_anual: baseResult.economia_anual,
-          payback_meses: baseResult.payback_meses,
-          geracao_mensal_kwh: baseResult.geracao_mensal_kwh,
-          co2_evitado_ton: baseResult.co2_evitado_ton,
-          arvores_equivalentes: baseResult.arvores_equivalentes || 5,
-          area_necessaria_m2: baseResult.area_necessaria_m2,
+          economia_mensal: finalCalculo.economia_mensal,
+          economia_anual: finalCalculo.economia_anual,
+          payback_meses: finalCalculo.payback_meses,
+          geracao_mensal_kwh: finalCalculo.geracao_mensal_kwh,
+          co2_evitado_ton: finalCalculo.co2_evitado_ton,
+          arvores_equivalentes: finalCalculo.arvores_equivalentes || 5,
+          area_necessaria_m2: finalCalculo.area_necessaria_m2,
           condicoes_pagamento: finalCondicoes,
           expires_at: expDate.toISOString(),
           parceiro_id: user?.id,
@@ -708,7 +725,22 @@ function NovaProposta() {
           cidade: scriptCidade.trim(),
           codigo_publico: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-"),
           validade_dias: params.validade_proposta_dias || 15,
-          preco_por_wp: +(precoTotal / (kwp * 1000)).toFixed(2)
+          preco_por_wp: +(precoTotal / (kwp * 1000)).toFixed(2),
+          fornecedor: kitRecomendado ? (kitRecomendado.fornecedor || "Aldo Solar") : null,
+          custo_equipamentos: finalCalculo.custo_equipamentos,
+          custo_instalacao: finalCalculo.custo_instalacao,
+          custo_frete: finalCalculo.custo_frete,
+          custo_impostos_compra: finalCalculo.custo_impostos_compra,
+          custo_comissao: finalCalculo.custo_comissao,
+          custo_tributacao_empresa: finalCalculo.custo_tributacao_empresa,
+          custo_marketing: finalCalculo.custo_marketing,
+          custo_engenharia_fixo: finalCalculo.custo_engenharia_fixo,
+          custo_overhead: finalCalculo.custo_overhead,
+          custo_garantia: finalCalculo.custo_garantia,
+          custos_operacionais_totais: finalCalculo.custos_operacionais_totais,
+          lucro_liquido_real: finalCalculo.lucro_liquido_real,
+          lucro_liquido_pct: finalCalculo.lucro_liquido_pct,
+          margem_bruta: finalCalculo.margem_bruta
         } as any)
         .select()
         .single();
@@ -1245,7 +1277,7 @@ function NovaProposta() {
 
           {role === "admin" ? (
             <div className="space-y-3 bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <div className="text-xs font-bold text-amber-800 uppercase">Modo administrador — edite qualquer valor</div>
+              <div className="text-xs font-bold text-amber-800 uppercase">Modo administrador — espelho financeiro completo</div>
               <div className="grid md:grid-cols-3 gap-3">
                 <div><Label className="text-xs">kWp</Label><Input type="number" step="0.01" value={calculo.kwp_sistema} onChange={(e) => setOverride("kwp_sistema", Number(e.target.value))} /></div>
                 <div><Label className="text-xs">Qtd módulos</Label><Input type="number" value={calculo.qtd_modulos} onChange={(e) => setOverride("qtd_modulos", Number(e.target.value))} /></div>
@@ -1255,29 +1287,67 @@ function NovaProposta() {
                 <div><Label className="text-xs">Payback (meses)</Label><Input type="number" step="0.1" value={calculo.payback_meses} onChange={(e) => setOverride("payback_meses", Number(e.target.value))} /></div>
               </div>
 
-              <details className="mt-3">
-                <summary className="text-xs font-bold text-amber-800 cursor-pointer">Análise de custos e margem</summary>
-                <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-                  <CostRow label="Equipamentos" value={calculo.custo_equipamentos} />
-                  <CostRow label="Instalação" value={calculo.custo_instalacao} />
-                  <CostRow label="Frete" value={calculo.custo_frete} />
-                  <CostRow label="Impostos" value={(calculo as any).custo_impostos ?? calculo.custo_impostos_compra} />
-                  <CostRow label="Comissão" value={calculo.custo_comissao} />
-                  <CostRow label="Custos totais" value={calculo.custos_totais} bold />
-                  <div className="col-span-full bg-white rounded p-3 mt-1 flex justify-between items-center border border-emerald-300">
-                    <span className="font-semibold text-emerald-800">Margem real estimada</span>
-                    <span className="font-bold text-emerald-700">{BRL(calculo.margem_real)} ({(calculo.margem_pct * 100).toFixed(1)}%)</span>
+              <details className="mt-3" open>
+                <summary className="text-xs font-bold text-amber-800 cursor-pointer">Espelho Detalhado da Operação (Exclusivo Admin)</summary>
+                <div className="mt-3 space-y-3 text-xs">
+                  <div className="bg-white rounded p-3 border border-amber-200">
+                    <span className="font-semibold text-slate-500 block uppercase text-[9px] mb-1">Fornecedor / Distribuidor</span>
+                    <strong className="text-navy text-sm font-black">{selectedKit?.fornecedor || "Aldo Solar"}</strong>
+                  </div>
+                  
+                  <div>
+                    <span className="font-bold text-slate-600 block uppercase text-[9.5px] mb-1">Custos Diretos (Brutos)</span>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      <CostRow label="Equipamentos" value={calculo.custo_equipamentos} />
+                      <CostRow label="Instalação" value={calculo.custo_instalacao} />
+                      <CostRow label="Frete" value={calculo.custo_frete} />
+                      <CostRow label="Impostos Compra" value={calculo.custo_impostos_compra} />
+                      <CostRow label="Comissão" value={calculo.custo_comissao} />
+                      <CostRow label="Custos Totais Diretos" value={calculo.custos_totais} bold />
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="font-bold text-slate-600 block uppercase text-[9.5px] mb-1">Custos Operacionais Reais (ESOL)</span>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      <CostRow label="Tributação ESOL" value={calculo.custo_tributacao_empresa} />
+                      <CostRow label="CAC / Marketing" value={calculo.custo_marketing} />
+                      <CostRow label="Engenharia Fixo" value={calculo.custo_engenharia_fixo} />
+                      <CostRow label="Overhead / Adm" value={calculo.custo_overhead} />
+                      <CostRow label="Provisão Garantia" value={calculo.custo_garantia} />
+                      <CostRow label="Despesas Op. Totais" value={calculo.custos_operacionais_totais} bold />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    <div className="bg-white rounded p-2.5 flex justify-between items-center border border-slate-300">
+                      <span className="font-semibold text-slate-700">Margem Bruta</span>
+                      <span className="font-bold text-slate-700">{BRL(calculo.margem_bruta)} ({(calculo.margem_bruta_pct * 100).toFixed(1)}%)</span>
+                    </div>
+                    <div className={`rounded p-2.5 flex justify-between items-center border ${calculo.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
+                      <span className="font-bold">★ LUCRO LÍQUIDO REAL</span>
+                      <span className="font-black text-sm">{BRL(calculo.lucro_liquido_real)} ({(calculo.lucro_liquido_pct * 100).toFixed(1)}%)</span>
+                    </div>
                   </div>
                 </div>
               </details>
             </div>
           ) : (
-            <div className="bg-slate-50 rounded-lg p-4 text-sm space-y-1">
-              <div className="flex justify-between"><span className="text-muted-foreground">{calculo.qtd_modulos} módulos × {calculo.potencia_modulo_w}W</span><span className="font-semibold">{NUM(calculo.kwp_sistema, 2)} kWp</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Área necessária</span><span className="font-semibold">{NUM(calculo.area_necessaria_m2, 1)} m²</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Economia mensal</span><span className="font-semibold text-emerald-700">{BRL(calculo.economia_mensal)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Payback estimado</span><span className="font-semibold">{(calculo.payback_meses / 12).toFixed(1)} anos</span></div>
-              <div className="flex justify-between text-base pt-2 border-t"><span className="font-semibold text-navy">Investimento</span><span className="font-bold text-navy">{BRL(calculo.preco_total)}</span></div>
+            <div className="bg-slate-50 rounded-xl p-5 text-sm space-y-3 shadow-inner">
+              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground font-semibold">{calculo.qtd_modulos} módulos × {calculo.potencia_modulo_w}W</span><span className="font-extrabold text-navy">{NUM(calculo.kwp_sistema, 2)} kWp</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Área necessária</span><span className="font-semibold">{NUM(calculo.area_necessaria_m2, 1)} m²</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Economia mensal</span><span className="font-semibold text-emerald-700">{BRL(calculo.economia_mensal)}</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Payback estimado</span><span className="font-semibold">{(calculo.payback_meses / 12).toFixed(1)} anos</span></div>
+              <div className="flex justify-between text-base border-b pb-2 pt-1"><span className="font-bold text-navy">Investimento da Venda</span><span className="font-black text-navy">{BRL(calculo.preco_total)}</span></div>
+              
+              {/* Espelho exclusivo do Parceiro com comissão */}
+              <div className="bg-sun/15 border border-sun/50 rounded-xl p-3 flex justify-between items-center text-navy-deep">
+                <div>
+                  <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
+                  <span className="text-[10px] text-navy/70">Taxa individual: {profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? `${profile.comissao_percent}%` : `${((calculo.custo_comissao / calculo.preco_total) * 100).toFixed(0)}%`}</span>
+                </div>
+                <strong className="text-lg font-black text-navy">{BRL(calculo.custo_comissao)}</strong>
+              </div>
             </div>
           )}
 

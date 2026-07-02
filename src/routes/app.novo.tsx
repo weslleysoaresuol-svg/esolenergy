@@ -21,7 +21,7 @@ export const Route = createFileRoute("/app/novo")({
 const STEPS = ["Dados & Fatura", "Imóvel (Opcional)", "Especificações (Opcional)"];
 
 function NovoCliente() {
-  const { user } = useCurrentUser();
+  const { user, profile } = useCurrentUser();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -147,19 +147,22 @@ function NovoCliente() {
           }
         } catch(e) {}
 
-        // Encontra o kit adequado mais econômico para o cliente
-        const adequados = loadedKits.filter((k) => k.potencia_kwp >= calculo.kwp_sistema);
-        const kitRecomendado = adequados.length > 0 
-          ? adequados.sort((a, b) => a.preco - b.preco)[0]
-          : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
+        // Executa o cálculo final com overrides do kit recomendado e comissão do parceiro
+        const finalCalculo = calcularProposta({
+          consumo_kwh: consumoKwh,
+          tarifa_kwh: tarifaKwh,
+          estado: f.estado || "SP",
+          tipo: f.imovel_tipo || "residencial",
+          preco_override: precoFinal,
+          kwp_override: kwpFinal,
+          qtd_modulos_override: qtdModulosFinal,
+          comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
+        }, paramsComerciais);
 
         const expDate = new Date();
         expDate.setDate(expDate.getDate() + (paramsComerciais.validade_proposta_dias || 15));
 
         // Cria a Proposta
-        const precoFinal = kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total;
-        const kwpFinal = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : calculo.kwp_sistema;
-        const qtdModulosFinal = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : calculo.qtd_modulos;
         const { data: prop, error: propError } = await supabase.from("propostas").insert({
           titulo: `Proposta Solar - ${clientData.nome}`,
           parceiro_id: user.id,
@@ -174,24 +177,39 @@ function NovoCliente() {
           tarifa_kwh: tarifaKwh,
           estado: f.estado || "SP",
           cidade: f.cidade || "",
-          regiao: calculo.regiao,
-          hsp: calculo.hsp,
+          regiao: finalCalculo.regiao,
+          hsp: finalCalculo.hsp,
           qtd_modulos: qtdModulosFinal,
-          potencia_modulo_w: calculo.potencia_modulo_w,
-          qtd_inversores: calculo.qtd_inversores,
-          potencia_inversor_kw: calculo.potencia_inversor_kw,
-          area_necessaria_m2: calculo.area_necessaria_m2,
-          geracao_mensal_kwh: calculo.geracao_mensal_kwh,
-          economia_mensal: calculo.economia_mensal,
-          economia_anual: calculo.economia_anual,
-          economia_25_anos: calculo.economia_25_anos,
-          payback_meses: calculo.payback_meses,
-          co2_evitado_ton: calculo.co2_evitado_ton,
-          arvores_equivalentes: calculo.arvores_equivalentes,
+          potencia_modulo_w: finalCalculo.potencia_modulo_w,
+          qtd_inversores: finalCalculo.qtd_inversores,
+          potencia_inversor_kw: finalCalculo.potencia_inversor_kw,
+          area_necessaria_m2: finalCalculo.area_necessaria_m2,
+          geracao_mensal_kwh: finalCalculo.geracao_mensal_kwh,
+          economia_mensal: finalCalculo.economia_mensal,
+          economia_anual: finalCalculo.economia_anual,
+          economia_25_anos: finalCalculo.economia_25_anos,
+          payback_meses: finalCalculo.payback_meses,
+          co2_evitado_ton: finalCalculo.co2_evitado_ton,
+          arvores_equivalentes: finalCalculo.arvores_equivalentes,
           preco_por_wp: +(precoFinal / (kwpFinal * 1000)).toFixed(2),
           validade_dias: paramsComerciais.validade_proposta_dias || 15,
           condicoes_pagamento: "À vista 5% desconto · Financiamento via parceiros bancários",
-          observacoes: f.observacoes || ""
+          observacoes: f.observacoes || "",
+          fornecedor: kitRecomendado ? (kitRecomendado.fornecedor || "Aldo Solar") : null,
+          custo_equipamentos: finalCalculo.custo_equipamentos,
+          custo_instalacao: finalCalculo.custo_instalacao,
+          custo_frete: finalCalculo.custo_frete,
+          custo_impostos_compra: finalCalculo.custo_impostos_compra,
+          custo_comissao: finalCalculo.custo_comissao,
+          custo_tributacao_empresa: finalCalculo.custo_tributacao_empresa,
+          custo_marketing: finalCalculo.custo_marketing,
+          custo_engenharia_fixo: finalCalculo.custo_engenharia_fixo,
+          custo_overhead: finalCalculo.custo_overhead,
+          custo_garantia: finalCalculo.custo_garantia,
+          custos_operacionais_totais: finalCalculo.custos_operacionais_totais,
+          lucro_liquido_real: finalCalculo.lucro_liquido_real,
+          lucro_liquido_pct: finalCalculo.lucro_liquido_pct,
+          margem_bruta: finalCalculo.margem_bruta
         } as any).select().single();
 
         if (propError) {

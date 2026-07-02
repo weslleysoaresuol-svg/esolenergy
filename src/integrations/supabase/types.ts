@@ -188,6 +188,21 @@ export type Database = {
           quantidade: number
           status: Database["public"]["Enums"]["cotacao_status"]
           updated_at: string
+          fornecedor: string | null
+          custo_equipamentos: number | null
+          custo_instalacao: number | null
+          custo_frete: number | null
+          custo_impostos_compra: number | null
+          custo_comissao: number | null
+          custo_tributacao_empresa: number | null
+          custo_marketing: number | null
+          custo_engenharia_fixo: number | null
+          custo_overhead: number | null
+          custo_garantia: number | null
+          custos_operacionais_totais: number | null
+          lucro_liquido_real: number | null
+          lucro_liquido_pct: number | null
+          margem_bruta: number | null
         }
         Insert: {
           cliente_id: string
@@ -206,6 +221,21 @@ export type Database = {
           quantidade?: number
           status?: Database["public"]["Enums"]["cotacao_status"]
           updated_at?: string
+          fornecedor?: string | null
+          custo_equipamentos?: number | null
+          custo_instalacao?: number | null
+          custo_frete?: number | null
+          custo_impostos_compra?: number | null
+          custo_comissao?: number | null
+          custo_tributacao_empresa?: number | null
+          custo_marketing?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_overhead?: number | null
+          custo_garantia?: number | null
+          custos_operacionais_totais?: number | null
+          lucro_liquido_real?: number | null
+          lucro_liquido_pct?: number | null
+          margem_bruta?: number | null
         }
         Update: {
           cliente_id?: string
@@ -224,6 +254,21 @@ export type Database = {
           quantidade?: number
           status?: Database["public"]["Enums"]["cotacao_status"]
           updated_at?: string
+          fornecedor?: string | null
+          custo_equipamentos?: number | null
+          custo_instalacao?: number | null
+          custo_frete?: number | null
+          custo_impostos_compra?: number | null
+          custo_comissao?: number | null
+          custo_tributacao_empresa?: number | null
+          custo_marketing?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_overhead?: number | null
+          custo_garantia?: number | null
+          custos_operacionais_totais?: number | null
+          lucro_liquido_real?: number | null
+          lucro_liquido_pct?: number | null
+          margem_bruta?: number | null
         }
         Relationships: [
           {
@@ -889,6 +934,21 @@ export type Database = {
           updated_at: string
           validade_dias: number
           visualizada_em: string | null
+          fornecedor: string | null
+          custo_equipamentos: number | null
+          custo_instalacao: number | null
+          custo_frete: number | null
+          custo_impostos_compra: number | null
+          custo_comissao: number | null
+          custo_tributacao_empresa: number | null
+          custo_marketing: number | null
+          custo_engenharia_fixo: number | null
+          custo_overhead: number | null
+          custo_garantia: number | null
+          custos_operacionais_totais: number | null
+          lucro_liquido_real: number | null
+          lucro_liquido_pct: number | null
+          margem_bruta: number | null
         }
         Insert: {
           aceita_em?: string | null
@@ -929,6 +989,21 @@ export type Database = {
           updated_at?: string
           validade_dias?: number
           visualizada_em?: string | null
+          fornecedor?: string | null
+          custo_equipamentos?: number | null
+          custo_instalacao?: number | null
+          custo_frete?: number | null
+          custo_impostos_compra?: number | null
+          custo_comissao?: number | null
+          custo_tributacao_empresa?: number | null
+          custo_marketing?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_overhead?: number | null
+          custo_garantia?: number | null
+          custos_operacionais_totais?: number | null
+          lucro_liquido_real?: number | null
+          lucro_liquido_pct?: number | null
+          margem_bruta?: number | null
         }
         Update: {
           aceita_em?: string | null
@@ -969,6 +1044,21 @@ export type Database = {
           updated_at?: string
           validade_dias?: number
           visualizada_em?: string | null
+          fornecedor?: string | null
+          custo_equipamentos?: number | null
+          custo_instalacao?: number | null
+          custo_frete?: number | null
+          custo_impostos_compra?: number | null
+          custo_comissao?: number | null
+          custo_tributacao_empresa?: number | null
+          custo_marketing?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_overhead?: number | null
+          custo_garantia?: number | null
+          custos_operacionais_totais?: number | null
+          lucro_liquido_real?: number | null
+          lucro_liquido_pct?: number | null
+          margem_bruta?: number | null
         }
         Relationships: [
           {

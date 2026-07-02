@@ -49,7 +49,7 @@ const recomendarKit = (kwh: number, kitsList: any[]) => {
 };
 
 function CotacoesList() {
-  const { user, role } = useCurrentUser();
+  const { user, role, profile } = useCurrentUser();
   const navigate = useNavigate();
   const [cotacoes, setCotacoes] = useState<any[]>([]);
   const [clientes, setClientes] = useState<any[]>([]);
@@ -61,6 +61,7 @@ function CotacoesList() {
   const [q, setQ] = useState("");
   const [clienteTipo, setClienteTipo] = useState<"existente" | "novo">("existente");
   const [novoCliente, setNovoCliente] = useState({ nome: "", telefone: "", cidade: "", estado: "SP" });
+  const [params, setParams] = useState<any>(null);
 
   // Estados para Recomendação Inteligente de Kit
   const [usarRecomendacao, setUsarRecomendacao] = useState(false);
@@ -112,16 +113,18 @@ function CotacoesList() {
 
   const load = async () => {
     setLoading(true);
-    const [cs, cls, ks] = await Promise.all([
+    const [cs, cls, ks, pr] = await Promise.all([
       (supabase.from as any)("cotacoes")
         .select("*, cliente:cliente_id(*), kit:kit_id(*)")
         .order("created_at", { ascending: false }),
-      // Clientes: ordenados pelo mais recente (created_at DESC) — o \u00faltimo cadastrado fica no topo
-      supabase.from("clientes").select("id, nome, telefone, cidade, estado").order("created_at", { ascending: false }),
+      // Clientes: ordenados pelo mais recente (created_at DESC) — o último cadastrado fica no topo
+      supabase.from("clientes").select("id, nome, telefone, cidade, estado, consumo_kwh, valor_fatura").order("created_at", { ascending: false }),
       supabase.from("kits_produtos" as any).select("*").order("potencia_kwp"),
+      (supabase.rpc as any)("get_parametros_publicos")
     ]);
     setCotacoes(cs.data || []);
     setClientes(cls.data || []);
+    if (pr.data) setParams(pr.data);
     
     // Kits: mantém ordem por potencia_kwp, mas fallback j\u00e1 vem ordenado por potencia
     let mergedKits = (ks.data || []).sort((a: any, b: any) => Number(a.potencia_kwp) - Number(b.potencia_kwp));
@@ -140,6 +143,29 @@ function CotacoesList() {
 
   const kitSel = kits.find((k) => k.id === novo.kit_id);
   const total = kitSel ? Number(kitSel.preco) * novo.quantidade : 0;
+
+  const qCalculo = useMemo(() => {
+    if (!kitSel || !params) return null;
+    
+    const targetClienteId = novo.cliente_id;
+    const targetCliente = clientes.find((c) => c.id === targetClienteId) || novoCliente;
+    const clientConsumo = targetCliente ? Number((targetCliente as any).consumo_kwh || (targetCliente.valor_fatura ? Math.round(Number(targetCliente.valor_fatura) / (params.tarifa_kwh_default || 0.95)) : 500)) : 500;
+    const clientEstado = targetCliente?.estado || "SP";
+
+    const kwp = Number(kitSel.potencia_kwp) * novo.quantidade;
+    const modulos = Number(kitSel.quantidade_modulos) * novo.quantidade;
+
+    return calcularProposta({
+      consumo_kwh: clientConsumo,
+      tarifa_kwh: params.tarifa_kwh_default || 0.95,
+      estado: clientEstado,
+      tipo: "residencial",
+      preco_override: total,
+      kwp_override: kwp,
+      qtd_modulos_override: modulos,
+      comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
+    }, params);
+  }, [kitSel, params, novo, clientes, novoCliente, total, profile]);
 
   // Verifica se o kit_id é um UUID válido (kits do fallback têm IDs como "KIT-RES-PEQ-03")
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -197,6 +223,23 @@ function CotacoesList() {
         preco_total: total,
         observacoes: novo.observacoes || null,
         status: "enviada",
+        
+        // Novos campos do espelho financeiro
+        fornecedor: kitSel.fornecedor || "Aldo Solar",
+        custo_equipamentos: qCalculo?.custo_equipamentos || null,
+        custo_instalacao: qCalculo?.custo_instalacao || null,
+        custo_frete: qCalculo?.custo_frete || null,
+        custo_impostos_compra: qCalculo?.custo_impostos_compra || null,
+        custo_comissao: qCalculo?.custo_comissao || null,
+        custo_tributacao_empresa: qCalculo?.custo_tributacao_empresa || null,
+        custo_marketing: qCalculo?.custo_marketing || null,
+        custo_engenharia_fixo: qCalculo?.custo_engenharia_fixo || null,
+        custo_overhead: qCalculo?.custo_overhead || null,
+        custo_garantia: qCalculo?.custo_garantia || null,
+        custos_operacionais_totais: qCalculo?.custos_operacionais_totais || null,
+        lucro_liquido_real: qCalculo?.lucro_liquido_real || null,
+        lucro_liquido_pct: qCalculo?.lucro_liquido_pct || null,
+        margem_bruta: qCalculo?.margem_bruta || null,
       }).select().single();
 
       if (error) throw error;
@@ -455,6 +498,37 @@ function CotacoesList() {
               <Label>Observações (opcional)</Label>
               <Textarea value={novo.observacoes} onChange={(e) => setNovo({ ...novo, observacoes: e.target.value })} rows={2} />
             </div>
+
+            {/* Espelho de visualização de custos no ato da geração */}
+            {role === "admin" && kitSel && qCalculo && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs space-y-2 text-navy">
+                <strong className="block text-[10px] uppercase font-bold text-amber-800 tracking-wider">Espelho Detalhado (Exclusivo Admin)</strong>
+                <div className="text-[10px] text-muted-foreground">Fornecedor: <strong>{kitSel.fornecedor || "Aldo Solar"}</strong></div>
+                <div className="grid grid-cols-2 gap-2 border-t pt-2">
+                  <div>Equipamentos: <strong>{BRL(qCalculo.custo_equipamentos)}</strong></div>
+                  <div>Instalação: <strong>{BRL(qCalculo.custo_instalacao)}</strong></div>
+                  <div>Comissão: <strong>{BRL(qCalculo.custo_comissao)}</strong></div>
+                  <div>Impostos Compra: <strong>{BRL(qCalculo.custo_impostos_compra)}</strong></div>
+                  <div>Tributação ESOL: <strong>{BRL(qCalculo.custo_tributacao_empresa)}</strong></div>
+                  <div>Despesas Op: <strong>{BRL(qCalculo.custos_operacionais_totais)}</strong></div>
+                </div>
+                <div className="border-t pt-2 flex justify-between font-bold text-emerald-800 bg-white/60 p-2 rounded">
+                  <span>LUCRO LÍQUIDO REAL</span>
+                  <span>{BRL(qCalculo.lucro_liquido_real)} ({(qCalculo.lucro_liquido_pct * 100).toFixed(1)}%)</span>
+                </div>
+              </div>
+            )}
+
+            {role !== "admin" && kitSel && qCalculo && (
+              <div className="bg-sun/10 border border-sun/40 rounded-xl p-3 text-xs flex justify-between items-center text-navy">
+                <div>
+                  <strong className="block text-[10px] uppercase font-bold text-navy tracking-wider">Sua Comissão Estimada</strong>
+                  <span className="text-[9px] text-navy/70">Taxa individual: {profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? `${profile.comissao_percent}%` : "5%"}</span>
+                </div>
+                <strong className="text-sm font-black text-navy">{BRL(qCalculo.custo_comissao)}</strong>
+              </div>
+            )}
+
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => setOpenNew(false)}>Cancelar</Button>
               <Button onClick={criar} disabled={saving} className="bg-sun text-navy hover:bg-sun-deep">

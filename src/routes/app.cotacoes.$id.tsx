@@ -16,7 +16,7 @@ export const Route = createFileRoute("/app/cotacoes/$id")({
 
 function CotacaoDetail() {
   const { id } = Route.useParams();
-  const { user, role } = useCurrentUser();
+  const { user, role, profile } = useCurrentUser();
   const navigate = useNavigate();
   const [c, setC] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -244,6 +244,77 @@ function CotacaoDetail() {
           )}
         </Card>
 
+        {/* Espelho Financeiro Exclusivo da Cotação */}
+        {role === "admin" && (
+          <Card className="p-6 border border-amber-200 bg-amber-50/30 shadow-sm print:hidden space-y-4">
+            <div className="flex items-center justify-between border-b border-amber-200 pb-3">
+              <div>
+                <h3 className="font-extrabold text-navy text-sm uppercase tracking-wider">Espelho de Operação (Administrador)</h3>
+                <p className="text-[10px] text-slate-500">Breakdown completo de custos, impostos e margem líquida real</p>
+              </div>
+              {c.fornecedor && (
+                <span className="bg-navy text-white text-[10px] font-black px-2 py-1 rounded uppercase">
+                  Distribuidor: {c.fornecedor}
+                </span>
+              )}
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Diretos (B2B / Compra)</span>
+                <div className="bg-white rounded-xl p-3 border border-slate-200 space-y-1">
+                  <CostRow label="Equipamentos (Kit)" value={c.custo_equipamentos} />
+                  <CostRow label="Instalação / Integração" value={c.custo_instalacao} />
+                  <CostRow label="Frete" value={c.custo_frete} />
+                  <CostRow label="Impostos de Compra" value={c.custo_impostos_compra} />
+                  <CostRow label="Comissão do Parceiro" value={c.custo_comissao} />
+                  <CostRow label="Total Custos Diretos" value={c.preco_total - (c.margem_bruta || 0)} bold />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Operacionais e Margens (ESOL)</span>
+                <div className="bg-white rounded-xl p-3 border border-slate-200 space-y-1">
+                  <CostRow label="Tributação ESOL" value={c.custo_tributacao_empresa} />
+                  <CostRow label="CAC / Marketing" value={c.custo_marketing} />
+                  <CostRow label="Engenharia / Fixo" value={c.custo_engenharia_fixo} />
+                  <CostRow label="Overhead / Adm" value={c.custo_overhead} />
+                  <CostRow label="Provisão de Garantia" value={c.custo_garantia} />
+                  <CostRow label="Despesas Op. Totais" value={c.custos_operacionais_totais} bold />
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-3 pt-2">
+              <div className="bg-white rounded-xl p-3.5 flex justify-between items-center border border-slate-300">
+                <span className="font-semibold text-slate-700 text-xs">Margem Bruta</span>
+                <span className="font-bold text-slate-700 text-sm">{BRL(c.margem_bruta || 0)} {c.preco_total > 0 && `(${( ((c.margem_bruta || 0) / c.preco_total) * 100 ).toFixed(1)}%)`}</span>
+              </div>
+              
+              <div className={`rounded-xl p-3.5 flex justify-between items-center border ${c.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
+                <span className="font-bold text-xs uppercase tracking-wide">★ Lucro Líquido Real</span>
+                <span className="font-black text-base">{BRL(c.lucro_liquido_real || 0)} {c.lucro_liquido_pct !== null && c.lucro_liquido_pct !== undefined && c.lucro_liquido_pct !== 0 ? `(${(c.lucro_liquido_pct * 100).toFixed(1)}%)` : c.preco_total > 0 ? `(${( ((c.lucro_liquido_real || 0) / c.preco_total) * 100 ).toFixed(1)}%)` : ""}</span>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {role !== "admin" && (
+          <Card className="p-5 border border-sun/50 bg-sun/10 shadow-sm print:hidden flex justify-between items-center text-navy-deep">
+            <div>
+              <h3 className="font-extrabold text-xs uppercase tracking-wider">Seu Espelho de Comissão (Parceiro)</h3>
+              <p className="text-[10px] text-navy/70 mt-0.5">
+                Valor de venda: <strong>{BRL(c.preco_total)}</strong> · 
+                Taxa individual: <strong>{profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? `${profile.comissao_percent}%` : c.preco_total > 0 ? `${(((c.custo_comissao || 0) / c.preco_total) * 100).toFixed(0)}%` : "5%"}</strong>
+              </p>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] text-navy/60 block uppercase font-semibold text-left">Comissão Estimada</span>
+              <strong className="text-xl font-black text-navy">{BRL(c.custo_comissao || (c.preco_total * 0.05))}</strong>
+            </div>
+          </Card>
+        )}
+
         {/* Ações */}
         <div className="space-y-4">
           <Card className="p-5">
@@ -301,3 +372,10 @@ function CotacaoDetail() {
 function Linha({ label, v }: { label: string; v: string }) {
   return <div className="flex justify-between gap-3 border-b border-dashed pb-1"><span className="text-muted-foreground">{label}</span><span className="text-navy font-medium text-right">{v}</span></div>;
 }
+
+const CostRow = ({ label, value, bold }: { label: string; value: number | null; bold?: boolean }) => (
+  <div className={`flex justify-between items-center py-1.5 border-b border-slate-100 last:border-b-0 ${bold ? "font-bold text-navy pt-2" : "text-slate-600 text-[11px]"}`}>
+    <span>{label}</span>
+    <span>{value !== null ? BRL(value) : "—"}</span>
+  </div>
+);
