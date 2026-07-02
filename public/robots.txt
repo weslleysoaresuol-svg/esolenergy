@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://esolenergy.com.br/sitemap.xml

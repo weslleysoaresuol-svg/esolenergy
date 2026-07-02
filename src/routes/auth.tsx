@@ -62,8 +62,8 @@ function AuthPage() {
         <div className="relative my-4"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><span className="relative flex justify-center text-xs uppercase bg-white px-2 text-muted-foreground">ou</span></div>
 
         <form onSubmit={handleLogin} className="space-y-3">
-          <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-          <div><Label>Senha</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
+          <div><Label htmlFor="auth-email">Email</Label><Input id="auth-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+          <div><Label htmlFor="auth-password">Senha</Label><Input id="auth-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
           <Button type="submit" disabled={loading} className="w-full bg-navy hover:bg-navy-deep">Acessar com email</Button>
         </form>
 
