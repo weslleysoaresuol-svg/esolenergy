@@ -9,6 +9,7 @@ import portfolioIndustrial from "@/assets/portfolio-industrial.jpg";
 import portfolioRural from "@/assets/portfolio-rural.jpg";
 import heroHouse from "@/assets/hero-house.jpg";
 import { Loader2, Zap, Sun, ShieldCheck, TrendingUp, Sparkles } from "lucide-react";
+import { hspForEstado } from "@/lib/proposta-calc";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -381,6 +382,8 @@ function Simulator() {
   const [financeiras, setFinanceiras] = useState<any[]>(DEFAULT_FINANCEIRAS);
   const [selectedBankId, setSelectedBankId] = useState("1");
   const [selectedTerm, setSelectedTerm] = useState(60);
+  // Estado selecionado para HSP preciso por UF (default SP, Sudeste)
+  const [selectedUF, setSelectedUF] = useState("SP");
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const billHighlightRef = useRef<HTMLDivElement>(null);
@@ -391,7 +394,6 @@ function Simulator() {
       const el = billHighlightRef.current;
       if (el) {
         el.classList.remove("ring-4", "ring-sun");
-        // force reflow then re-add
         void el.offsetWidth;
         el.classList.add("ring-4", "ring-sun");
         setTimeout(() => el.classList.remove("ring-4", "ring-sun"), 1400);
@@ -416,23 +418,25 @@ function Simulator() {
     [financeiras, selectedBankId],
   );
 
-  // HSP médio nacional (poderá ser ajustado por estado em proposta real)
-  const hspMedio = useMemo(() => {
-    return (params.hsp_norte + params.hsp_nordeste + params.hsp_centro_oeste + params.hsp_sudeste + params.hsp_sul) / 5;
-  }, [params]);
+  // HSP preciso por UF (Atlas INPE) via motor — muito mais preciso que a média nacional
+  const hspUF = useMemo(() => hspForEstado(params as any, selectedUF), [params, selectedUF]);
 
   const result = useMemo(() => {
     const tarifa = params.tarifa_kwh_default;
     const eficiencia = 1 - params.perdas_sistema;
     const consumoKwh = bill / tarifa;
     const consumoDiario = consumoKwh / 30;
-    const kwpIdeal = consumoDiario / (hspMedio * eficiencia);
+    const kwpIdeal = consumoDiario / (hspUF * eficiencia);
     const qtdModulos = Math.max(2, Math.ceil((kwpIdeal * 1000) / params.potencia_modulo_w));
     const systemKwp = +(qtdModulos * params.potencia_modulo_w / 1000).toFixed(2);
 
-    const geracaoMensal = systemKwp * hspMedio * 30 * eficiencia;
-    const reduction = tipo === "industrial" ? 0.92 : tipo === "comercial" ? 0.93 : 0.95;
-    const monthly = Math.round(Math.min(bill * reduction, geracaoMensal * tarifa));
+    const geracaoMensal = systemKwp * hspUF * 30 * eficiencia;
+    // Economia bruta real (baseada na geração, não em percentual fixo de 95%)
+    const economiaBruta = Math.round(Math.min(consumoKwh, geracaoMensal) * tarifa);
+    // Descontos obrigatórios que o cliente SEMPRE paga, independente do solar
+    const custoDispo = 28.50; // monofásico: 30 kWh × tarifa padrão
+    const cosip = 25.00;     // iluminação pública estimada
+    const monthly = Math.max(0, economiaBruta - custoDispo - cosip);
     const yearly = monthly * 12;
 
     let total25 = 0;
@@ -446,9 +450,10 @@ function Simulator() {
       (systemKwp >= 5 ? params.preco_wp_residencial_grande : params.preco_wp_residencial_pequeno);
     const precoTotal = +(systemKwp * 1000 * precoWp).toFixed(0);
     const payback = monthly > 0 ? +(precoTotal / monthly / 12).toFixed(1) : 0;
+    const reducaoPct = bill > 0 ? Math.min(85, Math.round((monthly / bill) * 100)) : 0;
 
-    return { monthly, yearly, total25: Math.round(total25), systemKwp, payback, precoTotal };
-  }, [bill, tipo, params, hspMedio]);
+    return { monthly, yearly, total25: Math.round(total25), systemKwp, payback, precoTotal, reducaoPct };
+  }, [bill, tipo, params, hspUF]);
 
   const financeParcela = useMemo(() => {
     if (!selectedBank) return 0;
@@ -533,6 +538,46 @@ function Simulator() {
                 </div>
               </div>
 
+              {/* Estado / UF */}
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-widest text-ink/50">
+                  Estado de instalação
+                </label>
+                <select
+                  value={selectedUF}
+                  onChange={(e) => setSelectedUF(e.target.value)}
+                  className="mt-2 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-navy outline-none"
+                >
+                  <option value="SP">São Paulo (SP)</option>
+                  <option value="RJ">Rio de Janeiro (RJ)</option>
+                  <option value="MG">Minas Gerais (MG)</option>
+                  <option value="ES">Espírito Santo (ES)</option>
+                  <option value="PR">Paraná (PR)</option>
+                  <option value="SC">Santa Catarina (SC)</option>
+                  <option value="RS">Rio Grande do Sul (RS)</option>
+                  <option value="DF">Distrito Federal (DF)</option>
+                  <option value="GO">Goiás (GO)</option>
+                  <option value="MT">Mato Grosso (MT)</option>
+                  <option value="MS">Mato Grosso do Sul (MS)</option>
+                  <option value="CE">Ceará (CE)</option>
+                  <option value="BA">Bahia (BA)</option>
+                  <option value="PE">Pernambuco (PE)</option>
+                  <option value="PB">Paraíba (PB)</option>
+                  <option value="RN">Rio Grande do Norte (RN)</option>
+                  <option value="PI">Piauí (PI)</option>
+                  <option value="MA">Maranhão (MA)</option>
+                  <option value="AL">Alagoas (AL)</option>
+                  <option value="SE">Sergipe (SE)</option>
+                  <option value="PA">Pará (PA)</option>
+                  <option value="AM">Amazonas (AM)</option>
+                  <option value="TO">Tocantins (TO)</option>
+                  <option value="RO">Rondônia (RO)</option>
+                  <option value="RR">Roraima (RR)</option>
+                  <option value="AP">Amapá (AP)</option>
+                  <option value="AC">Acre (AC)</option>
+                </select>
+              </div>
+
               {/* Conta mensal — preenchida automaticamente pelo hero */}
               <div ref={billHighlightRef} className="rounded-2xl p-3 -m-3 transition-all duration-500">
                 <div className="flex items-baseline justify-between">
@@ -563,10 +608,13 @@ function Simulator() {
                 <div className="rounded-2xl bg-navy text-white p-4 relative overflow-hidden">
                   <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
                   <div className="relative grid grid-cols-2 gap-4">
-                    <Stat label="Economia anual" value={BRL.format(result.yearly)} accent />
-                    <Stat label={`Em ${params.vida_util_anos} anos`} value={BRL.format(result.total25)} />
+                    <Stat label="Economia anual real" value={BRL.format(result.yearly)} accent />
+                    <Stat label="Redução real média" value={`${result.reducaoPct}% da conta`} />
                     <Stat label="Sistema ideal" value={`${result.systemKwp} kWp`} />
-                    <Stat label="Payback estimado" value={`${result.payback} anos`} />
+                    <Stat label="Payback real" value={`${result.payback} anos`} />
+                  </div>
+                  <div className="relative mt-3 pt-2.5 border-t border-white/10 text-[9px] text-white/55 leading-relaxed">
+                    * Cálculo honesto: já desconta taxa de disponibilidade mínima da concessionária e estimativa de iluminação pública (COSIP).
                   </div>
                 </div>
               ) : (

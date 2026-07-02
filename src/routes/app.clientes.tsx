@@ -50,14 +50,27 @@ function AdminClientes() {
   const fetchClientes = async () => {
     setLoading(true);
     setErrorMsg(null);
+    
+    // Tenta com join no profiles
     const { data, error } = await supabase
       .from("clientes")
       .select("*, profiles:corretor_id(nome)")
       .order("created_at", { ascending: false });
     
     if (error) {
-      console.error("Erro na busca de clientes:", error);
-      setErrorMsg(`Erro: ${error.message}`);
+      console.warn("Erro no relacionamento do profiles em clientes. Usando fallback seguro...", error);
+      // Fallback robusto sem join
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from("clientes")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (fallbackError) {
+        console.error("Erro no fallback de clientes:", fallbackError);
+        setErrorMsg(`Erro: ${fallbackError.message}`);
+      } else {
+        setClientes(fallbackData || []);
+      }
     } else {
       setClientes(data || []);
     }

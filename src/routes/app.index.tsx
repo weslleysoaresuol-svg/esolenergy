@@ -6,10 +6,15 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   TrendingUp, Users, Target, DollarSign, ArrowRight, Globe, Inbox,
   AlertTriangle, Clock, CheckCircle2, MessageCircle, Percent, Zap, BarChart3,
-  FileSpreadsheet, Phone, Mail, ShieldAlert
+  FileSpreadsheet, Phone, Mail, ShieldAlert, SlidersHorizontal, Lock, Unlock, Settings2, RefreshCw, Gauge
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
@@ -60,6 +65,75 @@ function DashboardOrList() {
   return role && role !== "corretor" ? <AdminDashboard /> : <CorretorClientes />;
 }
 
+function CockpitParamsForm({ params, onSave, onPropagate, saving }: { 
+  params: any; 
+  onSave: (margem: number, comissao: number) => void;
+  onPropagate: (comissao: number) => void;
+  saving: boolean; 
+}) {
+  const [margem, setMargem] = useState<number>(Math.round((params.margem_alvo_pct ?? 0.15) * 100));
+  const [comissao, setComissao] = useState<number>(Math.round((params.custo_comissao_pct ?? 0.08) * 100));
+
+  return (
+    <div className="space-y-5">
+      {/* Margem Geral */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-center text-xs">
+          <Label className="text-slate-300 font-bold">Margem de Lucro Alvo Geral</Label>
+          <span className="font-mono text-sun-deep font-bold text-sm bg-black/40 px-2 py-0.5 rounded border border-slate-800">{margem}%</span>
+        </div>
+        <Slider 
+          min={5} 
+          max={40} 
+          step={1} 
+          value={[margem]} 
+          onValueChange={(val) => setMargem(val[0])}
+          className="py-1"
+        />
+        <p className="text-[10px] text-slate-400">Usado no motor de cálculo para definir o preço sugerido do Wp nas propostas.</p>
+      </div>
+
+      {/* Comissão Geral */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-center text-xs">
+          <Label className="text-slate-300 font-bold">Comissão Geral do Canal (Parceiros)</Label>
+          <span className="font-mono text-sun-deep font-bold text-sm bg-black/40 px-2 py-0.5 rounded border border-slate-800">{comissao}%</span>
+        </div>
+        <Slider 
+          min={1} 
+          max={20} 
+          step={0.5} 
+          value={[comissao]} 
+          onValueChange={(val) => setComissao(val[0])}
+          className="py-1"
+        />
+        <p className="text-[10px] text-slate-400">Taxa base/default do canal de consultores.</p>
+      </div>
+
+      {/* Botões de Ação */}
+      <div className="flex gap-2 pt-2 border-t border-slate-800/80 flex-wrap">
+        <Button 
+          onClick={() => onSave(margem, comissao)} 
+          disabled={saving}
+          className="flex-1 bg-sun hover:bg-sun-deep text-navy font-bold text-xs h-9 rounded-lg flex items-center justify-center gap-1.5 shadow-sm border-0 cursor-pointer"
+        >
+          {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+          Salvar no Motor Geral
+        </Button>
+        <Button 
+          variant="outline"
+          onClick={() => onPropagate(comissao)} 
+          disabled={saving}
+          className="flex-1 border-slate-700 text-slate-200 hover:bg-slate-850 hover:text-white text-xs h-9 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer bg-slate-900"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          Aplicar aos Não-Congelados
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function AdminDashboard() {
   const navigate = useNavigate();
   const { user, role, profile } = useCurrentUser();
@@ -70,6 +144,12 @@ function AdminDashboard() {
   const [params, setParams] = useState<any>(null);
   const [activeKanbanCol, setActiveKanbanCol] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Estados para o Cockpit de Direção
+  const [cockpitParams, setCockpitParams] = useState<any>(null);
+  const [cockpitCorretores, setCockpitCorretores] = useState<any[]>([]);
+  const [loadingCockpit, setLoadingCockpit] = useState(false);
+  const [savingCockpit, setSavingCockpit] = useState(false);
   
   // Consenso de novos administradores
   const [adminsPendentes, setAdminsPendentes] = useState<any[]>([]);
@@ -199,6 +279,121 @@ function AdminDashboard() {
       console.error("Erro grave ao iniciar dados do dashboard:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCockpitData = async () => {
+    setLoadingCockpit(true);
+    try {
+      // 1. Carrega parâmetros comerciais
+      const { data: pComerciais } = await supabase
+        .from("parametros_comerciais")
+        .select("*")
+        .limit(1)
+        .maybeSingle();
+      if (pComerciais) {
+        setCockpitParams(pComerciais);
+      }
+
+      // 2. Carrega todos os parceiros comerciais (role = corretor) com seus perfis
+      const { data: cRoles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "corretor");
+      const cIds = (cRoles || []).map((r: any) => r.user_id);
+      if (cIds.length > 0) {
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("id, nome, comissao_percent, comissao_congelada, ativo")
+          .in("id", cIds);
+        setCockpitCorretores(profs || []);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar dados do Cockpit:", err);
+      toast.error("Falha ao abrir painel de controle.");
+    } finally {
+      setLoadingCockpit(false);
+    }
+  };
+
+  const handleSaveCockpitParams = async (margem: number, comissaoGeral: number) => {
+    if (!cockpitParams) return;
+    setSavingCockpit(true);
+    try {
+      const { error } = await supabase
+        .from("parametros_comerciais")
+        .update({
+          margem_alvo_pct: Number(margem) / 100,
+          custo_comissao_pct: Number(comissaoGeral) / 100
+        })
+        .eq("id", cockpitParams.id);
+      if (error) throw error;
+      
+      toast.success("Parâmetros do Cockpit atualizados!");
+      loadCockpitData();
+      loadData();
+    } catch (err: any) {
+      toast.error("Erro ao salvar parâmetros: " + err.message);
+    } finally {
+      setSavingCockpit(false);
+    }
+  };
+
+  const handlePropagateCommission = async (comissaoGeral: number) => {
+    setSavingCockpit(true);
+    try {
+      // Atualiza a comissão na tabela profiles apenas para quem NÃO está com comissão congelada
+      const naoCongeladosIds = cockpitCorretores
+        .filter((c) => !c.comissao_congelada)
+        .map((c) => c.id);
+
+      if (naoCongeladosIds.length > 0) {
+        const { error } = await supabase
+          .from("profiles")
+          .update({ comissao_percent: Number(comissaoGeral) })
+          .in("id", naoCongeladosIds);
+        if (error) throw error;
+      }
+      toast.success(`Comissão de ${comissaoGeral}% propagada para parceiros não congelados!`);
+      loadCockpitData();
+    } catch (err: any) {
+      toast.error("Erro ao propagar comissão: " + err.message);
+    } finally {
+      setSavingCockpit(false);
+    }
+  };
+
+  const handleToggleFreezeCommission = async (corretorId: string, frozen: boolean) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ comissao_congelada: frozen })
+        .eq("id", corretorId);
+      if (error) throw error;
+      
+      toast.success(frozen ? "Comissão congelada (tarifa fixa)" : "Comissão desbloqueada para reajustes");
+      setCockpitCorretores(prev => 
+        prev.map(c => c.id === corretorId ? { ...c, comissao_congelada: frozen } : c)
+      );
+    } catch (err: any) {
+      toast.error("Erro ao atualizar: " + err.message);
+    }
+  };
+
+  const handleUpdateIndividualCommission = async (corretorId: string, val: number) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ comissao_percent: Number(val) })
+        .eq("id", corretorId);
+      if (error) throw error;
+      
+      toast.success("Comissão individual atualizada!");
+      setCockpitCorretores(prev => 
+        prev.map(c => c.id === corretorId ? { ...c, comissao_percent: Number(val) } : c)
+      );
+    } catch (err: any) {
+      toast.error("Erro ao atualizar comissão: " + err.message);
     }
   };
 
@@ -490,139 +685,259 @@ function AdminDashboard() {
         <h2 className="text-xl font-bold text-navy">O que você deseja fazer agora?</h2>
         
         {role === "admin" && (
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" className="text-slate-600 hover:text-navy hover:bg-slate-100 flex items-center gap-1.5 text-xs font-bold rounded-lg px-3.5 py-2 border border-slate-200 bg-white shadow-sm transition">
-                <BarChart3 className="w-4 h-4 text-[#2E44B8]" /> Inteligência Comercial (BI)
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-[#0B0F19]/98 border-l border-white/10 text-white p-6 shadow-2xl">
-              <SheetHeader className="pb-6 border-b border-white/5 mb-6">
-                <SheetTitle className="text-xl font-bold text-white flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-sun-deep" /> Inteligência de Vendas (BI)
-                </SheetTitle>
-                <p className="text-xs text-slate-400">Dados consolidados de conversão, faturamento e motivos de perda da Esol Energy.</p>
-              </SheetHeader>
+          <div className="flex gap-2 flex-wrap">
+            {/* Inteligência Comercial (BI) */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" className="text-slate-600 hover:text-navy hover:bg-slate-100 flex items-center gap-1.5 text-xs font-bold rounded-lg px-3.5 py-2 border border-slate-200 bg-white shadow-sm transition cursor-pointer">
+                  <BarChart3 className="w-4 h-4 text-[#2E44B8]" /> Inteligência Comercial (BI)
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-[#0B0F19]/98 border-l border-white/10 text-white p-6 shadow-2xl">
+                <SheetHeader className="pb-6 border-b border-white/5 mb-6">
+                  <SheetTitle className="text-xl font-bold text-white flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5 text-sun-deep" /> Inteligência de Vendas (BI)
+                  </SheetTitle>
+                  <p className="text-xs text-slate-400">Dados consolidados de conversão, faturamento e motivos de perda da Esol Energy.</p>
+                </SheetHeader>
 
-              <div className="space-y-6">
-                {/* Métricas e KPIs Financeiros */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="text-2xl font-bold text-sun-deep">{m.conversao.toFixed(1)}%</div>
-                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Taxa de Conversão</div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="text-2xl font-bold text-white">{BRL(m.receitaRealizada)}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Faturamento (Mês)</div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="text-2xl font-bold text-white">{BRL(m.ticketMedio)}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Ticket Médio</div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                    <div className="text-2xl font-bold text-emerald-400">{m.margemPct.toFixed(1)}%</div>
-                    <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Margem Média</div>
-                  </div>
-                </div>
-
-                {/* Gráfico Mensal e Funil Ponderado */}
-                <div className="grid grid-cols-1 gap-6">
-                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-sun-deep" /> Evolução de Faturamento Mensal</h3>
-                    {m.mensal.length === 0 ? (
-                      <div className="h-60 flex items-center justify-center text-slate-400 text-xs">Massa de dados insuficiente para gerar histórico.</div>
-                    ) : (
-                      <div className="h-60">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={m.mensal}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.05} />
-                            <XAxis dataKey="mes" tick={{ fill: "#94a3b8", fontSize: 9 }} />
-                            <YAxis tickFormatter={(v) => `R$ ${v/1000}k`} tick={{ fill: "#94a3b8", fontSize: 9 }} />
-                            <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} formatter={(value: any) => [`R$ ${Number(value).toLocaleString("pt-BR")}`, "Faturamento"]} />
-                            <Bar dataKey="receita" fill="#F59E0B" radius={[4, 4, 0, 0]} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    )}
+                <div className="space-y-6">
+                  {/* Métricas e KPIs Financeiros */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                      <div className="text-2xl font-bold text-sun-deep">{m.conversao.toFixed(1)}%</div>
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Taxa de Conversão</div>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                      <div className="text-2xl font-bold text-white">{BRL(m.receitaRealizada)}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Faturamento (Mês)</div>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                      <div className="text-2xl font-bold text-white">{BRL(m.ticketMedio)}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Ticket Médio</div>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                      <div className="text-2xl font-bold text-emerald-400">{m.margemPct.toFixed(1)}%</div>
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Margem Média</div>
+                    </div>
                   </div>
 
-                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Zap className="w-4 h-4 text-sun-deep" /> Pipeline Ponderado</h3>
-                    <div className="space-y-4 text-xs">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400">Volume total em negociação</span>
-                        <span className="text-lg font-bold text-white">
-                          {m.pipelineReceita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center border-t border-white/5 pt-3">
-                        <span className="text-slate-400">Faturamento provável (25%)</span>
-                        <span className="text-lg font-bold text-emerald-400">
-                          {m.receitaEsperada.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-                        </span>
-                      </div>
-                      {m.tempoMedioFechamento && (
+                  {/* Gráfico Mensal e Funil Ponderado */}
+                  <div className="grid grid-cols-1 gap-6">
+                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-sun-deep" /> Evolução de Faturamento Mensal</h3>
+                      {m.mensal.length === 0 ? (
+                        <div className="h-60 flex items-center justify-center text-slate-400 text-xs">Massa de dados insuficiente para gerar histórico.</div>
+                      ) : (
+                        <div className="h-60">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={m.mensal}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.05} />
+                              <XAxis dataKey="mes" tick={{ fill: "#94a3b8", fontSize: 9 }} />
+                              <YAxis tickFormatter={(v) => `R$ ${v/1000}k`} tick={{ fill: "#94a3b8", fontSize: 9 }} />
+                              <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} formatter={(value: any) => [`R$ ${Number(value).toLocaleString("pt-BR")}`, "Faturamento"]} />
+                              <Bar dataKey="receita" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Zap className="w-4 h-4 text-sun-deep" /> Pipeline Ponderado</h3>
+                      <div className="space-y-4 text-xs">
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-400">Volume total em negociação</span>
+                          <span className="text-lg font-bold text-white">
+                            {m.pipelineReceita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                          </span>
+                        </div>
                         <div className="flex justify-between items-center border-t border-white/5 pt-3">
-                          <span className="text-slate-400">Tempo médio de fechamento</span>
-                          <span className="font-bold text-white">{m.tempoMedioFechamento.toFixed(0)} dias</span>
+                          <span className="text-slate-400">Faturamento provável (25%)</span>
+                          <span className="text-lg font-bold text-emerald-400">
+                            {m.receitaEsperada.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                          </span>
+                        </div>
+                        {m.tempoMedioFechamento && (
+                          <div className="flex justify-between items-center border-t border-white/5 pt-3">
+                            <span className="text-slate-400">Tempo médio de fechamento</span>
+                            <span className="font-bold text-white">{m.tempoMedioFechamento.toFixed(0)} dias</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Vendedores e perdas */}
+                  <div className="grid grid-cols-1 gap-6">
+                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Users className="w-4 h-4 text-sun-deep" /> Vendedores Destaque</h3>
+                      {m.topParceiros.length === 0 ? (
+                        <div className="py-6 text-center text-slate-400 text-xs">Nenhuma venda aceita registrada.</div>
+                      ) : (
+                        <div className="space-y-3">
+                          {m.topParceiros.map((p, idx) => (
+                            <div key={p.nome} className="flex items-center justify-between border-b border-white/5 pb-2 text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-sun-deep w-5">{idx + 1}º</span>
+                                <span className="font-semibold text-slate-200">{p.nome}</span>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-bold text-white">{p.receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}</div>
+                                <div className="text-[10px] text-slate-400">{p.aceitas} fechados de {p.total} propostas</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-sun-deep" /> Motivos de Negócios Perdidos</h3>
+                      {m.motivoData.length === 0 ? (
+                        <div className="py-6 text-center text-slate-400 text-xs">Nenhum lead marcado como perdido.</div>
+                      ) : (
+                        <div className="space-y-3">
+                          {m.motivoData.map((d) => {
+                            const totalPerdas = m.motivoData.reduce((s, x) => s + x.value, 0);
+                            const pct = (d.value / totalPerdas) * 100;
+                            return (
+                              <div key={d.name} className="space-y-1 text-xs">
+                                <div className="flex justify-between font-semibold">
+                                  <span className="text-slate-300">{d.name}</span>
+                                  <span className="text-sun-deep">{d.value} perdas ({pct.toFixed(0)}%)</span>
+                                </div>
+                                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                                  <div className="bg-red-500 h-full" style={{ width: `${pct}%` }} />
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
+              </SheetContent>
+            </Sheet>
 
-                {/* Parceiros & Motivos Perda */}
-                <div className="grid grid-cols-1 gap-6">
-                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Users className="w-4 h-4 text-sun-deep" /> Vendedores Destaque</h3>
-                    {m.topParceiros.length === 0 ? (
-                      <div className="py-6 text-center text-slate-400 text-xs">Nenhuma venda aceita registrada.</div>
-                    ) : (
-                      <div className="space-y-3">
-                        {m.topParceiros.map((p, idx) => (
-                          <div key={p.nome} className="flex items-center justify-between border-b border-white/5 pb-2 text-xs">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-sun-deep w-5">{idx + 1}º</span>
-                              <span className="font-semibold text-slate-200">{p.nome}</span>
-                            </div>
-                            <div className="text-right">
-                              <div className="font-bold text-white">{p.receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}</div>
-                              <div className="text-[10px] text-slate-400">{p.aceitas} fechados de {p.total} propostas</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+            {/* Cockpit de Direção (Controle de Lucro & Comissões) */}
+            <Sheet onOpenChange={(open) => { if (open) loadCockpitData(); }}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" className="text-slate-600 hover:text-navy hover:bg-slate-100 flex items-center gap-1.5 text-xs font-bold rounded-lg px-3.5 py-2 border border-slate-200 bg-white shadow-sm transition cursor-pointer">
+                  <Gauge className="w-4 h-4 text-[#E2B714]" /> Cockpit de Direção
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-[#090D1A] border-l border-slate-800 text-white p-6 shadow-2xl font-sans">
+                <SheetHeader className="pb-6 border-b border-slate-800 mb-6">
+                  <SheetTitle className="text-xl font-bold text-white flex items-center gap-2">
+                    <Gauge className="w-5 h-5 text-sun-deep animate-pulse" /> Cockpit de Direção (Lucro & Comissões)
+                  </SheetTitle>
+                  <p className="text-xs text-slate-400">Direção da aeronave ESOL Energy: regule comissões, gerencie margens de lucro e pilote o crescimento.</p>
+                </SheetHeader>
 
-                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                    <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-sun-deep" /> Motivos de Negócios Perdidos</h3>
-                    {m.motivoData.length === 0 ? (
-                      <div className="py-6 text-center text-slate-400 text-xs">Nenhum lead marcado como perdido.</div>
-                    ) : (
-                      <div className="space-y-3">
-                        {m.motivoData.map((d) => {
-                          const totalPerdas = m.motivoData.reduce((s, x) => s + x.value, 0);
-                          const pct = (d.value / totalPerdas) * 100;
-                          return (
-                            <div key={d.name} className="space-y-1 text-xs">
-                              <div className="flex justify-between font-semibold">
-                                <span className="text-slate-300">{d.name}</span>
-                                <span className="text-sun-deep">{d.value} perdas ({pct.toFixed(0)}%)</span>
-                              </div>
-                              <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                                <div className="bg-red-500 h-full" style={{ width: `${pct}%` }} />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+                {loadingCockpit ? (
+                  <div className="py-12 text-center text-slate-400 text-xs flex items-center justify-center">
+                    <RefreshCw className="w-4 h-4 animate-spin mr-2" /> Carregando painel de instrumentos...
                   </div>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Painel Geral (Sliders) */}
+                    <div className="p-5 rounded-2xl bg-white/5 border border-slate-800 space-y-5">
+                      <h3 className="font-extrabold text-sm text-white flex items-center gap-2 uppercase tracking-wider text-[10px]">
+                        <Settings2 className="w-4 h-4 text-sun-deep" /> Ajustes Gerais (Aeronave)
+                      </h3>
+
+                      {cockpitParams ? (
+                        <CockpitParamsForm 
+                          params={cockpitParams} 
+                          onSave={handleSaveCockpitParams}
+                          onPropagate={handlePropagateCommission}
+                          saving={savingCockpit}
+                        />
+                      ) : (
+                        <p className="text-xs text-slate-400">Nenhum parâmetro de faturamento carregado.</p>
+                      )}
+                    </div>
+
+                    {/* Painel Individual (Parceiros e Corretores) */}
+                    <div className="p-5 rounded-2xl bg-white/5 border border-slate-800 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-extrabold text-sm text-white flex items-center gap-2 uppercase tracking-wider text-[10px]">
+                          <Users className="w-4 h-4 text-sun-deep" /> Controle de Corretores Individuais
+                        </h3>
+                        <Badge className="bg-slate-800 text-[10px] text-slate-300 font-bold border border-slate-700">
+                          {cockpitCorretores.length} parceiros
+                        </Badge>
+                      </div>
+                      
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        Regule a comissão individualmente para cada corretor parceiro. 
+                        Selecione <strong>🔒 Congelar</strong> para que a tarifa individual permaneça inalterada mesmo ao reajustar a comissão geral da empresa.
+                      </p>
+
+                      <div className="border border-slate-850 rounded-xl overflow-hidden bg-black/20">
+                        <div className="max-h-[350px] overflow-y-auto">
+                          <Table>
+                            <TableHeader className="bg-slate-950/50 border-b border-slate-800">
+                              <TableRow>
+                                <TableHead className="text-slate-400 text-[10px] uppercase font-bold py-2">Parceiro</TableHead>
+                                <TableHead className="text-slate-400 text-[10px] uppercase font-bold py-2 text-center w-28">Taxa (%)</TableHead>
+                                <TableHead className="text-slate-400 text-[10px] uppercase font-bold py-2 text-center w-24">Congelado</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody className="divide-y divide-slate-800/60 text-xs">
+                              {cockpitCorretores.length === 0 ? (
+                                <TableRow>
+                                  <TableCell colSpan={3} className="text-center py-6 text-slate-500">Nenhum corretor cadastrado.</TableCell>
+                                </TableRow>
+                              ) : (
+                                cockpitCorretores.map((c) => (
+                                  <TableRow key={c.id} className="hover:bg-white/5 border-b border-slate-800/40">
+                                    <TableCell className="py-2.5 font-bold text-slate-200">
+                                      {c.nome || "Sem nome"}
+                                      {!c.ativo && <span className="ml-1.5 text-[8px] bg-red-950 text-red-400 border border-red-900/30 px-1 rounded font-normal uppercase">Inativo</span>}
+                                    </TableCell>
+                                    <TableCell className="py-2.5 text-center">
+                                      <div className="flex items-center justify-center gap-1">
+                                        <Input
+                                          type="number"
+                                          min={0}
+                                          max={30}
+                                          step={0.5}
+                                          value={c.comissao_percent ?? 5}
+                                          onChange={(e) => handleUpdateIndividualCommission(c.id, Number(e.target.value))}
+                                          className="w-16 h-8 text-center bg-black/40 border-slate-800 text-white font-bold rounded-lg text-xs"
+                                        />
+                                        <span className="text-[10px] text-slate-400 font-bold">%</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="py-2.5 text-center">
+                                      <button
+                                        onClick={() => handleToggleFreezeCommission(c.id, !c.comissao_congelada)}
+                                        className={`p-1.5 rounded-lg border transition ${
+                                          c.comissao_congelada 
+                                            ? "bg-red-950/40 border-red-900/50 text-red-400" 
+                                            : "bg-slate-900 border-slate-850 text-slate-400 hover:text-white"
+                                        }`}
+                                        title={c.comissao_congelada ? "Comissão Congelada" : "Comissão Descongelada"}
+                                      >
+                                        {c.comissao_congelada ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                                      </button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))
+                              )}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </SheetContent>
+            </Sheet>
+          </div>
         )}
       </div>
 
