@@ -79,8 +79,8 @@ function CockpitParamsForm({ params, onSave, onPropagate, saving }: {
       {/* Margem Geral */}
       <div className="space-y-2">
         <div className="flex justify-between items-center text-xs">
-          <Label className="text-slate-300 font-bold">Margem de Lucro Alvo Geral</Label>
-          <span className="font-mono text-sun-deep font-bold text-sm bg-black/40 px-2 py-0.5 rounded border border-slate-800">{margem}%</span>
+          <Label className="text-slate-700 font-extrabold uppercase tracking-wider text-[10px]">Margem de Lucro Alvo Geral</Label>
+          <span className="font-mono text-[#2E44B8] font-black text-sm bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{margem}%</span>
         </div>
         <Slider 
           min={5} 
@@ -90,14 +90,14 @@ function CockpitParamsForm({ params, onSave, onPropagate, saving }: {
           onValueChange={(val) => setMargem(val[0])}
           className="py-1"
         />
-        <p className="text-[10px] text-slate-400">Usado no motor de cálculo para definir o preço sugerido do Wp nas propostas.</p>
+        <p className="text-[10px] text-slate-500 font-medium">Usado no motor de cálculo para definir o preço sugerido do Wp nas propostas.</p>
       </div>
 
       {/* Comissão Geral */}
       <div className="space-y-2">
         <div className="flex justify-between items-center text-xs">
-          <Label className="text-slate-300 font-bold">Comissão Geral do Canal (Parceiros)</Label>
-          <span className="font-mono text-sun-deep font-bold text-sm bg-black/40 px-2 py-0.5 rounded border border-slate-800">{comissao}%</span>
+          <Label className="text-slate-700 font-extrabold uppercase tracking-wider text-[10px]">Comissão Geral do Canal (Parceiros)</Label>
+          <span className="font-mono text-[#2E44B8] font-black text-sm bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{comissao}%</span>
         </div>
         <Slider 
           min={1} 
@@ -107,15 +107,15 @@ function CockpitParamsForm({ params, onSave, onPropagate, saving }: {
           onValueChange={(val) => setComissao(val[0])}
           className="py-1"
         />
-        <p className="text-[10px] text-slate-400">Taxa base/default do canal de consultores.</p>
+        <p className="text-[10px] text-slate-500 font-medium">Taxa base/default do canal de consultores.</p>
       </div>
 
       {/* Botões de Ação */}
-      <div className="flex gap-2 pt-2 border-t border-slate-800/80 flex-wrap">
+      <div className="flex gap-2 pt-3 border-t border-slate-200 flex-wrap">
         <Button 
           onClick={() => onSave(margem, comissao)} 
           disabled={saving}
-          className="flex-1 bg-sun hover:bg-sun-deep text-navy font-bold text-xs h-9 rounded-lg flex items-center justify-center gap-1.5 shadow-sm border-0 cursor-pointer"
+          className="flex-1 bg-[#2E44B8] hover:bg-[#1F3095] text-white font-bold text-xs h-9 rounded-lg flex items-center justify-center gap-1.5 shadow-sm border-0 cursor-pointer transition"
         >
           {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
           Salvar no Motor Geral
@@ -124,7 +124,7 @@ function CockpitParamsForm({ params, onSave, onPropagate, saving }: {
           variant="outline"
           onClick={() => onPropagate(comissao)} 
           disabled={saving}
-          className="flex-1 border-slate-700 text-slate-200 hover:bg-slate-850 hover:text-white text-xs h-9 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer bg-slate-900"
+          className="flex-1 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs h-9 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Aplicar aos Não-Congelados
@@ -150,6 +150,7 @@ function AdminDashboard() {
   const [cockpitCorretores, setCockpitCorretores] = useState<any[]>([]);
   const [loadingCockpit, setLoadingCockpit] = useState(false);
   const [savingCockpit, setSavingCockpit] = useState(false);
+  const [viewMode, setViewMode] = useState<"dashboard" | "bi" | "cockpit">("dashboard");
   
   // Consenso de novos administradores
   const [adminsPendentes, setAdminsPendentes] = useState<any[]>([]);
@@ -301,12 +302,37 @@ function AdminDashboard() {
         .select("user_id")
         .eq("role", "corretor");
       const cIds = (cRoles || []).map((r: any) => r.user_id);
+      
       if (cIds.length > 0) {
-        const { data: profs } = await supabase
+        // Tenta buscar com comissao_congelada
+        const { data: profs, error: profsError } = await supabase
           .from("profiles")
           .select("id, nome, comissao_percent, comissao_congelada, ativo")
           .in("id", cIds);
-        setCockpitCorretores(profs || []);
+        
+        if (profsError) {
+          console.warn("Erro ao buscar profiles com comissao_congelada no cockpit, usando fallback...", profsError);
+          // Fallback sem comissao_congelada
+          const { data: fallbackProfs, error: fbError } = await supabase
+            .from("profiles")
+            .select("id, nome, comissao_percent, ativo")
+            .in("id", cIds);
+          
+          if (fbError) {
+            console.error("Erro no fallback de corretores do cockpit:", fbError);
+            setCockpitCorretores([]);
+          } else {
+            const mapped = (fallbackProfs || []).map(p => ({
+              ...p,
+              comissao_congelada: false
+            }));
+            setCockpitCorretores(mapped);
+          }
+        } else {
+          setCockpitCorretores(profs || []);
+        }
+      } else {
+        setCockpitCorretores([]);
       }
     } catch (err) {
       console.error("Erro ao carregar dados do Cockpit:", err);
@@ -675,271 +701,281 @@ function AdminDashboard() {
             onClick={() => handleAprovarAdmin(admin.id, admin.nome || admin.email)}
             className="bg-sun-deep hover:bg-sun text-navy font-bold text-xs px-4 h-9 shrink-0 flex gap-1.5 items-center rounded-lg shadow-sm"
           >
-            <CheckCircle2 className="w-4 h-4" /> Aprovar Acesso (Consenso)
-          </Button>
-        </Card>
-      ))}
-
-      {/* Título e Botão Oculto de BI */}
-      <div className="flex justify-between items-center flex-wrap gap-3">
-        <h2 className="text-xl font-bold text-navy">O que você deseja fazer agora?</h2>
+            <CheckCircle2 className="w-4 h-4" />      {/* Título e Abas do Administrador (Suns Brasil Style) */}
+      <div className="flex justify-between items-center flex-wrap gap-3 pb-2 border-b border-slate-100">
+        <div>
+          <h2 className="text-xl font-black text-navy uppercase tracking-tight flex items-center gap-2">
+            {viewMode === "dashboard" && "O que você deseja fazer agora?"}
+            {viewMode === "bi" && "Inteligência Comercial (BI)"}
+            {viewMode === "cockpit" && "Cockpit de Direção"}
+          </h2>
+          <p className="text-[10.5px] text-slate-500 font-bold mt-0.5">
+            {viewMode === "dashboard" && "Painel geral de atalhos e cotações da ESOL Energy"}
+            {viewMode === "bi" && "Métricas de conversão, faturamento e motivos de perda da Esol Energy"}
+            {viewMode === "cockpit" && "Direção da aeronave ESOL Energy: regule comissões e gerencie margens de lucro"}
+          </p>
+        </div>
         
         {role === "admin" && (
-          <div className="flex gap-2 flex-wrap">
-            {/* Inteligência Comercial (BI) */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" className="text-slate-600 hover:text-navy hover:bg-slate-100 flex items-center gap-1.5 text-xs font-bold rounded-lg px-3.5 py-2 border border-slate-200 bg-white shadow-sm transition cursor-pointer">
-                  <BarChart3 className="w-4 h-4 text-[#2E44B8]" /> Inteligência Comercial (BI)
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-[#0B0F19]/98 border-l border-white/10 text-white p-6 shadow-2xl">
-                <SheetHeader className="pb-6 border-b border-white/5 mb-6">
-                  <SheetTitle className="text-xl font-bold text-white flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-sun-deep" /> Inteligência de Vendas (BI)
-                  </SheetTitle>
-                  <p className="text-xs text-slate-400">Dados consolidados de conversão, faturamento e motivos de perda da Esol Energy.</p>
-                </SheetHeader>
-
-                <div className="space-y-6">
-                  {/* Métricas e KPIs Financeiros */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                      <div className="text-2xl font-bold text-sun-deep">{m.conversao.toFixed(1)}%</div>
-                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Taxa de Conversão</div>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                      <div className="text-2xl font-bold text-white">{BRL(m.receitaRealizada)}</div>
-                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Faturamento (Mês)</div>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                      <div className="text-2xl font-bold text-white">{BRL(m.ticketMedio)}</div>
-                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Ticket Médio</div>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                      <div className="text-2xl font-bold text-emerald-400">{m.margemPct.toFixed(1)}%</div>
-                      <div className="text-[10px] uppercase tracking-wider text-slate-400 mt-1">Margem Média</div>
-                    </div>
-                  </div>
-
-                  {/* Gráfico Mensal e Funil Ponderado */}
-                  <div className="grid grid-cols-1 gap-6">
-                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-sun-deep" /> Evolução de Faturamento Mensal</h3>
-                      {m.mensal.length === 0 ? (
-                        <div className="h-60 flex items-center justify-center text-slate-400 text-xs">Massa de dados insuficiente para gerar histórico.</div>
-                      ) : (
-                        <div className="h-60">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={m.mensal}>
-                              <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.05} />
-                              <XAxis dataKey="mes" tick={{ fill: "#94a3b8", fontSize: 9 }} />
-                              <YAxis tickFormatter={(v) => `R$ ${v/1000}k`} tick={{ fill: "#94a3b8", fontSize: 9 }} />
-                              <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} formatter={(value: any) => [`R$ ${Number(value).toLocaleString("pt-BR")}`, "Faturamento"]} />
-                              <Bar dataKey="receita" fill="#F59E0B" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Zap className="w-4 h-4 text-sun-deep" /> Pipeline Ponderado</h3>
-                      <div className="space-y-4 text-xs">
-                        <div className="flex justify-between items-center">
-                          <span className="text-slate-400">Volume total em negociação</span>
-                          <span className="text-lg font-bold text-white">
-                            {m.pipelineReceita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center border-t border-white/5 pt-3">
-                          <span className="text-slate-400">Faturamento provável (25%)</span>
-                          <span className="text-lg font-bold text-emerald-400">
-                            {m.receitaEsperada.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
-                          </span>
-                        </div>
-                        {m.tempoMedioFechamento && (
-                          <div className="flex justify-between items-center border-t border-white/5 pt-3">
-                            <span className="text-slate-400">Tempo médio de fechamento</span>
-                            <span className="font-bold text-white">{m.tempoMedioFechamento.toFixed(0)} dias</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Vendedores e perdas */}
-                  <div className="grid grid-cols-1 gap-6">
-                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><Users className="w-4 h-4 text-sun-deep" /> Vendedores Destaque</h3>
-                      {m.topParceiros.length === 0 ? (
-                        <div className="py-6 text-center text-slate-400 text-xs">Nenhuma venda aceita registrada.</div>
-                      ) : (
-                        <div className="space-y-3">
-                          {m.topParceiros.map((p, idx) => (
-                            <div key={p.nome} className="flex items-center justify-between border-b border-white/5 pb-2 text-xs">
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-sun-deep w-5">{idx + 1}º</span>
-                                <span className="font-semibold text-slate-200">{p.nome}</span>
-                              </div>
-                              <div className="text-right">
-                                <div className="font-bold text-white">{p.receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}</div>
-                                <div className="text-[10px] text-slate-400">{p.aceitas} fechados de {p.total} propostas</div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                      <h3 className="font-bold text-white text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-sun-deep" /> Motivos de Negócios Perdidos</h3>
-                      {m.motivoData.length === 0 ? (
-                        <div className="py-6 text-center text-slate-400 text-xs">Nenhum lead marcado como perdido.</div>
-                      ) : (
-                        <div className="space-y-3">
-                          {m.motivoData.map((d) => {
-                            const totalPerdas = m.motivoData.reduce((s, x) => s + x.value, 0);
-                            const pct = (d.value / totalPerdas) * 100;
-                            return (
-                              <div key={d.name} className="space-y-1 text-xs">
-                                <div className="flex justify-between font-semibold">
-                                  <span className="text-slate-300">{d.name}</span>
-                                  <span className="text-sun-deep">{d.value} perdas ({pct.toFixed(0)}%)</span>
-                                </div>
-                                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                                  <div className="bg-red-500 h-full" style={{ width: `${pct}%` }} />
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-
-            {/* Cockpit de Direção (Controle de Lucro & Comissões) */}
-            <Sheet onOpenChange={(open) => { if (open) loadCockpitData(); }}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" className="text-slate-600 hover:text-navy hover:bg-slate-100 flex items-center gap-1.5 text-xs font-bold rounded-lg px-3.5 py-2 border border-slate-200 bg-white shadow-sm transition cursor-pointer">
-                  <Gauge className="w-4 h-4 text-[#E2B714]" /> Cockpit de Direção
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-xl md:max-w-2xl overflow-y-auto bg-[#090D1A] border-l border-slate-800 text-white p-6 shadow-2xl font-sans">
-                <SheetHeader className="pb-6 border-b border-slate-800 mb-6">
-                  <SheetTitle className="text-xl font-bold text-white flex items-center gap-2">
-                    <Gauge className="w-5 h-5 text-sun-deep animate-pulse" /> Cockpit de Direção (Lucro & Comissões)
-                  </SheetTitle>
-                  <p className="text-xs text-slate-400">Direção da aeronave ESOL Energy: regule comissões, gerencie margens de lucro e pilote o crescimento.</p>
-                </SheetHeader>
-
-                {loadingCockpit ? (
-                  <div className="py-12 text-center text-slate-400 text-xs flex items-center justify-center">
-                    <RefreshCw className="w-4 h-4 animate-spin mr-2" /> Carregando painel de instrumentos...
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {/* Painel Geral (Sliders) */}
-                    <div className="p-5 rounded-2xl bg-white/5 border border-slate-800 space-y-5">
-                      <h3 className="font-extrabold text-sm text-white flex items-center gap-2 uppercase tracking-wider text-[10px]">
-                        <Settings2 className="w-4 h-4 text-sun-deep" /> Ajustes Gerais (Aeronave)
-                      </h3>
-
-                      {cockpitParams ? (
-                        <CockpitParamsForm 
-                          params={cockpitParams} 
-                          onSave={handleSaveCockpitParams}
-                          onPropagate={handlePropagateCommission}
-                          saving={savingCockpit}
-                        />
-                      ) : (
-                        <p className="text-xs text-slate-400">Nenhum parâmetro de faturamento carregado.</p>
-                      )}
-                    </div>
-
-                    {/* Painel Individual (Parceiros e Corretores) */}
-                    <div className="p-5 rounded-2xl bg-white/5 border border-slate-800 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-extrabold text-sm text-white flex items-center gap-2 uppercase tracking-wider text-[10px]">
-                          <Users className="w-4 h-4 text-sun-deep" /> Controle de Corretores Individuais
-                        </h3>
-                        <Badge className="bg-slate-800 text-[10px] text-slate-300 font-bold border border-slate-700">
-                          {cockpitCorretores.length} parceiros
-                        </Badge>
-                      </div>
-                      
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
-                        Regule a comissão individualmente para cada corretor parceiro. 
-                        Selecione <strong>🔒 Congelar</strong> para que a tarifa individual permaneça inalterada mesmo ao reajustar a comissão geral da empresa.
-                      </p>
-
-                      <div className="border border-slate-850 rounded-xl overflow-hidden bg-black/20">
-                        <div className="max-h-[350px] overflow-y-auto">
-                          <Table>
-                            <TableHeader className="bg-slate-950/50 border-b border-slate-800">
-                              <TableRow>
-                                <TableHead className="text-slate-400 text-[10px] uppercase font-bold py-2">Parceiro</TableHead>
-                                <TableHead className="text-slate-400 text-[10px] uppercase font-bold py-2 text-center w-28">Taxa (%)</TableHead>
-                                <TableHead className="text-slate-400 text-[10px] uppercase font-bold py-2 text-center w-24">Congelado</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody className="divide-y divide-slate-800/60 text-xs">
-                              {cockpitCorretores.length === 0 ? (
-                                <TableRow>
-                                  <TableCell colSpan={3} className="text-center py-6 text-slate-500">Nenhum corretor cadastrado.</TableCell>
-                                </TableRow>
-                              ) : (
-                                cockpitCorretores.map((c) => (
-                                  <TableRow key={c.id} className="hover:bg-white/5 border-b border-slate-800/40">
-                                    <TableCell className="py-2.5 font-bold text-slate-200">
-                                      {c.nome || "Sem nome"}
-                                      {!c.ativo && <span className="ml-1.5 text-[8px] bg-red-950 text-red-400 border border-red-900/30 px-1 rounded font-normal uppercase">Inativo</span>}
-                                    </TableCell>
-                                    <TableCell className="py-2.5 text-center">
-                                      <div className="flex items-center justify-center gap-1">
-                                        <Input
-                                          type="number"
-                                          min={0}
-                                          max={30}
-                                          step={0.5}
-                                          value={c.comissao_percent ?? 5}
-                                          onChange={(e) => handleUpdateIndividualCommission(c.id, Number(e.target.value))}
-                                          className="w-16 h-8 text-center bg-black/40 border-slate-800 text-white font-bold rounded-lg text-xs"
-                                        />
-                                        <span className="text-[10px] text-slate-400 font-bold">%</span>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell className="py-2.5 text-center">
-                                      <button
-                                        onClick={() => handleToggleFreezeCommission(c.id, !c.comissao_congelada)}
-                                        className={`p-1.5 rounded-lg border transition ${
-                                          c.comissao_congelada 
-                                            ? "bg-red-950/40 border-red-900/50 text-red-400" 
-                                            : "bg-slate-900 border-slate-850 text-slate-400 hover:text-white"
-                                        }`}
-                                        title={c.comissao_congelada ? "Comissão Congelada" : "Comissão Descongelada"}
-                                      >
-                                        {c.comissao_congelada ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
-                                      </button>
-                                    </TableCell>
-                                  </TableRow>
-                                ))
-                              )}
-                            </TableBody>
-                          </Table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </SheetContent>
-            </Sheet>
+          <div className="flex gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200/40">
+            <button
+              onClick={() => setViewMode("dashboard")}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border-0 outline-none ${
+                viewMode === "dashboard" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-navy bg-transparent"
+              }`}
+            >
+              📊 Painel Geral
+            </button>
+            <button
+              onClick={() => setViewMode("bi")}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border-0 outline-none ${
+                viewMode === "bi" ? "bg-white text-[#2E44B8] shadow-sm" : "text-slate-500 hover:text-navy bg-transparent"
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-[#2E44B8]" /> BI Comercial
+            </button>
+            <button
+              onClick={() => {
+                setViewMode("cockpit");
+                loadCockpitData();
+              }}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border-0 outline-none ${
+                viewMode === "cockpit" ? "bg-white text-[#E2B714] shadow-sm" : "text-slate-500 hover:text-navy bg-transparent"
+              }`}
+            >
+              <Gauge className="w-4 h-4 text-[#E2B714]" /> Cockpit
+            </button>
           </div>
         )}
       </div>
+
+      {/* Conteúdo de BI Central */}
+      {viewMode === "bi" && (
+        <Card className="p-6 border border-slate-200 bg-white rounded-3xl shadow-sm space-y-6 animate-fade-in">
+          {/* Métricas e KPIs Financeiros */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-xs">
+              <div className="text-2xl font-black text-navy">{m.conversao.toFixed(1)}%</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mt-1">Taxa de Conversão</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-xs">
+              <div className="text-2xl font-black text-[#2E44B8]">{BRL(m.receitaRealizada)}</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mt-1">Faturamento (Mês)</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-xs">
+              <div className="text-2xl font-black text-navy">{BRL(m.ticketMedio)}</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mt-1">Ticket Médio</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 shadow-xs">
+              <div className="text-2xl font-black text-emerald-700">{m.margemPct.toFixed(1)}%</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mt-1">Margem Média</div>
+            </div>
+          </div>
+
+          {/* Gráfico Mensal e Funil Ponderado */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-4 shadow-xs">
+              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><TrendingUp className="w-4 h-4 text-[#2E44B8]" /> Evolução de Faturamento Mensal</h3>
+              {m.mensal.length === 0 ? (
+                <div className="h-60 flex items-center justify-center text-slate-400 text-xs">Massa de dados insuficiente para gerar histórico.</div>
+              ) : (
+                <div className="h-60">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={m.mensal}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                      <XAxis dataKey="mes" tick={{ fill: "#64748b", fontSize: 9 }} />
+                      <YAxis tickFormatter={(v) => `R$ ${v/1000}k`} tick={{ fill: "#64748b", fontSize: 9 }} />
+                      <Tooltip contentStyle={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", color: "#0f172a" }} formatter={(value: any) => [`R$ ${Number(value).toLocaleString("pt-BR")}`, "Faturamento"]} />
+                      <Bar dataKey="receita" fill="#2E44B8" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-4 shadow-xs">
+              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><Zap className="w-4 h-4 text-amber-500" /> Pipeline Ponderado</h3>
+              <div className="space-y-4 text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-bold">Volume total em negociação</span>
+                  <span className="text-lg font-black text-navy">
+                    {m.pipelineReceita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center border-t border-slate-200 pt-3">
+                  <span className="text-slate-500 font-bold">Faturamento provável (25%)</span>
+                  <span className="text-lg font-black text-emerald-700">
+                    {m.receitaEsperada.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+                {m.tempoMedioFechamento && (
+                  <div className="flex justify-between items-center border-t border-slate-200 pt-3">
+                    <span className="text-slate-500 font-bold">Tempo médio de fechamento</span>
+                    <span className="font-black text-navy">{m.tempoMedioFechamento.toFixed(0)} dias</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Vendedores e perdas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-4 shadow-xs">
+              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><Users className="w-4 h-4 text-[#2E44B8]" /> Vendedores Destaque</h3>
+              {m.topParceiros.length === 0 ? (
+                <div className="py-6 text-center text-slate-400 text-xs">Nenhuma venda aceita registrada.</div>
+              ) : (
+                <div className="space-y-3">
+                  {m.topParceiros.map((p, idx) => (
+                    <div key={p.nome} className="flex items-center justify-between border-b border-slate-250 pb-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#2E44B8] w-5">{idx + 1}º</span>
+                        <span className="font-semibold text-slate-700">{p.nome}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-black text-navy">{p.receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}</div>
+                        <div className="text-[10px] text-slate-500 font-bold">{p.aceitas} fechados de {p.total} propostas</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-4 shadow-xs">
+              <h3 className="font-bold text-navy text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-red-500" /> Motivos de Negócios Perdidos</h3>
+              {m.motivoData.length === 0 ? (
+                <div className="py-6 text-center text-slate-400 text-xs">Nenhum lead marcado como perdido.</div>
+              ) : (
+                <div className="space-y-3">
+                  {m.motivoData.map((d) => {
+                    const totalPerdas = m.motivoData.reduce((s, x) => s + x.value, 0);
+                    const pct = (d.value / totalPerdas) * 100;
+                    return (
+                      <div key={d.name} className="space-y-1 text-xs">
+                        <div className="flex justify-between font-semibold">
+                          <span className="text-slate-650 font-bold">{d.name}</span>
+                          <span className="text-red-700">{d.value} perdas ({pct.toFixed(0)}%)</span>
+                        </div>
+                        <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                          <div className="bg-red-500 h-full" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Conteúdo de Cockpit Central */}
+      {viewMode === "cockpit" && (
+        <Card className="p-6 border border-slate-200 bg-white rounded-3xl shadow-sm space-y-6 animate-fade-in font-sans">
+          {loadingCockpit ? (
+            <div className="py-20 text-center text-slate-400 text-xs flex items-center justify-center">
+              <RefreshCw className="w-4 h-4 animate-spin mr-2 text-navy" /> Carregando painel de instrumentos...
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              {/* Ajustes Gerais */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 shadow-xs space-y-5">
+                <h3 className="font-extrabold text-sm text-navy flex items-center gap-2 uppercase tracking-wider text-[10px]">
+                  <Settings2 className="w-4 h-4 text-[#2E44B8]" /> Ajustes Gerais (Aeronave)
+                </h3>
+                {cockpitParams ? (
+                  <CockpitParamsForm 
+                    params={cockpitParams} 
+                    onSave={handleSaveCockpitParams}
+                    onPropagate={handlePropagateCommission}
+                    saving={savingCockpit}
+                  />
+                ) : (
+                  <p className="text-xs text-slate-500">Nenhum parâmetro de faturamento carregado.</p>
+                )}
+              </div>
+
+              {/* Ajustes Individuais */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 shadow-xs space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-extrabold text-sm text-navy flex items-center gap-2 uppercase tracking-wider text-[10px]">
+                    <Users className="w-4 h-4 text-[#2E44B8]" /> Controle de Corretores Individuais
+                  </h3>
+                  <Badge className="bg-[#2E44B8]/10 text-[#2E44B8] text-[10px] font-bold border-0">
+                    {cockpitCorretores.length} parceiros
+                  </Badge>
+                </div>
+                
+                <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
+                  Regule a comissão individualmente para cada corretor parceiro. 
+                  Selecione <strong>🔒 Congelar</strong> para que a tarifa individual permaneça inalterada mesmo ao reajustar a comissão geral da empresa.
+                </p>
+
+                <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                  <div className="max-h-[350px] overflow-y-auto">
+                    <Table>
+                      <TableHeader className="bg-slate-50 border-b border-slate-200">
+                        <TableRow>
+                          <TableHead className="text-slate-600 text-[10px] uppercase font-bold py-2.5">Parceiro</TableHead>
+                          <TableHead className="text-slate-600 text-[10px] uppercase font-bold py-2.5 text-center w-28 font-bold">Taxa (%)</TableHead>
+                          <TableHead className="text-slate-600 text-[10px] uppercase font-bold py-2.5 text-center w-24 font-bold">Congelado</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody className="divide-y divide-slate-100 text-xs">
+                        {cockpitCorretores.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={3} className="text-center py-6 text-slate-400">Nenhum corretor cadastrado.</TableCell>
+                          </TableRow>
+                        ) : (
+                          cockpitCorretores.map((c) => (
+                            <TableRow key={c.id} className="hover:bg-slate-50/50">
+                              <TableCell className="py-2.5 font-bold text-slate-700">
+                                {c.nome || "Sem nome"}
+                                {!c.ativo && <span className="ml-1.5 text-[8px] bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded font-normal uppercase">Inativo</span>}
+                              </TableCell>
+                              <TableCell className="py-2.5 text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    max={30}
+                                    step={0.5}
+                                    value={c.comissao_percent ?? 5}
+                                    onChange={(e) => handleUpdateIndividualCommission(c.id, Number(e.target.value))}
+                                    className="w-16 h-8 text-center bg-white border-slate-200 text-navy font-bold rounded-lg text-xs"
+                                  />
+                                  <span className="text-[10px] text-slate-500 font-bold">%</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="py-2.5 text-center">
+                                <button
+                                  onClick={() => handleToggleFreezeCommission(c.id, !c.comissao_congelada)}
+                                  className={`p-1.5 rounded-lg border transition cursor-pointer ${
+                                    c.comissao_congelada 
+                                      ? "bg-red-50 border-red-200 text-red-600" 
+                                      : "bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-650 hover:bg-slate-100"
+                                  }`}
+                                  title={c.comissao_congelada ? "Comissão Congelada" : "Comissão Descongelada"}
+                                >
+                                  {c.comissao_congelada ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                                </button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {viewMode === "dashboard" && (
+        <>
 
       {/* Leads do Site Pendentes (Apenas para Admin, Auxiliar, Atendente) */}
       {(role === "admin" || role === "auxiliar" || role === "atendente") && siteLeads.length > 0 && (
@@ -1128,6 +1164,7 @@ function AdminDashboard() {
           </Link>
         </Card>
       </div>
+      )}
     </div>
   );
 }
