@@ -11,6 +11,14 @@ import heroHouse from "@/assets/hero-house.jpg";
 import { Loader2, Zap, Sun, ShieldCheck, TrendingUp, Sparkles } from "lucide-react";
 import { hspForEstado } from "@/lib/proposta-calc";
 
+const FAQ_ITEMS = [
+  { q: "Quanto custa um sistema solar residencial?", a: "Sistemas residenciais começam em torno de R$ 14 mil, com parcelas em até 84x. O valor exato depende do consumo, telhado e região — nosso engenheiro envia proposta gratuita." },
+  { q: "Em quanto tempo recupero o investimento?", a: "O payback médio é de 3 a 5 anos. Após esse período, são mais 20 anos de energia praticamente gratuita." },
+  { q: "Funciona em dias nublados e à noite?", a: "Sim. O sistema gera mesmo com nuvens (em menor escala) e, à noite, você usa o crédito gerado durante o dia via compensação na rede." },
+  { q: "Qual a garantia dos equipamentos?", a: "Painéis com 25 anos de garantia de geração, inversores com 10 anos e instalação com 5 anos. Tudo em contrato." },
+  { q: "Vocês cuidam da homologação na concessionária?", a: "Sim. Cuidamos de 100% do processo: projeto, ART, protocolos e vistoria. Você só assina." },
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -27,9 +35,49 @@ export const Route = createFileRoute("/")({
           "Sistemas fotovoltaicos premium com financiamento facilitado. Simule e descubra quanto você pode economizar.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://esolenergy.com.br/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://esolenergy.com.br/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "ESOL Energy",
+              url: "https://esolenergy.com.br/",
+              logo: "https://esolenergy.com.br/favicon.ico",
+              description:
+                "Engenharia solar fotovoltaica: projeto, homologação, instalação e financiamento de sistemas de energia solar.",
+            },
+            {
+              "@type": "WebSite",
+              name: "ESOL Energy",
+              url: "https://esolenergy.com.br/",
+            },
+            {
+              "@type": "Service",
+              serviceType: "Instalação de energia solar fotovoltaica",
+              provider: { "@type": "Organization", name: "ESOL Energy" },
+              areaServed: "BR",
+              description:
+                "Sistemas fotovoltaicos residenciais, comerciais, industriais e rurais com engenharia e homologação inclusas.",
+            },
+            {
+              "@type": "FAQPage",
+              mainEntity: FAQ_ITEMS.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: Landing,
 });
@@ -235,7 +283,10 @@ function Hero() {
           >
             <div className="flex items-center gap-3 flex-1 px-4">
               <span className="text-ink/40 font-semibold">R$</span>
+              <label htmlFor="hero-bill" className="sr-only">Valor da conta de luz</label>
               <input
+                id="hero-bill"
+                aria-label="Valor da conta de luz"
                 value={val}
                 onChange={(e) => setVal(e.target.value.replace(/\D/g, ""))}
                 inputMode="numeric"
