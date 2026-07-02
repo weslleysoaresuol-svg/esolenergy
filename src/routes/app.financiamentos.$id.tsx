@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Copy, Share2, MessageCircle, Eye, Send, Upload, FileCheck } from "lucide-react";
+import { ArrowLeft, Copy, Share2, MessageCircle, Eye, Send, Upload, FileCheck, Check, ShoppingCart } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 import { toast } from "sonner";
 
@@ -56,6 +56,56 @@ function FinDetail() {
   };
 
   const [subindo, setSubindo] = useState(false);
+  const [gerandoPedido, setGerandoPedido] = useState(false);
+
+  const criarPedidoFinanciamento = async () => {
+    if (!confirm(`Deseja criar um Pedido na esteira de logística para este financiamento aprovado?`)) return;
+    setGerandoPedido(true);
+    try {
+      // 1. Cria o Pedido com status 'faturado'
+      const { data: ped, error: pedErr } = await (supabase.from as any)("pedidos").insert({
+        parceiro_id: f.parceiro_id,
+        cliente_id: f.cliente_id,
+        origem: "financiamento",
+        origem_id: f.id,
+        valor_total: f.valor_solicitado,
+        descricao: `Pedido gerado a partir do Financiamento Aprovado`,
+        status: "faturado",
+        comprovante_url: edit.comprovante_financiamento_url || edit.contrato_banco_url || null,
+        contrato_cliente_url: edit.comprovante_financiamento_url || edit.contrato_banco_url || null,
+        contrato_cliente_status: "assinado"
+      }).select().single();
+
+      if (pedErr) throw pedErr;
+
+      // 2. Vincula o pedido no financiamento
+      const { error: updErr } = await (supabase.from as any)("financiamentos").update({
+        pedido_id: ped.id
+      }).eq("id", f.id);
+
+      if (updErr) throw updErr;
+
+      // 3. Atualiza a timeline
+      await (supabase.from as any)("timeline_cliente").insert({
+        cliente_id: f.cliente_id,
+        parceiro_id: f.parceiro_id,
+        tipo: "pedido",
+        referencia_id: ped.id,
+        titulo: `Pedido ${ped.numero} criado a partir do financiamento`,
+        descricao: `Valor faturado: ${BRL(Number(f.valor_solicitado))}`,
+      });
+
+      // 4. Sincroniza o CRM
+      await supabase.from("clientes").update({ status: "contrato_assinado" }).eq("id", f.cliente_id);
+
+      toast.success(`Pedido ${ped.numero} gerado e vinculado com sucesso!`);
+      load();
+    } catch (err: any) {
+      toast.error("Erro ao gerar pedido: " + err.message);
+    } finally {
+      setGerandoPedido(false);
+    }
+  };
 
   const handleUploadContrato = async (file: File) => {
     setSubindo(true);
@@ -220,6 +270,39 @@ function FinDetail() {
         </Card>
 
         <div className="space-y-4">
+          {/* Integração com Esteira de Pedidos */}
+          {f.pedido_id ? (
+            <Card className="p-5 border border-emerald-100 bg-emerald-50/50">
+              <h2 className="font-bold text-emerald-800 text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <Check className="w-4.5 h-4.5 text-emerald-600" /> Pedido Logístico Ativo
+              </h2>
+              <p className="text-xs text-emerald-700 leading-relaxed mb-3">
+                Este financiamento possui um pedido ativo na esteira de logística e instalação.
+              </p>
+              <Link to="/app/pedidos/$id" params={{ id: f.pedido_id }}>
+                <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl h-9 border-0 cursor-pointer">
+                  Ver Pedido Logístico
+                </Button>
+              </Link>
+            </Card>
+          ) : (["pre_aprovado", "aprovado", "contrato_assinado", "liberado"].includes(f.status)) && (
+            <Card className="p-5 border border-blue-100 bg-blue-50/50">
+              <h2 className="font-bold text-[#2E44B8] text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <ShoppingCart className="w-4.5 h-4.5" /> Integração de Entrega
+              </h2>
+              <p className="text-xs text-blue-700 leading-relaxed mb-3">
+                Crédito liberado ou pré-aprovado! Crie o pedido correspondente e inicie a separação do kit na logística.
+              </p>
+              <Button
+                onClick={criarPedidoFinanciamento}
+                disabled={gerandoPedido}
+                className="w-full bg-[#2E44B8] hover:bg-[#1F3095] text-white font-bold text-xs rounded-xl h-9 border-0 cursor-pointer"
+              >
+                {gerandoPedido ? "Gerando..." : "Gerar Pedido na Logística"}
+              </Button>
+            </Card>
+          )}
+
           <Card className="p-5">
             <h2 className="font-bold text-navy mb-3">Status</h2>
             <Select value={f.status} onValueChange={(v) => salvar({ status: v })}>

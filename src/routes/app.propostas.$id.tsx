@@ -88,6 +88,9 @@ function PropostaDetail() {
 
       if (error) throw error;
 
+      // Sincroniza o CRM movendo o cliente para "Contrato Assinado" automaticamente
+      await supabase.from("clientes").update({ status: "contrato_assinado" }).eq("id", clientePrincipal.id);
+
       await (supabase.from as any)("timeline_cliente").insert({
         cliente_id: clientePrincipal.id, 
         parceiro_id: proposta.parceiro_id,

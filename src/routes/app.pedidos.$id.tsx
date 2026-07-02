@@ -43,6 +43,13 @@ function PedidoDetail() {
   // Dados manuais de transação
   const [banco, setBanco] = useState("");
   const [codigoTransacao, setCodigoTransacao] = useState("");
+
+  // Novos campos de Homologação / Engenharia de Pós-Venda
+  const [concessionaria, setConcessionaria] = useState("");
+  const [protocolo, setProtocolo] = useState("");
+  const [dataVistoriaStr, setDataVistoriaStr] = useState("");
+  const [parecerUrl, setParecerUrl] = useState("");
+  const [subindoParecer, setSubindoParecer] = useState(false);
   
   const load = async () => {
     const [{ data: ped }, { data: kt }] = await Promise.all([
@@ -59,6 +66,13 @@ function PedidoDetail() {
       setBanco(ped.transacao_dados.banco || "");
       setCodigoTransacao(ped.transacao_dados.codigo_transacao || "");
     }
+
+    if (ped) {
+      setConcessionaria(ped.concessionaria_distribuidora || "");
+      setProtocolo(ped.protocolo_homologacao || "");
+      setDataVistoriaStr(ped.data_vistoria ? ped.data_vistoria.split("T")[0] : "");
+      setParecerUrl(ped.parecer_acesso_url || "");
+    }
   };
 
   useEffect(() => {
@@ -72,12 +86,67 @@ function PedidoDetail() {
     setSaving(true);
     try {
       await (supabase.from as any)("pedidos").update(patch).eq("id", p.id);
+      
+      // Sincroniza o CRM de forma bidirecional ao mudar status do pedido
+      if (patch.status && p.cliente_id) {
+        let cStatus = null;
+        let motivoPerda = null;
+        let fechadoEm = null;
+        let perdidoEm = null;
+        
+        if (patch.status === "instalado") {
+          cStatus = "instalacao";
+        } else if (patch.status === "concluido") {
+          cStatus = "concluido";
+          fechadoEm = new Date().toISOString();
+        } else if (patch.status === "novo" || patch.status === "analise_tecnica" || patch.status === "assinatura_contrato" || patch.status === "faturado") {
+          cStatus = "contrato_assinado";
+        } else if (patch.status === "cancelado") {
+          cStatus = "desistiu";
+          motivoPerda = "outro";
+          perdidoEm = new Date().toISOString();
+        }
+        
+        if (cStatus) {
+          await supabase.from("clientes").update({ 
+            status: cStatus,
+            ...(motivoPerda ? { motivo_perda: motivoPerda } : {}),
+            ...(fechadoEm ? { fechado_em: fechadoEm } : {}),
+            ...(perdidoEm ? { perdido_em: perdidoEm } : {})
+          }).eq("id", p.cliente_id);
+        }
+      }
+      
       toast.success("Pedido atualizado com sucesso!");
       load();
     } catch (err: any) {
       toast.error("Erro ao salvar: " + err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUploadParecer = async (file: File) => {
+    setSubindoParecer(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `pareceres_acesso/${p.id}_parecer_acesso.${ext}`;
+      
+      const { error: upErr } = await supabase.storage
+        .from("parceiros")
+        .upload(path, file, { upsert: true });
+        
+      if (upErr) throw upErr;
+
+      const publicUrl = supabase.storage.from("parceiros").getPublicUrl(path).data.publicUrl;
+      setParecerUrl(publicUrl);
+      await (supabase.from as any)("pedidos").update({ parecer_acesso_url: publicUrl }).eq("id", p.id);
+      toast.success("Parecer de Acesso carregado!");
+      load();
+    } catch (err: any) {
+      toast.error("Erro no upload do parecer: " + err.message);
+    } finally {
+      setSubindoParecer(false);
     }
   };
 
@@ -572,6 +641,85 @@ function PedidoDetail() {
               </div>
             </Card>
           )}
+
+          {/* Seção 5: Homologação e Engenharia de Pós-Venda */}
+          <Card className="p-5 space-y-4 rounded-2xl border-0 shadow-md">
+            <div>
+              <h2 className="font-extrabold text-navy text-sm uppercase tracking-wider flex items-center gap-1.5">
+                <Zap className="w-5 h-5 text-sun-deep" /> Homologação & Engenharia de Pós-Venda
+              </h2>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Mapeamento do processo de liberação técnica junto à distribuidora de energia.</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold text-slate-700">Concessionária / Distribuidora</Label>
+                <Input
+                  value={concessionaria}
+                  onChange={(e) => setConcessionaria(e.target.value)}
+                  onBlur={() => salvar({ concessionaria_distribuidora: concessionaria })}
+                  placeholder="Ex: CPFL, Enel, Neoenergia, Light..."
+                  className="text-xs h-9"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold text-slate-700">Protocolo de Homologação</Label>
+                <Input
+                  value={protocolo}
+                  onChange={(e) => setProtocolo(e.target.value)}
+                  onBlur={() => salvar({ protocolo_homologacao: protocolo })}
+                  placeholder="Número do protocolo de entrada"
+                  className="text-xs h-9"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold text-slate-700">Previsão / Data de Vistoria</Label>
+                <Input
+                  type="date"
+                  value={dataVistoriaStr}
+                  onChange={(e) => setDataVistoriaStr(e.target.value)}
+                  onBlur={() => salvar({ data_vistoria: dataVistoriaStr ? new Date(dataVistoriaStr).toISOString() : null })}
+                  className="text-xs h-9"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold text-slate-700">Parecer de Acesso (PDF)</Label>
+                <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    id="file-upload-parecer"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleUploadParecer(file);
+                    }}
+                    disabled={subindoParecer}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById("file-upload-parecer")?.click()}
+                    disabled={subindoParecer}
+                    className="flex-1 text-xs font-semibold h-9"
+                  >
+                    <Upload className="w-4 h-4 mr-1.5" />
+                    {subindoParecer ? "Carregando..." : parecerUrl ? "Substituir Parecer" : "Anexar Parecer"}
+                  </Button>
+                  {parecerUrl && (
+                    <Button asChild variant="ghost" size="icon" className="h-9 w-9 text-blue-600 hover:bg-blue-50 border border-slate-200 rounded-lg">
+                      <a href={parecerUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Card>
 
         </div>
 
