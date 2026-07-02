@@ -337,7 +337,7 @@ function AppShell() {
       {/* Sidebar desktop */}
       <aside className="hidden md:flex w-60 flex-col suns-sidebar text-navy p-5 z-20 relative">
         <Link to="/" className="mb-8 block transition-transform hover:scale-[1.01]">
-          <img src={logo} alt="ESOL" className="h-8 w-auto opacity-95" />
+          <img src={logo} alt="ESOL Energy — Sistema de Gestão" className="h-8 w-auto opacity-95" />
         </Link>
         <div className="mb-6 px-2">
           <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{ROLE_LABELS[role ?? ""] || "Parceiro"}</div>
@@ -378,11 +378,12 @@ function AppShell() {
 
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 inset-x-0 bg-white text-navy z-40 flex items-center justify-between px-4 h-14 border-b border-slate-200/60 shadow-sm animate-fade-in">
-        <img src={logo} alt="ESOL" className="h-8 w-auto" />
+        <img src={logo} alt="ESOL Energy — Sistema de Gestão" className="h-8 w-auto" />
         <div className="flex items-center gap-3">
           {/* Sino mobile */}
           <MobileBellBadge count={naoLidas} onClick={() => navigate({ to: "/app" })} />
           <select
+            aria-label="Navegação móvel"
             value={pathname}
             onChange={(e) => navigate({ to: e.target.value as any })}
             className="bg-white text-navy text-xs rounded-lg px-2.5 py-1 border border-slate-200"
