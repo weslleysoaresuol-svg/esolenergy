@@ -1,12 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Download, FileSpreadsheet, ShoppingCart, Share2, MessageCircle, Mail, Copy, Sun, Check, Landmark, FileText } from "lucide-react";
-import { BRL } from "@/lib/proposta-calc";
+import { BRL, calcularProposta } from "@/lib/proposta-calc";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 
@@ -22,17 +22,48 @@ function CotacaoDetail() {
   const [c, setC] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [openMirror, setOpenMirror] = useState(false);
+  const [params, setParams] = useState<any>(null);
   const printRef = useRef<HTMLDivElement>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data } = await (supabase.from as any)("cotacoes")
-      .select("*, cliente:cliente_id(*), kit:kit_id(*), parceiro:parceiro_id(nome, telefone, email)")
-      .eq("id", id).maybeSingle();
+    const [{ data }, { data: pr }] = await Promise.all([
+      (supabase.from as any)("cotacoes")
+        .select("*, cliente:cliente_id(*), kit:kit_id(*), parceiro:parceiro_id(nome, telefone, email, comissao_percent)")
+        .eq("id", id).maybeSingle(),
+      (supabase.rpc as any)("get_parametros_publicos")
+    ]);
     setC(data);
+    if (pr) setParams(pr);
     setLoading(false);
   };
   useEffect(() => { load(); }, [id]);
+
+  const calculoOnFly = useMemo(() => {
+    if (!c || !params) return null;
+    
+    if (c.custo_equipamentos !== null && c.custo_equipamentos !== undefined) {
+      return c;
+    }
+    
+    const client = c.cliente;
+    const clientConsumo = client ? Number((client as any).consumo_kwh || (client.valor_fatura ? Math.round(Number(client.valor_fatura) / (params.tarifa_kwh_default || 0.95)) : 500)) : 500;
+    const clientEstado = client?.estado || "SP";
+    
+    const kwp = Number(kit?.potencia_kwp || c.kwp_sistema || 0) * (c.quantidade || 1);
+    const modulos = Number(kit?.quantidade_modulos || c.qtd_modulos || 0) * (c.quantidade || 1);
+
+    return calcularProposta({
+      consumo_kwh: clientConsumo,
+      tarifa_kwh: params.tarifa_kwh_default || 0.95,
+      estado: clientEstado,
+      tipo: "residencial",
+      preco_override: c.preco_total,
+      kwp_override: kwp,
+      qtd_modulos_override: modulos,
+      comissao_percent_override: c.parceiro?.comissao_percent !== null && c.parceiro?.comissao_percent !== undefined ? Number(c.parceiro.comissao_percent) : undefined,
+    }, params);
+  }, [c, params, kit]);
 
   if (loading) return <div className="p-6 text-muted-foreground">Carregando…</div>;
   if (!c) return <div className="p-6">Cotação não encontrada</div>;
@@ -276,10 +307,10 @@ function CotacaoDetail() {
 
                   {role === "admin" ? (
                     <div className="space-y-4 pt-2">
-                      {c.fornecedor && (
+                      {(calculoOnFly?.fornecedor || c.fornecedor) && (
                         <div className="bg-navy/5 rounded-xl p-3 border text-xs flex justify-between items-center">
                           <span className="font-semibold text-slate-500 uppercase text-[9px]">Distribuidor / Fornecedor</span>
-                          <strong className="text-navy text-sm font-black uppercase">{c.fornecedor}</strong>
+                          <strong className="text-navy text-sm font-black uppercase">{calculoOnFly?.fornecedor || c.fornecedor}</strong>
                         </div>
                       )}
 
@@ -287,24 +318,24 @@ function CotacaoDetail() {
                         <div className="space-y-2">
                           <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Diretos (Compra B2B)</span>
                           <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
-                            <CostRow label="Equipamentos (Kit)" value={c.custo_equipamentos} />
-                            <CostRow label="Instalação / Integração" value={c.custo_instalacao} />
-                            <CostRow label="Frete" value={c.custo_frete} />
-                            <CostRow label="Impostos de Compra" value={c.custo_impostos_compra} />
-                            <CostRow label="Comissão do Parceiro" value={c.custo_comissao} />
-                            <CostRow label="Total Custos Diretos" value={c.preco_total - (c.margem_bruta || 0)} bold />
+                            <CostRow label="Equipamentos (Kit)" value={calculoOnFly?.custo_equipamentos} />
+                            <CostRow label="Instalação / Integração" value={calculoOnFly?.custo_instalacao} />
+                            <CostRow label="Frete" value={calculoOnFly?.custo_frete} />
+                            <CostRow label="Impostos de Compra" value={calculoOnFly?.custo_impostos_compra} />
+                            <CostRow label="Comissão do Parceiro" value={calculoOnFly?.custo_comissao} />
+                            <CostRow label="Total Custos Diretos" value={c.preco_total - (calculoOnFly?.margem_bruta || 0)} bold />
                           </div>
                         </div>
                         
                         <div className="space-y-2">
                           <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Operacionais e Margens (ESOL)</span>
                           <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
-                            <CostRow label="Tributação ESOL" value={c.custo_tributacao_empresa} />
-                            <CostRow label="CAC / Marketing" value={c.custo_marketing} />
-                            <CostRow label="Engenharia / Fixo" value={c.custo_engenharia_fixo} />
-                            <CostRow label="Overhead / Adm" value={c.custo_overhead} />
-                            <CostRow label="Provisão de Garantia" value={c.custo_garantia} />
-                            <CostRow label="Despesas Op. Totais" value={c.custos_operacionais_totais} bold />
+                            <CostRow label="Tributação ESOL" value={calculoOnFly?.custo_tributacao_empresa} />
+                            <CostRow label="CAC / Marketing" value={calculoOnFly?.custo_marketing} />
+                            <CostRow label="Engenharia / Fixo" value={calculoOnFly?.custo_engenharia_fixo} />
+                            <CostRow label="Overhead / Adm" value={calculoOnFly?.custo_overhead} />
+                            <CostRow label="Provisão de Garantia" value={calculoOnFly?.custo_garantia} />
+                            <CostRow label="Despesas Op. Totais" value={calculoOnFly?.custos_operacionais_totais} bold />
                           </div>
                         </div>
                       </div>
@@ -312,12 +343,12 @@ function CotacaoDetail() {
                       <div className="grid md:grid-cols-2 gap-3 pt-2">
                         <div className="bg-slate-50 rounded-xl p-3.5 flex justify-between items-center border">
                           <span className="font-semibold text-slate-700 text-xs">Margem Bruta</span>
-                          <span className="font-bold text-slate-700 text-sm">{BRL(c.margem_bruta || 0)} {c.preco_total > 0 && `(${( ((c.margem_bruta || 0) / c.preco_total) * 100 ).toFixed(1)}%)`}</span>
+                          <span className="font-bold text-slate-700 text-sm">{BRL(calculoOnFly?.margem_bruta || 0)} {c.preco_total > 0 && `(${( ((calculoOnFly?.margem_bruta || 0) / c.preco_total) * 100 ).toFixed(1)}%)`}</span>
                         </div>
                         
-                        <div className={`rounded-xl p-3.5 flex justify-between items-center border ${c.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
+                        <div className={`rounded-xl p-3.5 flex justify-between items-center border ${calculoOnFly?.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
                           <span className="font-bold text-xs uppercase tracking-wide">★ Lucro Líquido Real</span>
-                          <span className="font-black text-sm">{BRL(c.lucro_liquido_real || 0)} {c.lucro_liquido_pct !== null && c.lucro_liquido_pct !== undefined && c.lucro_liquido_pct !== 0 ? `(${(c.lucro_liquido_pct * 100).toFixed(1)}%)` : c.preco_total > 0 ? `(${( ((c.lucro_liquido_real || 0) / c.preco_total) * 100 ).toFixed(1)}%)` : ""}</span>
+                          <span className="font-black text-sm">{BRL(calculoOnFly?.lucro_liquido_real || 0)} {calculoOnFly?.lucro_liquido_pct !== null && calculoOnFly?.lucro_liquido_pct !== undefined && calculoOnFly?.lucro_liquido_pct !== 0 ? `(${(calculoOnFly?.lucro_liquido_pct * 100).toFixed(1)}%)` : c.preco_total > 0 ? `(${( ((calculoOnFly?.lucro_liquido_real || 0) / c.preco_total) * 100 ).toFixed(1)}%)` : ""}</span>
                         </div>
                       </div>
                     </div>
@@ -330,9 +361,9 @@ function CotacaoDetail() {
                         <div className="bg-sun/15 border border-sun/50 rounded-xl p-4 flex justify-between items-center text-navy-deep">
                           <div>
                             <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
-                            <span className="text-[10px] text-navy/70">Taxa individual: {profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? `${profile.comissao_percent}%` : c.preco_total > 0 ? `${(((c.custo_comissao || 0) / c.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
+                            <span className="text-[10px] text-navy/70">Taxa individual: {c.parceiro?.comissao_percent !== null && c.parceiro?.comissao_percent !== undefined ? `${c.parceiro.comissao_percent}%` : c.preco_total > 0 ? `${(((calculoOnFly?.custo_comissao || 0) / c.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
                           </div>
-                          <strong className="text-lg font-black text-navy">{BRL(c.custo_comissao || (c.preco_total * 0.05))}</strong>
+                          <strong className="text-lg font-black text-navy">{BRL(calculoOnFly?.custo_comissao || (c.preco_total * 0.05))}</strong>
                         </div>
                       </div>
                     </div>

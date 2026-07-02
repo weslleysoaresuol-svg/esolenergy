@@ -1,5 +1,5 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PropostaView } from "@/components/PropostaView";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { ChevronLeft, Copy, MessageCircle, Mail, Printer, Trash2, ShoppingCart, 
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { BRL } from "@/lib/proposta-calc";
+import { BRL, calcularProposta } from "@/lib/proposta-calc";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/app/propostas/$id")({ component: PropostaDetail });
@@ -21,20 +21,42 @@ function PropostaDetail() {
   const [parceiro, setParceiro] = useState<any>(null);
   const [clientes, setClientes] = useState<any[]>([]);
   const [openMirror, setOpenMirror] = useState(false);
+  const [params, setParams] = useState<any>(null);
 
   useEffect(() => {
     (async () => {
       const { data: p } = await supabase.from("propostas").select("*").eq("id", id).maybeSingle();
       if (!p) return;
       setProposta(p);
-      const [{ data: prof }, { data: pcs }] = await Promise.all([
-        supabase.from("profiles").select("nome, email, telefone, avatar_url").eq("id", p.parceiro_id).maybeSingle(),
+      const [{ data: prof }, { data: pcs }, { data: pr }] = await Promise.all([
+        supabase.from("profiles").select("nome, email, telefone, avatar_url, comissao_percent").eq("id", p.parceiro_id).maybeSingle(),
         supabase.from("proposta_clientes").select("cliente:cliente_id(*)").eq("proposta_id", id),
+        (supabase.rpc as any)("get_parametros_publicos")
       ]);
       setParceiro(prof);
       setClientes((pcs || []).map((x: any) => x.cliente).filter(Boolean));
+      if (pr) setParams(pr);
     })();
   }, [id]);
+
+  const calculoOnFly = useMemo(() => {
+    if (!proposta || !params) return null;
+    
+    if (proposta.custo_equipamentos !== null && proposta.custo_equipamentos !== undefined) {
+      return proposta;
+    }
+    
+    return calcularProposta({
+      consumo_kwh: proposta.consumo_kwh,
+      tarifa_kwh: proposta.tarifa_kwh || 0.95,
+      estado: proposta.estado,
+      tipo: proposta.tipo_instalacao || "residencial",
+      preco_override: proposta.preco_total,
+      kwp_override: proposta.kwp_sistema,
+      qtd_modulos_override: proposta.qtd_modulos,
+      comissao_percent_override: parceiro?.comissao_percent !== null && parceiro?.comissao_percent !== undefined ? Number(parceiro.comissao_percent) : undefined,
+    }, params);
+  }, [proposta, params, parceiro]);
 
   const linkPublico = proposta && typeof window !== "undefined" ? `${window.location.origin}/proposta/${proposta.codigo_publico}` : "";
 
@@ -168,10 +190,10 @@ function PropostaDetail() {
 
               {role === "admin" ? (
                 <div className="space-y-4 pt-2">
-                  {proposta.fornecedor && (
+                  {(calculoOnFly?.fornecedor || proposta.fornecedor) && (
                     <div className="bg-navy/5 rounded-xl p-3 border text-xs flex justify-between items-center">
                       <span className="font-semibold text-slate-500 uppercase text-[9px]">Distribuidor / Fornecedor</span>
-                      <strong className="text-navy text-sm font-black uppercase">{proposta.fornecedor}</strong>
+                      <strong className="text-navy text-sm font-black uppercase">{calculoOnFly?.fornecedor || proposta.fornecedor}</strong>
                     </div>
                   )}
 
@@ -179,24 +201,24 @@ function PropostaDetail() {
                     <div className="space-y-2">
                       <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Diretos (Compra B2B)</span>
                       <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
-                        <CostRow label="Equipamentos (Kit)" value={proposta.custo_equipamentos} />
-                        <CostRow label="Instalação / Integração" value={proposta.custo_instalacao} />
-                        <CostRow label="Frete" value={proposta.custo_frete} />
-                        <CostRow label="Impostos de Compra" value={proposta.custo_impostos_compra} />
-                        <CostRow label="Comissão do Parceiro" value={proposta.custo_comissao} />
-                        <CostRow label="Total Custos Diretos" value={proposta.preco_total - (proposta.margem_bruta || 0)} bold />
+                        <CostRow label="Equipamentos (Kit)" value={calculoOnFly?.custo_equipamentos} />
+                        <CostRow label="Instalação / Integração" value={calculoOnFly?.custo_instalacao} />
+                        <CostRow label="Frete" value={calculoOnFly?.custo_frete} />
+                        <CostRow label="Impostos de Compra" value={calculoOnFly?.custo_impostos_compra} />
+                        <CostRow label="Comissão do Parceiro" value={calculoOnFly?.custo_comissao} />
+                        <CostRow label="Total Custos Diretos" value={calculoOnFly?.preco_total - (calculoOnFly?.margem_bruta || 0)} bold />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
                       <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Operacionais e Margens (ESOL)</span>
                       <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
-                        <CostRow label="Tributação ESOL" value={proposta.custo_tributacao_empresa} />
-                        <CostRow label="CAC / Marketing" value={proposta.custo_marketing} />
-                        <CostRow label="Engenharia / Fixo" value={proposta.custo_engenharia_fixo} />
-                        <CostRow label="Overhead / Adm" value={proposta.custo_overhead} />
-                        <CostRow label="Provisão de Garantia" value={proposta.custo_garantia} />
-                        <CostRow label="Despesas Op. Totais" value={proposta.custos_operacionais_totais} bold />
+                        <CostRow label="Tributação ESOL" value={calculoOnFly?.custo_tributacao_empresa} />
+                        <CostRow label="CAC / Marketing" value={calculoOnFly?.custo_marketing} />
+                        <CostRow label="Engenharia / Fixo" value={calculoOnFly?.custo_engenharia_fixo} />
+                        <CostRow label="Overhead / Adm" value={calculoOnFly?.custo_overhead} />
+                        <CostRow label="Provisão de Garantia" value={calculoOnFly?.custo_garantia} />
+                        <CostRow label="Despesas Op. Totais" value={calculoOnFly?.custos_operacionais_totais} bold />
                       </div>
                     </div>
                   </div>
@@ -204,12 +226,12 @@ function PropostaDetail() {
                   <div className="grid md:grid-cols-2 gap-3 pt-2">
                     <div className="bg-slate-50 rounded-xl p-3.5 flex justify-between items-center border">
                       <span className="font-semibold text-slate-700 text-xs">Margem Bruta</span>
-                      <span className="font-bold text-slate-700 text-sm">{BRL(proposta.margem_bruta || 0)} {proposta.preco_total > 0 && `(${( ((proposta.margem_bruta || 0) / proposta.preco_total) * 100 ).toFixed(1)}%)`}</span>
+                      <span className="font-bold text-slate-700 text-sm">{BRL(calculoOnFly?.margem_bruta || 0)} {proposta.preco_total > 0 && `(${( ((calculoOnFly?.margem_bruta || 0) / proposta.preco_total) * 100 ).toFixed(1)}%)`}</span>
                     </div>
                     
-                    <div className={`rounded-xl p-3.5 flex justify-between items-center border ${proposta.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
+                    <div className={`rounded-xl p-3.5 flex justify-between items-center border ${calculoOnFly?.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
                       <span className="font-bold text-xs uppercase tracking-wide">★ Lucro Líquido Real</span>
-                      <span className="font-black text-sm">{BRL(proposta.lucro_liquido_real || 0)} {proposta.lucro_liquido_pct !== null && proposta.lucro_liquido_pct !== undefined && proposta.lucro_liquido_pct !== 0 ? `(${(proposta.lucro_liquido_pct * 100).toFixed(1)}%)` : proposta.preco_total > 0 ? `(${( ((proposta.lucro_liquido_real || 0) / proposta.preco_total) * 100 ).toFixed(1)}%)` : ""}</span>
+                      <span className="font-black text-sm">{BRL(calculoOnFly?.lucro_liquido_real || 0)} {calculoOnFly?.lucro_liquido_pct !== null && calculoOnFly?.lucro_liquido_pct !== undefined && calculoOnFly?.lucro_liquido_pct !== 0 ? `(${(calculoOnFly?.lucro_liquido_pct * 100).toFixed(1)}%)` : proposta.preco_total > 0 ? `(${( ((calculoOnFly?.lucro_liquido_real || 0) / proposta.preco_total) * 100 ).toFixed(1)}%)` : ""}</span>
                     </div>
                   </div>
                 </div>
@@ -223,9 +245,9 @@ function PropostaDetail() {
                     <div className="bg-sun/15 border border-sun/50 rounded-xl p-4 flex justify-between items-center text-navy-deep">
                       <div>
                         <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
-                        <span className="text-[10px] text-navy/70">Taxa individual: {profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? `${profile.comissao_percent}%` : proposta.preco_total > 0 ? `${(((proposta.custo_comissao || 0) / proposta.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
+                        <span className="text-[10px] text-navy/70">Taxa individual: {parceiro?.comissao_percent !== null && parceiro?.comissao_percent !== undefined ? `${parceiro.comissao_percent}%` : proposta.preco_total > 0 ? `${(((calculoOnFly?.custo_comissao || 0) / proposta.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
                       </div>
-                      <strong className="text-lg font-black text-navy">{BRL(proposta.custo_comissao || (proposta.preco_total * 0.05))}</strong>
+                      <strong className="text-lg font-black text-navy">{BRL(calculoOnFly?.custo_comissao || (proposta.preco_total * 0.05))}</strong>
                     </div>
                   </div>
                 </div>
