@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, FileText, Eye, Zap, Sun, Sparkles } from "lucide-react";
-import { BRL } from "@/lib/proposta-calc";
+import { BRL, calcularProposta } from "@/lib/proposta-calc";
 import { toast } from "sonner";
 import { KITS_FALLBACK } from "@/lib/kits-fallback";
 

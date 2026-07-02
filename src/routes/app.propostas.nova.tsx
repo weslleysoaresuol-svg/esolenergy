@@ -54,6 +54,7 @@ function NovaProposta() {
   const [selectedCotacaoKitId, setSelectedCotacaoKitId] = useState<string>("");
   const [usuarioAlterouKit, setUsuarioAlterouKit] = useState(false);
   const [selectedFinanceirasIds, setSelectedFinanceirasIds] = useState<string[]>([]);
+  const selectedKit = useMemo(() => kits.find((k) => k.id === selectedKitId), [kits, selectedKitId]);
 
   const [perfilCliente, setPerfilCliente] = useState<"completo" | "cotacao" | "financiamento">("completo");
 
@@ -272,7 +273,6 @@ function NovaProposta() {
   const calculo = useMemo(() => {
     if (!params) return null;
     
-    const selectedKit = kits.find((k) => k.id === selectedKitId);
     const kitOverrides = selectedKit ? {
       preco_override: Number(selectedKit.preco),
       kwp_override: Number(selectedKit.potencia_kwp),
@@ -294,7 +294,7 @@ function NovaProposta() {
     }
     
     return { ...base, ...overrides };
-  }, [params, consumo, tarifa, estado, tipo, overrides, selectedKitId, kits, tipoConexao, profile]);
+  }, [params, consumo, tarifa, estado, tipo, overrides, selectedKit, tipoConexao, profile]);
 
   const setOverride = (k: string, v: number) => setOverrides((o) => ({ ...o, [k]: v }));
 
@@ -308,7 +308,6 @@ function NovaProposta() {
     try {
       const validadeDias = Number(params.validade_proposta_dias || 15);
       
-      const selectedKit = kits.find((k) => k.id === selectedKitId);
       let finalObservacoes = observacoes;
       if (selectedKit) {
         finalObservacoes = `Kit Selecionado: ${selectedKit.nome}\n` +
@@ -352,7 +351,6 @@ function NovaProposta() {
           financingTexts.join("\n") + `\n\n` + condicoes;
       }
 
-      const selectedKit = kits.find((k) => k.id === selectedKitId);
       const payload = {
         parceiro_id: user.id,
         titulo: titulo || `Proposta solar`,
