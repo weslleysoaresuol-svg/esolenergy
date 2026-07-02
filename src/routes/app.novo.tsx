@@ -151,7 +151,7 @@ function NovoCliente() {
         const matchingKits = validKits.filter((k: any) => consumoKwh >= Number(k.consumo_kwh_min) && consumoKwh <= Number(k.consumo_kwh_max));
         const kitRecomendado = (matchingKits.length > 0 ? matchingKits : validKits)
           .sort((a: any, b: any) => Number(a.preco) - Number(b.preco))[0];
-        const precoFinal = kitRecomendado ? Number(kitRecomendado.preco) : calculo.preco_total;
+        const kitCusto = kitRecomendado ? Number(kitRecomendado.preco) : undefined;
         const kwpFinal = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : calculo.kwp_sistema;
         const qtdModulosFinal = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : calculo.qtd_modulos;
         const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -163,11 +163,13 @@ function NovoCliente() {
           tarifa_kwh: tarifaKwh,
           estado: f.estado || "SP",
           tipo: f.imovel_tipo || "residencial",
-          preco_override: precoFinal,
+          custo_equipamentos_override: kitCusto,
           kwp_override: kwpFinal,
           qtd_modulos_override: qtdModulosFinal,
           comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
         }, paramsComerciais);
+
+        const precoFinal = finalCalculo.preco_total;
 
         const expDate = new Date();
         expDate.setDate(expDate.getDate() + (paramsComerciais.validade_proposta_dias || 15));

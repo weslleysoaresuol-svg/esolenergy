@@ -1,2 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /app/
+Disallow: /auth/
+Disallow: /convite/
+Disallow: /cotacao/
+Disallow: /financiamento/
+Disallow: /proposta/
+
+Sitemap: https://www.esolenergy.com.br/sitemap.xml
+

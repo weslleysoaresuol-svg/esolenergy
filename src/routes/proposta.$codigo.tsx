@@ -5,7 +5,12 @@ import { PropostaView } from "@/components/PropostaView";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/proposta/$codigo")({
-  head: () => ({ meta: [{ title: "Sua proposta de energia solar — ESOL Energy" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sua proposta de energia solar — ESOL Energy" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: PropostaPublica,
 });
 

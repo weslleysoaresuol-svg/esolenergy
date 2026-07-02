@@ -9,7 +9,12 @@ import { BRL } from "@/lib/proposta-calc";
 import { obterComponentesKit } from "@/lib/kits-fallback";
 
 export const Route = createFileRoute("/cotacao/$codigo")({
-  head: () => ({ meta: [{ title: "Sua cotação — ESOL Energy" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sua cotação — ESOL Energy" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: CotacaoPublica,
 });
 

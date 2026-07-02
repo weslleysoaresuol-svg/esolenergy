@@ -87,6 +87,12 @@ function NovaProposta() {
   const [scriptEstado, setScriptEstado] = useState("");
 
   useEffect(() => {
+    if (modo === "cotacao" || modo === "financiamento" || modo === "completo") {
+      setPerfilCliente(modo as any);
+    }
+  }, [modo]);
+
+  useEffect(() => {
     (async () => {
       // 1. Parâmetros Comerciais
       try {
@@ -254,6 +260,16 @@ function NovaProposta() {
     });
   }, [clientes, selecionados, clienteIdPreSel]);
 
+  const getPrecoVendaKit = (kit: any) => {
+    if (!params) return Number(kit.preco);
+    const comissao_pct = profile?.comissao_percent !== null && profile?.comissao_percent !== undefined
+      ? Number(profile.comissao_percent) / 100
+      : params.custo_comissao_pct;
+    const impostos_compra_pct = params.custo_impostos_compra_pct ?? params.custo_impostos_pct ?? 0.03;
+    const divisor = 1 - (params.custo_instalacao_pct + params.custo_frete_pct + impostos_compra_pct + comissao_pct + params.margem_alvo_pct);
+    return Number(kit.preco) / (divisor > 0.1 ? divisor : params.custo_equipamentos_pct);
+  };
+
   // Sincroniza o consumo com base nas entradas do script de vendas (cotacao rapida ou financiamento)
   useEffect(() => {
     const tarifaKwh = params?.tarifa_kwh_default || 0.95;
@@ -274,7 +290,7 @@ function NovaProposta() {
     if (!params) return null;
     
     const kitOverrides = selectedKit ? {
-      preco_override: Number(selectedKit.preco),
+      custo_equipamentos_override: Number(selectedKit.preco),
       kwp_override: Number(selectedKit.potencia_kwp),
       qtd_modulos_override: Number(selectedKit.quantidade_modulos),
     } : {};
@@ -521,7 +537,7 @@ function NovaProposta() {
           : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0]
       );
 
-      const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResultDummy.preco_total;
+      const kitCusto = kitRecomendado ? Number(kitRecomendado.preco) : undefined;
       const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResultDummy.kwp_sistema;
       const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResultDummy.qtd_modulos;
       
@@ -531,11 +547,13 @@ function NovaProposta() {
         estado: scriptEstado.trim().toUpperCase(),
         tipo,
         ligacao: tipoConexao === "trifasico" ? "tri" : "mono",
-        preco_override: precoTotal,
+        custo_equipamentos_override: kitCusto,
         kwp_override: kwp,
         qtd_modulos_override: qtdModulos,
         comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
       }, params);
+
+      const precoTotal = finalCalculo.preco_total;
 
       // Juros e condições
       const tagDoc = perfilCliente === "cotacao" 
@@ -673,7 +691,7 @@ function NovaProposta() {
         ? adequados.sort((a, b) => a.preco - b.preco)[0]
         : [...loadedKits].sort((a, b) => b.potencia_kwp - a.potencia_kwp)[0];
 
-      const precoTotal = kitRecomendado ? Number(kitRecomendado.preco) : baseResultDummy.preco_total;
+      const kitCusto = kitRecomendado ? Number(kitRecomendado.preco) : undefined;
       const kwp = kitRecomendado ? Number(kitRecomendado.potencia_kwp) : baseResultDummy.kwp_sistema;
       const qtdModulos = kitRecomendado ? Number(kitRecomendado.quantidade_modulos) : baseResultDummy.qtd_modulos;
 
@@ -683,11 +701,13 @@ function NovaProposta() {
         estado: scriptEstado.trim().toUpperCase(),
         tipo,
         ligacao: tipoConexao === "trifasico" ? "tri" : "mono",
-        preco_override: precoTotal,
+        custo_equipamentos_override: kitCusto,
         kwp_override: kwp,
         qtd_modulos_override: qtdModulos,
         comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
       }, params);
+
+      const precoTotal = finalCalculo.preco_total;
 
       // 3. Monta condições de pagamento
       const tagDoc = "[DOC:FIN_AGUARDANDO]";
@@ -853,7 +873,7 @@ function NovaProposta() {
                         {isRecommended && <span className="bg-sun text-navy text-[8px] font-extrabold px-1 rounded">Recomendado</span>}
                       </div>
                       <div className="text-[10px] text-muted-foreground mt-0.5">Potência: <strong>{kit.potencia_kwp} kWp</strong> · {kit.quantidade_modulos}x painéis</div>
-                      <div className="text-xs font-extrabold text-emerald-700 mt-1">{BRL(Number(kit.preco))}</div>
+                      <div className="text-xs font-extrabold text-emerald-700 mt-1">{BRL(getPrecoVendaKit(kit))}</div>
                     </div>
                     {kit.imagem_kit_url && (
                       <img src={kit.imagem_kit_url} className="size-10 rounded object-cover border" alt="Kit" />
@@ -1213,7 +1233,7 @@ function NovaProposta() {
                       Potência: <strong>{kit.potencia_kwp} kWp</strong> · Módulos: <strong>{kit.quantidade_modulos}x {kit.fabricante_modulos}</strong> · Inversor: <strong>{kit.inversor}</strong>
                     </div>
                     {kit.faixa && <div className="text-[10px] text-ink/40 font-bold uppercase mt-1">Faixa: {kit.faixa.replace("_", " ")}</div>}
-                    <div className="text-sm font-bold text-navy mt-2">{BRL(Number(kit.preco))}</div>
+                    <div className="text-sm font-bold text-navy mt-2">{BRL(getPrecoVendaKit(kit))}</div>
                   </div>
                   {kit.imagem_kit_url && (
                     <img src={kit.imagem_kit_url} className="size-14 rounded-lg object-cover border" alt="Componentes do kit" />

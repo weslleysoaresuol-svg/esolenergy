@@ -8,7 +8,12 @@ import { Sun, MessageCircle, FileCheck, Clock, ShieldCheck, CheckCircle2, XCircl
 import { BRL } from "@/lib/proposta-calc";
 
 export const Route = createFileRoute("/financiamento/$codigo")({
-  head: () => ({ meta: [{ title: "Status do seu financiamento — ESOL Energy" }] }),
+  head: () => ({
+    meta: [
+      { title: "Status do seu financiamento — ESOL Energy" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: FinPublica,
 });
 

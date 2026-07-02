@@ -235,8 +235,18 @@ function CotacoesList() {
     );
   };
 
+  const getPrecoVendaKit = (kit: any) => {
+    if (!params) return Number(kit.preco);
+    const comissao_pct = profile?.comissao_percent !== null && profile?.comissao_percent !== undefined
+      ? Number(profile.comissao_percent) / 100
+      : params.custo_comissao_pct;
+    const impostos_compra_pct = params.custo_impostos_compra_pct ?? params.custo_impostos_pct ?? 0.03;
+    const divisor = 1 - (params.custo_instalacao_pct + params.custo_frete_pct + impostos_compra_pct + comissao_pct + params.margem_alvo_pct);
+    return Number(kit.preco) / (divisor > 0.1 ? divisor : params.custo_equipamentos_pct);
+  };
+
   const kitSel = kits.find((k) => k.id === novo.kit_id);
-  const total = kitSel ? Number(kitSel.preco) * novo.quantidade : 0;
+  const total = kitSel ? getPrecoVendaKit(kitSel) * novo.quantidade : 0;
 
   const qCalculo = useMemo(() => {
     if (!kitSel || !params) return null;
@@ -254,7 +264,7 @@ function CotacoesList() {
       tarifa_kwh: params.tarifa_kwh_default || 0.95,
       estado: clientEstado,
       tipo: "residencial",
-      preco_override: total,
+      custo_equipamentos_override: Number(kitSel.preco) * novo.quantidade,
       kwp_override: kwp,
       qtd_modulos_override: modulos,
       comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
@@ -572,7 +582,7 @@ function CotacoesList() {
                       <div>
                         <strong className="block font-bold">Gerador Recomendado Auto:</strong>
                         <span className="font-semibold text-navy">{kitRecomendado.nome}</span>
-                        <span className="block mt-0.5 text-emerald-700 font-medium">Preço B2B: {BRL(Number(kitRecomendado.preco))} | Consumo Ideal: {kitRecomendado.consumo_kwh_min} a {kitRecomendado.consumo_kwh_max} kWh</span>
+                        <span className="block mt-0.5 text-emerald-700 font-medium">Preço de Venda: {BRL(getPrecoVendaKit(kitRecomendado))} | Consumo Ideal: {kitRecomendado.consumo_kwh_min} a {kitRecomendado.consumo_kwh_max} kWh</span>
                       </div>
                     </div>
                   )}
@@ -585,13 +595,13 @@ function CotacoesList() {
               <Select value={novo.kit_id} onValueChange={(v) => setNovo({ ...novo, kit_id: v })}>
                 <SelectTrigger className="w-full">
                   <span className="truncate block text-left">
-                    {kitSel ? `${kitSel.nome} — ${BRL(Number(kitSel.preco))}` : "Escolha um kit solar"}
+                    {kitSel ? `${kitSel.nome} — ${BRL(getPrecoVendaKit(kitSel))}` : "Escolha um kit solar"}
                   </span>
                 </SelectTrigger>
                 <SelectContent className="max-h-[280px] overflow-y-auto w-full">
                   {kits.map((k) => (
                     <SelectItem key={k.id} value={k.id} className="text-xs">
-                      <span className="block truncate max-w-[380px]">{k.nome} — {BRL(Number(k.preco))}</span>
+                      <span className="block truncate max-w-[380px]">{k.nome} — {BRL(getPrecoVendaKit(k))}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>

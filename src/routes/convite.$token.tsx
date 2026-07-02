@@ -10,7 +10,12 @@ import { CheckCircle2, Clock, FileSignature, UserPlus } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
 export const Route = createFileRoute("/convite/$token")({
-  head: () => ({ meta: [{ title: "Convite de parceiro — ESOL Energy" }] }),
+  head: () => ({
+    meta: [
+      { title: "Convite de parceiro — ESOL Energy" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: InvitePage,
 });
 

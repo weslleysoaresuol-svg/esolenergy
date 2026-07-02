@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://www.esolenergy.com.br/" }],
   }),
   component: Landing,
 });
@@ -471,7 +471,7 @@ function Simulator() {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           <div>
             <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">
-              Simulador inteligente
+              Simulador de Energia Solar
             </span>
             <h2 className="mt-3 font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-navy leading-tight text-balance">
               Veja sua economia em <span className="text-sun-deep">30 segundos</span>.
@@ -833,6 +833,8 @@ function FAQ() {
     { q: "Quanto custa um sistema solar residencial?", a: "Sistemas residenciais começam em torno de R$ 14 mil, com parcelas em até 84x. O valor exato depende do consumo, telhado e região — nosso engenheiro envia proposta gratuita." },
     { q: "Em quanto tempo recupero o investimento?", a: "O payback médio é de 3 a 5 anos. Após esse período, são mais 20 anos de energia praticamente gratuita." },
     { q: "Funciona em dias nublados e à noite?", a: "Sim. O sistema gera mesmo com nuvens (em menor escala) e, à noite, você usa o crédito gerado durante o dia via compensação na rede." },
+    { q: "A energia solar vale a pena em 2026 com a nova lei 14.300?", a: "Sim! Mesmo com a taxação progressiva do Fio B estabelecida pela Lei 14.300/2022, a energia solar residencial e comercial continua sendo um dos melhores investimentos disponíveis, reduzindo sua conta em até 90% a 95%. O retorno do investimento (payback) ocorre em média entre 3 e 5 anos, gerando mais 20 anos de economia livre. Nosso simulador calcula a estimativa considerando as regras tarifárias atualizadas." },
+    { q: "É possível instalar um sistema solar com baterias (híbrido)?", a: "Com certeza! Os sistemas solares híbridos com baterias de lítio são uma grande tendência para quem deseja independência e garantia de energia mesmo em apagões da rede elétrica. A ESOL Energy oferece projetos personalizados off-grid e híbridos de alta tecnologia sob consulta." },
     { q: "Qual a garantia dos equipamentos?", a: "Painéis com 25 anos de garantia de geração, inversores com 10 anos e instalação com 5 anos. Tudo em contrato." },
     { q: "Vocês cuidam da homologação na concessionária?", a: "Sim. Cuidamos de 100% do processo: projeto, ART, protocolos e vistoria. Você só assina." },
   ];

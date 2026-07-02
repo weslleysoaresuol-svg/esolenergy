@@ -140,6 +140,7 @@ export interface CalculoInput {
   kwp_override?: number;
   qtd_modulos_override?: number;
   comissao_percent_override?: number;
+  custo_equipamentos_override?: number;
 }
 
 export interface CalculoResultado {
@@ -262,10 +263,24 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   }
   const economia_ajustada_25_anos = +acumuladoAjustado.toFixed(2);
 
+  const comissao_pct = input.comissao_percent_override !== undefined && input.comissao_percent_override !== null
+    ? input.comissao_percent_override / 100
+    : p.custo_comissao_pct;
+  const impostos_compra_pct = p.custo_impostos_compra_pct ?? p.custo_impostos_pct ?? 0.03;
+
   const preco_por_wp = input.preco_override 
     ? (kwp_sistema > 0 ? +(input.preco_override / (kwp_sistema * 1000)).toFixed(2) : 0)
     : precoPorWp(p, input.tipo, kwp_sistema);
-  const preco_total = input.preco_override ?? +(kwp_sistema * 1000 * preco_por_wp).toFixed(2);
+
+  let preco_total = input.preco_override;
+  if (preco_total === undefined || preco_total === null) {
+    if (input.custo_equipamentos_override !== undefined && input.custo_equipamentos_override !== null) {
+      const divisor = 1 - (p.custo_instalacao_pct + p.custo_frete_pct + impostos_compra_pct + comissao_pct + p.margem_alvo_pct);
+      preco_total = +(input.custo_equipamentos_override / (divisor > 0.1 ? divisor : p.custo_equipamentos_pct)).toFixed(2);
+    } else {
+      preco_total = +(kwp_sistema * 1000 * preco_por_wp).toFixed(2);
+    }
+  }
 
   const payback_meses = economia_mensal > 0 ? +(preco_total / economia_mensal).toFixed(1) : 0;
   const payback_ajustado_meses = economia_ajustada_mensal > 0
@@ -285,12 +300,11 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   // =====================================================================
   // CUSTOS — Análise admin (Margem Bruta)
   // =====================================================================
-  const custo_equipamentos = +(preco_total * p.custo_equipamentos_pct).toFixed(2);
+  const custo_equipamentos = input.custo_equipamentos_override ?? +(preco_total * p.custo_equipamentos_pct).toFixed(2);
   const custo_instalacao = +(preco_total * p.custo_instalacao_pct).toFixed(2);
   const custo_frete = +(preco_total * p.custo_frete_pct).toFixed(2);
 
   // Impostos de compra: usa novo campo, cai para o legado se não existir
-  const impostos_compra_pct = p.custo_impostos_compra_pct ?? p.custo_impostos_pct ?? 0.03;
   const custo_impostos_compra = +(preco_total * impostos_compra_pct).toFixed(2);
   const comissao_pct = input.comissao_percent_override !== undefined && input.comissao_percent_override !== null
     ? input.comissao_percent_override / 100
