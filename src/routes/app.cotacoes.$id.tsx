@@ -421,9 +421,9 @@ function Linha({ label, v }: { label: string; v: string }) {
   return <div className="flex justify-between gap-3 border-b border-dashed pb-1"><span className="text-muted-foreground">{label}</span><span className="text-navy font-medium text-right">{v}</span></div>;
 }
 
-const CostRow = ({ label, value, bold }: { label: string; value: number | null; bold?: boolean }) => (
+const CostRow = ({ label, value, bold }: { label: string; value: number | null | undefined; bold?: boolean }) => (
   <div className={`flex justify-between items-center py-1.5 border-b border-slate-100 last:border-b-0 ${bold ? "font-bold text-navy pt-2" : "text-slate-600 text-[11px]"}`}>
     <span>{label}</span>
-    <span>{value !== null ? BRL(value) : "—"}</span>
+    <span>{typeof value === "number" && !isNaN(value) ? BRL(value) : "—"}</span>
   </div>
 );

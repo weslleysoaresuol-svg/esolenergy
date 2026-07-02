@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, FileText, Eye, Check, X, Clock } from "lucide-react";
-import { BRL } from "@/lib/proposta-calc";
+import { BRL, calcularProposta } from "@/lib/proposta-calc";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/app/propostas/")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -35,19 +36,115 @@ function PropostasList() {
   const [parceiros, setParceiros] = useState<any[]>([]);
   const { modo } = Route.useSearch();
 
+  const [params, setParams] = useState<any>(null);
+
   useEffect(() => {
     (async () => {
-      const [{ data: ps }, { data: profs }] = await Promise.all([
+      const [{ data: ps }, { data: profs }, { data: pr }] = await Promise.all([
         supabase
           .from("propostas")
-          .select("*, parceiro:parceiro_id(nome, id), proposta_clientes(cliente:cliente_id(nome))")
+          .select("*, parceiro:parceiro_id(nome, id, comissao_percent), proposta_clientes(cliente:cliente_id(nome, estado, consumo_kwh, valor_fatura))")
           .order("created_at", { ascending: false }),
         supabase.from("profiles").select("id, nome").order("nome"),
+        (supabase.rpc as any)("get_parametros_publicos"),
       ]);
       setPropostas(ps || []);
       setParceiros(profs || []);
+      if (pr) setParams(pr);
     })();
   }, [modo]);
+
+  const getCalculoRow = (p: any) => {
+    if (p.custo_equipamentos !== null && p.custo_equipamentos !== undefined) {
+      return p;
+    }
+    if (!params) return null;
+
+    const firstClient = p.proposta_clientes?.[0]?.cliente;
+    const clientConsumo = firstClient ? Number(firstClient.consumo_kwh || (firstClient.valor_fatura ? Math.round(Number(firstClient.valor_fatura) / (params.tarifa_kwh_default || 0.95)) : 500)) : 500;
+    const clientEstado = firstClient?.estado || "SP";
+
+    return calcularProposta({
+      consumo_kwh: clientConsumo,
+      tarifa_kwh: params.tarifa_kwh_default || 0.95,
+      estado: clientEstado,
+      tipo: p.tipo_instalacao || "residencial",
+      preco_override: p.preco_total,
+      kwp_override: p.kwp_sistema,
+      qtd_modulos_override: p.qtd_modulos,
+      comissao_percent_override: p.parceiro?.comissao_percent !== null && p.parceiro?.comissao_percent !== undefined ? Number(p.parceiro.comissao_percent) : undefined,
+    }, params);
+  };
+
+  const renderEspelhoDialogContent = (p: any) => {
+    const calc = getCalculoRow(p);
+    if (!calc) return <div className="p-4 text-center text-xs text-muted-foreground">Carregando parâmetros comerciais...</div>;
+    
+    return role === "admin" ? (
+      <div className="space-y-4 pt-2 text-left">
+        {(calc.fornecedor || p.fornecedor) && (
+          <div className="bg-navy/5 rounded-xl p-3 border text-xs flex justify-between items-center">
+            <span className="font-semibold text-slate-500 uppercase text-[9px]">Distribuidor / Fornecedor</span>
+            <strong className="text-navy text-sm font-black uppercase">{calc.fornecedor || p.fornecedor}</strong>
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Diretos (Compra B2B)</span>
+            <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
+              <CostRow label="Equipamentos (Kit)" value={calc.custo_equipamentos} />
+              <CostRow label="Instalação / Integração" value={calc.custo_instalacao} />
+              <CostRow label="Frete" value={calc.custo_frete} />
+              <CostRow label="Impostos de Compra" value={calc.custo_impostos_compra} />
+              <CostRow label="Comissão do Parceiro" value={calc.custo_comissao} />
+              <CostRow label="Total Custos Diretos" value={p.preco_total - (calc.margem_bruta || 0)} bold />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Operacionais e Margens (ESOL)</span>
+            <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
+              <CostRow label="Tributação ESOL" value={calc.custo_tributacao_empresa} />
+              <CostRow label="CAC / Marketing" value={calc.custo_marketing} />
+              <CostRow label="Engenharia / Fixo" value={calc.custo_engenharia_fixo} />
+              <CostRow label="Overhead / Adm" value={calc.custo_overhead} />
+              <CostRow label="Provisão de Garantia" value={calc.custo_garantia} />
+              <CostRow label="Despesas Op. Totais" value={calc.custos_operacionais_totais} bold />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-3 pt-2">
+          <div className="bg-slate-50 rounded-xl p-3.5 flex justify-between items-center border">
+            <span className="font-semibold text-slate-700 text-xs">Margem Bruta</span>
+            <span className="font-bold text-slate-700 text-sm">{BRL(calc.margem_bruta || 0)} {p.preco_total > 0 && `(${( ((calc.margem_bruta || 0) / p.preco_total) * 100 ).toFixed(1)}%)`}</span>
+          </div>
+          
+          <div className={`rounded-xl p-3.5 flex justify-between items-center border ${calc.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
+            <span className="font-bold text-xs uppercase tracking-wide">★ Lucro Líquido Real</span>
+            <span className="font-black text-sm">{BRL(calc.lucro_liquido_real || 0)} {calc.lucro_liquido_pct !== null && calc.lucro_liquido_pct !== undefined && calc.lucro_liquido_pct !== 0 ? `(${(calc.lucro_liquido_pct * 100).toFixed(1)}%)` : p.preco_total > 0 ? `(${( ((calc.lucro_liquido_real || 0) / p.preco_total) * 100 ).toFixed(1)}%)` : ""}</span>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div className="space-y-4 pt-2 text-left">
+        <div className="bg-slate-50 rounded-xl p-5 text-sm space-y-3">
+          <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground font-semibold">Especificações do Kit</span><span className="font-extrabold text-navy">{p.qtd_modulos} módulos × {p.potencia_modulo_w}W ({p.kwp_sistema} kWp)</span></div>
+          {p.area_necessaria_m2 && <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Área necessária</span><span className="font-semibold">{p.area_necessaria_m2} m²</span></div>}
+          <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Investimento da Venda</span><span className="font-black text-navy">{BRL(p.preco_total)}</span></div>
+          
+          <div className="bg-sun/15 border border-sun/50 rounded-xl p-4 flex justify-between items-center text-navy-deep">
+            <div>
+              <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
+              <span className="text-[10px] text-navy/70">Taxa individual: {p.parceiro?.comissao_percent !== null && p.parceiro?.comissao_percent !== undefined ? `${p.parceiro.comissao_percent}%` : p.preco_total > 0 ? `${(((calc.custo_comissao || 0) / p.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
+            </div>
+            <strong className="text-lg font-black text-navy">{BRL(calc.custo_comissao || (p.preco_total * 0.05))}</strong>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const now = new Date();
   
@@ -157,6 +254,7 @@ function PropostasList() {
                 <th className="p-3">Valor</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Validade</th>
+                <th className="p-3 text-center">Espelho</th>
                 <th className="p-3">Data</th>
               </tr>
             </thead>
@@ -174,6 +272,30 @@ function PropostasList() {
                     <td className="p-3 font-semibold">{BRL(Number(p.preco_total))}</td>
                     <td className="p-3"><Badge className={s.color}>{s.label}</Badge></td>
                     <td className="p-3">{getValidade(p)}</td>
+                    <td className="p-3 text-center">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="icon" variant="ghost" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg">
+                            <FileText className="w-4 h-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl overflow-y-auto max-h-[85vh]">
+                          <DialogHeader>
+                            <DialogTitle className="text-navy text-base uppercase tracking-wider font-extrabold flex items-center gap-2">
+                              <FileText className="text-sun w-5 h-5" /> 
+                              {role === "admin" ? "Espelho de Operação (Administrador)" : "Seu Espelho de Comissão (Parceiro)"}
+                            </DialogTitle>
+                            <DialogDescription className="text-xs text-muted-foreground">
+                              {role === "admin" 
+                                ? "Detalhamento completo de custos diretos, indiretos e margens da ESOL Energy."
+                                : "Informações do produto, valor total de venda e sua comissão estimada."}
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          {renderEspelhoDialogContent(p)}
+                        </DialogContent>
+                      </Dialog>
+                    </td>
                     <td className="p-3 text-xs text-muted-foreground">{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
                   </tr>
                 );
@@ -185,3 +307,10 @@ function PropostasList() {
     </div>
   );
 }
+
+const CostRow = ({ label, value, bold }: { label: string; value: number | null | undefined; bold?: boolean }) => (
+  <div className={`flex justify-between items-center py-1.5 border-b border-slate-200 last:border-b-0 ${bold ? "font-bold text-navy pt-2 text-xs" : "text-slate-600 text-[11px]"}`}>
+    <span>{label}</span>
+    <span>{typeof value === "number" && !isNaN(value) ? BRL(value) : "—"}</span>
+  </div>
+);
