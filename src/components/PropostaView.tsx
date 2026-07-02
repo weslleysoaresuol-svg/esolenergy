@@ -39,7 +39,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await supabase.from("financeiras_solar").select("*").eq("ativo", true);
+        const { data } = await (supabase as any).from("financeiras_solar").select("*").eq("ativo", true);
         if (data && data.length > 0) {
           setBancos(data);
         }

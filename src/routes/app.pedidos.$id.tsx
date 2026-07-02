@@ -108,7 +108,7 @@ function PedidoDetail() {
         }
         
         if (cStatus) {
-          await supabase.from("clientes").update({ 
+          await (supabase as any).from("clientes").update({ 
             status: cStatus,
             ...(motivoPerda ? { motivo_perda: motivoPerda } : {}),
             ...(fechadoEm ? { fechado_em: fechadoEm } : {}),

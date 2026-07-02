@@ -129,7 +129,7 @@ function Parametros() {
   const loadFinanceiras = async () => {
     setLoadingFin(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("financeiras_solar")
         .select("*")
         .order("nome");
@@ -176,7 +176,7 @@ function Parametros() {
     try {
       for (const fin of financeiras) {
         if (fin.id) {
-          const { error } = await supabase
+          const { error } = await (supabase as any)
             .from("financeiras_solar")
             .update({
               nome: fin.nome,
@@ -189,7 +189,7 @@ function Parametros() {
             .eq("id", fin.id);
           if (error) throw error;
         } else {
-          const { error } = await supabase
+          const { error } = await (supabase as any)
             .from("financeiras_solar")
             .insert({
               nome: fin.nome,
@@ -232,7 +232,7 @@ function Parametros() {
     }
     if (!confirm("Tem certeza que deseja remover este banco de financiamento?")) return;
     try {
-      const { error } = await supabase.from("financeiras_solar").delete().eq("id", id);
+      const { error } = await (supabase as any).from("financeiras_solar").delete().eq("id", id);
       if (error) throw error;
       toast.success("Banco excluído com sucesso!");
       loadFinanceiras();
