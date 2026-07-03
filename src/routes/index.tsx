@@ -15,6 +15,8 @@ const FAQ_ITEMS = [
   { q: "Quanto custa um sistema solar residencial?", a: "Sistemas residenciais começam em torno de R$ 14 mil, com parcelas em até 84x. O valor exato depende do consumo, telhado e região — nosso engenheiro envia proposta gratuita." },
   { q: "Em quanto tempo recupero o investimento?", a: "O payback médio é de 3 a 5 anos. Após esse período, são mais 20 anos de energia praticamente gratuita." },
   { q: "Funciona em dias nublados e à noite?", a: "Sim. O sistema gera mesmo com nuvens (em menor escala) e, à noite, você usa o crédito gerado durante o dia via compensação na rede." },
+  { q: "A energia solar vale a pena em 2026 com a nova lei 14.300?", a: "Sim. Mesmo com a taxação progressiva do Fio B estabelecida pela Lei 14.300/2022, a energia solar residencial e comercial continua sendo um dos melhores investimentos disponíveis, reduzindo sua conta em até 90% a 95%. O retorno do investimento ocorre em média entre 3 e 5 anos, gerando mais 20 anos de economia livre." },
+  { q: "É possível instalar um sistema solar com baterias?", a: "Sim. Sistemas solares híbridos com baterias de lítio são indicados para quem deseja mais independência e garantia de energia em apagões. A ESOL Energy desenvolve projetos personalizados sob consulta." },
   { q: "Qual a garantia dos equipamentos?", a: "Painéis com 25 anos de garantia de geração, inversores com 10 anos e instalação com 5 anos. Tudo em contrato." },
   { q: "Vocês cuidam da homologação na concessionária?", a: "Sim. Cuidamos de 100% do processo: projeto, ART, protocolos e vistoria. Você só assina." },
 ];
@@ -880,19 +882,7 @@ function Process() {
 
 /* ============================ FAQ ============================ */
 function FAQ() {
-<<<<<<< HEAD
-  const qs = [
-    { q: "Quanto custa um sistema solar residencial?", a: "Sistemas residenciais começam em torno de R$ 14 mil, com parcelas em até 84x. O valor exato depende do consumo, telhado e região — nosso engenheiro envia proposta gratuita." },
-    { q: "Em quanto tempo recupero o investimento?", a: "O payback médio é de 3 a 5 anos. Após esse período, são mais 20 anos de energia praticamente gratuita." },
-    { q: "Funciona em dias nublados e à noite?", a: "Sim. O sistema gera mesmo com nuvens (em menor escala) e, à noite, você usa o crédito gerado durante o dia via compensação na rede." },
-    { q: "A energia solar vale a pena em 2026 com a nova lei 14.300?", a: "Sim! Mesmo com a taxação progressiva do Fio B estabelecida pela Lei 14.300/2022, a energia solar residencial e comercial continua sendo um dos melhores investimentos disponíveis, reduzindo sua conta em até 90% a 95%. O retorno do investimento (payback) ocorre em média entre 3 e 5 anos, gerando mais 20 anos de economia livre. Nosso simulador calcula a estimativa considerando as regras tarifárias atualizadas." },
-    { q: "É possível instalar um sistema solar com baterias (híbrido)?", a: "Com certeza! Os sistemas solares híbridos com baterias de lítio são uma grande tendência para quem deseja independência e garantia de energia mesmo em apagões da rede elétrica. A ESOL Energy oferece projetos personalizados off-grid e híbridos de alta tecnologia sob consulta." },
-    { q: "Qual a garantia dos equipamentos?", a: "Painéis com 25 anos de garantia de geração, inversores com 10 anos e instalação com 5 anos. Tudo em contrato." },
-    { q: "Vocês cuidam da homologação na concessionária?", a: "Sim. Cuidamos de 100% do processo: projeto, ART, protocolos e vistoria. Você só assina." },
-  ];
-=======
   const qs = FAQ_ITEMS;
->>>>>>> 0a4a814ad2972652c0aa0c8af999607f37efe2f4
   return (
     <section id="faq" className="py-12 sm:py-16 px-5 sm:px-6 bg-white">
       <div className="mx-auto max-w-4xl">

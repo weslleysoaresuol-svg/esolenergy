@@ -191,7 +191,7 @@ function AgendaComercial() {
   };
 
   // Atribuir/Reencaminhar Consultor Responsável
-  const handleAtribuirCorretor = async (agendamentoId: string, clienteId: string, corretorId: string) => {
+  const handleAtribuirCorretor = async (agendamentoId: string, clienteId: string, corretorId: string | null) => {
     try {
       const { error: errAgend } = await supabase
         .from("agendamentos" as any)
@@ -202,7 +202,7 @@ function AgendaComercial() {
 
       const { error: errClient } = await supabase
         .from("clientes")
-        .update({ corretor_id: corretorId, status: "em_atendimento" })
+        .update({ corretor_id: corretorId, status: "contato" })
         .eq("id", clienteId);
 
       if (errClient) throw errClient;
@@ -223,6 +223,10 @@ function AgendaComercial() {
     }
     if (!dataReuniao || !horaReuniao) {
       toast.error("Selecione data e horário para a reunião.");
+      return;
+    }
+    if (!user) {
+      toast.error("Sessão expirada. Entre novamente para agendar.");
       return;
     }
 
@@ -263,7 +267,7 @@ function AgendaComercial() {
 
       await supabase
         .from("clientes")
-        .update({ status: "em_atendimento", corretor_id: finalCorretorId })
+        .update({ status: "contato", corretor_id: finalCorretorId })
         .eq("id", selectedClienteId);
 
       toast.success("Reunião agendada com sucesso!");

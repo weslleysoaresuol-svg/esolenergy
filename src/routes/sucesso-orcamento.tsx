@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2, MessageCircle, ArrowLeft, Sun, ShieldCheck, Sparkles, Clock, Calendar, Check } from "lucide-react";
+import { CheckCircle2, MessageCircle, ArrowLeft, Sun, ShieldCheck, Sparkles, Clock, Calendar, Check, Loader2 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -244,7 +244,7 @@ function SucessoOrcamento() {
               </span>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
                 {nome ? `Obrigado, ${nome.split(" ")[0]}!` : "Estudo Fotovoltaico Solicitado!"}
-              </h2>
+              </h1>
               <p className="text-xs text-slate-300 leading-relaxed max-w-md mx-auto">
                 Seu orçamento foi recebido com sucesso no CRM da ESOL Energy. Nossos engenheiros já iniciaram os cálculos de dimensionamento.
               </p>

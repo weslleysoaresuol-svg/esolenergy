@@ -24,6 +24,7 @@ function CotacaoDetail() {
   const [openMirror, setOpenMirror] = useState(false);
   const [params, setParams] = useState<any>(null);
   const printRef = useRef<HTMLDivElement>(null);
+  const kit = c?.kit || c?.kit_snapshot;
 
   const load = async () => {
     setLoading(true);
@@ -68,7 +69,6 @@ function CotacaoDetail() {
   if (loading) return <div className="p-6 text-muted-foreground">Carregando…</div>;
   if (!c) return <div className="p-6">Cotação não encontrada</div>;
 
-  const kit = c.kit || c.kit_snapshot;
   const linkPublico = typeof window !== "undefined" ? `${window.location.origin}/cotacao/${c.codigo_publico}` : "";
 
   const baixarPDF = async () => {

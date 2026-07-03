@@ -306,9 +306,6 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
 
   // Impostos de compra: usa novo campo, cai para o legado se não existir
   const custo_impostos_compra = +(preco_total * impostos_compra_pct).toFixed(2);
-  const comissao_pct = input.comissao_percent_override !== undefined && input.comissao_percent_override !== null
-    ? input.comissao_percent_override / 100
-    : p.custo_comissao_pct;
   const custo_comissao = +(preco_total * comissao_pct).toFixed(2);
 
   const custos_brutos = custo_equipamentos + custo_instalacao + custo_frete + custo_impostos_compra + custo_comissao;

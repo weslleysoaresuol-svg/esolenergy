@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-<<<<<<< HEAD
-const BASE_URL = "https://www.esolenergy.com.br";
-=======
 const BASE_URL = "https://esolenergy.com.br";
 
 interface SitemapEntry {
@@ -11,7 +8,6 @@ interface SitemapEntry {
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority?: string;
 }
->>>>>>> 0a4a814ad2972652c0aa0c8af999607f37efe2f4
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
