@@ -437,13 +437,13 @@ function AppShell() {
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 inset-x-0 bg-white text-navy z-40 flex items-center justify-between px-4 h-14 border-b border-slate-200/60 shadow-sm animate-fade-in">
-        <img src={logo} alt="ESOL Energy — Sistema de Gestão" className="h-8 w-auto" />
+      <div className="md:hidden fixed top-0 inset-x-0 bg-white dark:bg-slate-900 text-navy dark:text-white z-40 flex items-center justify-between px-4 h-14 border-b border-slate-200/60 dark:border-slate-800 shadow-sm animate-fade-in">
+        <img src={logo} alt="ESOL Energy — Sistema de Gestão" className="h-8 w-auto dark:invert" />
         <div className="flex items-center gap-3">
           {/* Alternador de Tema Mobile */}
           <button
             onClick={() => handleThemeChange(theme === "light" ? "dark" : "light")}
-            className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 cursor-pointer flex items-center justify-center"
+            className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-center"
             aria-label="Alternar tema"
           >
             {theme === "light" ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
@@ -454,7 +454,7 @@ function AppShell() {
             aria-label="Navegação móvel"
             value={pathname}
             onChange={(e) => navigate({ to: e.target.value as any })}
-            className="bg-white text-navy text-xs rounded-lg px-2.5 py-1 border border-slate-200"
+            className="bg-white dark:bg-slate-900 text-navy dark:text-white text-xs rounded-lg px-2.5 py-1 border border-slate-200 dark:border-slate-800"
           >
             {nav.map((n) => <option key={n.to} value={n.to}>{n.label}</option>)}
           </select>
@@ -471,7 +471,7 @@ function AppShell() {
 function MobileBellBadge({ count, onClick }: { count: number; onClick: () => void }) {
   return (
     <button onClick={onClick} className="relative p-1">
-      <Bell className="w-5 h-5 text-navy" />
+      <Bell className="w-5 h-5 text-navy dark:text-slate-200" />
       {count > 0 && (
         <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 animate-pulse">
           {count > 9 ? "9+" : count}

@@ -25,7 +25,7 @@ const BOARD_COLUMNS = [
 ];
 
 function AdminClientes() {
-  const { user } = useCurrentUser();
+  const { user, role } = useCurrentUser();
   const [clientes, setClientes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -100,8 +100,6 @@ function AdminClientes() {
     })();
   }, []);
 
-
-
   const handleOpenModal = (status: string) => {
     setTargetStatus(status);
     setNome("");
@@ -115,61 +113,53 @@ function AdminClientes() {
   const handleSaveLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim() || !telefone.trim()) {
-      toast.error("Nome e celular são campos obrigatórios!");
+      toast.error("Nome e celular são obrigatórios.");
       return;
     }
 
     setSavingLead(true);
     try {
-      // Fallback seguro de ID se não puder usar crypto.randomUUID
-      const randomId = typeof crypto.randomUUID === "function" 
-        ? crypto.randomUUID() 
-        : Math.random().toString(36).substring(2) + Date.now().toString(36);
-
-      const ufNome = ufsList.find((x) => x.sigla === uf)?.nome || uf;
-
-      const { error } = await (supabase.from as any)("clientes").insert({
-        id: randomId,
-        nome,
-        email: email || null,
-        telefone,
-        estado: ufNome || null,
-        cidade: cidade || null,
-        status: targetStatus,
-        corretor_id: user?.id || null
-      });
+      const { error } = await supabase
+        .from("clientes")
+        .insert({
+          nome: nome.trim(),
+          email: email.trim() || null,
+          telefone: telefone.trim(),
+          cidade: cidade || null,
+          estado: uf || null,
+          status: targetStatus,
+          origem: "manual",
+          corretor_id: role === "corretor" ? user?.id : null,
+        });
 
       if (error) throw error;
-
-      toast.success("Lead cadastrado com sucesso!");
+      toast.success("Lead cadastrada com sucesso!");
       setModalOpen(false);
       fetchClientes();
     } catch (err: any) {
-      console.error("Erro ao salvar lead:", err);
-      toast.error(`Erro ao salvar lead: ${err.message}`);
+      toast.error(`Falha ao salvar lead: ${err.message}`);
     } finally {
       setSavingLead(false);
     }
   };
 
-  // Filtra os clientes locais
+  // Filtragem local dos clientes
   const filteredClientes = clientes.filter((c) => {
-    const matchesSearch = !searchTerm || 
-      c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      c.telefone?.includes(searchTerm) || 
-      c.cidade?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCorretor = filterCorretor === "todos" || c.corretor_id === filterCorretor;
+    const q = searchTerm.toLowerCase();
+    const matchSearch =
+      c.nome.toLowerCase().includes(q) ||
+      (c.telefone && c.telefone.includes(q)) ||
+      (c.cidade && c.cidade.toLowerCase().includes(q));
 
-    return matchesSearch && matchesCorretor;
+    if (filterCorretor === "todos") return matchSearch;
+    return matchSearch && c.corretor_id === filterCorretor;
   });
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-1">
-      {/* Topo / Header */}
       <div className="flex justify-between items-center flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-navy">Acompanhar suas leads</h1>
+          <h1 className="text-2xl font-bold text-navy dark:text-white">Acompanhar suas leads</h1>
           <p className="text-xs text-muted-foreground mt-0.5">Gerenciamento visual e segmentado dos clientes ESOL Energy</p>
         </div>
         <button
@@ -188,7 +178,7 @@ function AdminClientes() {
       )}
 
       {/* Caixa de alerta padrão Suns Brasil */}
-      <div className="bg-[#EBF0F6] border border-blue-100 rounded-xl p-4 text-xs text-slate-700 font-medium">
+      <div className="bg-[#EBF0F6] dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 text-xs text-slate-700 dark:text-slate-300 font-medium">
         Nesta área, você pode gerenciar e acompanhar seus clientes. Para buscar clientes específicos, utilize a área de "Filtros".
       </div>
 
@@ -221,7 +211,7 @@ function AdminClientes() {
                 <select
                   value={filterCorretor}
                   onChange={(e) => setFilterCorretor(e.target.value)}
-                  className="w-full h-10 px-3 text-xs bg-white border border-slate-200 rounded-lg outline-none"
+                  className="w-full h-10 px-3 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-700 dark:text-slate-200"
                 >
                   <option value="todos">Todos os parceiros</option>
                   {corretores.map((c) => (
@@ -247,9 +237,9 @@ function AdminClientes() {
             return (
               <div key={col.key} className="space-y-3 min-w-[220px]">
                 {/* Header da coluna */}
-                <div className="bg-[#EBF0F6] border border-blue-50/50 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs font-bold text-navy shadow-sm">
+                <div className="bg-[#EBF0F6] dark:bg-slate-800/80 border border-blue-50/50 dark:border-slate-700 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs font-bold text-navy dark:text-slate-200 shadow-sm">
                   <span>{col.label}</span>
-                  <span className="bg-[#2E44B8]/10 text-[#2E44B8] text-[10px] font-black px-2 py-0.5 rounded-full">
+                  <span className="bg-[#2E44B8]/10 dark:bg-slate-900 text-[#2E44B8] dark:text-blue-400 text-[10px] font-black px-2 py-0.5 rounded-full">
                     {colLeads.length}
                   </span>
                 </div>
@@ -266,7 +256,7 @@ function AdminClientes() {
                       <div className="text-[10px] text-slate-400 font-medium">{c.cidade || "—"}/{c.estado || "—"}</div>
                       
                       <div className="flex justify-between items-center pt-2 border-t border-slate-50 mt-1">
-                        <Link to="/app/cliente/$id" params={{ id: c.id }} className="text-[10px] text-[#2E44B8] hover:underline font-bold">
+                        <Link to={`/app/cliente/${c.id}`} className="text-[10px] text-[#2E44B8] hover:underline font-bold">
                           Ver ficha
                         </Link>
                         {c.telefone && (
@@ -285,7 +275,7 @@ function AdminClientes() {
                   {/* Botão de adicionar novo lead da coluna */}
                   <button
                     onClick={() => handleOpenModal(col.statuses[0])}
-                    className="w-full flex items-center justify-center gap-1.5 py-3 border border-dashed border-slate-200 hover:border-slate-300 bg-slate-50/50 hover:bg-slate-50 text-slate-500 rounded-xl text-xs font-bold transition-all"
+                    className="w-full flex items-center justify-center gap-1.5 py-3 border border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-xs font-bold transition-all"
                   >
                     + Nova lead
                   </button>
@@ -296,7 +286,7 @@ function AdminClientes() {
         </div>
       )}
 
-      {/* Modal Nova Lead (Fiel ao print) */}
+      {/* Modal Nova Lead */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-xl border border-slate-100">
           <DialogHeader className="pb-3 border-b border-slate-100">
@@ -307,7 +297,7 @@ function AdminClientes() {
             <div className="space-y-1">
               <label className="font-bold text-slate-600">Nome</label>
               <Input
-                placeholder="Nome completo do cliente"
+                placeholder="Ex: João da Silva"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 className="h-10 text-xs"
@@ -319,7 +309,7 @@ function AdminClientes() {
               <label className="font-bold text-slate-600">E-mail</label>
               <Input
                 type="email"
-                placeholder="E-mail de contato"
+                placeholder="Ex: joao@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-10 text-xs"
@@ -327,15 +317,17 @@ function AdminClientes() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-600">Celular *(Obrigatório)</label>
+              <label className="font-bold text-slate-600">WhatsApp / Celular</label>
               <Input
-                placeholder="(00) 00000-0000"
+                placeholder="Ex: (11) 99999-9999"
                 value={telefone}
                 onChange={(e) => setTelefone(e.target.value)}
                 className="h-10 text-xs"
                 required
               />
-               <div className="grid grid-cols-3 gap-3">
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
               <div className="col-span-2 space-y-1">
                 <label className="font-bold text-slate-600 text-xs">Cidade / Estado</label>
                 <CidadeEstadoInput
@@ -358,16 +350,15 @@ function AdminClientes() {
                 />
               </div>
             </div>
-            </div>
 
             <div className="pt-4 flex justify-center">
-              <button
+              <Button
                 type="submit"
                 disabled={savingLead}
                 className="suns-btn-accent px-8 py-2.5 rounded-full font-bold text-xs shadow-sm transition disabled:opacity-50"
               >
                 {savingLead ? "Salvando..." : "Salvar dados"}
-              </button>
+              </Button>
             </div>
           </form>
         </DialogContent>
