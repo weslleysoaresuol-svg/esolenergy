@@ -145,14 +145,16 @@ function Landing() {
       <div className="min-h-screen bg-paper text-ink antialiased selection:bg-sun selection:text-navy overflow-x-hidden">
         <Nav onOpenTracking={() => setIsTrackingOpen(true)} />
         <FloatingOrcamento />
-        <Hero />
-        <LogosStrip />
-        <MetricsBar />
-        <Simulator />
-        <Solutions />
-        <Process />
-        <FAQ />
-        <FinalCTA />
+        <main>
+          <Hero />
+          <LogosStrip />
+          <MetricsBar />
+          <Simulator />
+          <Solutions />
+          <Process />
+          <FAQ />
+          <FinalCTA />
+        </main>
         <Footer />
         <FloatingWhatsApp />
         <AcompanharModal isOpen={isTrackingOpen} onClose={() => setIsTrackingOpen(false)} />
