@@ -244,7 +244,7 @@ function SucessoOrcamento() {
               </span>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
                 {nome ? `Obrigado, ${nome.split(" ")[0]}!` : "Estudo Fotovoltaico Solicitado!"}
-              </h2>
+              </h1>
               <p className="text-xs text-slate-300 leading-relaxed max-w-md mx-auto">
                 Seu orçamento foi recebido com sucesso no CRM da ESOL Energy. Nossos engenheiros já iniciaram os cálculos de dimensionamento.
               </p>

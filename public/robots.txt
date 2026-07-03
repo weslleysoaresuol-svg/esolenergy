@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-<<<<<<< HEAD
 Disallow: /app/
 Disallow: /auth/
 Disallow: /convite/
@@ -8,9 +7,4 @@ Disallow: /cotacao/
 Disallow: /financiamento/
 Disallow: /proposta/
 
-Sitemap: https://www.esolenergy.com.br/sitemap.xml
-
-=======
-
 Sitemap: https://esolenergy.com.br/sitemap.xml
->>>>>>> 0a4a814ad2972652c0aa0c8af999607f37efe2f4
