@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SucessoOrcamentoRouteImport } from './routes/sucesso-orcamento'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
@@ -31,6 +32,7 @@ import { Route as AppCotacoesRouteImport } from './routes/app.cotacoes'
 import { Route as AppCorretoresRouteImport } from './routes/app.corretores'
 import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
+import { Route as AppAgendaRouteImport } from './routes/app.agenda'
 import { Route as AppPropostasIndexRouteImport } from './routes/app.propostas.index'
 import { Route as AppPedidosIndexRouteImport } from './routes/app.pedidos.index'
 import { Route as AppFinanciamentosIndexRouteImport } from './routes/app.financiamentos.index'
@@ -44,6 +46,11 @@ import { Route as AppCotacoesIdRouteImport } from './routes/app.cotacoes.$id'
 import { Route as AppContratoIdRouteImport } from './routes/app.contrato.$id'
 import { Route as AppClienteIdRouteImport } from './routes/app.cliente.$id'
 
+const SucessoOrcamentoRoute = SucessoOrcamentoRouteImport.update({
+  id: '/sucesso-orcamento',
+  path: '/sucesso-orcamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -154,6 +161,11 @@ const AppClientesRoute = AppClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAgendaRoute = AppAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPropostasIndexRoute = AppPropostasIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -220,6 +232,8 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/app/agenda': typeof AppAgendaRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/corretores': typeof AppCorretoresRoute
@@ -255,6 +269,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/app/agenda': typeof AppAgendaRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/corretores': typeof AppCorretoresRoute
@@ -288,6 +304,8 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/app/agenda': typeof AppAgendaRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
   '/app/corretores': typeof AppCorretoresRoute
@@ -326,6 +344,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/sitemap.xml'
+    | '/sucesso-orcamento'
+    | '/app/agenda'
     | '/app/clientes'
     | '/app/contrato'
     | '/app/corretores'
@@ -361,6 +381,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/sitemap.xml'
+    | '/sucesso-orcamento'
+    | '/app/agenda'
     | '/app/clientes'
     | '/app/contrato'
     | '/app/corretores'
@@ -393,6 +415,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/sitemap.xml'
+    | '/sucesso-orcamento'
+    | '/app/agenda'
     | '/app/clientes'
     | '/app/contrato'
     | '/app/corretores'
@@ -430,6 +454,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SucessoOrcamentoRoute: typeof SucessoOrcamentoRoute
   ConviteTokenRoute: typeof ConviteTokenRoute
   CotacaoCodigoRoute: typeof CotacaoCodigoRoute
   FinanciamentoCodigoRoute: typeof FinanciamentoCodigoRoute
@@ -438,6 +463,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sucesso-orcamento': {
+      id: '/sucesso-orcamento'
+      path: '/sucesso-orcamento'
+      fullPath: '/sucesso-orcamento'
+      preLoaderRoute: typeof SucessoOrcamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -590,6 +622,13 @@ declare module '@tanstack/react-router' {
       path: '/clientes'
       fullPath: '/app/clientes'
       preLoaderRoute: typeof AppClientesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/agenda': {
+      id: '/app/agenda'
+      path: '/agenda'
+      fullPath: '/app/agenda'
+      preLoaderRoute: typeof AppAgendaRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/propostas/': {
@@ -749,6 +788,7 @@ const AppPropostasRouteWithChildren = AppPropostasRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAgendaRoute: typeof AppAgendaRoute
   AppClientesRoute: typeof AppClientesRoute
   AppContratoRoute: typeof AppContratoRouteWithChildren
   AppCorretoresRoute: typeof AppCorretoresRoute
@@ -768,6 +808,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAgendaRoute: AppAgendaRoute,
   AppClientesRoute: AppClientesRoute,
   AppContratoRoute: AppContratoRouteWithChildren,
   AppCorretoresRoute: AppCorretoresRoute,
@@ -793,6 +834,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SucessoOrcamentoRoute: SucessoOrcamentoRoute,
   ConviteTokenRoute: ConviteTokenRoute,
   CotacaoCodigoRoute: CotacaoCodigoRoute,
   FinanciamentoCodigoRoute: FinanciamentoCodigoRoute,
