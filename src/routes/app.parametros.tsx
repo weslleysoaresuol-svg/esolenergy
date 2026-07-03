@@ -224,6 +224,29 @@ function Parametros() {
       },
     ]);
   };
+ 
+  const handlePopularBancosPadrao = () => {
+    const defaultBancos = [
+      { nome: 'Solfácil', taxa_juros_mes: 1.19, taxa_cet_mes: 1.39, prazo_maximo_meses: 120, taxa_aprovacao_media: 88, ativo: true },
+      { nome: 'Banco BV Solar', taxa_juros_mes: 1.29, taxa_cet_mes: 1.48, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
+      { nome: 'Santander Solar', taxa_juros_mes: 1.39, taxa_cet_mes: 1.59, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
+      { nome: 'Sicredi Energia Verde', taxa_juros_mes: 0.99, taxa_cet_mes: 1.15, prazo_maximo_meses: 120, taxa_aprovacao_media: 85, ativo: true },
+      { nome: 'Sicoob EcoCrédito', taxa_juros_mes: 1.05, taxa_cet_mes: 1.22, prazo_maximo_meses: 96, taxa_aprovacao_media: 82, ativo: true },
+      { nome: 'Banco do Brasil Agro/Solar', taxa_juros_mes: 0.95, taxa_cet_mes: 1.12, prazo_maximo_meses: 120, taxa_aprovacao_media: 70, ativo: true },
+      { nome: 'Bradesco Financiamento Solar', taxa_juros_mes: 1.25, taxa_cet_mes: 1.44, prazo_maximo_meses: 72, taxa_aprovacao_media: 72, ativo: true },
+      { nome: 'Itaú CrediSolar', taxa_juros_mes: 1.35, taxa_cet_mes: 1.55, prazo_maximo_meses: 60, taxa_aprovacao_media: 70, ativo: true },
+      { nome: 'Porto Seguro Solar (PortoBank)', taxa_juros_mes: 1.20, taxa_cet_mes: 1.38, prazo_maximo_meses: 84, taxa_aprovacao_media: 78, ativo: true },
+      { nome: 'Ailos Solar', taxa_juros_mes: 1.08, taxa_cet_mes: 1.25, prazo_maximo_meses: 96, taxa_aprovacao_media: 80, ativo: true },
+      { nome: 'Caixa Econômica Federal (CEF)', taxa_juros_mes: 1.15, taxa_cet_mes: 1.32, prazo_maximo_meses: 60, taxa_aprovacao_media: 82, ativo: true },
+      { nome: 'Banco do Nordeste (BNB)', taxa_juros_mes: 0.80, taxa_cet_mes: 0.95, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
+      { nome: 'Banco da Amazônia (BASA)', taxa_juros_mes: 0.85, taxa_cet_mes: 1.00, prazo_maximo_meses: 96, taxa_aprovacao_media: 70, ativo: true },
+      { nome: 'Crefisa Solar', taxa_juros_mes: 1.89, taxa_cet_mes: 2.12, prazo_maximo_meses: 48, taxa_aprovacao_media: 85, ativo: true },
+      { nome: 'BNDES Finame Baixo Carbono', taxa_juros_mes: 0.75, taxa_cet_mes: 0.88, prazo_maximo_meses: 120, taxa_aprovacao_media: 60, ativo: true },
+      { nome: 'Desenvolve SP (Economia Verde)', taxa_juros_mes: 0.90, taxa_cet_mes: 1.05, prazo_maximo_meses: 84, taxa_aprovacao_media: 65, ativo: true }
+    ];
+    setFinanceiras(defaultBancos);
+    toast.success("16 bancos padrão populados! Clique em 'Salvar Alterações de Bancos' para persistir no banco de dados.");
+  };
 
   const handleDeleteFinanceira = async (id: string, index: number) => {
     if (!id) {
@@ -272,7 +295,7 @@ function Parametros() {
           onClick={() => setActiveTab("financeiras")}
           className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${activeTab === "financeiras" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"}`}
         >
-          <Landmark className="w-4 h-4 text-sun-deep" /> Bancos & Taxas Solar (16 Financeiras)
+          <Landmark className="w-4 h-4 text-sun-deep" /> Bancos & Taxas Solar ({financeiras.length} Financeiras)
         </button>
         <button
           onClick={() => setActiveTab("motor")}
@@ -428,8 +451,16 @@ function Parametros() {
             )}
 
             {financeiras.length === 0 && !loadingFin && (
-              <div className="py-10 text-center text-slate-400 text-xs">
-                Nenhum banco ou financeira configurada. Clique em Adicionar Banco acima.
+              <div className="py-12 text-center text-slate-400 text-xs space-y-4">
+                <p>Nenhum banco ou financeira de crédito solar configurado na nuvem.</p>
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handlePopularBancosPadrao}
+                    className="bg-[#2E44B8] hover:bg-[#1F3095] text-white text-xs font-bold rounded-xl px-4 py-2 flex items-center gap-1.5 border-0 cursor-pointer"
+                  >
+                    <Landmark className="w-4 h-4" /> Restaurar 16 Bancos Padrão de Mercado 🏦
+                  </Button>
+                </div>
               </div>
             )}
           </Card>
