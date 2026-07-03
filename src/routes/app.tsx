@@ -8,7 +8,7 @@ import {
   LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog,
   Plus, FileText, Link2, FileSpreadsheet, BarChart3, Settings,
   Bell, CheckCheck, X, ExternalLink, Sun, ShoppingCart, Landmark, Zap,
-  CheckCircle2, Clock, AlertTriangle, Target
+  CheckCircle2, Clock, AlertTriangle, Target, Calendar
 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 
@@ -228,6 +228,7 @@ function AppShell() {
   const adminNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/agenda", icon: Calendar, label: "Agenda de Reuniões" },
     { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
@@ -243,6 +244,7 @@ function AppShell() {
   const auxiliarNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/agenda", icon: Calendar, label: "Agenda de Reuniões" },
     { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
@@ -254,6 +256,7 @@ function AppShell() {
   const atendenteNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/agenda", icon: Calendar, label: "Agenda de Reuniões" },
     { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
@@ -262,6 +265,7 @@ function AppShell() {
   const vendedorNav = [
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
+    { to: "/app/agenda", icon: Calendar, label: "Agenda de Reuniões" },
     { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
@@ -297,6 +301,7 @@ function AppShell() {
 
   const corretorNav = [
     { to: "/app", icon: Briefcase, label: "Meus Clientes", exact: true },
+    { to: "/app/agenda", icon: Calendar, label: "Minhas Reuniões" },
     { to: "/app/cotacoes", icon: Zap, label: "Cotações" },
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },

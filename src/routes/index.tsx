@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -38,9 +38,6 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://esolenergy.com.br/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-<<<<<<< HEAD
-    links: [{ rel: "canonical", href: "https://www.esolenergy.com.br/" }],
-=======
     links: [{ rel: "canonical", href: "https://esolenergy.com.br/" }],
     scripts: [
       {
@@ -81,7 +78,6 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
->>>>>>> 0a4a814ad2972652c0aa0c8af999607f37efe2f4
   }),
   component: Landing,
 });
@@ -929,6 +925,7 @@ function FAQ() {
 
 /* ============================ FINAL CTA / FORM ============================ */
 function FinalCTA() {
+  const navigate = useNavigate();
   const { bill } = useBill();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -1002,7 +999,7 @@ function FinalCTA() {
     }
 
     setLoading(true);
-    const { error } = await supabase.from("clientes").insert({
+    const { data: inserted, error } = await supabase.from("clientes").insert({
       nome: form.nome.trim(),
       email: form.email.trim() || null,
       telefone: form.telefone.trim(),
@@ -1013,14 +1010,21 @@ function FinalCTA() {
       origem: "landing",
       status: "novo",
       corretor_id: null,
-    });
+    }).select("id").maybeSingle();
+    
     setLoading(false);
     if (error) {
       toast.error("Não foi possível enviar. Tente novamente.");
       return;
     }
     toast.success("Recebemos seu pedido!");
-    setSent(true);
+    navigate({
+      to: "/sucesso-orcamento",
+      search: { 
+        id: inserted?.id || "",
+        nome: form.nome.trim() 
+      }
+    });
   };
 
   return (
