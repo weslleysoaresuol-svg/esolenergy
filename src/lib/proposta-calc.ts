@@ -170,6 +170,10 @@ export interface CalculoResultado {
   payback_ajustado_meses: number;
   reducao_percentual_real: number;
 
+  // Métricas de atratividade financeira avançadas (Fase 2)
+  tir_anual_pct: number;
+  vpl_brl: number;
+
   preco_total: number;
   preco_por_wp: number;
   co2_evitado_ton: number;
@@ -216,17 +220,24 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   const modulosFloat = (kwpIdeal * 1000) / p.potencia_modulo_w;
   const qtd_modulos = input.qtd_modulos_override ?? Math.max(2, Math.ceil(modulosFloat));
   const kwp_sistema = input.kwp_override ?? +(qtd_modulos * p.potencia_modulo_w / 1000).toFixed(2);
-
-  // Inversor: 1 por até 8 kWp, +1 a cada 8 kWp acima
-  const qtd_inversores = Math.max(1, Math.ceil(kwp_sistema / 8));
-  const potencia_inversor_kw = +(kwp_sistema / qtd_inversores).toFixed(2);
+ 
+  // CORREÇÃO: Dimensionamento de Inversores por Overload ideal de 25% (relação 1.25 CC/CA)
+  const potencia_total_inversores_kw = +(kwp_sistema / 1.25).toFixed(2);
+  let qtd_inversores = 1;
+  if (potencia_total_inversores_kw > 100) {
+    // Para grandes potências, usa inversores de 75 kW comerciais
+    qtd_inversores = Math.ceil(potencia_total_inversores_kw / 75);
+  }
+  const potencia_inversor_kw = +(potencia_total_inversores_kw / qtd_inversores).toFixed(2);
 
   const area_necessaria_m2 = +(qtd_modulos * p.area_por_modulo_m2).toFixed(1);
   const geracao_mensal_kwh = +(kwp_sistema * hsp * 30 * eficiencia).toFixed(0);
-  const economia_mensal = +(Math.min(geracao_mensal_kwh, input.consumo_kwh) * input.tarifa_kwh).toFixed(2);
+  
+  // CORREÇÃO ANOMALIA 1: A economia bruta reflete o valor total da geração produzida pelo sistema (Aneel créditos)
+  const economia_mensal = +(geracao_mensal_kwh * input.tarifa_kwh).toFixed(2);
   const economia_anual = +(economia_mensal * 12).toFixed(2);
 
-  // Economia 25 anos com inflação composta
+  // Economia 25 anos simples (bruta) com inflação composta
   let acumulado = 0;
   for (let ano = 0; ano < p.vida_util_anos; ano++) {
     acumulado += economia_anual * Math.pow(1 + p.inflacao_energetica, ano);
@@ -234,35 +245,8 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   const economia_25_anos = +acumulado.toFixed(2);
 
   // =====================================================================
-  // ECONOMIA AJUSTADA — Cálculo Honesto para o Cliente
+  // PREÇO E VALORES DO PROJETO (Movido para cima para permitir provisionamento de O&M)
   // =====================================================================
-  const ehTrifasico = input.ligacao === "tri";
-  const custo_disponibilidade_mensal = ehTrifasico
-    ? (p.custo_disponibilidade_tri_brl ?? 95.00)
-    : (p.custo_disponibilidade_mono_brl ?? 28.50);
-  const cosip_mensal = p.cosip_estimada_brl ?? 25.00;
-
-  // Ajuste do Fio B sobre energia compensada injetada (Lei 14.300/2022)
-  // O Fio B incide sobre a energia excedente injetada (diferença geração - autoconsumo)
-  // Estimamos autoconsumo como 30% da geração (tipicamente 20-40%)
-  const percentual_fio_b = p.percentual_fio_b ?? 0.60;
-  const energia_injetada_estimada = geracao_mensal_kwh * 0.70; // 70% injetada, 30% autoconsumo
-  // O Fio B é ~15-25% da tarifa total (estimamos 20% da tarifa como componente Fio B da TUSD)
-  const custo_fio_b_por_kwh = input.tarifa_kwh * 0.20;
-  const ajuste_fio_b_mensal = +(energia_injetada_estimada * custo_fio_b_por_kwh * percentual_fio_b).toFixed(2);
-
-  const economia_ajustada_mensal = +Math.max(
-    0,
-    economia_mensal - custo_disponibilidade_mensal - cosip_mensal - ajuste_fio_b_mensal
-  ).toFixed(2);
-  const economia_ajustada_anual = +(economia_ajustada_mensal * 12).toFixed(2);
-
-  let acumuladoAjustado = 0;
-  for (let ano = 0; ano < p.vida_util_anos; ano++) {
-    acumuladoAjustado += economia_ajustada_anual * Math.pow(1 + p.inflacao_energetica, ano);
-  }
-  const economia_ajustada_25_anos = +acumuladoAjustado.toFixed(2);
-
   const comissao_pct = input.comissao_percent_override !== undefined && input.comissao_percent_override !== null
     ? input.comissao_percent_override / 100
     : p.custo_comissao_pct;
@@ -276,11 +260,67 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   if (preco_total === undefined || preco_total === null) {
     if (input.custo_equipamentos_override !== undefined && input.custo_equipamentos_override !== null) {
       const divisor = 1 - (p.custo_instalacao_pct + p.custo_frete_pct + impostos_compra_pct + comissao_pct + p.margem_alvo_pct);
-      preco_total = +(input.custo_equipamentos_override / (divisor > 0.1 ? divisor : p.custo_equipamentos_pct)).toFixed(2);
+      
+      // Proteção de segurança matemática contra divisor negativo/nulo
+      preco_total = +(input.custo_equipamentos_override / (divisor > 0.05 ? divisor : 0.05)).toFixed(2);
     } else {
       preco_total = +(kwp_sistema * 1000 * preco_por_wp).toFixed(2);
     }
   }
+
+  // =====================================================================
+  // ECONOMIA AJUSTADA — Cálculo Realista com Provisões de Longo Prazo
+  // =====================================================================
+  const ehTrifasico = input.ligacao === "tri";
+  
+  // Custo de disponibilidade baseado na tarifa do cliente ou parâmetro real
+  const taxa_minima_kwh = ehTrifasico ? 100 : 30;
+  const custo_disponibilidade_mensal = ehTrifasico
+    ? (p.custo_disponibilidade_tri_brl || +(100 * input.tarifa_kwh).toFixed(2))
+    : (p.custo_disponibilidade_mono_brl || +(30 * input.tarifa_kwh).toFixed(2));
+  const cosip_mensal = p.cosip_estimada_brl ?? 25.00;
+
+  // Ajuste do Fio B sobre energia compensada injetada (Lei 14.300/2022)
+  const percentual_fio_b = p.percentual_fio_b ?? 0.60;
+  const energia_injetada_estimada = geracao_mensal_kwh * 0.70; // 70% injetada, 30% autoconsumo
+  const custo_fio_b_por_kwh = input.tarifa_kwh * 0.20;
+  const ajuste_fio_b_mensal = +(energia_injetada_estimada * custo_fio_b_por_kwh * percentual_fio_b).toFixed(2);
+
+  // A economia ajustada reflete a geração descontando Fio B, limitada ao consumo abatível (Consumo - Taxa Mínima)
+  const maximo_compensavel = Math.max(0, input.consumo_kwh - taxa_minima_kwh);
+  const economia_ajustada_mensal = +Math.max(
+    0,
+    (Math.min(geracao_mensal_kwh, maximo_compensavel) * input.tarifa_kwh) - ajuste_fio_b_mensal
+  ).toFixed(2);
+  const economia_ajustada_anual = +(economia_ajustada_mensal * 12).toFixed(2);
+
+  // CORREÇÃO: Loop de 25 anos com provisão anual de O&M e troca do inversor no 12º ano
+  let acumuladoAjustado = 0;
+  const fluxosCaixaTIR: number[] = [];
+  
+  // Ano 0: Investimento inicial
+  fluxosCaixaTIR.push(-preco_total);
+
+  for (let ano = 1; ano <= p.vida_util_anos; ano++) {
+    const economiaAno = economia_ajustada_anual * Math.pow(1 + p.inflacao_energetica, ano - 1);
+    
+    // Provisão O&M (0.5% do preço do projeto ao ano a partir do ano 2 para limpeza de placas)
+    const custoOM = ano >= 2 ? +(preco_total * 0.005).toFixed(2) : 0;
+    
+    // Provisão Substituição de Inversor (15% do preço do projeto no 12º ano)
+    const custoInversor = ano === 12 ? +(preco_total * 0.15).toFixed(2) : 0;
+    
+    // Fluxo líquido da economia real do ano
+    const fluxoLiquidoAno = +(economiaAno - custoOM - custoInversor).toFixed(2);
+    
+    acumuladoAjustado += fluxoLiquidoAno;
+    fluxosCaixaTIR.push(fluxoLiquidoAno);
+  }
+  const economia_ajustada_25_anos = +acumuladoAjustado.toFixed(2);
+
+  // CORREÇÃO: Métricas financeiras corporativas TIR e VPL (TMA de 10% a.a.)
+  const tir_anual_pct = calcularTIR(fluxosCaixaTIR);
+  const vpl_brl = calcularVPL(fluxosCaixaTIR, 0.10); // 10% a.a. Taxa Mínima de Atratividade (TMA)
 
   const payback_meses = economia_mensal > 0 ? +(preco_total / economia_mensal).toFixed(1) : 0;
   const payback_ajustado_meses = economia_ajustada_mensal > 0
@@ -321,7 +361,8 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   const garantia_pct = p.custo_garantia_pct ?? 0.008;
   const engenharia_fixo = p.custo_engenharia_fixo_brl ?? 900;
 
-  const custo_tributacao_empresa = +(preco_total * tributacao_pct).toFixed(2);
+  // Tributação incide sobre o serviço (Faturamento - Custo de Equipamentos)
+  const custo_tributacao_empresa = +((preco_total - custo_equipamentos) * tributacao_pct).toFixed(2);
   const custo_marketing = +(preco_total * marketing_pct).toFixed(2);
   const custo_engenharia_fixo_val = +engenharia_fixo.toFixed(2);
   const custo_overhead = +(preco_total * overhead_pct).toFixed(2);
@@ -339,6 +380,11 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
     custo_disponibilidade_mensal, cosip_mensal, ajuste_fio_b_mensal,
     economia_ajustada_mensal, economia_ajustada_anual, economia_ajustada_25_anos,
     payback_ajustado_meses, reducao_percentual_real,
+    
+    // Métricas financeiras avançadas (Fase 2)
+    tir_anual_pct,
+    vpl_brl,
+
     preco_total, preco_por_wp, co2_evitado_ton, arvores_equivalentes,
     // Custos brutos
     custo_equipamentos, custo_instalacao, custo_frete, custo_impostos_compra, custo_comissao,
@@ -351,6 +397,45 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
     margem_real: margem_bruta,
     margem_pct: margem_bruta_pct,
   };
+}
+
+// CORREÇÃO: Métodos numéricos para análise de atratividade de capital
+export function calcularVPL(fluxos: number[], taxaAtratividade: number): number {
+  let vpl = 0;
+  for (let t = 0; t < fluxos.length; t++) {
+    vpl += fluxos[t] / Math.pow(1 + taxaAtratividade, t);
+  }
+  return +vpl.toFixed(2);
+}
+
+export function calcularTIR(fluxos: number[]): number {
+  const somaFluxosFuturos = fluxos.slice(1).reduce((a, b) => a + b, 0);
+  if (somaFluxosFuturos <= 0 || fluxos[0] >= 0) return 0;
+
+  let min = -0.99; // -99%
+  let max = 3.0;   // 300%
+  let tir = 0.0;
+  
+  // Bisseção rápida para convergir com precisão decimal em 60 iterações
+  for (let i = 0; i < 60; i++) {
+    tir = (min + max) / 2;
+    let vpl = 0;
+    for (let t = 0; t < fluxos.length; t++) {
+      vpl += fluxos[t] / Math.pow(1 + tir, t);
+    }
+    
+    if (Math.abs(vpl) < 0.01) {
+      break;
+    }
+    
+    if (vpl > 0) {
+      min = tir; // taxa maior necessária para diminuir o VPL
+    } else {
+      max = tir; // taxa menor necessária para aumentar o VPL
+    }
+  }
+  
+  return +(tir * 100).toFixed(2);
 }
 
 export const BRL = (n: number) =>

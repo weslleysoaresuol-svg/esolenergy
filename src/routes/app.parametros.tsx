@@ -593,9 +593,17 @@ function Parametros() {
                     <span>Redução na conta:</span>
                     <span className="font-bold text-[#2E44B8]">{res.reducao_percentual_real}%</span>
                   </div>
-                  <div className="flex justify-between pb-0.5">
+                  <div className="flex justify-between border-b border-dashed border-slate-200 pb-1.5">
                     <span>Payback Real Ajustado:</span>
                     <span className="font-bold text-[#2E44B8]">{res.payback_ajustado_meses} meses</span>
+                  </div>
+                  <div className="flex justify-between border-b border-dashed border-slate-200 pb-1.5">
+                    <span>TIR Anual (Solar):</span>
+                    <span className="font-bold text-emerald-600">{res.tir_anual_pct}% a.a.</span>
+                  </div>
+                  <div className="flex justify-between pb-0.5">
+                    <span>VPL do Solar (TMA 10%):</span>
+                    <span className="font-bold text-emerald-600">{BRL(res.vpl_brl)}</span>
                   </div>
                 </div>
               );
@@ -787,35 +795,36 @@ function Parametros() {
                       Economia Real do Cliente (Ajustada — Para a Proposta)
                     </h4>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      O cliente solar <strong>nunca zera a conta de luz</strong>. Três custos fixos e obrigatórios permanecem: o Custo de Disponibilidade (taxa mínima de conexão), a COSIP (iluminação pública municipal) e o Fio B da Lei 14.300/2022.
+                      O cliente solar <strong>nunca zera a conta de luz</strong>. A economia é limitada pelo faturamento de consumo ativo que excede a taxa mínima de disponibilidade. O pedágio do Fio B da Lei 14.300/2022 também incide sobre a energia injetada compensada:
                     </p>
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-3">
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-[11px]">
                         <div className="bg-white p-2 rounded-lg border border-slate-100">
-                          <span className="block text-slate-400 font-semibold uppercase text-[9px]">Economia Bruta (Motor)</span>
+                          <span className="block text-slate-400 font-semibold uppercase text-[9px]">Geração Total Gerada</span>
                           <strong className="text-slate-700 text-xs">{BRL(res.economia_mensal)}/mês</strong>
                         </div>
-                        <div className="bg-red-50 p-2 rounded-lg border border-red-100">
-                          <span className="block text-red-400 font-semibold uppercase text-[9px]">(-) Custo Disponibilidade</span>
-                          <strong className="text-red-600 text-xs">−{BRL(res.custo_disponibilidade_mensal)}/mês</strong>
+                        <div className="bg-amber-50 p-2 rounded-lg border border-amber-100">
+                          <span className="block text-amber-500 font-semibold uppercase text-[9px]">Fatura Mínima Obrigatória</span>
+                          <strong className="text-amber-700 text-xs">{BRL(res.custo_disponibilidade_mensal)}/mês</strong>
                         </div>
                         <div className="bg-red-50 p-2 rounded-lg border border-red-100">
-                          <span className="block text-red-400 font-semibold uppercase text-[9px]">(-) COSIP Municipal</span>
-                          <strong className="text-red-600 text-xs">−{BRL(res.cosip_mensal)}/mês</strong>
+                          <span className="block text-red-400 font-semibold uppercase text-[9px]">(-) Pedágio Fio B {((geralData.percentual_fio_b ?? 0.60) * 100).toFixed(0)}%</span>
+                          <strong className="text-red-600 text-xs">−{BRL(res.ajuste_fio_b_mensal)}/mês</strong>
                         </div>
-                        <div className="bg-red-50 p-2 rounded-lg border border-red-100 col-span-2">
-                          <span className="block text-red-400 font-semibold uppercase text-[9px]">(-) Pedágio Fio B {((geralData.percentual_fio_b ?? 0.60) * 100).toFixed(0)}% (Lei 14.300/2022)</span>
-                          <strong className="text-red-600 text-xs">−{BRL(res.ajuste_fio_b_mensal)}/mês sobre energia compensada</strong>
-                        </div>
-                        <div className="bg-blue-50 p-2 rounded-lg border border-blue-200">
-                          <span className="block text-[#2E44B8] font-bold uppercase text-[9px]">★ ECONOMIA REAL ({res.reducao_percentual_real}% de redução)</span>
+                        <div className="bg-blue-50 p-2 rounded-lg border border-blue-200 col-span-3">
+                          <span className="block text-[#2E44B8] font-bold uppercase text-[9px]">★ ECONOMIA REAL LÍQUIDA ({res.reducao_percentual_real}% de redução)</span>
                           <strong className="text-[#2E44B8] text-sm">{BRL(res.economia_ajustada_mensal)}/mês</strong>
                         </div>
                       </div>
-                      <div className="text-[11px] text-slate-500 border-t border-slate-200 pt-2 space-y-0.5">
-                        <div>• Payback Simples (sem ajustes): <strong className="text-navy">{res.payback_meses} meses</strong></div>
-                        <div>• Payback Real Ajustado: <strong className="text-[#2E44B8]">{res.payback_ajustado_meses} meses</strong></div>
-                        <div>• Economia em 25 anos (ajustada c/ inflação {((geralData.inflacao_energetica ?? 0.08) * 100).toFixed(0)}%/a): <strong className="text-emerald-600">{BRL(res.economia_ajustada_25_anos)}</strong></div>
+                      <div className="text-[11px] text-slate-500 border-t border-slate-200 pt-2 space-y-1">
+                        <div>• Payback Bruto da Geração: <strong className="text-navy">{res.payback_meses} meses</strong></div>
+                        <div>• Payback Real Ajustado ao Cliente: <strong className="text-[#2E44B8]">{res.payback_ajustado_meses} meses</strong></div>
+                        <div>• Economia em 25 anos (deduzindo 0.5% a.a. O&M e troca de inversor no 12º ano): <strong className="text-emerald-600">{BRL(res.economia_ajustada_25_anos)}</strong></div>
+                        <div className="font-semibold text-slate-700 text-[10px] mt-1.5 bg-slate-100/60 p-2 rounded-lg space-y-0.5">
+                          <div className="text-[#2E44B8]">• Taxa Interna de Retorno (TIR) Anual: <strong className="font-bold text-emerald-600">{res.tir_anual_pct}% a.a.</strong></div>
+                          <div className="text-[#2E44B8]">• VPL do Investimento (TMA 10% a.a.): <strong className="font-bold text-emerald-600">{BRL(res.vpl_brl)}</strong></div>
+                          <div className="text-slate-400 font-normal text-[9px] mt-0.5">• A TIR anual e o VPL demonstram a atratividade do solar frente a investimentos de renda fixa (como CDI).</div>
+                        </div>
                       </div>
                     </div>
                   </Card>
