@@ -177,8 +177,7 @@ function AdminClientes() {
         </Card>
       )}
 
-      {/* Caixa de alerta padrão Suns Brasil */}
-      <div className="bg-[#EBF0F6] dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 text-xs text-slate-700 dark:text-slate-300 font-medium">
+      <div className="bg-[#EBF0F6] border border-blue-100 rounded-xl p-4 text-xs text-slate-700 font-medium">
         Nesta área, você pode gerenciar e acompanhar seus clientes. Para buscar clientes específicos, utilize a área de "Filtros".
       </div>
 
@@ -211,7 +210,7 @@ function AdminClientes() {
                 <select
                   value={filterCorretor}
                   onChange={(e) => setFilterCorretor(e.target.value)}
-                  className="w-full h-10 px-3 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-700 dark:text-slate-200"
+                  className="w-full h-10 px-3 text-xs bg-white border border-slate-200 rounded-lg outline-none"
                 >
                   <option value="todos">Todos os parceiros</option>
                   {corretores.map((c) => (
@@ -237,9 +236,9 @@ function AdminClientes() {
             return (
               <div key={col.key} className="space-y-3 min-w-[220px]">
                 {/* Header da coluna */}
-                <div className="bg-[#EBF0F6] dark:bg-slate-800/80 border border-blue-50/50 dark:border-slate-700 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs font-bold text-navy dark:text-slate-200 shadow-sm">
+                <div className="bg-[#EBF0F6] border border-blue-50/50 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs font-bold text-navy shadow-sm">
                   <span>{col.label}</span>
-                  <span className="bg-[#2E44B8]/10 dark:bg-slate-900 text-[#2E44B8] dark:text-blue-400 text-[10px] font-black px-2 py-0.5 rounded-full">
+                  <span className="bg-[#2E44B8]/10 text-[#2E44B8] text-[10px] font-black px-2 py-0.5 rounded-full">
                     {colLeads.length}
                   </span>
                 </div>
@@ -275,7 +274,7 @@ function AdminClientes() {
                   {/* Botão de adicionar novo lead da coluna */}
                   <button
                     onClick={() => handleOpenModal(col.statuses[0])}
-                    className="w-full flex items-center justify-center gap-1.5 py-3 border border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-xs font-bold transition-all"
+                    className="w-full flex items-center justify-center gap-1.5 py-3 border border-dashed border-slate-200 hover:border-slate-300 bg-slate-50/50 hover:bg-slate-50 text-slate-500 rounded-xl text-xs font-bold transition-all"
                   >
                     + Nova lead
                   </button>

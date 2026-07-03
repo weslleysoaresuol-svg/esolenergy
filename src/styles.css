@@ -2,7 +2,6 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
 
 /*
  * ESOL Energy design system.
@@ -86,11 +85,6 @@
   --border: oklch(0.92 0.01 255);
   --input: oklch(0.92 0.01 255);
   --ring: var(--sun);
-
-  /* Suns Premium Theme Variables */
-  --suns-bg-color: #F4F6FA;
-  --suns-sidebar-color: #FFFFFF;
-  --suns-card-color: #FFFFFF;
 }
 
 @layer base {
@@ -241,17 +235,17 @@
    ESTILOS PREMIUM (STYLE SUNS BRASIL)
    ========================================================= */
 @utility suns-bg {
-  background-color: var(--suns-bg-color) !important;
+  background-color: #F4F6FA !important;
 }
 
 @utility suns-sidebar {
-  background-color: var(--suns-sidebar-color) !important;
-  border-right: 1px solid var(--border) !important;
+  background-color: #FFFFFF !important;
+  border-right: 1px solid #E2E8F0 !important;
 }
 
 @utility suns-card {
-  background-color: var(--suns-card-color) !important;
-  border: 1px solid var(--border) !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
   border-radius: 1rem !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
 }
@@ -308,127 +302,5 @@
   }
 }
 
-/* =========================================================
-   DARK THEME OVERRIDES FOR PREMIUM ESOL PANEL
-   ========================================================= */
-.dark {
-  --navy: oklch(0.65 0.16 225);
-  --navy-deep: oklch(0.55 0.15 225);
-  --sun: oklch(0.84 0.17 85);
-  --sun-deep: oklch(0.78 0.18 75);
-  --paper: oklch(0.12 0.015 250);
-  --ink: oklch(0.97 0.01 250);
 
-  --background: oklch(0.12 0.015 250);
-  --foreground: var(--ink);
-  --card: oklch(0.15 0.015 250);
-  --card-foreground: var(--ink);
-  --popover: oklch(0.15 0.015 250);
-  --popover-foreground: var(--ink);
-  --primary: var(--navy);
-  --primary-foreground: oklch(0.12 0.015 250);
-  --secondary: oklch(0.18 0.015 250);
-  --secondary-foreground: var(--navy);
-  --muted: oklch(0.18 0.015 250);
-  --muted-foreground: oklch(0.65 0.015 250);
-  --border: oklch(0.22 0.015 250);
-  --input: oklch(0.22 0.015 250);
-
-  /* Suns Premium Theme Variables - Dark Mode */
-  --suns-bg-color: oklch(0.12 0.015 250);
-  --suns-sidebar-color: oklch(0.15 0.015 250);
-  --suns-card-color: oklch(0.15 0.015 250);
-}
-
-.dark body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-}
-
-
-
-.dark .suns-table-header {
-  background-color: oklch(0.18 0.015 250) !important;
-  color: oklch(0.85 0.01 250) !important;
-}
-
-.dark .suns-btn-primary {
-  background-color: oklch(0.5 0.16 240) !important; /* brighter blue for primary buttons */
-  color: #FFFFFF !important;
-}
-.dark .suns-btn-primary:hover {
-  background-color: oklch(0.45 0.16 240) !important;
-}
-
-/* Force bg-white overrides inside dark mode */
-.dark .bg-white {
-  background-color: oklch(0.15 0.015 250) !important;
-}
-
-/* Force text colors inside dark mode */
-.dark .text-navy {
-  color: oklch(0.7 0.15 220) !important;
-}
-
-.dark .text-slate-900,
-.dark .text-slate-800,
-.dark .text-slate-700 {
-  color: oklch(0.92 0.01 250) !important;
-}
-
-.dark .text-slate-650,
-.dark .text-slate-600,
-.dark .text-slate-500 {
-  color: oklch(0.75 0.01 250) !important;
-}
-
-.dark .text-slate-400 {
-  color: oklch(0.6 0.01 250) !important;
-}
-
-/* Force borders inside dark mode */
-.dark .border-slate-250,
-.dark .border-slate-200,
-.dark .border-slate-150,
-.dark .border-slate-100,
-.dark .border-slate-200\/60 {
-  border-color: oklch(0.22 0.015 250) !important;
-}
-
-/* Force specific slate background elements inside dark mode */
-.dark .bg-slate-50,
-.dark .bg-slate-100 {
-  background-color: oklch(0.18 0.015 250) !important;
-}
-
-/* hover states */
-.dark .hover\:bg-slate-50:hover,
-.dark .hover\:bg-slate-100:hover {
-  background-color: oklch(0.2 0.015 250) !important;
-}
-
-/* forms elements */
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: oklch(0.15 0.015 250) !important;
-  color: oklch(0.95 0.01 250) !important;
-  border-color: oklch(0.22 0.015 250) !important;
-}
-
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: oklch(0.5 0.01 250) !important;
-}
-
-/* cards, popovers, select dropdowns */
-.dark [role="menu"],
-.dark [role="dialog"],
-.dark [role="listbox"],
-.dark .bg-popover,
-.dark .bg-card {
-  background-color: oklch(0.15 0.015 250) !important;
-  border-color: oklch(0.22 0.015 250) !important;
-  color: var(--color-foreground) !important;
-}
 
