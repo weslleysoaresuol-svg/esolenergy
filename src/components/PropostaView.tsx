@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { BRL, NUM } from "@/lib/proposta-calc";
+import { BRL, NUM, calcularProposta } from "@/lib/proposta-calc";
 import { supabase } from "@/integrations/supabase/client";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { Badge } from "@/components/ui/badge";
@@ -219,11 +219,84 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     };
   }, [p.preco_total, p.economia_mensal, p.economia_anual, selectedFin, selectedPrazo, dadosAprovados]);
 
-  const inflacao = 0.08;
-  const chartData = Array.from({ length: 25 }, (_, i) => ({
-    ano: `${i + 1}`,
-    economia: Math.round(Number(p.economia_anual) * Math.pow(1 + inflacao, i)),
-  }));
+  // Objeto de cálculo final reativo (com fallback para propostas legadas)
+  const calc = useMemo(() => {
+    if (p.economia_ajustada_mensal !== undefined && p.economia_ajustada_mensal !== null) {
+      return {
+        economia_ajustada_mensal: Number(p.economia_ajustada_mensal),
+        economia_ajustada_anual: Number(p.economia_ajustada_anual),
+        economia_ajustada_25_anos: Number(p.economia_ajustada_25_anos),
+        payback_ajustado_meses: Number(p.payback_ajustado_meses),
+        tir_anual_pct: Number(p.tir_anual_pct || 0),
+        vpl_brl: Number(p.vpl_brl || 0),
+        custo_disponibilidade_mensal: Number(p.custo_disponibilidade_mensal || 0),
+        ajuste_fio_b_mensal: Number(p.ajuste_fio_b_mensal || 0),
+        inflacao_energetica: 0.08
+      };
+    }
+
+    // Fallback: proposta legada, recalcula reativamente
+    try {
+      const mockParams = {
+        hsp_norte: 4.6, hsp_nordeste: 5.6, hsp_centro_oeste: 5.2, hsp_sudeste: 4.8, hsp_sul: 4.5,
+        preco_wp_residencial_pequeno: 3.80, preco_wp_residencial_grande: 3.20, preco_wp_comercial_pequeno: 2.90, preco_wp_comercial_grande: 2.60, preco_wp_industrial: 2.40,
+        tarifa_kwh_default: 0.95, perdas_sistema: 0.18, inflacao_energetica: 0.08, vida_util_anos: 25,
+        potencia_modulo_w: p.potencia_modulo_w || 555, area_por_modulo_m2: 2.7,
+        custo_equipamentos_pct: 0.48, custo_instalacao_pct: 0.12, custo_frete_pct: 0.03, custo_impostos_compra_pct: 0.03, custo_comissao_pct: 0.08, margem_alvo_pct: 0.24,
+        tributacao_empresa_pct: 0.10, custo_marketing_pct: 0.03, custo_overhead_pct: 0.05, custo_garantia_pct: 0.008, custo_engenharia_fixo_brl: 900,
+        percentual_fio_b: 0.60
+      };
+
+      const res = calcularProposta({
+        consumo_kwh: Number(p.consumo_kwh),
+        tarifa_kwh: Number(p.tarifa_kwh),
+        estado: p.estado || "SP",
+        tipo: (p.tipo_instalacao || "residencial") as any,
+        ligacao: p.kwp_sistema > 15 ? "tri" : "mono", // heurística de ligação
+        preco_override: Number(p.preco_total),
+        qtd_modulos_override: Number(p.qtd_modulos)
+      }, mockParams as any);
+
+      return {
+        economia_ajustada_mensal: res.economia_ajustada_mensal,
+        economia_ajustada_anual: res.economia_ajustada_anual,
+        economia_ajustada_25_anos: res.economia_ajustada_25_anos,
+        payback_ajustado_meses: res.payback_ajustado_meses,
+        tir_anual_pct: res.tir_anual_pct,
+        vpl_brl: res.vpl_brl,
+        custo_disponibilidade_mensal: res.custo_disponibilidade_mensal,
+        ajuste_fio_b_mensal: res.ajuste_fio_b_mensal,
+        inflacao_energetica: 0.08
+      };
+    } catch (e) {
+      console.error("Erro no fallback de recálculo da proposta", e);
+      return {
+        economia_ajustada_mensal: Number(p.economia_mensal),
+        economia_ajustada_anual: Number(p.economia_anual),
+        economia_ajustada_25_anos: Number(p.economia_25_anos),
+        payback_ajustado_meses: Number(p.payback_meses),
+        tir_anual_pct: 0,
+        vpl_brl: 0,
+        custo_disponibilidade_mensal: 0,
+        ajuste_fio_b_mensal: 0,
+        inflacao_energetica: 0.08
+      };
+    }
+  }, [p]);
+
+  const chartData = Array.from({ length: 25 }, (_, i) => {
+    const ano = i + 1;
+    const economiaAno = calc.economia_ajustada_anual * Math.pow(1 + calc.inflacao_energetica, i);
+    // Descontar custos de O&M (0.5% a.a. do preço a partir do ano 2)
+    const custoOM = ano >= 2 ? +(Number(p.preco_total) * 0.005) : 0;
+    // Descontar troca do inversor (15% no ano 12)
+    const custoInversor = ano === 12 ? +(Number(p.preco_total) * 0.15) : 0;
+    
+    return {
+      ano: `${ano}`,
+      economia: Math.round(Math.max(0, economiaAno - custoOM - custoInversor)),
+    };
+  });
 
   const validadeDias = p.validade_dias || 15;
   const expiraEm = p.expires_at ? new Date(p.expires_at) : null;
@@ -486,8 +559,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
       <section className="max-w-5xl mx-auto px-6 md:px-12 -mt-8 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Stat icon={Zap} label="Sistema" value={`${NUM(Number(p.kwp_sistema), 2)} kWp`} />
-          <Stat icon={TrendingDown} label="Economia/mês" value={BRL(Number(p.economia_mensal))} highlight />
-          <Stat icon={Clock} label="Payback" value={`${(Number(p.payback_meses) / 12).toFixed(1)} anos`} />
+          <Stat icon={TrendingDown} label="Economia Real/mês" value={BRL(calc.economia_ajustada_mensal)} highlight />
+          <Stat icon={Clock} label="Payback Real" value={`${(calc.payback_ajustado_meses / 12).toFixed(1)} anos`} />
           <Stat icon={Leaf} label="CO₂ evitado" value={`${NUM(Number(p.co2_evitado_ton), 1)} t`} />
         </div>
       </section>
@@ -634,9 +707,9 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
         <div className="text-center mb-8">
           <div className="text-xs uppercase tracking-widest text-sun-deep font-bold mb-2">A grande virada</div>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-navy">
-            Você vai economizar <span className="text-sun-deep">{BRL(Number(p.economia_25_anos))}</span>
+            Você vai economizar <span className="text-sun-deep">{BRL(calc.economia_ajustada_25_anos)}</span>
           </h2>
-          <p className="text-muted-foreground mt-2">Em 25 anos com inflação energética projetada de 8% ao ano</p>
+          <p className="text-muted-foreground mt-2">Em 25 anos deduzindo O&M anual e troca de inversor</p>
         </div>
 
         <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-4 md:p-6 border shadow-sm">
@@ -670,10 +743,10 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
               <Row label="Área necessária" value={`~${NUM(Number(p.area_necessaria_m2), 1)} m²`} />
             </SpecCard>
             <SpecCard title="Retorno do investimento">
-              <Row label="Economia/mês" value={BRL(Number(p.economia_mensal))} />
-              <Row label="Economia/ano" value={BRL(Number(p.economia_anual))} />
-              <Row label="Payback" value={`${(Number(p.payback_meses) / 12).toFixed(1)} anos`} highlight />
-              <Row label="Economia em 25 anos" value={BRL(Number(p.economia_25_anos))} />
+              <Row label="Economia Real/mês" value={BRL(calc.economia_ajustada_mensal)} />
+              <Row label="Economia Real/ano" value={BRL(calc.economia_ajustada_anual)} />
+              <Row label="Payback Real Ajustado" value={`${(calc.payback_ajustado_meses / 12).toFixed(1)} anos`} highlight />
+              <Row label="Economia em 25 anos" value={BRL(calc.economia_ajustada_25_anos)} />
             </SpecCard>
           </div>
           
@@ -685,6 +758,53 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           )}
         </div>
       </section>
+
+      {/* CARD DE ATRATIVIDADE FINANCEIRA PREMIUM */}
+      {calc.tir_anual_pct > 0 && (
+        <section className="max-w-5xl mx-auto px-6 md:px-12 pb-10">
+          <div className="bg-[#001F5C]/5 border border-[#001F5C]/15 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+            <div className="flex items-center gap-2">
+              <span className="p-2 bg-emerald-500/10 rounded-xl text-emerald-600"><Coins className="w-5 h-5" /></span>
+              <div>
+                <h3 className="font-display font-extrabold text-navy text-lg">Métricas de Atratividade Financeira</h3>
+                <p className="text-xs text-muted-foreground">Comparativo de rentabilidade sobre o capital investido</p>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white p-5 rounded-2xl border shadow-sm space-y-1 text-center">
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Taxa de Retorno (TIR Solar)</span>
+                <strong className="text-3xl font-black text-emerald-600 block">{calc.tir_anual_pct}% a.a.</strong>
+                <span className="text-[9px] text-slate-400 block">• Excelente rentabilidade, isenta de Imposto de Renda.</span>
+              </div>
+              
+              <div className="bg-white p-5 rounded-2xl border shadow-sm space-y-1 text-center">
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Valor Presente Líquido (VPL)</span>
+                <strong className="text-3xl font-black text-emerald-600 block">{BRL(calc.vpl_brl)}</strong>
+                <span className="text-[9px] text-slate-400 block">• Riqueza gerada acima de uma aplicação de 10% a.a.</span>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border shadow-sm space-y-3">
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block text-center animate-pulse">Comparativo de Rendimento</span>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-slate-500">Poupança (Poupa):</span>
+                    <span className="font-bold text-slate-700">~6.0% a.a.</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-slate-500">Renda Fixa / CDI:</span>
+                    <span className="font-bold text-slate-700">~10.0% a.a.</span>
+                  </div>
+                  <div className="flex justify-between items-center border-t pt-1.5 font-bold">
+                    <span className="text-navy">SOLAR ESOL:</span>
+                    <span className="text-emerald-600 font-extrabold">{calc.tir_anual_pct}% a.a.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* SIMULADOR FINANCEIRO E ANÁLISE DE VIABILIDADE OU CARD SIMPLIFICADO */}
       {!docFinAprovado ? (

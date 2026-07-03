@@ -108,6 +108,28 @@ function CotacaoPublica() {
               Quantidade solicitada: {cotacao.quantidade}x • Preço unitário de tabela: {BRL(Number(cotacao.preco_unit))}
             </div>
 
+            {cotacao.tir_anual_pct > 0 && (
+              <div className="bg-slate-50 border rounded-2xl p-4 mb-5 space-y-3 font-sans text-xs print-no-break">
+                <div className="flex items-center gap-1.5 text-navy font-bold">
+                  <Sun className="w-4 h-4 text-emerald-600 animate-spin-slow" />
+                  Atratividade e Retorno do Investimento
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-center">
+                  <div className="bg-white p-2.5 rounded-xl border shadow-sm">
+                    <span className="text-[9px] text-slate-400 block uppercase font-bold">TIR Anual do Solar</span>
+                    <strong className="text-sm font-black text-emerald-600 mt-0.5 block">{cotacao.tir_anual_pct}% a.a.</strong>
+                  </div>
+                  <div className="bg-white p-2.5 rounded-xl border shadow-sm">
+                    <span className="text-[9px] text-slate-400 block uppercase font-bold">Payback Real Estimado</span>
+                    <strong className="text-sm font-black text-navy mt-0.5 block">{(Number(cotacao.payback_ajustado_meses || 0) / 12).toFixed(1)} anos</strong>
+                  </div>
+                </div>
+                <div className="text-[10px] text-slate-500 text-center">
+                  • Economia mensal ajustada estimada: <strong className="text-emerald-700">{BRL(Number(cotacao.economia_ajustada_mensal))}</strong> (VPL de {BRL(Number(cotacao.vpl_brl))} a 10% a.a.).
+                </div>
+              </div>
+            )}
+
             {cotacao.observacoes && (
               <div className="text-sm text-muted-foreground mb-4 p-3 bg-slate-50 rounded-lg whitespace-pre-wrap">{cotacao.observacoes}</div>
             )}

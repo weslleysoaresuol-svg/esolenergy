@@ -389,6 +389,17 @@ function NovaProposta() {
         payback_meses: calculo.payback_meses,
         co2_evitado_ton: calculo.co2_evitado_ton,
         arvores_equivalentes: calculo.arvores_equivalentes,
+        
+        // Novos KPIs regulatórios e de atratividade financeira
+        economia_ajustada_mensal: calculo.economia_ajustada_mensal,
+        economia_ajustada_anual: calculo.economia_ajustada_anual,
+        economia_ajustada_25_anos: calculo.economia_ajustada_25_anos,
+        payback_ajustado_meses: calculo.payback_ajustado_meses,
+        tir_anual_pct: calculo.tir_anual_pct,
+        vpl_brl: calculo.vpl_brl,
+        custo_disponibilidade_mensal: calculo.custo_disponibilidade_mensal,
+        ajuste_fio_b_mensal: calculo.ajuste_fio_b_mensal,
+
         preco_total: calculo.preco_total,
         preco_por_wp: calculo.preco_por_wp,
         observacoes: finalObservacoes,
@@ -440,7 +451,18 @@ function NovaProposta() {
             delete (cleanPayload as any).kit_imagem_url;
             delete (cleanPayload as any).kit_tecnologia_modulo;
             delete (cleanPayload as any).kit_garantia_modulos_anos;
+            delete (cleanPayload as any).kit_garantia_modulos_anos;
             delete (cleanPayload as any).kit_garantia_inversor_anos;
+
+            // Deleta os novos campos do motor em caso de Supabase legado
+            delete (cleanPayload as any).economia_ajustada_mensal;
+            delete (cleanPayload as any).economia_ajustada_anual;
+            delete (cleanPayload as any).economia_ajustada_25_anos;
+            delete (cleanPayload as any).payback_ajustado_meses;
+            delete (cleanPayload as any).tir_anual_pct;
+            delete (cleanPayload as any).vpl_brl;
+            delete (cleanPayload as any).custo_disponibilidade_mensal;
+            delete (cleanPayload as any).ajuste_fio_b_mensal;
 
             const { data: retryData, error: retryError } = await supabase.from("propostas").insert(cleanPayload as any).select().single();
             if (retryError) throw retryError;
@@ -1354,8 +1376,9 @@ function NovaProposta() {
             <div className="bg-slate-50 rounded-xl p-5 text-sm space-y-3 shadow-inner">
               <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground font-semibold">{calculo.qtd_modulos} módulos × {calculo.potencia_modulo_w}W</span><span className="font-extrabold text-navy">{NUM(calculo.kwp_sistema, 2)} kWp</span></div>
               <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Área necessária</span><span className="font-semibold">{NUM(calculo.area_necessaria_m2, 1)} m²</span></div>
-              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Economia mensal</span><span className="font-semibold text-emerald-700">{BRL(calculo.economia_mensal)}</span></div>
-              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Payback estimado</span><span className="font-semibold">{(calculo.payback_meses / 12).toFixed(1)} anos</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Economia mensal (ajustada)</span><span className="font-semibold text-[#2E44B8]">{BRL(calculo.economia_ajustada_mensal)}</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Payback real ajustado</span><span className="font-semibold text-[#2E44B8]">{(calculo.payback_ajustado_meses / 12).toFixed(1)} anos ({calculo.payback_ajustado_meses} meses)</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">TIR Anual / VPL</span><span className="font-semibold text-emerald-600">{calculo.tir_anual_pct}% a.a. / {BRL(calculo.vpl_brl)}</span></div>
               <div className="flex justify-between text-base border-b pb-2 pt-1"><span className="font-bold text-navy">Investimento da Venda</span><span className="font-black text-navy">{BRL(calculo.preco_total)}</span></div>
               
               {/* Espelho exclusivo do Parceiro com comissão */}

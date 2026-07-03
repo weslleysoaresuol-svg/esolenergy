@@ -314,12 +314,12 @@ function CotacoesList() {
         return;
       }
 
-      const { data, error } = await (supabase.from as any)("cotacoes").insert({
+      let data: any = null;
+      let error: any = null;
+
+      const payload = {
         parceiro_id: user.id,
         cliente_id: targetClienteId,
-        // kit_id só é enviado se for um UUID real (kits cadastrados no banco).
-        // Kits do fallback têm IDs como "KIT-RES-PEQ-03" e causariam erro de UUID.
-        // Nesses casos, kit_id fica null e todos os dados ficam no kit_snapshot.
         kit_id: kitIdParaDB,
         kit_snapshot: kitSel,
         quantidade: novo.quantidade,
@@ -344,7 +344,38 @@ function CotacoesList() {
         lucro_liquido_real: qCalculo?.lucro_liquido_real || null,
         lucro_liquido_pct: qCalculo?.lucro_liquido_pct || null,
         margem_bruta: qCalculo?.margem_bruta || null,
-      }).select().single();
+
+        // Indicadores do motor solar
+        economia_ajustada_mensal: qCalculo?.economia_ajustada_mensal || null,
+        economia_ajustada_anual: qCalculo?.economia_ajustada_anual || null,
+        economia_ajustada_25_anos: qCalculo?.economia_ajustada_25_anos || null,
+        payback_ajustado_meses: qCalculo?.payback_ajustado_meses || null,
+        tir_anual_pct: qCalculo?.tir_anual_pct || null,
+        vpl_brl: qCalculo?.vpl_brl || null,
+        custo_disponibilidade_mensal: qCalculo?.custo_disponibilidade_mensal || null,
+        ajuste_fio_b_mensal: qCalculo?.ajuste_fio_b_mensal || null,
+      };
+
+      const resInsert = await (supabase.from as any)("cotacoes").insert(payload).select().single();
+      data = resInsert.data;
+      error = resInsert.error;
+
+      if (error && (error.code === "42703" || error.message?.includes("column"))) {
+        console.warn("Tabela 'cotacoes' não possui os novos campos financeiros. Salvando no formato reduzido...");
+        const cleanPayload = { ...payload };
+        delete (cleanPayload as any).economia_ajustada_mensal;
+        delete (cleanPayload as any).economia_ajustada_anual;
+        delete (cleanPayload as any).economia_ajustada_25_anos;
+        delete (cleanPayload as any).payback_ajustado_meses;
+        delete (cleanPayload as any).tir_anual_pct;
+        delete (cleanPayload as any).vpl_brl;
+        delete (cleanPayload as any).custo_disponibilidade_mensal;
+        delete (cleanPayload as any).ajuste_fio_b_mensal;
+
+        const resRetry = await (supabase.from as any)("cotacoes").insert(cleanPayload).select().single();
+        data = resRetry.data;
+        error = resRetry.error;
+      }
 
       if (error) throw error;
 
