@@ -295,7 +295,7 @@ function Hero() {
                 onChange={(e) => setVal(e.target.value.replace(/\D/g, ""))}
                 inputMode="numeric"
                 placeholder="Valor da sua conta de luz"
-                className="w-full py-3 bg-transparent outline-none text-navy font-medium placeholder:text-ink/30"
+                className="w-full py-3 bg-transparent outline-none text-navy font-medium placeholder:text-ink/60"
               />
             </div>
             <button
@@ -1092,7 +1092,7 @@ function FinalCTA() {
                         }}
                         onFocus={() => setShowSuggestions(true)}
                         onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
+                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
                       />
                       
                       {showSuggestions && suggestions.length > 0 && (
@@ -1128,7 +1128,7 @@ function FinalCTA() {
                           setForm((f) => ({ ...f, conta: Number(e.target.value.replace(/\D/g, "")) || 0 }))
                         }
                         placeholder="Ex: 850"
-                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
+                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
                       />
                       <p className="mt-1 text-[10px] text-ink/60">Já preenchemos com o valor do simulador.</p>
                     </div>
@@ -1179,7 +1179,7 @@ function Field({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all"
+        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all"
       />
     </div>
   );
@@ -1327,7 +1327,7 @@ function AcompanharModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
               placeholder="Digite seu CPF ou CNPJ (apenas números)"
               value={doc}
               onChange={(e) => setDoc(e.target.value)}
-              className="flex-1 bg-transparent px-3 py-2 outline-none text-navy font-semibold placeholder:text-ink/30 text-sm"
+              className="flex-1 bg-transparent px-3 py-2 outline-none text-navy font-semibold placeholder:text-ink/60 text-sm"
             />
             <button
               type="submit"
