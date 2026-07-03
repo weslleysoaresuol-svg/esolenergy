@@ -14,6 +14,7 @@ import { Plus, FileText, Eye, Zap, Sun, Sparkles } from "lucide-react";
 import { BRL, calcularProposta } from "@/lib/proposta-calc";
 import { toast } from "sonner";
 import { KITS_FALLBACK } from "@/lib/kits-fallback";
+import { CidadeEstadoInput } from "@/components/CidadeEstadoInput";
 
 export const Route = createFileRoute("/app/cotacoes/")({
   head: () => ({ meta: [{ title: "Cotações Rápidas — ESOL Energy" }] }),
@@ -538,15 +539,12 @@ function CotacoesList() {
                   </div>
                   <div className="space-y-1">
                     <Label className="text-[10px] font-bold text-slate-500 uppercase">Cidade / UF</Label>
-                    <div className="flex gap-1.5">
-                      <Input placeholder="Cidade" value={novoCliente.cidade} onChange={(e) => setNovoCliente({ ...novoCliente, cidade: e.target.value })} className="h-9 text-xs flex-1" />
-                      <Select value={novoCliente.estado} onValueChange={(v) => setNovoCliente({ ...novoCliente, estado: v })}>
-                        <SelectTrigger className="h-9 w-16 text-xs"><SelectValue placeholder="UF" /></SelectTrigger>
-                        <SelectContent>
-                          {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <CidadeEstadoInput
+                      cidade={novoCliente.cidade}
+                      estado={novoCliente.estado}
+                      onChange={(cit, uf) => setNovoCliente({ ...novoCliente, cidade: cit, estado: uf })}
+                      className="h-9 text-xs"
+                    />
                   </div>
                 </div>
               )}

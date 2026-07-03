@@ -13,6 +13,7 @@ import { calcularProposta, type Parametros, type TipoInstalacao, BRL, NUM, regia
 import { KITS_FALLBACK, FINANCEIRAS_FALLBACK } from "@/lib/kits-fallback";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Sun, Zap, Wallet } from "lucide-react";
+import { CidadeEstadoInput } from "@/components/CidadeEstadoInput";
 
 export const Route = createFileRoute("/app/propostas/nova")({ 
   validateSearch: (search: Record<string, unknown>) => ({
@@ -1171,13 +1172,20 @@ function NovaProposta() {
             <div><Label>Consumo médio (kWh/mês)</Label><Input type="number" value={consumo} onChange={(e) => setConsumo(Number(e.target.value))} /></div>
             <div><Label>Tarifa de energia (R$/kWh)</Label><Input type="number" step="0.01" value={tarifa} onChange={(e) => setTarifa(Number(e.target.value))} /></div>
             <div>
-              <Label>Estado</Label>
-              <Select value={estado} onValueChange={setEstado}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{UFS.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
-              </Select>
+              <Label>Cidade / Estado</Label>
+              <CidadeEstadoInput
+                cidade={cidade}
+                estado={estado}
+                onChange={(cit, uf) => {
+                  setCidade(cit);
+                  if (uf) setEstado(uf);
+                }}
+              />
             </div>
-            <div><Label>Cidade</Label><Input value={cidade} onChange={(e) => setCidade(e.target.value)} /></div>
+            <div>
+              <Label>UF</Label>
+              <Input value={estado} readOnly className="bg-slate-50 cursor-not-allowed font-bold text-navy" />
+            </div>
             <div>
               <Label>Padrão de Ligação</Label>
               <Select value={tipoConexao} onValueChange={(v: any) => setTipoConexao(v)}>

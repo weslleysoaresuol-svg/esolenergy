@@ -54,25 +54,56 @@ function SucessoOrcamento() {
     (async () => {
       setLoadingAgenda(true);
       try {
-        // 1. Carrega configuração da agenda
-        const { data: configs } = await supabase
-          .from("configuracao_agenda" as any)
-          .select("*")
-          .eq("ativo", true);
+        let configs: any[] = [];
+        let agends: any[] = [];
         
-        setConfigAgenda(configs || []);
+        try {
+          // 1. Carrega configuração da agenda
+          const { data: configData, error: errConfig } = await supabase
+            .from("configuracao_agenda" as any)
+            .select("*")
+            .eq("ativo", true);
+          
+          if (errConfig) throw errConfig;
+          configs = configData || [];
+        } catch (eConfig) {
+          console.warn("Tabela configuracao_agenda ausente no banco remoto. Usando fallback padrão.");
+          // Fallback padrão: Segunda a Sexta ativa
+          configs = [
+            { dia_semana: 1, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60 },
+            { dia_semana: 2, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60 },
+            { dia_semana: 3, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60 },
+            { dia_semana: 4, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60 },
+            { dia_semana: 5, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60 }
+          ];
+        }
 
-        // 2. Carrega agendamentos futuros
-        const limitDate = new Date();
-        limitDate.setDate(limitDate.getDate() + 10);
-        const { data: agends } = await supabase
-          .from("agendamentos" as any)
-          .select("data_hora")
-          .gte("data_hora", new Date().toISOString())
-          .lte("data_hora", limitDate.toISOString())
-          .neq("status", "cancelado");
+        try {
+          // 2. Carrega agendamentos futuros
+          const limitDate = new Date();
+          limitDate.setDate(limitDate.getDate() + 10);
+          const { data: agendsData, error: errAgends } = await supabase
+            .from("agendamentos" as any)
+            .select("data_hora")
+            .gte("data_hora", new Date().toISOString())
+            .lte("data_hora", limitDate.toISOString())
+            .neq("status", "cancelado");
 
-        setAgendamentosExistentes(agends || []);
+          if (errAgends) throw errAgends;
+          agends = agendsData || [];
+        } catch (eAgends) {
+          console.warn("Tabela agendamentos ausente no banco remoto. Usando fallback local.");
+          const local = localStorage.getItem("esol_fallback_agendamentos");
+          if (local) {
+            try {
+              const parsed = JSON.parse(local);
+              agends = parsed.map((a: any) => ({ data_hora: a.data_hora }));
+            } catch {}
+          }
+        }
+
+        setConfigAgenda(configs);
+        setAgendamentosExistentes(agends);
 
         // 3. Gera os próximos 5 dias úteis (Segunda a Sexta)
         const days: Date[] = [];
@@ -83,7 +114,7 @@ function SucessoOrcamento() {
         while (days.length < 5) {
           const dayOfWeek = cur.getDay();
           // Verifica se o dia de semana está ativo nas configurações da agenda
-          const configParaDia = (configs || []).find((c: any) => c.dia_semana === dayOfWeek);
+          const configParaDia = configs.find((c: any) => c.dia_semana === dayOfWeek);
           
           if (configParaDia) {
             days.push(new Date(cur));
@@ -168,16 +199,49 @@ function SucessoOrcamento() {
       const scheduledDateTime = new Date(diaSelecionado);
       scheduledDateTime.setHours(h, m, 0, 0);
 
-      const { data, error } = await supabase
-        .from("agendamentos" as any)
-        .insert({
+      let data: any = null;
+      let error: any = null;
+
+      try {
+        const resInsert = await supabase
+          .from("agendamentos" as any)
+          .insert({
+            cliente_id: id,
+            data_hora: scheduledDateTime.toISOString(),
+            status: "pendente",
+            observacoes: "Agendamento autônomo efetuado pelo cliente na página de sucesso do site."
+          })
+          .select("*")
+          .maybeSingle();
+        data = resInsert.data;
+        error = resInsert.error;
+      } catch (e) {
+        error = e;
+      }
+
+      // Se a tabela não existe no banco de dados remoto
+      if (error && (error.code === "42P01" || error.message?.includes("does not exist"))) {
+        console.warn("Tabela agendamentos ausente no banco remoto. Registrando localmente...");
+        const novoAg = {
+          id: Math.random().toString(36).substring(2, 9),
           cliente_id: id,
           data_hora: scheduledDateTime.toISOString(),
           status: "pendente",
-          observacoes: "Agendamento autônomo efetuado pelo cliente na página de sucesso do site."
-        })
-        .select("*")
-        .maybeSingle();
+          observacoes: "Agendamento autônomo efetuado pelo cliente na página de sucesso do site (demonstração local)."
+        };
+        const local = localStorage.getItem("esol_fallback_agendamentos");
+        let list = [];
+        if (local) {
+          try { list = JSON.parse(local); } catch {}
+        }
+        list.push(novoAg);
+        localStorage.setItem("esol_fallback_agendamentos", JSON.stringify(list));
+        
+        toast.success("Reunião agendada com sucesso (modo de simulação local)!");
+        setAgendamentoConfirmado(novoAg);
+        setSavingAgendamento(false);
+        return;
+      }
 
       if (error) throw error;
 

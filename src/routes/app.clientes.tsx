@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertTriangle, Users, Loader2, Filter, Search, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { CidadeEstadoInput } from "@/components/CidadeEstadoInput";
 
 export const Route = createFileRoute("/app/clientes")({
   head: () => ({ meta: [{ title: "Clientes & Leads — ESOL Energy" }] }),
@@ -43,8 +44,6 @@ function AdminClientes() {
   const [telefone, setTelefone] = useState("");
   const [uf, setUf] = useState("");
   const [cidade, setCidade] = useState("");
-  const [ufsList, setUfsList] = useState<any[]>([]);
-  const [cidadesList, setCidadesList] = useState<any[]>([]);
   const [savingLead, setSavingLead] = useState(false);
 
   const fetchClientes = async () => {
@@ -99,26 +98,9 @@ function AdminClientes() {
         console.error("Erro ao buscar corretores para filtro:", err);
       }
     })();
-
-    // Carrega UFs do IBGE
-    fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados?ordenar=nome")
-      .then((res) => res.json())
-      .then((data) => setUfsList(data))
-      .catch((err) => console.error("Erro ao buscar UFs:", err));
   }, []);
 
-  // Carrega cidades da UF selecionada
-  useEffect(() => {
-    if (!uf) {
-      setCidadesList([]);
-      setCidade("");
-      return;
-    }
-    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?ordenar=nome`)
-      .then((res) => res.json())
-      .then((data) => setCidadesList(data))
-      .catch((err) => console.error("Erro ao buscar cidades:", err));
-  }, [uf]);
+
 
   const handleOpenModal = (status: string) => {
     setTargetStatus(status);
@@ -353,37 +335,29 @@ function AdminClientes() {
                 className="h-10 text-xs"
                 required
               />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
+               <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-2 space-y-1">
+                <label className="font-bold text-slate-600 text-xs">Cidade / Estado</label>
+                <CidadeEstadoInput
+                  cidade={cidade}
+                  estado={uf}
+                  onChange={(cit, estadoUF) => {
+                    setCidade(cit);
+                    setUf(estadoUF);
+                  }}
+                  className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg outline-none text-xs"
+                />
+              </div>
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">Estado</label>
-                <select
+                <label className="font-bold text-slate-600 text-xs">UF</label>
+                <Input
                   value={uf}
-                  onChange={(e) => setUf(e.target.value)}
-                  className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg outline-none text-xs"
-                >
-                  <option value="">Selecione um estado</option>
-                  {ufsList.map((x) => (
-                    <option key={x.id} value={x.sigla}>{x.nome}</option>
-                  ))}
-                </select>
+                  readOnly
+                  placeholder="SP"
+                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg outline-none text-xs font-bold text-navy cursor-not-allowed"
+                />
               </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-600">Cidade</label>
-                <select
-                  value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
-                  className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg outline-none text-xs"
-                  disabled={!uf}
-                >
-                  <option value="">Selecione uma cidade</option>
-                  {cidadesList.map((x) => (
-                    <option key={x.id} value={x.nome}>{x.nome}</option>
-                  ))}
-                </select>
-              </div>
+            </div>
             </div>
 
             <div className="pt-4 flex justify-center">

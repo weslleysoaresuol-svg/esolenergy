@@ -47,6 +47,7 @@ const DIAS_SEMANA = [
 
 function AgendaComercial() {
   const { user, role } = useCurrentUser();
+  const [dbNeedsSync, setDbNeedsSync] = useState(false);
   const [agendamentos, setAgendamentos] = useState<any[]>([]);
   const [corretores, setCorretores] = useState<any[]>([]);
   const [configs, setConfigs] = useState<any[]>([]);
@@ -85,52 +86,37 @@ function AgendaComercial() {
     setLoading(true);
     try {
       // 1. Carrega Agendamentos com dados dos clientes e corretores
-      let agendsQuery = supabase
-        .from("agendamentos" as any)
-        .select(`
-          *,
-          clientes:cliente_id (id, nome, telefone, email, cidade, estado),
-          profiles:corretor_id (nome, email, telefone)
-        ` as any);
-
-      if (role === "corretor") {
-        agendsQuery = agendsQuery.eq("corretor_id", user.id);
-      }
-
-      const { data: agends, error: errAgends } = await agendsQuery.order("data_hora", { ascending: true });
-
-      if (errAgends) {
-        // Fallback simples se a junção der erro de cache de relacionamento
-        let fallbackQuery = supabase
+      let tempAgendamentos: any[] = [];
+      try {
+        let agendsQuery = supabase
           .from("agendamentos" as any)
-          .select("*");
-        
+          .select(`
+            *,
+            clientes:cliente_id (id, nome, telefone, email, cidade, estado),
+            profiles:corretor_id (nome, email, telefone)
+          ` as any);
+
         if (role === "corretor") {
-          fallbackQuery = fallbackQuery.eq("corretor_id", user.id);
+          agendsQuery = agendsQuery.eq("corretor_id", user.id);
         }
 
-        const { data: fallbackAgends } = await fallbackQuery.order("data_hora", { ascending: true });
-        
-        // Carrega clientes e profiles separadamente
-        if (fallbackAgends && fallbackAgends.length > 0) {
-          const clientIds = fallbackAgends.map((a: any) => a.cliente_id);
-          const corrIds = fallbackAgends.map((a: any) => a.corretor_id).filter(Boolean);
+        const { data: agends, error: errAgends } = await agendsQuery.order("data_hora", { ascending: true });
 
-          const { data: clients } = await supabase.from("clientes").select("*").in("id", clientIds);
-          const { data: profs } = await supabase.from("profiles").select("*").in("id", corrIds);
-
-          const enriched = fallbackAgends.map((a: any) => ({
-            ...a,
-            clientes: (clients || []).find((c: any) => c.id === a.cliente_id),
-            profiles: (profs || []).find((p: any) => p.id === a.corretor_id),
-          }));
-          setAgendamentos(enriched);
-        } else {
-          setAgendamentos([]);
+        if (errAgends) {
+          if (errAgends.code === "42P01" || errAgends.message?.includes("does not exist")) {
+            setDbNeedsSync(true);
+          }
+          throw errAgends;
         }
-      } else {
-        setAgendamentos(agends || []);
+        tempAgendamentos = agends || [];
+      } catch (e) {
+        console.warn("Falha ao carregar agendamentos do banco remoto, usando fallback local.", e);
+        const local = localStorage.getItem("esol_fallback_agendamentos");
+        if (local) {
+          try { tempAgendamentos = JSON.parse(local); } catch {}
+        }
       }
+      setAgendamentos(tempAgendamentos);
 
       // 2. Carrega Corretores para Direcionamento
       const { data: roles } = await supabase
@@ -151,12 +137,37 @@ function AgendaComercial() {
       }
 
       // 3. Carrega Configurações da Agenda
-      const { data: configData } = await supabase
-        .from("configuracao_agenda" as any)
-        .select("*")
-        .order("dia_semana", { ascending: true });
-      
-      setConfigs(configData || []);
+      let tempConfigs: any[] = [];
+      try {
+        const { data: configData, error: errConfig } = await supabase
+          .from("configuracao_agenda" as any)
+          .select("*")
+          .order("dia_semana", { ascending: true });
+        
+        if (errConfig) {
+          if (errConfig.code === "42P01" || errConfig.message?.includes("does not exist")) {
+            setDbNeedsSync(true);
+          }
+          throw errConfig;
+        }
+        tempConfigs = configData || [];
+      } catch (e) {
+        console.warn("Falha ao carregar configuracoes da agenda do banco remoto, usando fallback local.", e);
+        const local = localStorage.getItem("esol_fallback_configs");
+        if (local) {
+          try { tempConfigs = JSON.parse(local); } catch {}
+        } else {
+          // Valores padrão em memória
+          tempConfigs = [
+            { id: "1", dia_semana: 1, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60, ativo: true },
+            { id: "2", dia_semana: 2, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60, ativo: true },
+            { id: "3", dia_semana: 3, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60, ativo: true },
+            { id: "4", dia_semana: 4, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60, ativo: true },
+            { id: "5", dia_semana: 5, hora_inicio: "09:00:00", hora_fim: "18:00:00", intervalo_minutos: 60, ativo: true },
+          ];
+        }
+      }
+      setConfigs(tempConfigs);
 
       // 4. Carrega Clientes para o agendamento manual
       let clientsQuery = supabase.from("clientes").select("id, nome, cidade, estado, telefone, corretor_id");
@@ -177,6 +188,17 @@ function AgendaComercial() {
   // Alterar Status do Agendamento
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
+      if (dbNeedsSync) {
+        const updated = agendamentos.map((a) => {
+          if (a.id === id) return { ...a, status: newStatus };
+          return a;
+        });
+        setAgendamentos(updated);
+        localStorage.setItem("esol_fallback_agendamentos", JSON.stringify(updated));
+        toast.success(`Status atualizado para '${newStatus}'!`);
+        return;
+      }
+
       const { error } = await supabase
         .from("agendamentos" as any)
         .update({ status: newStatus })
@@ -193,6 +215,24 @@ function AgendaComercial() {
   // Atribuir/Reencaminhar Consultor Responsável
   const handleAtribuirCorretor = async (agendamentoId: string, clienteId: string, corretorId: string | null) => {
     try {
+      if (dbNeedsSync) {
+        const corr = corretores.find((c) => c.id === corretorId);
+        const updated = agendamentos.map((a) => {
+          if (a.id === agendamentoId) {
+            return {
+              ...a,
+              corretor_id: corretorId,
+              profiles: corr ? { nome: corr.nome, email: corr.email, telefone: corr.telefone } : null,
+            };
+          }
+          return a;
+        });
+        setAgendamentos(updated);
+        localStorage.setItem("esol_fallback_agendamentos", JSON.stringify(updated));
+        toast.success("Reunião direcionada com sucesso!");
+        return;
+      }
+
       const { error: errAgend } = await supabase
         .from("agendamentos" as any)
         .update({ corretor_id: corretorId })
@@ -210,7 +250,7 @@ function AgendaComercial() {
       toast.success("Reunião direcionada com sucesso!");
       loadData();
     } catch (err: any) {
-      toast.error(`Erro ao delegar consultor: ${err.message}`);
+      toast.error(`Falha ao atribuir corretor: ${err.message}`);
     }
   };
 
@@ -251,6 +291,33 @@ function AgendaComercial() {
       } else {
         const cl = meusClientes.find(c => c.id === selectedClienteId);
         finalCorretorId = cl?.corretor_id || null;
+      }
+
+      if (dbNeedsSync) {
+        const cl = meusClientes.find(c => c.id === selectedClienteId);
+        const corr = corretores.find(c => c.id === finalCorretorId);
+        const novoAgendamento = {
+          id: Math.random().toString(36).substring(2, 9),
+          cliente_id: selectedClienteId,
+          data_hora: scheduledDateTime.toISOString(),
+          status: "confirmado",
+          corretor_id: finalCorretorId,
+          observacoes: obsReuniao.trim() || "Agendamento manual efetuado pelo painel da agenda.",
+          clientes: cl ? { id: cl.id, nome: cl.nome, telefone: cl.telefone, cidade: cl.cidade, estado: cl.estado } : null,
+          profiles: corr ? { nome: corr.nome, email: corr.email, telefone: corr.telefone } : null,
+          created_at: new Date().toISOString()
+        };
+        const updated = [...agendamentos, novoAgendamento];
+        setAgendamentos(updated);
+        localStorage.setItem("esol_fallback_agendamentos", JSON.stringify(updated));
+        toast.success("Reunião agendada localmente!");
+        setIsAgendando(false);
+        setSelectedClienteId("");
+        setDataReuniao("");
+        setHoraReuniao("");
+        setObsReuniao("");
+        setSavingAgendamento(false);
+        return;
       }
 
       const { error } = await supabase
@@ -310,6 +377,29 @@ function AgendaComercial() {
         return;
       }
 
+      if (dbNeedsSync) {
+        const updated = agendamentos.map((a: any) => {
+          if (a.id === agendamentoParaReagendar.id) {
+            return {
+              ...a,
+              data_hora: scheduledDateTime.toISOString(),
+              status: "confirmado",
+              observacoes: obsReuniao.trim() || agendamentoParaReagendar.observacoes
+            };
+          }
+          return a;
+        });
+        setAgendamentos(updated);
+        localStorage.setItem("esol_fallback_agendamentos", JSON.stringify(updated));
+        toast.success("Compromisso reagendado localmente!");
+        setAgendamentoParaReagendar(null);
+        setDataReuniao("");
+        setHoraReuniao("");
+        setObsReuniao("");
+        setSavingAgendamento(false);
+        return;
+      }
+
       const { error } = await supabase
         .from("agendamentos" as any)
         .update({
@@ -361,6 +451,22 @@ function AgendaComercial() {
 
     setSavingConfig(true);
     try {
+      if (dbNeedsSync) {
+        const novaRegra = {
+          id: Math.random().toString(36).substring(2, 9),
+          dia_semana: parseInt(novoDia),
+          hora_inicio: `${novaHoraInicio}:00`,
+          hora_fim: `${novaHoraFim}:00`,
+          intervalo_minutos: parseInt(novoIntervalo),
+          ativo: true,
+        };
+        const updated = [...configs, novaRegra];
+        setConfigs(updated);
+        localStorage.setItem("esol_fallback_configs", JSON.stringify(updated));
+        toast.success("Nova regra horária cadastrada localmente!");
+        return;
+      }
+
       const { error } = await supabase
         .from("configuracao_agenda" as any)
         .insert({
@@ -389,6 +495,14 @@ function AgendaComercial() {
     }
 
     try {
+      if (dbNeedsSync) {
+        const updated = configs.filter((c) => c.id !== id);
+        setConfigs(updated);
+        localStorage.setItem("esol_fallback_configs", JSON.stringify(updated));
+        toast.success("Regra de horário excluída localmente!");
+        return;
+      }
+
       const { error } = await supabase
         .from("configuracao_agenda" as any)
         .delete()
@@ -499,6 +613,25 @@ function AgendaComercial() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
+
+      {dbNeedsSync && (
+        <Card className="border border-amber-300 bg-amber-50 p-5 rounded-2xl flex items-start gap-4 text-amber-900 shadow-sm print-no-break font-sans">
+          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="text-xs space-y-2 leading-relaxed">
+            <strong className="block font-bold text-sm text-amber-800">⚠️ Sincronização do Banco de Dados Pendente (Modo Offline Ativado)</strong>
+            <p>
+              As tabelas de agenda (<code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">configuracao_agenda</code> e <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">agendamentos</code>) ainda não foram criadas ou atualizadas no cache do Supabase remoto.
+            </p>
+            <p>
+              Para ativar o agendamento real integrado ao banco de dados em produção, realize o <strong>commit</strong> e o <strong>push</strong> da migração SQL 
+              (<code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">supabase/migrations/20260702203000_agenda_reunioes.sql</code>) no seu repositório Git conectado à Lovable.
+            </p>
+            <div className="bg-amber-100/40 p-2.5 rounded-xl text-[10px] text-amber-800 border border-amber-200/50">
+              * Nota: Enquanto a sincronização não ocorre, você pode gerenciar, cadastrar janelas e agendar compromissos localmente neste navegador de forma experimental.
+            </div>
+          </div>
+        </Card>
+      )}
       
       {/* Título Principal */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

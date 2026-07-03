@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Zap, ArrowRight, Save, Loader2 } from "lucide-react";
+import { CidadeEstadoInput } from "@/components/CidadeEstadoInput";
 import { calcularProposta } from "@/lib/proposta-calc";
 import { KITS_FALLBACK } from "@/lib/kits-fallback";
 
@@ -320,12 +321,20 @@ function NovoCliente() {
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
-                  <Label className="text-xs font-semibold">Cidade</Label>
-                  <Input value={f.cidade || ""} onChange={(e) => set("cidade", e.target.value)} className="h-10 text-xs mt-1" />
+                  <Label className="text-xs font-semibold">Cidade / Estado</Label>
+                  <CidadeEstadoInput
+                    cidade={f.cidade || ""}
+                    estado={f.estado || ""}
+                    onChange={(cit, uf) => {
+                      set("cidade", cit);
+                      if (uf) set("estado", uf);
+                    }}
+                    className="h-10 text-xs mt-1"
+                  />
                 </div>
                 <div>
                   <Label className="text-xs font-semibold">UF</Label>
-                  <Input maxLength={2} value={f.estado || ""} onChange={(e) => set("estado", e.target.value.toUpperCase())} className="h-10 text-xs mt-1" />
+                  <Input maxLength={2} value={f.estado || ""} readOnly className="h-10 text-xs mt-1 bg-slate-50 cursor-not-allowed font-bold text-navy" />
                 </div>
               </div>
               <div className="sm:col-span-2">
