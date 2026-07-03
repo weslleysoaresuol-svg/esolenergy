@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2, MessageCircle, ArrowLeft, Sun, ShieldCheck, Sparkles, Clock, Calendar, Check } from "lucide-react";
+import { CheckCircle2, MessageCircle, ArrowLeft, Sun, ShieldCheck, Sparkles, Clock, Calendar, Check, Loader2 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
