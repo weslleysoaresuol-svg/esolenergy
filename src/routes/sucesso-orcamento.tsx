@@ -266,19 +266,19 @@ function SucessoOrcamento() {
   const whatsappLink = `https://wa.me/5511999999999?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
-    <div className="min-h-screen bg-[#001F5C] text-white antialiased flex flex-col justify-between relative overflow-hidden">
+    <div className="min-h-screen bg-paper text-ink antialiased flex flex-col justify-between relative overflow-x-hidden">
       {/* Elementos de background decorativos (Sol e brilhos) */}
-      <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-[#E2B714]/10 blur-3xl" />
-      <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-blue-500/10 blur-3xl" />
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+      <div className="pointer-events-none absolute -top-32 -right-40 w-[640px] h-[640px] rounded-full bg-sun/20 blur-3xl animate-sun-pulse" />
+      <div className="pointer-events-none absolute top-40 -left-20 w-[420px] h-[420px] rounded-full bg-navy/5 blur-3xl" />
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
+        backgroundImage: "radial-gradient(circle at 1px 1px, black 1px, transparent 0)",
         backgroundSize: "32px 32px",
       }} />
 
       {/* Header com Logotipo */}
       <header className="relative z-10 w-full max-w-6xl mx-auto px-6 py-8 flex justify-center sm:justify-start items-center">
         <Link to="/" className="transition hover:opacity-90">
-          <img src={logo} alt="ESOL Energy" className="h-9 w-auto brightness-0 invert" />
+          <img src={logo} alt="ESOL Energy" className="h-9 w-auto" />
         </Link>
       </header>
 
@@ -287,13 +287,13 @@ function SucessoOrcamento() {
         <div className="max-w-2xl w-full text-center space-y-8 animate-fade-in">
           
           {/* Card Principal */}
-          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-[32px] p-6 sm:p-10 shadow-2xl relative overflow-hidden space-y-6">
+          <div className="bg-white border border-slate-100 rounded-[32px] p-6 sm:p-10 shadow-deep relative overflow-hidden space-y-6">
             
             {/* Ícone de Sucesso */}
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 animate-pulse">
-                  <CheckCircle2 className="w-8 h-8 text-emerald-400 stroke-[1.5]" />
+                <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-200 animate-pulse">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-600 stroke-[1.5]" />
                 </div>
                 <div className="absolute -top-1 -right-1">
                   <Sparkles className="w-4 h-4 text-[#E2B714] animate-bounce" />
@@ -306,39 +306,39 @@ function SucessoOrcamento() {
               <span className="inline-block text-[#E2B714] font-extrabold tracking-[0.2em] text-[9px] uppercase bg-[#E2B714]/10 px-3 py-1 rounded-full border border-[#E2B714]/20">
                 Orçamento Solicitado!
               </span>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-tight text-navy">
                 {nome ? `Obrigado, ${nome.split(" ")[0]}!` : "Estudo Fotovoltaico Solicitado!"}
               </h1>
-              <p className="text-xs text-slate-300 leading-relaxed max-w-md mx-auto">
+              <p className="text-xs text-slate-650 leading-relaxed max-w-md mx-auto">
                 Seu orçamento foi recebido com sucesso no CRM da ESOL Energy. Nossos engenheiros já iniciaram os cálculos de dimensionamento.
               </p>
             </div>
 
             {/* Caixa de Agendamento Dinâmico */}
-            <div className="border-t border-white/5 pt-5 space-y-4">
+            <div className="border-t border-slate-100 pt-5 space-y-4">
               {agendamentoConfirmado ? (
                 /* Ticket de Reunião Confirmada */
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5 text-center space-y-3 animate-fade-in">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 text-center space-y-3 animate-fade-in">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                     <Check className="w-5 h-5 stroke-[2.5]" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm font-black text-white uppercase tracking-wider text-[10px]">Apresentação Reservada!</h3>
-                    <p className="text-xs font-bold text-emerald-400">
+                    <h3 className="text-sm font-black text-navy uppercase tracking-wider text-[10px]">Apresentação Reservada!</h3>
+                    <p className="text-xs font-bold text-emerald-600">
                       {formattedDate(new Date(agendamentoConfirmado.data_hora))} às {String(new Date(agendamentoConfirmado.data_hora).getHours()).padStart(2, "0")}:{String(new Date(agendamentoConfirmado.data_hora).getMinutes()).padStart(2, "0")}
                     </p>
                   </div>
-                  <p className="text-[10px] text-slate-300 max-w-xs mx-auto leading-relaxed">
+                  <p className="text-[10px] text-slate-600 max-w-xs mx-auto leading-relaxed">
                     Reservamos o consultor para apresentar o estudo do seu telhado nesta data. As informações de acesso foram enviadas no seu WhatsApp!
                   </p>
                 </div>
               ) : (
                 /* Formulário de Seleção de Dia e Horário */
-                <div className="space-y-4 text-left bg-black/10 p-5 rounded-2xl border border-white/5">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <div className="space-y-4 text-left bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
                     <Calendar className="w-4 h-4 text-[#E2B714]" /> Agende a Apresentação do seu Estudo Técnico (Grátis)
                   </h3>
-                  <p className="text-[10.5px] text-slate-350 leading-relaxed">
+                  <p className="text-[10.5px] text-slate-600 leading-relaxed">
                     Escolha o melhor horário para fazermos uma chamada de 10 minutos para detalhar o dimensionamento dos painéis, prazos de instalação e economias reais.
                   </p>
 
@@ -363,8 +363,8 @@ function SucessoOrcamento() {
                                 onClick={() => setDiaSelecionado(d)}
                                 className={`px-3 py-2 rounded-xl text-xs font-bold text-center shrink-0 transition cursor-pointer border ${
                                   isSelected 
-                                    ? "bg-white border-white text-navy font-black" 
-                                    : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
+                                    ? "bg-[#001F5C] border-[#001F5C] text-white font-black" 
+                                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300"
                                 }`}
                               >
                                 <div className="text-[9px] opacity-70">{DIAS_NOMES[d.getDay()].slice(0, 3)}</div>
@@ -380,7 +380,7 @@ function SucessoOrcamento() {
                       <div className="space-y-1.5">
                         <label className="text-[9px] uppercase tracking-widest font-black text-slate-400">2. Escolha o horário</label>
                         {slotsHorarios.length === 0 ? (
-                          <p className="text-[10px] text-amber-400 font-bold py-1">Todos os horários deste dia já foram ocupados. Escolha outra data.</p>
+                          <p className="text-[10px] text-amber-600 font-bold py-1">Todos os horários deste dia já foram ocupados. Escolha outra data.</p>
                         ) : (
                           <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                             {slotsHorarios.map((t) => {
@@ -392,8 +392,8 @@ function SucessoOrcamento() {
                                   onClick={() => setHorarioSelecionado(t)}
                                   className={`py-2 px-1 rounded-lg text-xs font-bold text-center transition cursor-pointer border ${
                                     isSelected
-                                      ? "bg-[#E2B714] border-[#E2B714] text-navy font-black"
-                                      : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
+                                      ? "bg-[#E2B714] border-[#E2B714] text-navy font-black shadow-sm"
+                                      : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300"
                                   }`}
                                 >
                                   {t}
@@ -409,7 +409,7 @@ function SucessoOrcamento() {
                         type="button"
                         onClick={handleConfirmarAgendamento}
                         disabled={savingAgendamento || !horarioSelecionado}
-                        className="w-full py-3 px-4 mt-2 bg-white hover:bg-slate-100 text-navy font-black text-xs rounded-xl flex items-center justify-center gap-1.5 shadow transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-3 px-4 mt-2 bg-[#001F5C] hover:bg-[#00153F] text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-lg shadow-blue-900/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                       >
                         {savingAgendamento ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
                         Confirmar Reunião Técnica Gratuita
@@ -423,10 +423,10 @@ function SucessoOrcamento() {
             {/* Divisor de Destaque */}
             <div className="relative py-2">
               <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                <div className="w-full border-t border-white/5"></div>
+                <div className="w-full border-t border-slate-100"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#001F5C] px-3 py-0.5 text-[8.5px] font-bold text-slate-400 tracking-widest rounded">Quer acelerar?</span>
+                <span className="bg-white px-3 py-0.5 text-[8.5px] font-bold text-slate-500 tracking-widest rounded">Quer acelerar?</span>
               </div>
             </div>
 
@@ -454,7 +454,7 @@ function SucessoOrcamento() {
           <div>
             <Link
               to="/"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white font-bold transition-all"
+              className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-navy font-bold transition-all"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Voltar para o site
             </Link>
@@ -463,13 +463,13 @@ function SucessoOrcamento() {
       </main>
 
       {/* Footer Minimalista */}
-      <footer className="relative z-10 w-full max-w-6xl mx-auto px-6 py-8 border-t border-white/5 text-center text-[10px] text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <footer className="relative z-10 w-full max-w-6xl mx-auto px-6 py-8 border-t border-slate-200/60 text-center text-[10px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
           © {new Date().getFullYear()} ESOL Energy. Todos os direitos reservados.
         </div>
         <div className="flex gap-4">
-          <Link to="/" className="hover:text-slate-350">Termos de Uso</Link>
-          <Link to="/" className="hover:text-slate-350">Política de Privacidade</Link>
+          <Link to="/" className="hover:text-navy">Termos de Uso</Link>
+          <Link to="/" className="hover:text-navy">Política de Privacidade</Link>
         </div>
       </footer>
     </div>

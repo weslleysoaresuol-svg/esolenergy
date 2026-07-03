@@ -139,14 +139,49 @@ function InvitePage() {
         
         // Consome o convite caso ele esteja cadastrado mas ainda não tenha cargo associado
         const { error: rpcErr } = await supabase.rpc("consume_invite", { _token: token });
-        if (!rpcErr) {
+        if (rpcErr) {
+          console.warn("RPC consume_invite falhou, executando fallback manual:", rpcErr);
+          try {
+            await supabase
+              .from("partner_invites")
+              .update({ 
+                used_at: new Date().toISOString(), 
+                used_by: userData.user.id 
+              } as any)
+              .eq("token", token);
+            
+            try {
+              await supabase
+                .from("convites" as any)
+                .update({ 
+                  used_at: new Date().toISOString(), 
+                  used_by: userData.user.id,
+                  status: "aceito"
+                } as any)
+                .eq("token", token);
+            } catch (e) {}
+
+            if (roleToAssign) {
+              await supabase.from("user_roles").insert({
+                user_id: userData.user.id,
+                role: roleToAssign as any
+              });
+            }
+
+            try { localStorage.removeItem("pending_invite_token"); } catch {}
+            toast.success("Acesso liberado com sucesso!");
+            navigate({ to: "/app" });
+          } catch (fallbackErr) {
+            console.error("Erro no fallback do useEffect:", fallbackErr);
+          }
+        } else {
           try { localStorage.removeItem("pending_invite_token"); } catch {}
           toast.success("Convite aceito com sucesso!");
           navigate({ to: "/app" });
         }
       }
     })();
-  }, [token, navigate]);
+  }, [token, navigate, roleToAssign]);
 
   const handleGoogle = async () => {
     setLoading(true);
@@ -190,11 +225,23 @@ function InvitePage() {
             } as any)
             .eq("token", token);
           
-          // E tenta atribuir a role corretor na user_roles caso seja corretor, ou deixa pendente
-          if (roleToAssign === "corretor") {
+          // Atualiza também na convites se existir
+          try {
+            await supabase
+              .from("convites" as any)
+              .update({ 
+                used_at: new Date().toISOString(), 
+                used_by: data.session.user.id,
+                status: "aceito"
+              } as any)
+              .eq("token", token);
+          } catch (e) {}
+
+          // Atribui o cargo correto na user_roles
+          if (roleToAssign) {
             await supabase.from("user_roles").insert({
               user_id: data.session.user.id,
-              role: "corretor" as any
+              role: roleToAssign as any
             });
           }
           

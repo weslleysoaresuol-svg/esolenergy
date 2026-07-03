@@ -67,6 +67,13 @@ function PerfilPage() {
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    // Apenas a chave Pix é obrigatória
+    if (!form.pix_tipo || !form.pix_chave || !form.pix_chave.trim()) {
+      toast.error("A chave Pix (Tipo e Chave) é obrigatória para o recebimento de comissões.");
+      return;
+    }
+
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
@@ -199,12 +206,12 @@ function PerfilPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <QrCode className="w-4 h-4 text-navy" />
-              <h3 className="font-semibold text-navy text-sm">Chave Pix (Preferencial)</h3>
+              <h3 className="font-semibold text-navy text-sm">Chave Pix *</h3>
               {temPix && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">✓ Cadastrado</span>}
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs">Tipo da chave Pix</Label>
+                <Label className="text-xs">Tipo da chave Pix *</Label>
                 <Select value={form.pix_tipo || ""} onValueChange={(v) => set("pix_tipo", v)}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Selecione o tipo" />
@@ -218,7 +225,7 @@ function PerfilPage() {
                 </Select>
               </div>
               <div>
-                <Label className="text-xs">Chave Pix</Label>
+                <Label className="text-xs">Chave Pix *</Label>
                 <Input
                   className="mt-1"
                   placeholder={
@@ -244,7 +251,7 @@ function PerfilPage() {
           <div className="border-t pt-4 space-y-3">
             <div className="flex items-center gap-2">
               <Banknote className="w-4 h-4 text-navy" />
-              <h3 className="font-semibold text-navy text-sm">Conta Bancária (alternativo ao Pix)</h3>
+              <h3 className="font-semibold text-navy text-sm">Conta Bancária (Opcional - alternativo ao Pix)</h3>
               {temBanco && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">✓ Cadastrado</span>}
             </div>
             <div className="grid sm:grid-cols-3 gap-3">
