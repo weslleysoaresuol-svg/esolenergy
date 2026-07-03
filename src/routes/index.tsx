@@ -286,7 +286,7 @@ function Hero() {
             className="mt-6 flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl shadow-deep border border-border max-w-xl"
           >
             <div className="flex items-center gap-3 flex-1 px-4">
-              <span className="text-ink/40 font-semibold">R$</span>
+              <span className="text-ink/60 font-semibold">R$</span>
               <label htmlFor="hero-bill" className="sr-only">Valor da conta de luz</label>
               <input
                 id="hero-bill"
@@ -307,7 +307,7 @@ function Hero() {
             </button>
           </form>
 
-          <div className="mt-5 flex items-center gap-4 text-xs text-ink/50">
+          <div className="mt-5 flex items-center gap-4 text-xs text-ink/70">
             <div className="flex -space-x-2">
               {["#FFC107", "#0A2A5E", "#FFC107", "#0A2A5E"].map((c, i) => (
                 <div
@@ -336,7 +336,7 @@ function Hero() {
 
           {/* floating stats */}
           <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-deep p-4 border border-border animate-float">
-            <div className="text-[9px] font-bold uppercase tracking-widest text-ink/50">
+            <div className="text-[9px] font-bold uppercase tracking-widest text-ink/70">
               Economia média / 10 anos
             </div>
             <div className="mt-0.5 font-display font-extrabold text-2xl text-navy">
@@ -371,7 +371,7 @@ function LogosStrip() {
       <div className="mx-auto max-w-7xl px-6 py-4 overflow-hidden">
         <div className="flex gap-12 animate-marquee whitespace-nowrap">
           {loop.map((t, i) => (
-            <div key={i} className="flex items-center gap-3 text-sm font-semibold text-ink/50">
+            <div key={i} className="flex items-center gap-3 text-sm font-semibold text-ink/70">
               <span className="size-1.5 rounded-full bg-sun" />
               {t}
             </div>
@@ -400,7 +400,7 @@ function MetricsBar() {
         {metrics.map((m) => (
           <div key={m.l} className="flex flex-col">
             <div className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-sun">{m.v}</div>
-            <div className="mt-2 text-[11px] sm:text-xs uppercase tracking-widest font-semibold text-white/55">
+            <div className="mt-2 text-[11px] sm:text-xs uppercase tracking-widest font-semibold text-white/75">
               {m.l}
             </div>
           </div>
@@ -558,7 +558,7 @@ function Simulator() {
                 <button
                   onClick={() => setMode("economia")}
                   className={`py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
-                    mode === "economia" ? "bg-navy text-white shadow-sm" : "text-ink/50 hover:text-navy"
+                    mode === "economia" ? "bg-navy text-white shadow-sm" : "text-ink/70 hover:text-navy"
                   }`}
                 >
                   Economia gerada
@@ -566,7 +566,7 @@ function Simulator() {
                 <button
                   onClick={() => setMode("financiamento")}
                   className={`py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
-                    mode === "financiamento" ? "bg-navy text-white shadow-sm" : "text-ink/50 hover:text-navy"
+                    mode === "financiamento" ? "bg-navy text-white shadow-sm" : "text-ink/70 hover:text-navy"
                   }`}
                 >
                   Financiamento solar
@@ -575,7 +575,7 @@ function Simulator() {
 
               {/* Tipo */}
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-widest text-ink/50">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-ink/70">
                   Tipo de imóvel
                 </label>
                 <div className="mt-2 grid grid-cols-3 gap-2 p-1 bg-secondary rounded-xl">
@@ -584,7 +584,7 @@ function Simulator() {
                       key={t}
                       onClick={() => setTipo(t)}
                       className={`py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
-                        tipo === t ? "bg-white text-navy shadow-sm" : "text-ink/50 hover:text-navy"
+                        tipo === t ? "bg-white text-navy shadow-sm" : "text-ink/70 hover:text-navy"
                       }`}
                     >
                       {t}
@@ -595,7 +595,7 @@ function Simulator() {
 
               {/* Estado / UF */}
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-widest text-ink/50">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-ink/70">
                   Estado de instalação
                 </label>
                 <select
@@ -636,7 +636,7 @@ function Simulator() {
               {/* Conta mensal — preenchida automaticamente pelo hero */}
               <div ref={billHighlightRef} className="rounded-2xl p-3 -m-3 transition-all duration-500">
                 <div className="flex items-baseline justify-between">
-                  <label className="text-[11px] font-bold uppercase tracking-widest text-ink/50">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-ink/70">
                     Conta mensal
                   </label>
                   <span className="font-display text-2xl sm:text-3xl font-extrabold text-navy">
@@ -653,7 +653,7 @@ function Simulator() {
                   className="mt-2.5 w-full accent-sun cursor-pointer"
                   aria-label="Valor da conta de luz"
                 />
-                <div className="mt-1 flex justify-between text-[10px] font-semibold text-ink/40">
+                <div className="mt-1 flex justify-between text-[10px] font-semibold text-ink/60">
                   <span>R$ 200</span>
                   <span>R$ 10.000</span>
                 </div>
@@ -668,7 +668,7 @@ function Simulator() {
                     <Stat label="Sistema ideal" value={`${result.systemKwp} kWp`} />
                     <Stat label="Payback real" value={`${result.payback} anos`} />
                   </div>
-                  <div className="relative mt-3 pt-2.5 border-t border-white/10 text-[9px] text-white/55 leading-relaxed">
+                  <div className="relative mt-3 pt-2.5 border-t border-white/10 text-[9px] text-white/75 leading-relaxed">
                     * Cálculo honesto: já desconta taxa de disponibilidade mínima da concessionária e estimativa de iluminação pública (COSIP).
                   </div>
                 </div>
@@ -676,7 +676,7 @@ function Simulator() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/50 block">Financeira</label>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/70 block">Financeira</label>
                       <select
                         value={selectedBankId}
                         onChange={(e) => setSelectedBankId(e.target.value)}
@@ -688,7 +688,7 @@ function Simulator() {
                       </select>
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/50 block">Prazo (meses)</label>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/70 block">Prazo (meses)</label>
                       <select
                         value={selectedTerm}
                         onChange={(e) => setSelectedTerm(Number(e.target.value))}
@@ -740,7 +740,7 @@ function Simulator() {
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div>
-      <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">{label}</div>
+      <div className="text-[10px] font-bold uppercase tracking-widest text-white/75">{label}</div>
       <div className={`mt-0.5 font-display font-extrabold text-xl ${accent ? "text-sun" : "text-white"}`}>
         {value}
       </div>
@@ -1079,7 +1079,7 @@ function FinalCTA() {
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="relative">
-                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50 block">
+                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
                         Cidade / Estado *
                       </label>
                       <input
@@ -1117,7 +1117,7 @@ function FinalCTA() {
                       )}
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50 block">
+                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
                         Conta mensal (R$)
                       </label>
                       <input
@@ -1130,7 +1130,7 @@ function FinalCTA() {
                         placeholder="Ex: 850"
                         className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/30 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
                       />
-                      <p className="mt-1 text-[10px] text-ink/40">Já preenchemos com o valor do simulador.</p>
+                      <p className="mt-1 text-[10px] text-ink/60">Já preenchemos com o valor do simulador.</p>
                     </div>
                   </div>
                   <button
@@ -1143,7 +1143,7 @@ function FinalCTA() {
                       <span aria-hidden className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] animate-[cta-shine_2.8s_ease-in-out_infinite]" />
                     )}
                   </button>
-                  <p className="text-[11px] text-ink/40 text-center">
+                  <p className="text-[11px] text-ink/60 text-center">
                     Resposta em até 15 minutos · Sem compromisso
                   </p>
                 </div>
@@ -1172,7 +1172,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/50">{label}</label>
+      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70">{label}</label>
       <input
         required={required}
         type={type}
@@ -1192,7 +1192,7 @@ function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-10 sm:py-12 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
           <img src={logo} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto brightness-0 invert opacity-90" width={137} height={60} />
-          <p className="mt-5 max-w-sm text-white/60 text-sm leading-relaxed">
+          <p className="mt-5 max-w-sm text-white/80 text-sm leading-relaxed">
             Engenharia solar fotovoltaica de alta performance. Deixe o sol trabalhar por você.
           </p>
           <div className="mt-6 flex gap-3">
@@ -1226,7 +1226,7 @@ function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-white/40">
+        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-white/70">
           <div>© {new Date().getFullYear()} ESOL Energy — Todos os direitos reservados.</div>
           <div>Deixe o sol trabalhar por você.</div>
         </div>
@@ -1315,7 +1315,7 @@ function AcompanharModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         <div className="p-6 bg-navy text-white flex justify-between items-center">
           <div>
             <h3 className="font-display font-extrabold text-xl md:text-2xl">Acompanhar minha instalação</h3>
-            <p className="text-xs text-white/60 mt-1">Consulte o status do seu sistema solar</p>
+            <p className="text-xs text-white/80 mt-1">Consulte o status do seu sistema solar</p>
           </div>
           <button onClick={onClose} className="size-10 rounded-full bg-white/10 hover:bg-white/20 text-white grid place-items-center font-bold text-sm transition-all">&times;</button>
         </div>
@@ -1343,12 +1343,12 @@ function AcompanharModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             <div className="space-y-6 animate-fade-up">
               <div className="bg-secondary rounded-2xl p-5 border border-slate-100 grid sm:grid-cols-2 gap-4">
                 <div>
-                  <div className="text-[10px] font-bold uppercase text-ink/40 tracking-wider">Cliente / Instalação</div>
+                  <div className="text-[10px] font-bold uppercase text-ink/60 tracking-wider">Cliente / Instalação</div>
                   <div className="font-bold text-navy text-base mt-1">{project.nome}</div>
                   <div className="text-xs text-ink/60 mt-1">{project.cidade} - {project.estado}</div>
                 </div>
                 <div className="sm:text-right">
-                  <div className="text-[10px] font-bold uppercase text-ink/40 tracking-wider">Potência / Distribuidora</div>
+                  <div className="text-[10px] font-bold uppercase text-ink/60 tracking-wider">Potência / Distribuidora</div>
                   <div className="font-bold text-navy text-base mt-1">{project.potencia_kwp} kWp</div>
                   <div className="text-xs text-ink/60 mt-1">{project.concessionaria}</div>
                 </div>
@@ -1363,7 +1363,7 @@ function AcompanharModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                       active ? "bg-sun/10 border-sun" : done ? "bg-white border-border" : "bg-white/50 border-border opacity-50"
                     }`}>
                       <div className={`size-9 grid place-items-center rounded-full font-bold text-sm shrink-0 ${
-                        active ? "bg-sun text-navy animate-pulse" : done ? "bg-navy text-white" : "bg-secondary text-ink/40"
+                        active ? "bg-sun text-navy animate-pulse" : done ? "bg-navy text-white" : "bg-secondary text-ink/60"
                       }`}>
                         {done ? "✓" : i + 1}
                       </div>
@@ -1378,7 +1378,7 @@ function AcompanharModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
               {logs.length > 0 && (
                 <div className="border-t border-border pt-5">
-                  <div className="text-[11px] font-bold uppercase tracking-widest text-ink/50 mb-3">Últimas atualizações</div>
+                  <div className="text-[11px] font-bold uppercase tracking-widest text-ink/70 mb-3">Últimas atualizações</div>
                   <ul className="space-y-2">
                     {logs.map((l, i) => (
                       <li key={i} className="text-xs text-ink/70 flex gap-2">
