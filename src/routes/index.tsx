@@ -40,7 +40,11 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://esolenergy.com.br/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://esolenergy.com.br/" }],
+    links: [
+      { rel: "canonical", href: "https://esolenergy.com.br/" },
+      { rel: "preload", as: "image", href: heroHouse, fetchpriority: "high" },
+    ],
+
     scripts: [
       {
         type: "application/ld+json",
