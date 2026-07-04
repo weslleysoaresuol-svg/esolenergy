@@ -329,8 +329,11 @@ function Hero() {
               alt="Residência brasileira de alto padrão com sistema solar fotovoltaico ESOL Energy"
               width={1024}
               height={1024}
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover"
             />
+
             <div className="absolute inset-0 bg-gradient-to-t from-navy/30 via-transparent to-transparent" />
           </div>
 
