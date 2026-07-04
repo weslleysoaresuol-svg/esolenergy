@@ -46,6 +46,44 @@ function NovaProposta() {
   const [overrides, setOverrides] = useState<Partial<ReturnType<typeof calcularProposta>>>({});
   const [saving, setSaving] = useState(false);
 
+  // Novos estados para enriquecimento cadastral
+  const [cep, setCep] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [valorFatura, setValorFatura] = useState("");
+
+  const handleCepChange = async (cepValue: string) => {
+    setCep(cepValue);
+    const cleanCep = cepValue.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setCidade(data.localidade || "");
+          setEstado(data.uf || "");
+          setEndereco(data.logradouro ? `${data.logradouro}${data.bairro ? ` - ${data.bairro}` : ""}` : "");
+          toast.success("CEP localizado!");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      }
+    }
+  };
+
+  const handleConsumoChange = (val: number) => {
+    setConsumo(val);
+    const faturaCalculada = Math.round(val * tarifa) || 0;
+    setValorFatura(String(faturaCalculada));
+  };
+
+  const handleFaturaChange = (val: string) => {
+    setValorFatura(val);
+    const num = Number(val);
+    if (!isNaN(num) && num > 0) {
+      setConsumo(Math.round(num / tarifa) || 0);
+    }
+  };
+
   // Novos estados para integração de Kits e Financeiras
   const [kits, setKits] = useState<any[]>([]);
   const [financeiras, setFinanceiras] = useState<any[]>([]);
@@ -204,13 +242,26 @@ function NovaProposta() {
     if (selecionados.length === 1) {
       const c = clientes.find((x) => x.id === selecionados[0]);
       if (c) {
-        if (c.consumo_kwh) setConsumo(Number(c.consumo_kwh));
+        if (c.cep) setCep(c.cep);
+        if (c.endereco) setEndereco(c.endereco);
+        if (c.valor_fatura) {
+          setValorFatura(String(c.valor_fatura));
+          if (!c.consumo_kwh) {
+            setConsumo(Math.round(Number(c.valor_fatura) / tarifa) || 500);
+          }
+        }
+        if (c.consumo_kwh) {
+          setConsumo(Number(c.consumo_kwh));
+          if (!c.valor_fatura) {
+            setValorFatura(String(Math.round(Number(c.consumo_kwh) * tarifa) || 0));
+          }
+        }
         if (c.estado) setEstado(c.estado);
         if (c.cidade) setCidade(c.cidade);
         if (!titulo) setTitulo(`Proposta solar - ${c.nome}`);
       }
     }
-  }, [selecionados, clientes]);
+  }, [selecionados, clientes, tarifa]);
 
   const kitRecomendadoId = useMemo(() => {
     if (params && kits.length > 0) {
@@ -323,6 +374,19 @@ function NovaProposta() {
     if (selecionados.length === 0) { toast.error("Selecione ao menos um cliente"); return; }
     setSaving(true);
     try {
+      // Atualiza a ficha cadastral do cliente selecionado no banco
+      await supabase
+        .from("clientes")
+        .update({
+          cep: cep.trim() || null,
+          endereco: endereco.trim() || null,
+          cidade: cidade.trim() || null,
+          estado: estado.trim() || null,
+          consumo_kwh: consumo ? Number(consumo) : null,
+          valor_fatura: valorFatura ? Number(valorFatura) : null
+        })
+        .in("id", selecionados);
+
       const validadeDias = Number(params.validade_proposta_dias || 15);
       
       let finalObservacoes = observacoes;
@@ -1169,46 +1233,90 @@ function NovaProposta() {
                 </SelectContent>
               </Select>
             </div>
-            <div><Label>Consumo médio (kWh/mês)</Label><Input type="number" value={consumo} onChange={(e) => setConsumo(Number(e.target.value))} /></div>
-            <div><Label>Tarifa de energia (R$/kWh)</Label><Input type="number" step="0.01" value={tarifa} onChange={(e) => setTarifa(Number(e.target.value))} /></div>
-            <div>
-              <Label>Cidade / Estado</Label>
-              <CidadeEstadoInput
-                cidade={cidade}
-                estado={estado}
-                onChange={(cit, uf) => {
-                  setCidade(cit);
-                  if (uf) setEstado(uf);
-                }}
-              />
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <Label>CEP (Opcional)</Label>
+                <Input
+                  placeholder="Ex: 01001-000"
+                  value={cep}
+                  onChange={(e) => handleCepChange(e.target.value)}
+                />
+              </div>
+              <div className="col-span-2 space-y-1">
+                <Label>Endereço (Opcional)</Label>
+                <Input
+                  placeholder="Ex: Av. Paulista, 1000"
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
+                />
+              </div>
             </div>
-            <div>
-              <Label>UF</Label>
-              <Input value={estado} readOnly className="bg-slate-50 cursor-not-allowed font-bold text-navy" />
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label>Cidade</Label>
+                <CidadeEstadoInput
+                  cidade={cidade}
+                  estado={estado}
+                  onChange={(cit, uf) => {
+                    setCidade(cit);
+                    if (uf) setEstado(uf);
+                  }}
+                />
+              </div>
+              <div>
+                <Label>UF</Label>
+                <Input value={estado} readOnly className="bg-slate-50 cursor-not-allowed font-bold text-navy" />
+              </div>
             </div>
-            <div>
-              <Label>Padrão de Ligação</Label>
-              <Select value={tipoConexao} onValueChange={(v: any) => setTipoConexao(v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="monofasico">Monofásico (Fase + Neutro)</SelectItem>
-                  <SelectItem value="bifasico">Bifásico (2 Fases + Neutro)</SelectItem>
-                  <SelectItem value="trifasico">Trifásico (3 Fases + Neutro)</SelectItem>
-                </SelectContent>
-              </Select>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label>Valor da Fatura (R$/mês)</Label>
+                <Input
+                  type="number"
+                  placeholder="Ex: 450"
+                  value={valorFatura}
+                  onChange={(e) => handleFaturaChange(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Consumo médio (kWh/mês)</Label>
+                <Input
+                  type="number"
+                  placeholder="Ex: 500"
+                  value={consumo}
+                  onChange={(e) => handleConsumoChange(Number(e.target.value))}
+                />
+              </div>
             </div>
-            <div>
-              <Label>Estrutura do Telhado</Label>
-              <Select value={tipoTelhado} onValueChange={setTipoTelhado}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ceramico">Telha Cerâmica / Colonial</SelectItem>
-                  <SelectItem value="metalico">Telha Metálica / Ondulada</SelectItem>
-                  <SelectItem value="fibrocimento">Telha Fibrocimento / Brasilit</SelectItem>
-                  <SelectItem value="laje">Laje de Concreto</SelectItem>
-                  <SelectItem value="solo">Estrutura de Solo</SelectItem>
-                </SelectContent>
-              </Select>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div><Label>Tarifa de energia (R$/kWh)</Label><Input type="number" step="0.01" value={tarifa} onChange={(e) => setTarifa(Number(e.target.value))} /></div>
+              <div>
+                <Label>Padrão de Ligação</Label>
+                <Select value={tipoConexao} onValueChange={(v: any) => setTipoConexao(v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="monofasico">Monofásico (Fase + Neutro)</SelectItem>
+                    <SelectItem value="bifasico">Bifásico (2 Fases + Neutro)</SelectItem>
+                    <SelectItem value="trifasico">Trifásico (3 Fases + Neutro)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Estrutura do Telhado</Label>
+                <Select value={tipoTelhado} onValueChange={setTipoTelhado}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ceramico">Telha Cerâmica / Colonial</SelectItem>
+                    <SelectItem value="metalico">Telha Metálica / Ondulada</SelectItem>
+                    <SelectItem value="fibrocimento">Telha Fibrocimento / Brasilit</SelectItem>
+                    <SelectItem value="laje">Laje de Concreto</SelectItem>
+                    <SelectItem value="solo">Estrutura de Solo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
           <div className="flex justify-between">

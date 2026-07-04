@@ -61,8 +61,51 @@ function CotacoesList() {
   const [loading, setLoading] = useState(false);
   const [q, setQ] = useState("");
   const [clienteTipo, setClienteTipo] = useState<"existente" | "novo">("existente");
-  const [novoCliente, setNovoCliente] = useState({ nome: "", telefone: "", cidade: "", estado: "SP" });
+  const [novoCliente, setNovoCliente] = useState({ nome: "", email: "", telefone: "", cep: "", endereco: "", cidade: "", estado: "SP" });
   const [params, setParams] = useState<any>(null);
+
+  // Estados locais para edição de campos do cliente selecionado no ato da cotação
+  const [editCep, setEditCep] = useState("");
+  const [editEndereco, setEditEndereco] = useState("");
+
+  const handleNewClientCepChange = async (cepValue: string) => {
+    setNovoCliente(prev => ({ ...prev, cep: cepValue }));
+    const cleanCep = cepValue.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setNovoCliente(prev => ({
+            ...prev,
+            cidade: data.localidade || prev.cidade || "",
+            estado: data.uf || prev.estado || "",
+            endereco: data.logradouro ? `${data.logradouro}${data.bairro ? ` - ${data.bairro}` : ""}` : prev.endereco || ""
+          }));
+          toast.success("CEP localizado!");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      }
+    }
+  };
+
+  const handleEditCepChange = async (cepValue: string) => {
+    setEditCep(cepValue);
+    const cleanCep = cepValue.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setEditEndereco(data.logradouro ? `${data.logradouro}${data.bairro ? ` - ${data.bairro}` : ""}` : "");
+          toast.success("CEP localizado!");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      }
+    }
+  };
 
   // Estados para Recomendação Inteligente de Kit
   const [usarRecomendacao, setUsarRecomendacao] = useState(false);
@@ -79,6 +122,32 @@ function CotacoesList() {
       setKitRecomendado(null);
     }
   }, [openNew]);
+
+  // Preenche dados quando seleciona cliente existente
+  useEffect(() => {
+    if (clienteTipo === "existente" && novo.cliente_id) {
+      const c = clientes.find((x) => x.id === novo.cliente_id);
+      if (c) {
+        setEditCep(c.cep || "");
+        setEditEndereco(c.endereco || "");
+        
+        // Se tiver fatura/consumo, ativa recomendação inteligente automaticamente!
+        if (c.valor_fatura || c.consumo_kwh) {
+          setUsarRecomendacao(true);
+          const fVal = c.valor_fatura ? String(c.valor_fatura) : "";
+          const cVal = c.consumo_kwh ? String(c.consumo_kwh) : "";
+          setValFatura(fVal);
+          setValConsumo(cVal);
+          
+          const kwhNum = Number(cVal) || (fVal ? Math.round(Number(fVal) / 0.95) : 500);
+          updateRecommendation(kwhNum);
+        }
+      }
+    } else {
+      setEditCep("");
+      setEditEndereco("");
+    }
+  }, [novo.cliente_id, clienteTipo, clientes]);
 
   const updateRecommendation = (kwh: number) => {
     const recommended = recomendarKit(kwh, kits);
@@ -119,7 +188,7 @@ function CotacoesList() {
         .select("*, cliente:cliente_id(*), kit:kit_id(*), parceiro:parceiro_id(nome, id, comissao_percent)")
         .order("created_at", { ascending: false }),
       // Clientes: ordenados pelo mais recente (created_at DESC) — o último cadastrado fica no topo
-      supabase.from("clientes").select("id, nome, telefone, cidade, estado, consumo_kwh, valor_fatura").order("created_at", { ascending: false }),
+      supabase.from("clientes").select("id, nome, telefone, cidade, estado, consumo_kwh, valor_fatura, cep, endereco").order("created_at", { ascending: false }),
       supabase.from("kits_produtos" as any).select("*").order("potencia_kwp"),
       (supabase.rpc as any)("get_parametros_publicos")
     ]);
@@ -295,9 +364,14 @@ function CotacoesList() {
 
         const { data: newCl, error: errCl } = await supabase.from("clientes").insert({
           nome: novoCliente.nome.trim(),
+          email: novoCliente.email.trim() || null,
           telefone: novoCliente.telefone.trim(),
+          cep: novoCliente.cep.trim() || null,
+          endereco: novoCliente.endereco.trim() || null,
           cidade: novoCliente.cidade.trim(),
           estado: novoCliente.estado.trim().toUpperCase(),
+          valor_fatura: valFatura ? Number(valFatura) : null,
+          consumo_kwh: valConsumo ? Number(valConsumo) : null,
           corretor_id: user.id,
           status: "novo",
           origem: "manual"
@@ -313,6 +387,14 @@ function CotacoesList() {
         toast.error("Selecione um cliente da lista");
         setSaving(false);
         return;
+      } else {
+        // Se for cliente existente, atualiza as informações no cadastro dele
+        await supabase.from("clientes").update({
+          cep: editCep.trim() || null,
+          endereco: editEndereco.trim() || null,
+          valor_fatura: valFatura ? Number(valFatura) : null,
+          consumo_kwh: valConsumo ? Number(valConsumo) : null,
+        }).eq("id", targetClienteId);
       }
 
       let data: any = null;
@@ -521,12 +603,27 @@ function CotacoesList() {
               </div>
 
               {clienteTipo === "existente" ? (
-                <Select value={novo.cliente_id} onValueChange={(v) => setNovo({ ...novo, cliente_id: v })}>
-                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione um cliente" /></SelectTrigger>
-                  <SelectContent>
-                    {clientes.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <div className="space-y-3">
+                  <Select value={novo.cliente_id} onValueChange={(v) => setNovo({ ...novo, cliente_id: v })}>
+                    <SelectTrigger className="h-9"><SelectValue placeholder="Selecione um cliente" /></SelectTrigger>
+                    <SelectContent>
+                      {clientes.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+
+                  {novo.cliente_id && (
+                    <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/50">
+                      <div className="space-y-1">
+                        <Label className="text-[10px] font-bold text-slate-500 uppercase">CEP (Opcional)</Label>
+                        <Input placeholder="Ex: 01001-000" value={editCep} onChange={(e) => handleEditCepChange(e.target.value)} className="h-9 text-xs" />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[10px] font-bold text-slate-500 uppercase">Endereço (Opcional)</Label>
+                        <Input placeholder="Ex: Av. Paulista, 1000" value={editEndereco} onChange={(e) => setEditEndereco(e.target.value)} className="h-9 text-xs" />
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/50">
                   <div className="col-span-2 space-y-1">
@@ -534,17 +631,33 @@ function CotacoesList() {
                     <Input placeholder="Ex: João da Silva" value={novoCliente.nome} onChange={(e) => setNovoCliente({ ...novoCliente, nome: e.target.value })} className="h-9 text-xs" />
                   </div>
                   <div className="space-y-1">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">E-mail (Opcional)</Label>
+                    <Input type="email" placeholder="Ex: joao@email.com" value={novoCliente.email} onChange={(e) => setNovoCliente({ ...novoCliente, email: e.target.value })} className="h-9 text-xs" />
+                  </div>
+                  <div className="space-y-1">
                     <Label className="text-[10px] font-bold text-slate-500 uppercase">Celular / WhatsApp *</Label>
                     <Input placeholder="Ex: (11) 99999-9999" value={novoCliente.telefone} onChange={(e) => setNovoCliente({ ...novoCliente, telefone: e.target.value })} className="h-9 text-xs" />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[10px] font-bold text-slate-500 uppercase">Cidade / UF</Label>
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">CEP (Opcional)</Label>
+                    <Input placeholder="Ex: 01001-000" value={novoCliente.cep} onChange={(e) => handleNewClientCepChange(e.target.value)} className="h-9 text-xs" />
+                  </div>
+                  <div className="col-span-2 space-y-1">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">Endereço (Opcional)</Label>
+                    <Input placeholder="Ex: Av. Paulista, 1000 - Ap 42" value={novoCliente.endereco} onChange={(e) => setNovoCliente({ ...novoCliente, endereco: e.target.value })} className="h-9 text-xs" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">Cidade</Label>
                     <CidadeEstadoInput
                       cidade={novoCliente.cidade}
                       estado={novoCliente.estado}
                       onChange={(cit, uf) => setNovoCliente({ ...novoCliente, cidade: cit, estado: uf })}
                       className="h-9 text-xs"
                     />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase">UF</Label>
+                    <Input value={novoCliente.estado} readOnly className="h-9 text-xs bg-slate-100 font-bold text-navy" />
                   </div>
                 </div>
               )}

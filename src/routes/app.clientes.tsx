@@ -44,7 +44,30 @@ function AdminClientes() {
   const [telefone, setTelefone] = useState("");
   const [uf, setUf] = useState("");
   const [cidade, setCidade] = useState("");
+  const [cep, setCep] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [valorFatura, setValorFatura] = useState("");
+  const [consumoKwh, setConsumoKwh] = useState("");
   const [savingLead, setSavingLead] = useState(false);
+
+  const handleCepChange = async (cepValue: string) => {
+    setCep(cepValue);
+    const cleanCep = cepValue.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setCidade(data.localidade || "");
+          setUf(data.uf || "");
+          setEndereco(data.logradouro ? `${data.logradouro}${data.bairro ? ` - ${data.bairro}` : ""}` : "");
+          toast.success("CEP localizado!");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      }
+    }
+  };
 
   const fetchClientes = async () => {
     setLoading(true);
@@ -107,6 +130,10 @@ function AdminClientes() {
     setTelefone("");
     setUf("");
     setCidade("");
+    setCep("");
+    setEndereco("");
+    setValorFatura("");
+    setConsumoKwh("");
     setModalOpen(true);
   };
 
@@ -127,6 +154,10 @@ function AdminClientes() {
           telefone: telefone.trim(),
           cidade: cidade || null,
           estado: uf || null,
+          cep: cep.trim() || null,
+          endereco: endereco.trim() || null,
+          valor_fatura: valorFatura ? Number(valorFatura) : null,
+          consumo_kwh: consumoKwh ? Number(consumoKwh) : null,
           status: targetStatus,
           origem: "manual",
           corretor_id: role === "corretor" ? user?.id : null,
@@ -327,8 +358,29 @@ function AdminClientes() {
             </div>
 
             <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-600">CEP</label>
+                <Input
+                  placeholder="Ex: 01001-000"
+                  value={cep}
+                  onChange={(e) => handleCepChange(e.target.value)}
+                  className="h-10 text-xs"
+                />
+              </div>
               <div className="col-span-2 space-y-1">
-                <label className="font-bold text-slate-600 text-xs">Cidade / Estado</label>
+                <label className="font-bold text-slate-600">Endereço</label>
+                <Input
+                  placeholder="Ex: Av. Paulista, 1000 - Ap 42"
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
+                  className="h-10 text-xs"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-2 space-y-1">
+                <label className="font-bold text-slate-600 text-xs">Cidade</label>
                 <CidadeEstadoInput
                   cidade={cidade}
                   estado={uf}
@@ -346,6 +398,29 @@ function AdminClientes() {
                   readOnly
                   placeholder="SP"
                   className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg outline-none text-xs font-bold text-navy cursor-not-allowed"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-600">Fatura Mensal (R$)</label>
+                <Input
+                  type="number"
+                  placeholder="Ex: 450"
+                  value={valorFatura}
+                  onChange={(e) => setValorFatura(e.target.value)}
+                  className="h-10 text-xs"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="font-bold text-slate-600">Consumo (kWh/mês)</label>
+                <Input
+                  type="number"
+                  placeholder="Ex: 500"
+                  value={consumoKwh}
+                  onChange={(e) => setConsumoKwh(e.target.value)}
+                  className="h-10 text-xs"
                 />
               </div>
             </div>

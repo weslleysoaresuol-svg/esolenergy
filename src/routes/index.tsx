@@ -521,28 +521,28 @@ function Simulator() {
   const parcelaMenor = financeParcela > 0 && financeParcela < bill;
 
   return (
-    <section id="simulador" ref={sectionRef} className="py-12 sm:py-16 px-5 sm:px-6 bg-paper relative">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+    <section id="simulador" ref={sectionRef} className="py-10 sm:py-12 px-5 sm:px-6 bg-paper relative">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           <div>
             <span className="text-sun-deep font-bold tracking-[0.18em] text-xs uppercase">
               Simulador de Energia Solar
             </span>
-            <h2 className="mt-3 font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-navy leading-tight text-balance">
+            <h2 className="mt-2.5 font-display font-extrabold text-2xl sm:text-3xl md:text-4xl text-navy leading-tight text-balance">
               Veja sua economia em <span className="text-sun-deep">30 segundos</span>.
             </h2>
-            <p className="mt-5 text-base sm:text-lg text-ink/70 max-w-md text-pretty">
+            <p className="mt-3.5 text-sm sm:text-base text-ink/70 max-w-md text-pretty leading-relaxed">
               Cálculo baseado em irradiação solar real e nos preços de engenharia atualizados da ESOL.
               Ajuste sua conta, escolha o perfil e descubra o tamanho ideal do sistema.
             </p>
-            <ul className="mt-8 space-y-3">
+            <ul className="mt-5 space-y-2.5">
               {[
                 "Dimensionamento técnico com HSP regional",
                 "Preço por Wp atualizado pelo nosso motor comercial",
                 "Compare economia ou parcela menor que a conta atual",
               ].map((t) => (
-                <li key={t} className="flex items-start gap-3 text-ink/75">
-                  <span className="mt-1 grid place-items-center size-5 rounded-full bg-sun text-navy text-[11px] font-extrabold shrink-0">
+                <li key={t} className="flex items-start gap-2.5 text-xs sm:text-sm text-ink/75">
+                  <span className="mt-0.5 grid place-items-center size-4 rounded-full bg-sun text-navy text-[10px] font-extrabold shrink-0">
                     ✓
                   </span>
                   {t}
@@ -551,13 +551,13 @@ function Simulator() {
             </ul>
           </div>
 
-          <div className="rounded-3xl bg-white p-5 sm:p-6 shadow-deep border border-border">
-            <div className="space-y-4">
+          <div className="rounded-2xl bg-white p-4 sm:p-5 shadow-deep border border-border">
+            <div className="space-y-3.5">
               {/* Modo */}
-              <div className="grid grid-cols-2 gap-2 p-1 bg-secondary rounded-xl">
+              <div className="grid grid-cols-2 gap-1.5 p-0.5 bg-secondary rounded-lg">
                 <button
                   onClick={() => setMode("economia")}
-                  className={`py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                  className={`py-1.5 text-[10.5px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
                     mode === "economia" ? "bg-navy text-white shadow-sm" : "text-ink/70 hover:text-navy"
                   }`}
                 >
@@ -565,7 +565,7 @@ function Simulator() {
                 </button>
                 <button
                   onClick={() => setMode("financiamento")}
-                  className={`py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                  className={`py-1.5 text-[10.5px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
                     mode === "financiamento" ? "bg-navy text-white shadow-sm" : "text-ink/70 hover:text-navy"
                   }`}
                 >
@@ -575,15 +575,15 @@ function Simulator() {
 
               {/* Tipo */}
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-widest text-ink/70">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-ink/70">
                   Tipo de imóvel
                 </label>
-                <div className="mt-2 grid grid-cols-3 gap-2 p-1 bg-secondary rounded-xl">
+                <div className="mt-1.5 grid grid-cols-3 gap-1.5 p-0.5 bg-secondary rounded-lg">
                   {(["residencial", "comercial", "industrial"] as Tipo[]).map((t) => (
                     <button
                       key={t}
                       onClick={() => setTipo(t)}
-                      className={`py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                      className={`py-1.5 text-[10.5px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
                         tipo === t ? "bg-white text-navy shadow-sm" : "text-ink/70 hover:text-navy"
                       }`}
                     >
@@ -595,13 +595,13 @@ function Simulator() {
 
               {/* Estado / UF */}
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-widest text-ink/70">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-ink/70">
                   Estado de instalação
                 </label>
                 <select
                   value={selectedUF}
                   onChange={(e) => setSelectedUF(e.target.value)}
-                  className="mt-2 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-navy outline-none"
+                  className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-navy outline-none"
                 >
                   <option value="SP">São Paulo (SP)</option>
                   <option value="RJ">Rio de Janeiro (RJ)</option>
@@ -634,12 +634,12 @@ function Simulator() {
               </div>
 
               {/* Conta mensal — preenchida automaticamente pelo hero */}
-              <div ref={billHighlightRef} className="rounded-2xl p-3 -m-3 transition-all duration-500">
+              <div ref={billHighlightRef} className="rounded-xl p-2 -m-2 transition-all duration-500">
                 <div className="flex items-baseline justify-between">
-                  <label className="text-[11px] font-bold uppercase tracking-widest text-ink/70">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-ink/70">
                     Conta mensal
                   </label>
-                  <span className="font-display text-2xl sm:text-3xl font-extrabold text-navy">
+                  <span className="font-display text-xl sm:text-2xl font-extrabold text-navy">
                     {BRL.format(bill)}
                   </span>
                 </div>
@@ -650,37 +650,37 @@ function Simulator() {
                   step={50}
                   value={Math.min(Math.max(bill, 200), 10000)}
                   onChange={(e) => setBill(Number(e.target.value))}
-                  className="mt-2.5 w-full accent-sun cursor-pointer"
+                  className="mt-1.5 w-full accent-sun cursor-pointer"
                   aria-label="Valor da conta de luz"
                 />
-                <div className="mt-1 flex justify-between text-[10px] font-semibold text-ink/60">
+                <div className="mt-0.5 flex justify-between text-[9px] font-semibold text-ink/60">
                   <span>R$ 200</span>
                   <span>R$ 10.000</span>
                 </div>
               </div>
 
               {mode === "economia" ? (
-                <div className="rounded-2xl bg-navy text-white p-4 relative overflow-hidden">
+                <div className="rounded-xl bg-navy text-white p-3.5 relative overflow-hidden">
                   <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
-                  <div className="relative grid grid-cols-2 gap-4">
+                  <div className="relative grid grid-cols-2 gap-3">
                     <Stat label="Economia anual real" value={BRL.format(result.yearly)} accent />
-                    <Stat label="Redução real média" value={`${result.reducaoPct}% da conta`} />
+                    <Stat label="Redução real média" value={`${result.reducaoPct}%`} />
                     <Stat label="Sistema ideal" value={`${result.systemKwp} kWp`} />
                     <Stat label="Payback real" value={`${result.payback} anos`} />
                   </div>
-                  <div className="relative mt-3 pt-2.5 border-t border-white/10 text-[9px] text-white/75 leading-relaxed">
-                    * Cálculo honesto: já desconta taxa de disponibilidade mínima da concessionária e estimativa de iluminação pública (COSIP).
+                  <div className="relative mt-2 pt-2 border-t border-white/10 text-[8.5px] text-white/70 leading-relaxed">
+                    * Desconta taxa mínima e estimativa de iluminação pública (COSIP).
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2.5">
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/70 block">Financeira</label>
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-ink/70 block">Financeira</label>
                       <select
                         value={selectedBankId}
                         onChange={(e) => setSelectedBankId(e.target.value)}
-                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-navy outline-none"
+                        className="mt-1 w-full bg-secondary border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold text-navy outline-none"
                       >
                         {financeiras.map((fin) => (
                           <option key={fin.id} value={fin.id}>{fin.nome}</option>
@@ -688,35 +688,35 @@ function Simulator() {
                       </select>
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-ink/70 block">Prazo (meses)</label>
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-ink/70 block">Prazo</label>
                       <select
                         value={selectedTerm}
                         onChange={(e) => setSelectedTerm(Number(e.target.value))}
-                        className="mt-1.5 w-full bg-secondary border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-navy outline-none"
+                        className="mt-1 w-full bg-secondary border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold text-navy outline-none"
                       >
                         {[24, 36, 48, 60, 72, 84, 96, 120]
                           .filter((t) => t <= (selectedBank?.prazo_maximo_meses || 120))
                           .map((t) => (
-                            <option key={t} value={t}>{t} parcelas</option>
+                            <option key={t} value={t}>{t} meses</option>
                           ))}
                       </select>
                     </div>
                   </div>
 
-                  <div className="rounded-2xl bg-navy text-white p-4 relative overflow-hidden">
+                  <div className="rounded-xl bg-navy text-white p-3.5 relative overflow-hidden">
                     <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sun/20 blur-2xl" />
-                    <div className="relative space-y-3">
-                      <div className="flex justify-between items-center gap-3 flex-wrap">
+                    <div className="relative space-y-2">
+                      <div className="flex justify-between items-center gap-2 flex-wrap">
                         <Stat label="Parcela estimada" value={`${BRL.format(financeParcela)}/mês`} accent />
                         {parcelaMenor && (
-                          <span className="text-[9px] font-extrabold uppercase bg-sun text-navy px-2 py-1 rounded-md tracking-wider">
-                            ⚡ Menor que sua conta
+                          <span className="text-[8px] font-extrabold uppercase bg-sun text-navy px-1.5 py-0.5 rounded tracking-wider">
+                            ⚡ Menor que a conta
                           </span>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 gap-3 border-t border-white/10 pt-2.5">
+                      <div className="grid grid-cols-2 gap-2 border-t border-white/10 pt-2">
                         <Stat label="Investimento" value={BRL.format(result.precoTotal)} />
-                        <Stat label="Aprovação média" value={`${selectedBank?.taxa_aprovacao_media || 80}%`} />
+                        <Stat label="Aprovação" value={`${selectedBank?.taxa_aprovacao_media || 80}%`} />
                       </div>
                     </div>
                   </div>
@@ -725,7 +725,7 @@ function Simulator() {
 
               <a
                 href="#orcamento"
-                className="relative block w-full text-center rounded-xl bg-sun py-3 text-sm font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow cta-halo overflow-hidden"
+                className="relative block w-full text-center rounded-xl bg-sun py-2.5 text-xs font-extrabold uppercase tracking-wider text-navy hover:bg-sun-deep transition-all shadow-glow cta-halo overflow-hidden"
               >
                 <span className="relative z-10">Quero garantir essa economia →</span>
                 <span aria-hidden className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] animate-[cta-shine_2.8s_ease-in-out_infinite]" />
@@ -740,8 +740,8 @@ function Simulator() {
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div>
-      <div className="text-[10px] font-bold uppercase tracking-widest text-white/75">{label}</div>
-      <div className={`mt-0.5 font-display font-extrabold text-xl ${accent ? "text-sun" : "text-white"}`}>
+      <div className="text-[9px] font-bold uppercase tracking-widest text-white/70">{label}</div>
+      <div className={`mt-0.5 font-display font-extrabold text-base ${accent ? "text-sun" : "text-white"}`}>
         {value}
       </div>
     </div>
@@ -925,8 +925,30 @@ function FinalCTA() {
     nome: "",
     email: "",
     telefone: "",
+    cep: "",
+    endereco: "",
     conta: bill,
   });
+
+  const handleLandingCepChange = async (cepValue: string) => {
+    update("cep", cepValue);
+    const cleanCep = cepValue.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          setCidadeInput(data.localidade || "");
+          setEstadoInput(data.uf || "");
+          setCidadeEstadoDisplay(data.localidade && data.uf ? `${data.localidade} - ${data.uf}` : "");
+          update("endereco", data.logradouro ? `${data.logradouro}${data.bairro ? ` - ${data.bairro}` : ""}` : "");
+          toast.success("CEP localizado!");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+      }
+    }
+  };
 
   const [cidadeEstadoDisplay, setCidadeEstadoDisplay] = useState("");
   const [cidadeInput, setCidadeInput] = useState("");
@@ -995,6 +1017,8 @@ function FinalCTA() {
       nome: form.nome.trim(),
       email: form.email.trim() || null,
       telefone: form.telefone.trim(),
+      cep: form.cep.trim() || null,
+      endereco: form.endereco.trim() || null,
       cidade: finalCidade,
       estado: finalEstado,
       valor_fatura: form.conta || null,
@@ -1077,6 +1101,32 @@ function FinalCTA() {
                     <Field label="E-mail" type="email" placeholder="voce@email.com" value={form.email} onChange={(v) => update("email", v)} required={false} />
                     <Field label="WhatsApp" type="tel" placeholder="(11) 99999-9999" value={form.telefone} onChange={(v) => update("telefone", v)} />
                   </div>
+
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
+                        CEP (Opcional)
+                      </label>
+                      <input
+                        placeholder="Ex: 01001-000"
+                        value={form.cep}
+                        onChange={(e) => handleLandingCepChange(e.target.value)}
+                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
+                        Endereço (Opcional)
+                      </label>
+                      <input
+                        placeholder="Ex: Av. Paulista, 1000"
+                        value={form.endereco}
+                        onChange={(e) => update("endereco", e.target.value)}
+                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
+                      />
+                    </div>
+                  </div>
+
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="relative">
                       <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
