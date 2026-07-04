@@ -103,7 +103,12 @@ function AgendaComercial() {
         const { data: agends, error: errAgends } = await agendsQuery.order("data_hora", { ascending: true });
 
         if (errAgends) {
-          if (errAgends.code === "42P01" || errAgends.message?.includes("does not exist")) {
+          if (
+            errAgends.code === "42P01" || 
+            errAgends.message?.includes("does not exist") || 
+            errAgends.message?.includes("schema cache") ||
+            errAgends.message?.includes("Could not find the table")
+          ) {
             setDbNeedsSync(true);
           }
           throw errAgends;
@@ -145,7 +150,12 @@ function AgendaComercial() {
           .order("dia_semana", { ascending: true });
         
         if (errConfig) {
-          if (errConfig.code === "42P01" || errConfig.message?.includes("does not exist")) {
+          if (
+            errConfig.code === "42P01" || 
+            errConfig.message?.includes("does not exist") || 
+            errConfig.message?.includes("schema cache") ||
+            errConfig.message?.includes("Could not find the table")
+          ) {
             setDbNeedsSync(true);
           }
           throw errConfig;
@@ -481,6 +491,26 @@ function AgendaComercial() {
       toast.success("Nova regra horária cadastrada!");
       loadData();
     } catch (err: any) {
+      if (
+        err.message?.includes("schema cache") || 
+        err.message?.includes("Could not find the table") ||
+        err.code === "42P01"
+      ) {
+        setDbNeedsSync(true);
+        const novaRegra = {
+          id: Math.random().toString(36).substring(2, 9),
+          dia_semana: parseInt(novoDia),
+          hora_inicio: `${novaHoraInicio}:00`,
+          hora_fim: `${novaHoraFim}:00`,
+          intervalo_minutos: parseInt(novoIntervalo),
+          ativo: true,
+        };
+        const updated = [...configs, novaRegra];
+        setConfigs(updated);
+        localStorage.setItem("esol_fallback_configs", JSON.stringify(updated));
+        toast.success("Nova regra horária cadastrada localmente (tabela ausente na nuvem)!");
+        return;
+      }
       toast.error(`Erro ao adicionar regra: ${err.message}`);
     } finally {
       setSavingConfig(false);
@@ -512,6 +542,18 @@ function AgendaComercial() {
       toast.success("Regra de horário excluída.");
       loadData();
     } catch (err: any) {
+      if (
+        err.message?.includes("schema cache") || 
+        err.message?.includes("Could not find the table") ||
+        err.code === "42P01"
+      ) {
+        setDbNeedsSync(true);
+        const updated = configs.filter((c) => c.id !== id);
+        setConfigs(updated);
+        localStorage.setItem("esol_fallback_configs", JSON.stringify(updated));
+        toast.success("Regra de horário excluída localmente!");
+        return;
+      }
       toast.error(`Falha ao excluir: ${err.message}`);
     }
   };
