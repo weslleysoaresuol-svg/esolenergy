@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -156,6 +156,7 @@ function Landing() {
           <Simulator />
           <Solutions />
           <Process />
+          <EducacionalSection />
           <FAQ />
           <FinalCTA />
         </main>
@@ -190,6 +191,7 @@ function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
           <a href="#simulador" className="hover:text-sun-deep transition-colors">Simulador</a>
           <a href="#solucoes" className="hover:text-sun-deep transition-colors">Soluções</a>
           <a href="#processo" className="hover:text-sun-deep transition-colors">Processo</a>
+          <Link to="/blog/como-funciona-a-energia-solar" className="hover:text-sun-deep transition-colors">Como funciona?</Link>
           <a href="#faq" className="hover:text-sun-deep transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -889,6 +891,42 @@ function Process() {
   );
 }
 
+/* ============================ EDUCACIONAL SECTION ============================ */
+function EducacionalSection() {
+  return (
+    <section className="py-12 sm:py-16 px-5 sm:px-6 bg-white relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-sun/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="mx-auto max-w-5xl relative z-10">
+        <div className="bg-gradient-to-br from-navy via-[#1b2a6b] to-navy-deep text-white rounded-3xl p-6 sm:p-10 md:p-12 shadow-deep flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+          {/* Destaque sutil de luz solar */}
+          <div className="absolute -right-20 -top-20 size-80 rounded-full bg-sun/10 blur-3xl pointer-events-none" />
+          
+          <div className="space-y-4 max-w-xl text-center md:text-left">
+            <span className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-sun bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+              Guia Educacional Premium
+            </span>
+            <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-white leading-tight">
+              Como funciona a energia solar?
+            </h2>
+            <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+              Explicamos detalhadamente e de forma simples o efeito fotovoltaico, o papel dos inversores e como o sistema on-grid conectado à rede gera créditos que eliminam até 95% do custo da sua fatura mensal.
+            </p>
+          </div>
+
+          <div className="shrink-0 w-full md:w-auto text-center">
+            <Link
+              to="/blog/como-funciona-a-energia-solar"
+              className="inline-flex items-center justify-center gap-2 bg-sun hover:bg-sun-deep text-navy font-black text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-glow transition-all duration-300 hover:scale-[1.03] w-full sm:w-auto"
+            >
+              Acessar Guia Completo →
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ============================ FAQ ============================ */
 function FAQ() {
   const qs = FAQ_ITEMS;
@@ -1270,6 +1308,7 @@ function Footer() {
             <li><a href="#solucoes" className="hover:text-sun transition-colors">Soluções</a></li>
             <li><a href="#processo" className="hover:text-sun transition-colors">Processo</a></li>
             <li><a href="#simulador" className="hover:text-sun transition-colors">Simulador</a></li>
+            <li><Link to="/blog/como-funciona-a-energia-solar" className="hover:text-sun transition-colors">Como Funciona?</Link></li>
             <li><a href="#faq" className="hover:text-sun transition-colors">FAQ</a></li>
           </ul>
         </div>
