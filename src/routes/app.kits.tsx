@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -54,7 +54,6 @@ const EMPTY_KIT = {
 function AdminKits() {
   const { role, loading } = useCurrentUser();
   const [kits, setKits] = useState<any[]>([]);
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [showTechDetails, setShowTechDetails] = useState(false);
   const [filterFaixa, setFilterFaixa] = useState("todas");
   const [filterAtivo, setFilterAtivo] = useState("todos");
@@ -65,24 +64,6 @@ function AdminKits() {
   const [expandedKitId, setExpandedKitId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
   const [selectedKitDetails, setSelectedKitDetails] = useState<any | null>(null);
-
-  // Estados de Integração
-  const [isPopulating, setIsPopulating] = useState(false);
-
-  // Estados de Importação CSV
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
-  const [csvRows, setCsvRows] = useState<any[]>([]);
-  const [mapping, setMapping] = useState({
-    nome: "0",
-    potencia_kwp: "1",
-    quantidade_modulos: "2",
-    fabricante_modulos: "3",
-    inversor: "4",
-    preco: "5",
-    faixa: "6"
-  });
-  const [fileLoaded, setFileLoaded] = useState(false);
 
   const load = async () => {
     try {
@@ -184,188 +165,6 @@ function AdminKits() {
     load();
   };
 
-  // Processamento de CSV
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const text = evt.target?.result as string;
-      const lines = text.split(/\r?\n/).filter(line => line.trim());
-      if (lines.length === 0) {
-        toast.error("O arquivo está vazio.");
-        return;
-      }
-
-      // Tenta detectar separador (vírgula ou ponto e vírgula)
-      const firstLine = lines[0];
-      const sep = firstLine.includes(";") ? ";" : ",";
-      
-      const headers = firstLine.split(sep).map(h => h.trim().replace(/^["']|["']$/g, ""));
-      const rows = lines.slice(1).map(line => {
-        return line.split(sep).map(val => val.trim().replace(/^["']|["']$/g, ""));
-      });
-
-      setCsvHeaders(headers);
-      setCsvRows(rows);
-      setFileLoaded(true);
-      toast.success(`${rows.length} linhas carregadas para mapeamento.`);
-
-      // Mapeamento automático rudimentar
-      const autoMap: any = { ...mapping };
-      headers.forEach((h, index) => {
-        const lower = h.toLowerCase();
-        const idxStr = String(index);
-        if (lower.includes("nome") || lower.includes("descri")) autoMap.nome = idxStr;
-        else if (lower.includes("potencia") || lower.includes("kwp")) autoMap.potencia_kwp = idxStr;
-        else if (lower.includes("modulo") || lower.includes("quantidade") || lower.includes("qtd")) autoMap.quantidade_modulos = idxStr;
-        else if (lower.includes("fabricante") || lower.includes("marca")) autoMap.fabricante_modulos = idxStr;
-        else if (lower.includes("inversor")) autoMap.inversor = idxStr;
-        else if (lower.includes("preco") || lower.includes("valor") || lower.includes("custo")) autoMap.preco = idxStr;
-        else if (lower.includes("faixa") || lower.includes("tipo")) autoMap.faixa = idxStr;
-      });
-      setMapping(autoMap);
-    };
-    reader.readAsText(file, "UTF-8");
-  };
-
-  const processImport = async () => {
-    if (csvRows.length === 0) return;
-    setSaving(true);
-    let importados = 0;
-    let erros = 0;
-
-    const parseNumber = (val: string) => {
-      if (!val) return 0;
-      // remove R$, pontos de milhar e troca vírgula por ponto
-      const clean = val.replace(/[R$\s]/g, "").replace(/\./g, "").replace(",", ".");
-      return Number(clean) || 0;
-    };
-
-    const determineFaixa = (pot: number, customFaixa?: string): string => {
-      if (customFaixa) {
-        const clean = customFaixa.toLowerCase().replace(/[\s_]/g, "");
-        if (clean.includes("residencialpequeno") || clean.includes("respeq")) return "residencial_pequeno";
-        if (clean.includes("residencialgrande") || clean.includes("resgra")) return "residencial_grande";
-        if (clean.includes("comercialpequeno") || clean.includes("compeq")) return "comercial_pequeno";
-        if (clean.includes("comercialgrande") || clean.includes("comgra")) return "comercial_grande";
-        if (clean.includes("industrial")) return "industrial";
-        if (clean.includes("rural") || clean.includes("agro")) return "rural";
-      }
-      
-      // Fallback automático por potência kWp
-      if (pot < 4) return "residencial_pequeno";
-      if (pot < 10) return "residencial_grande";
-      if (pot < 30) return "comercial_pequeno";
-      if (pot < 80) return "comercial_grande";
-      return "industrial";
-    };
-
-    try {
-      const listToInsert = csvRows.map(row => {
-        const nome = row[Number(mapping.nome)] || "Kit Importado";
-        const potencia_kwp = parseNumber(row[Number(mapping.potencia_kwp)]);
-        const quantidade_modulos = Math.max(1, parseInt(row[Number(mapping.quantidade_modulos)]) || 4);
-        const fabricante_modulos = row[Number(mapping.fabricante_modulos)] || "Fabricante Padrão";
-        const inversor = row[Number(mapping.inversor)] || "Inversor Padrão";
-        const preco = parseNumber(row[Number(mapping.preco)]);
-        const customFaixa = row[Number(mapping.faixa)];
-        
-        const faixa = determineFaixa(potencia_kwp, customFaixa);
-
-        return {
-          faixa,
-          nome,
-          potencia_kwp,
-          quantidade_modulos,
-          fabricante_modulos,
-          inversor,
-          preco,
-          potencia_modulo_w: 550,
-          tecnologia_modulo: "Monocristalino TOPCon",
-          tipo_inversor: "String On-Grid",
-          garantia_modulos_anos: 25,
-          garantia_inversor_anos: 10,
-          ativo: true,
-          destaque: false,
-        };
-      }).filter(k => k.preco > 0 && k.potencia_kwp > 0);
-
-      if (listToInsert.length === 0) {
-        toast.error("Nenhum kit válido com preço e potência maior que zero foi detectado.");
-        setSaving(false);
-        return;
-      }
-
-      const { error } = await supabase.from("kits_produtos" as any).insert(listToInsert);
-      if (error) throw error;
-
-      toast.success(`${listToInsert.length} kits solares reais importados com sucesso!`);
-      setFileLoaded(false);
-      setCsvRows([]);
-      setCsvHeaders([]);
-      load();
-      
-    } catch (e: any) {
-      toast.error("Erro na importação: " + e.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Sincronização via API / WebService do Distribuidor
-  // Popula banco de dados com os kits padrão
-  const popularBancoKits = async () => {
-    setIsPopulating(true);
-    try {
-      const { data: existing, error: errExist } = await supabase.from("kits_produtos" as any).select("codigo");
-      if (errExist) throw errExist;
-
-      const existingCodes = new Set((existing || []).map((k: any) => k.codigo));
-      const missing = KITS_FALLBACK.filter((k) => !existingCodes.has(k.id));
-
-      if (missing.length === 0) {
-        toast.info("Todos os 50 kits fotovoltaicos padrão já estão cadastrados no banco!");
-        return;
-      }
-
-      const mapped = missing.map((m) => ({
-        codigo: m.id,
-        faixa: m.faixa,
-        nome: m.nome,
-        potencia_kwp: Number(m.potencia_kwp),
-        quantidade_modulos: Number(m.quantidade_modulos),
-        fabricante_modulos: m.fabricante_modulos,
-        potencia_modulo_w: Number(m.potencia_modulo_w),
-        tecnologia_modulo: m.tecnologia_modulo,
-        eficiencia_modulo: Number(m.eficiencia_modulo),
-        inversor: m.inversor,
-        tipo_inversor: m.tipo_inversor,
-        garantia_modulos_anos: Number(m.garantia_modulos_anos),
-        garantia_inversor_anos: Number(m.garantia_inversor_anos),
-        preco: Number(m.preco),
-        consumo_kwh_min: m.consumo_kwh_min ? Number(m.consumo_kwh_min) : null,
-        consumo_kwh_max: m.consumo_kwh_max ? Number(m.consumo_kwh_max) : null,
-        destaque: m.destaque,
-        ativo: m.ativo,
-        fornecedor: m.fornecedor || "Aldo Solar",
-        url_fornecedor: m.url_fornecedor || null,
-        componentes: m.componentes || null
-      }));
-
-      const { error: errInsert } = await supabase.from("kits_produtos" as any).insert(mapped);
-      if (errInsert) throw errInsert;
-
-      toast.success(`${mapped.length} novos kits padrão cadastrados no banco com sucesso!`);
-      load();
-    } catch (e: any) {
-      toast.error("Erro ao popular banco: " + e.message);
-    } finally {
-      setIsPopulating(false);
-    }
-  };
-
   const F = (field: string) => (e: any) => setEditando((prev: any) => ({ ...prev, [field]: e.target.value }));
 
   return (
@@ -377,6 +176,11 @@ function AdminKits() {
         </div>
         {canEditKits && (
           <div className="flex gap-2">
+            <Link to="/app/parametros" search={{ tab: "kits" }}>
+              <Button variant="outline" className="border-navy/20 hover:bg-navy/5 text-navy font-semibold">
+                <Upload className="w-4 h-4 mr-1" />Importar Kits (Parâmetros)
+              </Button>
+            </Link>
             <Button onClick={() => setEditando({ ...EMPTY_KIT })} className="bg-sun hover:bg-sun-deep text-navy font-semibold">
               <Plus className="w-4 h-4 mr-1" />Novo kit manual
             </Button>
@@ -692,141 +496,7 @@ function AdminKits() {
             </Card>
           )}
 
-      {/* Ferramentas Avançadas / Importação */}
-      <div className="pt-6 border-t border-slate-200 mt-6 max-w-7xl mx-auto px-1">
-        <button
-          type="button"
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          className="text-xs text-slate-500 hover:text-navy font-bold flex items-center gap-1 cursor-pointer bg-transparent border-0"
-        >
-          {showAdvanced ? "▼ Ocultar Ferramentas de Importação & Carga" : "▶ Mostrar Ferramentas de Importação & Carga"}
-        </button>
-        
-        {showAdvanced && (
-          <div className="grid md:grid-cols-2 gap-6 mt-4">
-            {/* Importador Planilha */}
-            <Card className="p-6 border-0 shadow-md space-y-4">
-              <h3 className="font-bold text-navy text-lg flex items-center gap-2">
-                <FileSpreadsheet className="text-emerald-600 w-5 h-5" /> Importar Planilha de Preços (CSV)
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Exportou uma planilha de kits do portal da Aldo, Sou Energy ou de outro distribuidor? 
-                Você pode fazer o upload do arquivo CSV diretamente para o sistema mapear e carregar.
-              </p>
 
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:bg-slate-50 transition relative">
-                <input
-                  type="file"
-                  accept=".csv"
-                  onChange={handleFileUpload}
-                  ref={fileInputRef}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                />
-                <Upload className="w-10 h-10 mx-auto text-slate-400 mb-2" />
-                <div className="text-sm font-semibold text-navy">Arraste ou clique para selecionar o arquivo CSV</div>
-                <div className="text-xs text-muted-foreground mt-1">UTF-8 CSV (separado por vírgula ou ponto-e-vírgula)</div>
-              </div>
-
-              {fileLoaded && csvHeaders.length > 0 && (
-                <div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div className="text-xs font-bold text-navy uppercase">Mapeamento de Colunas da Planilha</div>
-                  
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <Label className="text-[10px]">Nome / Descrição</Label>
-                      <select
-                        value={mapping.nome}
-                        onChange={(e) => setMapping(p => ({ ...p, nome: e.target.value }))}
-                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
-                      >
-                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <Label className="text-[10px]">Potência total (kWp)</Label>
-                      <select
-                        value={mapping.potencia_kwp}
-                        onChange={(e) => setMapping(p => ({ ...p, potencia_kwp: e.target.value }))}
-                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
-                      >
-                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <Label className="text-[10px]">Quantidade Módulos</Label>
-                      <select
-                        value={mapping.quantidade_modulos}
-                        onChange={(e) => setMapping(p => ({ ...p, quantidade_modulos: e.target.value }))}
-                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
-                      >
-                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <Label className="text-[10px]">Marca dos Painéis</Label>
-                      <select
-                        value={mapping.fabricante_modulos}
-                        onChange={(e) => setMapping(p => ({ ...p, fabricante_modulos: e.target.value }))}
-                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
-                      >
-                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <Label className="text-[10px]">Inversor</Label>
-                      <select
-                        value={mapping.inversor}
-                        onChange={(e) => setMapping(p => ({ ...p, inversor: e.target.value }))}
-                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
-                      >
-                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <Label className="text-[10px]">Preço do Kit (R$)</Label>
-                      <select
-                        value={mapping.preco}
-                        onChange={(e) => setMapping(p => ({ ...p, preco: e.target.value }))}
-                        className="w-full bg-white border rounded px-2 py-1 font-semibold text-xs animate-none outline-none"
-                      >
-                        {csvHeaders.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 justify-end pt-2">
-                    <Button variant="ghost" size="sm" onClick={() => setFileLoaded(false)}>Cancelar</Button>
-                    <Button size="sm" onClick={processImport} disabled={saving} className="bg-[#2E44B8] hover:bg-[#1F3095] text-white font-semibold">
-                      {saving ? "Processando..." : "Confirmar e Importar"}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Card>
-
-            {/* Carga Inicial / Popular Banco de Dados */}
-            <Card className="p-6 border-0 shadow-md space-y-4">
-              <h3 className="font-bold text-navy text-lg flex items-center gap-2">
-                <Boxes className="text-sun-deep w-5 h-5" /> Base de Dados Padrão (50 Kits)
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Carregue a listagem padrão de 50 kits fotovoltaicos reais da Esol Energy diretamente na tabela de banco de dados do seu Supabase em nuvem. Isso evita carregar kits estáticos locais em modo de desenvolvimento.
-              </p>
-
-              <div className="pt-2">
-                <Button
-                  onClick={popularBancoKits}
-                  disabled={isPopulating}
-                  className="w-full bg-[#2E44B8] hover:bg-[#1F3095] text-white font-semibold flex items-center justify-center gap-2 border-0 cursor-pointer py-2.5 rounded-lg text-xs font-bold"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isPopulating ? "animate-spin" : ""}`} />
-                  {isPopulating ? "Gravando no Banco..." : "Cadastrar Kits Padrão no Supabase"}
-                </Button>
-              </div>
-            </Card>
-          </div>
-        )}
-      </div>
 
       {/* Modal de edição manual */}
       {editando && (
