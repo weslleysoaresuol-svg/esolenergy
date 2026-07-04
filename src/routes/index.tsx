@@ -1040,7 +1040,13 @@ function FinalCTA() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.nome.trim() || !form.telefone.trim()) {
-      toast.error("Nome e WhatsApp são obrigatórios");
+      toast.error("Nome/Empresa e WhatsApp são obrigatórios");
+      return;
+    }
+    
+    const cleanPhone = form.telefone.replace(/\D/g, "");
+    if (cleanPhone.length < 10) {
+      toast.error("Por favor, informe um WhatsApp válido com DDD");
       return;
     }
     
@@ -1060,10 +1066,10 @@ function FinalCTA() {
     setLoading(true);
     const { data: inserted, error } = await supabase.from("clientes").insert({
       nome: form.nome.trim(),
-      email: form.email.trim() || null,
+      email: null,
       telefone: form.telefone.trim(),
-      cep: form.cep.trim() || null,
-      endereco: form.endereco.trim() || null,
+      cep: null,
+      endereco: null,
       cidade: finalCidade,
       estado: finalEstado,
       valor_fatura: form.conta || null,
@@ -1140,42 +1146,42 @@ function FinalCTA() {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <Field label="Nome completo" placeholder="Ex: João Silva" value={form.nome} onChange={(v) => update("nome", v)} />
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <Field label="E-mail" type="email" placeholder="voce@email.com" value={form.email} onChange={(v) => update("email", v)} required={false} />
-                    <Field label="WhatsApp" type="tel" placeholder="(11) 99999-9999" value={form.telefone} onChange={(v) => update("telefone", v)} />
-                  </div>
+                <div className="space-y-4">
+                  <Field 
+                    label="Nome / Empresa" 
+                    placeholder="Ex: João Silva ou ESOL Energy" 
+                    value={form.nome} 
+                    onChange={(v) => update("nome", v)} 
+                  />
 
-                  <div className="grid sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
-                        CEP (Opcional)
-                      </label>
-                      <input
-                        placeholder="Ex: 01001-000"
-                        value={form.cep}
-                        onChange={(e) => handleLandingCepChange(e.target.value)}
-                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
-                        Endereço (Opcional)
-                      </label>
-                      <input
-                        placeholder="Ex: Av. Paulista, 1000"
-                        value={form.endereco}
-                        onChange={(e) => update("endereco", e.target.value)}
-                        className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
-                      />
-                    </div>
+                  <div>
+                    <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
+                      Contato / WhatsApp
+                    </label>
+                    <input
+                      required
+                      type="tel"
+                      placeholder="Ex: (11) 99999-9999"
+                      value={form.telefone}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "");
+                        let formatted = digits;
+                        if (digits.length > 2) {
+                          formatted = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+                        }
+                        if (digits.length > 7) {
+                          formatted = `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+                        }
+                        update("telefone", formatted.slice(0, 15));
+                      }}
+                      className="mt-1 w-full rounded-xl bg-secondary px-4 py-2.5 text-navy outline-none placeholder:text-ink/60 focus:ring-2 focus:ring-sun transition-all text-sm font-semibold"
+                    />
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="relative">
                       <label className="text-[11px] uppercase font-bold tracking-widest text-ink/70 block">
-                        Cidade / Estado *
+                        Cidade / Estado
                       </label>
                       <input
                         required
