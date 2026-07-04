@@ -475,7 +475,7 @@ function CotacoesList() {
       toast.success("Cotação criada com sucesso!");
       setOpenNew(false);
       setNovo({ cliente_id: "", kit_id: "", quantidade: 1, observacoes: "" });
-      setNovoCliente({ nome: "", telefone: "", cidade: "", estado: "SP" });
+      setNovoCliente({ nome: "", email: "", telefone: "", cep: "", endereco: "", cidade: "", estado: "SP" });
       setClienteTipo("existente");
       navigate({ to: "/app/cotacoes/$id", params: { id: data.id } });
     } catch (err: any) {

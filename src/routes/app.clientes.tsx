@@ -16,7 +16,17 @@ export const Route = createFileRoute("/app/clientes")({
   component: AdminClientes,
 });
 
-const BOARD_COLUMNS = [
+type ClienteStatus =
+  | "novo"
+  | "contato"
+  | "visita_agendada"
+  | "proposta_enviada"
+  | "negociacao"
+  | "contrato_assinado"
+  | "instalacao"
+  | "concluido";
+
+const BOARD_COLUMNS: Array<{ label: string; statuses: ClienteStatus[]; key: string; color: string }> = [
   { label: "Leads recebidas", statuses: ["novo"], key: "recebidas", color: "bg-blue-500" },
   { label: "Leads em atendimento", statuses: ["contato"], key: "atendimento", color: "bg-indigo-500" },
   { label: "Leads em proposta", statuses: ["visita_agendada", "proposta_enviada"], key: "proposta", color: "bg-amber-500" },
@@ -38,7 +48,7 @@ function AdminClientes() {
 
   // Modal Novo Lead
   const [modalOpen, setModalOpen] = useState(false);
-  const [targetStatus, setTargetStatus] = useState("novo");
+  const [targetStatus, setTargetStatus] = useState<ClienteStatus>("novo");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -123,7 +133,7 @@ function AdminClientes() {
     })();
   }, []);
 
-  const handleOpenModal = (status: string) => {
+  const handleOpenModal = (status: ClienteStatus) => {
     setTargetStatus(status);
     setNome("");
     setEmail("");
