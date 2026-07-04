@@ -19,6 +19,7 @@ import { Route as PropostaCodigoRouteImport } from './routes/proposta.$codigo'
 import { Route as FinanciamentoCodigoRouteImport } from './routes/financiamento.$codigo'
 import { Route as CotacaoCodigoRouteImport } from './routes/cotacao.$codigo'
 import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
+import { Route as BlogComoFuncionaAEnergiaSolarRouteImport } from './routes/blog.como-funciona-a-energia-solar'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppPedidosRouteImport } from './routes/app.pedidos'
@@ -96,6 +97,12 @@ const ConviteTokenRoute = ConviteTokenRouteImport.update({
   path: '/convite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogComoFuncionaAEnergiaSolarRoute =
+  BlogComoFuncionaAEnergiaSolarRouteImport.update({
+    id: '/blog/como-funciona-a-energia-solar',
+    path: '/blog/como-funciona-a-energia-solar',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppPropostasRoute = AppPropostasRouteImport.update({
   id: '/propostas',
   path: '/propostas',
@@ -247,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/app/pedidos': typeof AppPedidosRouteWithChildren
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRouteWithChildren
+  '/blog/como-funciona-a-energia-solar': typeof BlogComoFuncionaAEnergiaSolarRoute
   '/convite/$token': typeof ConviteTokenRoute
   '/cotacao/$codigo': typeof CotacaoCodigoRoute
   '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
@@ -280,6 +288,7 @@ export interface FileRoutesByTo {
   '/app/novo': typeof AppNovoRoute
   '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/blog/como-funciona-a-energia-solar': typeof BlogComoFuncionaAEnergiaSolarRoute
   '/convite/$token': typeof ConviteTokenRoute
   '/cotacao/$codigo': typeof CotacaoCodigoRoute
   '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
@@ -319,6 +328,7 @@ export interface FileRoutesById {
   '/app/pedidos': typeof AppPedidosRouteWithChildren
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRouteWithChildren
+  '/blog/como-funciona-a-energia-solar': typeof BlogComoFuncionaAEnergiaSolarRoute
   '/convite/$token': typeof ConviteTokenRoute
   '/cotacao/$codigo': typeof CotacaoCodigoRoute
   '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/app/pedidos'
     | '/app/perfil'
     | '/app/propostas'
+    | '/blog/como-funciona-a-energia-solar'
     | '/convite/$token'
     | '/cotacao/$codigo'
     | '/financiamento/$codigo'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/app/novo'
     | '/app/parametros'
     | '/app/perfil'
+    | '/blog/como-funciona-a-energia-solar'
     | '/convite/$token'
     | '/cotacao/$codigo'
     | '/financiamento/$codigo'
@@ -430,6 +442,7 @@ export interface FileRouteTypes {
     | '/app/pedidos'
     | '/app/perfil'
     | '/app/propostas'
+    | '/blog/como-funciona-a-energia-solar'
     | '/convite/$token'
     | '/cotacao/$codigo'
     | '/financiamento/$codigo'
@@ -455,6 +468,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SucessoOrcamentoRoute: typeof SucessoOrcamentoRoute
+  BlogComoFuncionaAEnergiaSolarRoute: typeof BlogComoFuncionaAEnergiaSolarRoute
   ConviteTokenRoute: typeof ConviteTokenRoute
   CotacaoCodigoRoute: typeof CotacaoCodigoRoute
   FinanciamentoCodigoRoute: typeof FinanciamentoCodigoRoute
@@ -531,6 +545,13 @@ declare module '@tanstack/react-router' {
       path: '/convite/$token'
       fullPath: '/convite/$token'
       preLoaderRoute: typeof ConviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/como-funciona-a-energia-solar': {
+      id: '/blog/como-funciona-a-energia-solar'
+      path: '/blog/como-funciona-a-energia-solar'
+      fullPath: '/blog/como-funciona-a-energia-solar'
+      preLoaderRoute: typeof BlogComoFuncionaAEnergiaSolarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/propostas': {
@@ -835,6 +856,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SucessoOrcamentoRoute: SucessoOrcamentoRoute,
+  BlogComoFuncionaAEnergiaSolarRoute: BlogComoFuncionaAEnergiaSolarRoute,
   ConviteTokenRoute: ConviteTokenRoute,
   CotacaoCodigoRoute: CotacaoCodigoRoute,
   FinanciamentoCodigoRoute: FinanciamentoCodigoRoute,
