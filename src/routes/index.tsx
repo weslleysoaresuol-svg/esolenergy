@@ -40,7 +40,11 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://esolenergy.com.br/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://esolenergy.com.br/" }],
+    links: [
+      { rel: "canonical", href: "https://esolenergy.com.br/" },
+      { rel: "preload", as: "image", href: heroHouse, fetchpriority: "high" },
+    ],
+
     scripts: [
       {
         type: "application/ld+json",
@@ -329,8 +333,11 @@ function Hero() {
               alt="Residência brasileira de alto padrão com sistema solar fotovoltaico ESOL Energy"
               width={1024}
               height={1024}
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover"
             />
+
             <div className="absolute inset-0 bg-gradient-to-t from-navy/30 via-transparent to-transparent" />
           </div>
 
