@@ -362,6 +362,12 @@ function CotacoesList() {
           return;
         }
 
+        if (!valFatura.trim() && !valConsumo.trim()) {
+          toast.error("Preencha ao menos uma informação de consumo: Valor da Fatura ou Consumo em kWh.");
+          setSaving(false);
+          return;
+        }
+
         const { data: newCl, error: errCl } = await supabase.from("clientes").insert({
           nome: novoCliente.nome.trim(),
           email: novoCliente.email.trim() || null,

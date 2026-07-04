@@ -154,6 +154,11 @@ function AdminClientes() {
       return;
     }
 
+    if (!valorFatura.trim() && !consumoKwh.trim()) {
+      toast.error("Preencha ao menos uma informação de consumo: Valor da Fatura ou Consumo em kWh.");
+      return;
+    }
+
     setSavingLead(true);
     try {
       const { error } = await supabase
@@ -334,6 +339,12 @@ function AdminClientes() {
           </DialogHeader>
           
           <form onSubmit={handleSaveLead} className="space-y-4 pt-2 text-xs">
+            {/* Caixa Informativa Resiliente */}
+            <div className="bg-amber-50/60 border border-amber-200/50 rounded-xl p-2.5 text-[10.5px] text-slate-750 leading-relaxed space-y-1.5 shadow-sm">
+              <p>💡 <strong>E-mail e CEP são opcionais:</strong> se não informados agora, as informações faltantes poderão ser preenchidas durante a geração de propostas ou cotações.</p>
+              <p>⚡ <strong>Dimensionamento Solar:</strong> você deve escolher preencher o <strong>Valor da Fatura</strong> ou o <strong>Consumo (kWh)</strong> para que o motor solar funcione.</p>
+            </div>
+
             <div className="space-y-1">
               <label className="font-bold text-slate-600">Nome</label>
               <Input
@@ -346,7 +357,10 @@ function AdminClientes() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-600">E-mail</label>
+              <label className="font-bold text-slate-600 flex justify-between items-baseline">
+                <span>E-mail</span>
+                <span className="text-slate-400 font-normal text-[10px]">(Opcional)</span>
+              </label>
               <Input
                 type="email"
                 placeholder="Ex: joao@email.com"
@@ -369,7 +383,10 @@ function AdminClientes() {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">CEP</label>
+                <label className="font-bold text-slate-600 flex justify-between items-baseline">
+                  <span>CEP</span>
+                  <span className="text-slate-400 font-normal text-[10px]">(Opcional)</span>
+                </label>
                 <Input
                   placeholder="Ex: 01001-000"
                   value={cep}
@@ -414,7 +431,9 @@ function AdminClientes() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">Fatura Mensal (R$)</label>
+                <label className="font-bold text-slate-600">
+                  Fatura Mensal (R$) <span className="text-[#E2B714] font-black">*</span>
+                </label>
                 <Input
                   type="number"
                   placeholder="Ex: 450"
@@ -424,7 +443,9 @@ function AdminClientes() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">Consumo (kWh/mês)</label>
+                <label className="font-bold text-slate-600">
+                  Consumo (kWh/mês) <span className="text-[#E2B714] font-black">*</span>
+                </label>
                 <Input
                   type="number"
                   placeholder="Ex: 500"

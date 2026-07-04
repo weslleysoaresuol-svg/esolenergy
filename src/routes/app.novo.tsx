@@ -27,6 +27,20 @@ function NovoCliente() {
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   
+  const handleStepChange = (newStep: number) => {
+    if (step === 0 && newStep > 0) {
+      if (!f.nome || !f.telefone) {
+        toast.error("Nome e Telefone/WhatsApp são obrigatórios.");
+        return;
+      }
+      if (!f.valor_fatura && !f.consumo_kwh) {
+        toast.error("Preencha ao menos uma informação de consumo: Valor da Fatura ou Consumo em kWh.");
+        return;
+      }
+    }
+    setStep(newStep);
+  };
+  
   // Estado do formulário unificado
   const [f, setF] = useState<any>({
     nome: "",
@@ -82,6 +96,12 @@ function NovoCliente() {
     if (!user) return;
     if (!f.nome || !f.telefone) {
       toast.error("Nome e Telefone/WhatsApp são obrigatórios para registrar o lead.");
+      setStep(0);
+      return;
+    }
+
+    if (!f.valor_fatura && !f.consumo_kwh) {
+      toast.error("Preencha ao menos uma informação de consumo: Valor da Fatura ou Consumo em kWh.");
       setStep(0);
       return;
     }
@@ -266,7 +286,7 @@ function NovoCliente() {
         {STEPS.map((s, i) => (
           <button 
             key={s} 
-            onClick={() => setStep(i)}
+            onClick={() => handleStepChange(i)}
             className="flex-1 text-left focus:outline-none"
           >
             <div className={`h-1.5 rounded-full transition-all ${i <= step ? "bg-sun-deep" : "bg-slate-200"}`} />
@@ -295,7 +315,10 @@ function NovoCliente() {
               </div>
               
               <div>
-                <Label className="text-xs font-semibold">E-mail</Label>
+                <Label className="text-xs font-semibold flex justify-between items-baseline">
+                  <span>E-mail</span>
+                  <span className="text-slate-400 font-normal text-[10px]">(Opcional)</span>
+                </Label>
                 <Input type="email" value={f.email || ""} onChange={(e) => set("email", e.target.value)} placeholder="Ex: joao@email.com" className="h-10 text-xs mt-1" />
               </div>
 
@@ -316,8 +339,11 @@ function NovoCliente() {
               </div>
 
               <div>
-                <Label className="text-xs font-semibold">CEP (Calcula Cidade/UF)</Label>
-                <Input placeholder="Ex: 01001-000" value={f.cep || ""} onChange={(e) => handleCepChange(e.target.value)} className="h-10 text-xs mt-1" />
+                <Label className="text-xs font-semibold flex justify-between items-baseline">
+                  <span>CEP</span>
+                  <span className="text-slate-400 font-normal text-[10px]">(Opcional)</span>
+                </Label>
+                <Input placeholder="Ex: 01001-000 (Calcula Cidade/UF)" value={f.cep || ""} onChange={(e) => handleCepChange(e.target.value)} className="h-10 text-xs mt-1" />
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
@@ -434,7 +460,7 @@ function NovoCliente() {
             {step < STEPS.length - 1 && (
               <Button 
                 type="button" 
-                onClick={() => setStep((s) => s + 1)} 
+                onClick={() => handleStepChange(step + 1)} 
                 variant="secondary"
                 className="h-11 text-xs font-semibold flex items-center gap-1"
               >
