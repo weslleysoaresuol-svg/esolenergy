@@ -1315,13 +1315,6 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           <Trust icon={Leaf} title={`${p.arvores_equivalentes} árvores`} subtitle="Equivalente plantadas" />
         </div>
       </section>
-2 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <Trust icon={ShieldCheck} title="25 anos" subtitle="Garantia dos módulos" />
-          <Trust icon={Award} title="Certificada" subtitle="Equipe especializada" />
-          <Trust icon={Home} title="Homologação" subtitle="Concessionária local" />
-          <Trust icon={Leaf} title={`${p.arvores_equivalentes} árvores`} subtitle="Equivalente plantadas" />
-        </div>
-      </section>
 
       <footer className="bg-navy text-white/80 py-8 px-6 text-center text-sm">
         <img src={logo} alt="ESOL" className="h-8 w-auto brightness-0 invert mx-auto mb-3" />
