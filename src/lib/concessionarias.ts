@@ -307,7 +307,23 @@ const DISTANCIAS_CD_POR_UF: Record<string, Record<string, number>> = {
 
 /** Retorna a distância estimada (km) entre o CD do distribuidor e a UF de destino */
 export function getDistanciaCD(distribuidoraId: string, uf_destino: string): number {
-  const mapa = DISTANCIAS_CD_POR_UF[distribuidoraId];
+  if (!distribuidoraId || !uf_destino) return 1000;
+  
+  // Normaliza o ID para remover caracteres especiais/espaços e lowercase
+  const cleanId = distribuidoraId.toLowerCase().replace(/[^a-z0-9]/g, "");
+  
+  // Mapeia chaves simples do banco/API para as chaves reais de DISTANCIAS_CD_POR_UF
+  let key = cleanId;
+  if (cleanId === "aldo" || cleanId === "aldosolar") key = "aldo_solar";
+  else if (cleanId === "souenergy" || cleanId === "sou" || cleanId === "souenergiasolar" || cleanId === "souenergysolar") key = "sou_energy";
+  else if (cleanId === "intelbras" || cleanId === "intelbrassolar") key = "intelbras_solar";
+  else if (cleanId === "phb" || cleanId === "phbsolar") key = "phb_solar";
+  else if (cleanId === "golden" || cleanId === "goldendist" || cleanId === "goldendistribuidora") key = "golden_dist";
+  else if (cleanId === "wdc" || cleanId === "wdcnetworks") key = "wdc_networks";
+  else if (cleanId === "fortlev" || cleanId === "fortlevsolar") key = "fortlev_solar";
+  else if (cleanId === "renovigi" || cleanId === "renovigisolar") key = "renovigi";
+  
+  const mapa = DISTANCIAS_CD_POR_UF[key];
   if (!mapa) return 1000; // fallback neutro se distribuidora não mapeada
   return mapa[uf_destino.toUpperCase()] ?? 1000;
 }

@@ -608,17 +608,26 @@ function Parametros() {
                   </div>
                 ))}
               </div>
-              <div className="bg-slate-50 rounded-xl p-3 border text-xs space-y-1">
-                <div className="font-bold text-slate-600 text-[10px] uppercase mb-2">Preview — Sistema 5 kWp em SP via Aldo Solar (SC, ~660km):</div>
+              <div className="bg-slate-50 rounded-xl p-3 border text-xs space-y-2">
+                <div className="font-bold text-slate-600 text-[10px] uppercase mb-1">Simulações de Frete (Sistema de 5 kWp via Aldo Solar):</div>
                 {geralData && (() => {
-                  const custo = Math.max(
-                    5 * (660 / 100) * (geralData.custo_frete_por_100km_kwp ?? 2.5),
-                    geralData.custo_frete_minimo_brl ?? 350
+                  const custoSP = calcularCustoFrete(5, "aldo", "SP", geralData);
+                  const custoPA = calcularCustoFrete(5, "aldo", "PA", geralData);
+                  return (
+                    <div className="space-y-1.5 font-bold">
+                      <div className="flex justify-between text-navy">
+                        <span>Local — São Paulo (SP):</span>
+                        <span>{BRL(custoSP)}</span>
+                      </div>
+                      <div className="flex justify-between text-[#2E44B8]">
+                        <span>Norte — Parauapebas (PA):</span>
+                        <span>{BRL(custoPA)}</span>
+                      </div>
+                    </div>
                   );
-                  return <div className="flex justify-between font-bold text-navy"><span>Frete estimado (660km)</span><span>{BRL(+custo.toFixed(2))}</span></div>;
                 })()}
-                <div className="text-[10px] text-slate-400 mt-2">
-                  As distâncias entre os CDs das 8 distribuidoras parceiras e as UFs do Brasil estão pré-mapeadas no sistema.
+                <div className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+                  As distâncias e dificuldades logísticas das 8 distribuidoras estão mapeadas. O sistema aplica fatores de redespacho regionais (ex: 2.4x para a Região Norte) sobre a distância e o frete mínimo.
                 </div>
               </div>
             </Card>

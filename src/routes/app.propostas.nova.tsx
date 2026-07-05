@@ -350,6 +350,7 @@ function NovaProposta() {
       custo_equipamentos_override: Number(selectedKit.preco),
       kwp_override: Number(selectedKit.potencia_kwp),
       qtd_modulos_override: Number(selectedKit.quantidade_modulos),
+      distribuidora_id: selectedKit.fornecedor || "Aldo Solar",
     } : {};
 
     const base = calcularProposta({ 
@@ -513,6 +514,7 @@ function NovaProposta() {
         // Novos campos do motor reverso v3
         tipo_telhado: tipoTelhado,
         eh_admin_proposta: role === "admin",
+        distribuidora_id: selectedKit ? (selectedKit.fornecedor || "Aldo Solar") : null,
       };
       let prop: any = null;
       try {

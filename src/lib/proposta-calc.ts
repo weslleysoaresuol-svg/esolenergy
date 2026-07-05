@@ -219,6 +219,27 @@ export function calcularCustoInstalacao(kwp: number, tipoTelhado: TipoTelhado, p
 
 // ─── Calculadora de Frete ─────────────────────────────────────────────────────
 
+/** Retorna o multiplicador de frete com base na dificuldade logística regional e redespacho */
+export function getMultiplicadorRegiao(uf: string): number {
+  if (!uf) return 1.0;
+  const ufUpper = uf.trim().toUpperCase();
+  
+  // Região Norte (AC, AM, AP, PA, RO, RR, TO) — Muito alto, redespacho fluvial/balsa e longas distâncias
+  if (["PA", "AM", "AC", "RO", "RR", "AP", "TO"].includes(ufUpper)) return 2.4;
+  
+  // Região Nordeste (AL, BA, CE, MA, PB, PE, PI, RN, SE) — Alto, longas distâncias
+  if (["MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA"].includes(ufUpper)) return 1.8;
+  
+  // Região Centro-Oeste (DF, GO, MT, MS) — Médio
+  if (["MT", "MS", "GO", "DF"].includes(ufUpper)) return 1.4;
+  
+  // Região Sudeste (RJ, MG, ES) — Leve acréscimo
+  if (["RJ", "MG", "ES"].includes(ufUpper)) return 1.1;
+  
+  // Região Sul + SP (Origem principal da maioria dos CDs)
+  return 1.0;
+}
+
 /** Retorna o custo estimado de frete em R$ */
 export function calcularCustoFrete(
   kwp: number,
@@ -227,9 +248,15 @@ export function calcularCustoFrete(
   p: Parametros
 ): number {
   if (!distribuidoraId || !uf_destino) return p.custo_frete_minimo_brl;
+  
   const distancia = getDistanciaCD(distribuidoraId, uf_destino);
-  const custo = kwp * (distancia / 100) * p.custo_frete_por_100km_kwp;
-  return +Math.max(custo, p.custo_frete_minimo_brl).toFixed(2);
+  const mult = getMultiplicadorRegiao(uf_destino);
+  
+  // Calcula o custo base e o mínimo ajustado regionalmente
+  const custoBase = kwp * (distancia / 100) * p.custo_frete_por_100km_kwp * mult;
+  const minimoRegional = p.custo_frete_minimo_brl * mult;
+  
+  return +Math.max(custoBase, minimoRegional).toFixed(2);
 }
 
 // ─── MOTOR REVERSO — Precificação Garantindo Lucro Alvo ──────────────────────
