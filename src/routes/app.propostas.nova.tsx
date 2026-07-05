@@ -31,9 +31,8 @@ async function insertPropostaWithFallback(payload: any) {
   const { data, error } = await supabase.from("propostas").insert(payload as any).select().single();
   if (!error) return { data, error: null };
 
-  if (error.code === "42703" || error.message?.includes("column")) {
-    console.warn("Tabela 'propostas' não possui colunas novas. Salvando em formato de compatibilidade...");
-    const cleanPayload = { ...payload };
+  console.warn("Falha na gravação inicial. Tentando salvar em formato de compatibilidade...", error);
+  const cleanPayload = { ...payload };
     
     // Removendo campos de Kit
     delete (cleanPayload as any).kit_id;
@@ -78,9 +77,6 @@ async function insertPropostaWithFallback(payload: any) {
     delete (cleanPayload as any).distribuidora_id;
 
     return await supabase.from("propostas").insert(cleanPayload as any).select().single();
-  }
-
-  return { data: null, error };
 }
 
 function NovaProposta() {
