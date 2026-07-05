@@ -317,23 +317,3 @@ export const LISTA_UFS = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
   "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
 ];
-
-/** Retorna todas as concessionárias de uma UF específica */
-export function getConcessionariasPorUF(uf: string): Concessionaria[] {
-  return CONCESSIONARIAS.filter((c) => c.uf === uf.toUpperCase());
-}
-
-/** Retorna a tarifa de uma concessionária pelo tipo de instalação */
-export function getTarifaPorTipo(c: Concessionaria, tipo: string): number {
-  switch (tipo) {
-    case "comercial":   return c.tarifa_comercial;
-    case "industrial":  return c.tarifa_industrial;
-    case "rural":       return c.tarifa_rural;
-    default:            return c.tarifa_residencial;
-  }
-}
-
-/** Retorna a primeira concessionária encontrada para uma UF */
-export function getConcessionariaPrincipal(uf: string): Concessionaria | null {
-  return CONCESSIONARIAS.find((c) => c.uf === uf.toUpperCase()) ?? null;
-}
