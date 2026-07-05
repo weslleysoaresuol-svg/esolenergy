@@ -4,11 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { PropostaView } from "@/components/PropostaView";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, Copy, MessageCircle, Mail, Printer, Trash2, ShoppingCart, Landmark, Check, FileText } from "lucide-react";
+import { ChevronLeft, Copy, MessageCircle, Mail, Printer, Trash2, ShoppingCart, Landmark, Check, FileText, Target, Building2, User } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { BRL, calcularProposta } from "@/lib/proposta-calc";
+import { BRL, calcularProposta, PARAMETROS_DEFAULT } from "@/lib/proposta-calc";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/app/propostas/$id")({ component: PropostaDetail });
@@ -42,20 +42,29 @@ function PropostaDetail() {
   const calculoOnFly = useMemo(() => {
     if (!proposta || !params) return null;
     
-    if (proposta.custo_equipamentos !== null && proposta.custo_equipamentos !== undefined) {
-      return proposta;
-    }
-    
+    // Detecta se a proposta foi gerada por admin (sem parceiro) ou por parceiro
+    const ehAdmin = !proposta.parceiro_id || proposta.parceiro_id === null;
+    const comissaoParceiro = parceiro?.comissao_percent !== null && parceiro?.comissao_percent !== undefined
+      ? Number(parceiro.comissao_percent)
+      : undefined;
+
+    // Mescla defaults para garantir novos campos disponíveis
+    const paramsCompletos = { ...PARAMETROS_DEFAULT, ...params };
+
     return calcularProposta({
       consumo_kwh: proposta.consumo_kwh,
       tarifa_kwh: proposta.tarifa_kwh || 0.95,
       estado: proposta.estado,
       tipo: proposta.tipo_instalacao || "residencial",
+      tipo_telhado: proposta.tipo_telhado || "ceramico",
+      distribuidora_id: proposta.distribuidora_id || null,
       preco_override: proposta.preco_total,
       kwp_override: proposta.kwp_sistema,
       qtd_modulos_override: proposta.qtd_modulos,
-      comissao_percent_override: parceiro?.comissao_percent !== null && parceiro?.comissao_percent !== undefined ? Number(parceiro.comissao_percent) : undefined,
-    }, params);
+      custo_equipamentos_override: proposta.custo_equipamentos || undefined,
+      eh_admin: ehAdmin,
+      comissao_percent_override: comissaoParceiro,
+    }, paramsCompletos);
   }, [proposta, params, parceiro]);
 
   const linkPublico = proposta && typeof window !== "undefined" ? `${window.location.origin}/proposta/${proposta.codigo_publico}` : "";
@@ -190,48 +199,97 @@ function PropostaDetail() {
 
               {role === "admin" ? (
                 <div className="space-y-4 pt-2">
-                  {(calculoOnFly?.fornecedor || proposta.fornecedor) && (
-                    <div className="bg-navy/5 rounded-xl p-3 border text-xs flex justify-between items-center">
-                      <span className="font-semibold text-slate-500 uppercase text-[9px]">Distribuidor / Fornecedor</span>
-                      <strong className="text-navy text-sm font-black uppercase">{calculoOnFly?.fornecedor || proposta.fornecedor}</strong>
+                  {/* Badge: Proposta Direta ou Via Parceiro */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {!proposta.parceiro_id ? (
+                      <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-300 rounded-xl px-4 py-2 text-emerald-700 text-xs font-bold">
+                        <Building2 className="w-3.5 h-3.5" /> Proposta Direta da Empresa — Sem Comissão
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 bg-amber-50 border border-amber-300 rounded-xl px-4 py-2 text-amber-700 text-xs font-bold">
+                        <User className="w-3.5 h-3.5" /> Via Parceiro: {parceiro?.nome || "—"} ({parceiro?.comissao_percent || 8}% comissão)
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2 text-blue-700 text-xs font-bold">
+                      <Target className="w-3.5 h-3.5" /> Lucro Alvo: {((params?.lucro_alvo_pct || 0.15) * 100).toFixed(1)}%
                     </div>
-                  )}
+                  </div>
 
+                  {/* Bloco 1: Custos Diretos */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Diretos (Compra B2B)</span>
+                      <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">📦 Custos Diretos (Compra B2B)</span>
                       <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
-                        <CostRow label="Equipamentos (Kit)" value={calculoOnFly?.custo_equipamentos} />
-                        <CostRow label="Instalação / Integração" value={calculoOnFly?.custo_instalacao} />
-                        <CostRow label="Frete" value={calculoOnFly?.custo_frete} />
+                        <CostRow label="Kit Fornecedor" value={calculoOnFly?.custo_equipamentos} />
+                        <CostRow label={`Instalação (${proposta.tipo_telhado || "cerâmico"})`} value={calculoOnFly?.custo_instalacao} />
+                        <CostRow label="Frete ao CD" value={calculoOnFly?.custo_frete} />
                         <CostRow label="Impostos de Compra" value={calculoOnFly?.custo_impostos_compra} />
-                        <CostRow label="Comissão do Parceiro" value={calculoOnFly?.custo_comissao} />
-                        <CostRow label="Total Custos Diretos" value={calculoOnFly?.preco_total - (calculoOnFly?.margem_bruta || 0)} bold />
+                        <CostRow
+                          label={!proposta.parceiro_id ? "Comissão (Proposta Direta)" : `Comissão Parceiro (${parceiro?.comissao_percent || 8}%)`}
+                          value={proposta.parceiro_id ? calculoOnFly?.custo_comissao : 0}
+                          isZero={!proposta.parceiro_id}
+                        />
+                        <CostRow label="Total Custos Diretos" value={(calculoOnFly?.custo_equipamentos || 0) + (calculoOnFly?.custo_instalacao || 0) + (calculoOnFly?.custo_frete || 0) + (calculoOnFly?.custo_impostos_compra || 0) + (proposta.parceiro_id ? (calculoOnFly?.custo_comissao || 0) : 0)} bold />
                       </div>
                     </div>
                     
+                    {/* Bloco 2: Custos Operacionais */}
                     <div className="space-y-2">
-                      <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">Custos Operacionais e Margens (ESOL)</span>
+                      <span className="font-extrabold text-slate-600 uppercase text-[10px] block tracking-wide">🏢 Custos Operacionais (ESOL)</span>
                       <div className="bg-slate-50 rounded-xl p-3.5 border space-y-1">
-                        <CostRow label="Tributação ESOL" value={calculoOnFly?.custo_tributacao_empresa} />
-                        <CostRow label="CAC / Marketing" value={calculoOnFly?.custo_marketing} />
-                        <CostRow label="Engenharia / Fixo" value={calculoOnFly?.custo_engenharia_fixo} />
-                        <CostRow label="Overhead / Adm" value={calculoOnFly?.custo_overhead} />
-                        <CostRow label="Provisão de Garantia" value={calculoOnFly?.custo_garantia} />
-                        <CostRow label="Despesas Op. Totais" value={calculoOnFly?.custos_operacionais_totais} bold />
+                        <CostRow label={`Tributação (${((params?.tributacao_empresa_pct || 0.06) * 100).toFixed(0)}%)`} value={calculoOnFly?.custo_tributacao_empresa} />
+                        <CostRow label="Marketing / CAC (fixo)" value={calculoOnFly?.custo_marketing} />
+                        <CostRow label="Engenharia (ART + Projeto)" value={calculoOnFly?.custo_engenharia_fixo} />
+                        <CostRow label={`Overhead SG&A (${((params?.custo_overhead_pct || 0.04) * 100).toFixed(0)}%)`} value={calculoOnFly?.custo_overhead} />
+                        <CostRow label={`Garantia/Pós-venda (${((params?.custo_garantia_pct || 0.007) * 100).toFixed(1)}%)`} value={calculoOnFly?.custo_garantia} />
+                        <CostRow label="Total Operacional" value={calculoOnFly?.custos_operacionais_totais} bold />
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-3 pt-2">
-                    <div className="bg-slate-50 rounded-xl p-3.5 flex justify-between items-center border">
-                      <span className="font-semibold text-slate-700 text-xs">Margem Bruta</span>
-                      <span className="font-bold text-slate-700 text-sm">{BRL(calculoOnFly?.margem_bruta || 0)} {proposta.preco_total > 0 && `(${( ((calculoOnFly?.margem_bruta || 0) / proposta.preco_total) * 100 ).toFixed(1)}%)`}</span>
+                  {/* Bloco 3: Resumo Financeiro */}
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <div className="bg-slate-50 rounded-xl p-3.5 flex flex-col border">
+                      <span className="font-semibold text-slate-500 uppercase text-[9px]">Preço de Venda</span>
+                      <span className="font-black text-navy text-lg">{BRL(proposta.preco_total)}</span>
+                      <span className="text-[10px] text-slate-400">{calculoOnFly?.preco_por_wp || "—"} R$/Wp</span>
                     </div>
-                    
-                    <div className={`rounded-xl p-3.5 flex justify-between items-center border ${calculoOnFly?.lucro_liquido_real >= 0 ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"}`}>
-                      <span className="font-bold text-xs uppercase tracking-wide">★ Lucro Líquido Real</span>
-                      <span className="font-black text-sm">{BRL(calculoOnFly?.lucro_liquido_real || 0)} {calculoOnFly?.lucro_liquido_pct !== null && calculoOnFly?.lucro_liquido_pct !== undefined && calculoOnFly?.lucro_liquido_pct !== 0 ? `(${(calculoOnFly?.lucro_liquido_pct * 100).toFixed(1)}%)` : proposta.preco_total > 0 ? `(${( ((calculoOnFly?.lucro_liquido_real || 0) / proposta.preco_total) * 100 ).toFixed(1)}%)` : ""}</span>
+                    <div className="bg-slate-50 rounded-xl p-3.5 flex flex-col border">
+                      <span className="font-semibold text-slate-500 uppercase text-[9px]">Custo Total</span>
+                      <span className="font-black text-slate-700 text-lg">{BRL(calculoOnFly?.custos_totais || 0)}</span>
+                      <span className="text-[10px] text-slate-400">{proposta.preco_total > 0 ? ((calculoOnFly?.custos_totais || 0) / proposta.preco_total * 100).toFixed(1) : 0}% do preço</span>
+                    </div>
+                    <div className={`rounded-xl p-3.5 flex flex-col border ${(calculoOnFly?.lucro_liquido_real || 0) >= 0 ? "bg-emerald-50 border-emerald-300" : "bg-rose-50 border-rose-300"}`}>
+                      <span className={`font-bold uppercase text-[9px] ${(calculoOnFly?.lucro_liquido_real || 0) >= 0 ? "text-emerald-600" : "text-rose-600"}`}>★ Lucro Líquido Real</span>
+                      <span className={`font-black text-lg ${(calculoOnFly?.lucro_liquido_real || 0) >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{BRL(calculoOnFly?.lucro_liquido_real || 0)}</span>
+                      <span className={`text-[10px] font-bold ${(calculoOnFly?.lucro_liquido_real || 0) >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{((calculoOnFly?.lucro_liquido_pct || 0) * 100).toFixed(1)}% sobre o preço</span>
+                    </div>
+                  </div>
+
+                  {/* Bloco 4: Indicadores de Rentabilidade */}
+                  <div className="bg-navy/3 rounded-xl border p-4">
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">📊 Rentabilidade do Projeto</div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                      <div className="bg-white rounded-lg p-2.5 border text-center">
+                        <div className="text-slate-400 text-[9px] uppercase">Margem Bruta</div>
+                        <div className="font-black text-slate-700">{BRL(calculoOnFly?.margem_bruta || 0)}</div>
+                        <div className="text-[9px] text-slate-400">{((calculoOnFly?.margem_bruta_pct || 0) * 100).toFixed(1)}%</div>
+                      </div>
+                      <div className="bg-white rounded-lg p-2.5 border text-center">
+                        <div className="text-slate-400 text-[9px] uppercase">Payback Ajustado</div>
+                        <div className="font-black text-slate-700">{calculoOnFly?.payback_ajustado_meses || "—"}</div>
+                        <div className="text-[9px] text-slate-400">meses</div>
+                      </div>
+                      <div className="bg-white rounded-lg p-2.5 border text-center">
+                        <div className="text-slate-400 text-[9px] uppercase">TIR Anual</div>
+                        <div className="font-black text-emerald-600">{calculoOnFly?.tir_anual_pct || "—"}%</div>
+                        <div className="text-[9px] text-slate-400">a.a.</div>
+                      </div>
+                      <div className="bg-white rounded-lg p-2.5 border text-center">
+                        <div className="text-slate-400 text-[9px] uppercase">VPL (TMA 10%)</div>
+                        <div className="font-black text-emerald-600">{BRL(calculoOnFly?.vpl_brl || 0)}</div>
+                        <div className="text-[9px] text-slate-400">25 anos</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -307,9 +365,12 @@ function PropostaDetail() {
   );
 }
 
-const CostRow = ({ label, value, bold }: { label: string; value: number | null | undefined; bold?: boolean }) => (
+const CostRow = ({ label, value, bold, isZero }: { label: string; value: number | null | undefined; bold?: boolean; isZero?: boolean }) => (
   <div className={`flex justify-between items-center py-1.5 border-b border-slate-200 last:border-b-0 ${bold ? "font-bold text-navy pt-2" : "text-slate-600 text-[11px]"}`}>
     <span>{label}</span>
-    <span>{typeof value === "number" && !isNaN(value) ? BRL(value) : "—"}</span>
+    {isZero
+      ? <span className="text-emerald-600 font-bold text-[10px]">R$ 0 (Direta)</span>
+      : <span>{typeof value === "number" && !isNaN(value) ? BRL(value) : "—"}</span>
+    }
   </div>
 );

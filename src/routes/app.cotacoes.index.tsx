@@ -232,7 +232,8 @@ function CotacoesList() {
       preco_override: c.preco_total,
       kwp_override: kwp,
       qtd_modulos_override: modulos,
-      comissao_percent_override: c.parceiro?.comissao_percent !== null && c.parceiro?.comissao_percent !== undefined ? Number(c.parceiro.comissao_percent) : undefined,
+      eh_admin: role === "admin",
+      comissao_percent_override: role !== "admin" && c.parceiro?.comissao_percent !== null && c.parceiro?.comissao_percent !== undefined ? Number(c.parceiro.comissao_percent) : undefined,
     }, params);
   };
 

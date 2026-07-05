@@ -69,10 +69,12 @@ function PropostasList() {
       tarifa_kwh: params.tarifa_kwh_default || 0.95,
       estado: clientEstado,
       tipo: p.tipo_instalacao || "residencial",
+      tipo_telhado: p.tipo_telhado || "ceramico",
       preco_override: p.preco_total,
       kwp_override: p.kwp_sistema,
       qtd_modulos_override: p.qtd_modulos,
-      comissao_percent_override: p.parceiro?.comissao_percent !== null && p.parceiro?.comissao_percent !== undefined ? Number(p.parceiro.comissao_percent) : undefined,
+      eh_admin: !p.parceiro_id,
+      comissao_percent_override: p.parceiro_id && p.parceiro?.comissao_percent !== null && p.parceiro?.comissao_percent !== undefined ? Number(p.parceiro.comissao_percent) : undefined,
     }, params);
   };
 

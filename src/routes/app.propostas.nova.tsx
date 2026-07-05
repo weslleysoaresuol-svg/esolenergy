@@ -352,8 +352,13 @@ function NovaProposta() {
       tarifa_kwh: tarifa, 
       estado, 
       tipo,
+      tipo_telhado: tipoTelhado as any,
       ligacao: tipoConexao === "trifasico" ? "tri" : "mono",
-      comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
+      // Regra de comissão: admin/sócio não tem comissão (lucro é da empresa)
+      eh_admin: role === "admin",
+      comissao_percent_override: role !== "admin" && profile?.comissao_percent !== null && profile?.comissao_percent !== undefined 
+        ? Number(profile.comissao_percent) 
+        : undefined,
       ...kitOverrides
     }, params);
     
@@ -362,7 +367,7 @@ function NovaProposta() {
     }
     
     return { ...base, ...overrides };
-  }, [params, consumo, tarifa, estado, tipo, overrides, selectedKit, tipoConexao, profile]);
+  }, [params, consumo, tarifa, estado, tipo, tipoTelhado, overrides, selectedKit, tipoConexao, profile, role]);
 
   const setOverride = (k: string, v: number) => setOverrides((o) => ({ ...o, [k]: v }));
 
@@ -500,6 +505,9 @@ function NovaProposta() {
         lucro_liquido_real: calculo.lucro_liquido_real,
         lucro_liquido_pct: calculo.lucro_liquido_pct,
         margem_bruta: calculo.margem_bruta,
+        // Novos campos do motor reverso v3
+        tipo_telhado: tipoTelhado,
+        eh_admin_proposta: role === "admin",
       };
       let prop: any = null;
       try {

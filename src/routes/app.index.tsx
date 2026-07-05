@@ -67,37 +67,44 @@ function DashboardOrList() {
 
 function CockpitParamsForm({ params, onSave, onPropagate, saving }: { 
   params: any; 
-  onSave: (margem: number, comissao: number) => void;
+  onSave: (lucro: number, comissao: number) => void;
   onPropagate: (comissao: number) => void;
   saving: boolean; 
 }) {
-  const [margem, setMargem] = useState<number>(Math.round((params.margem_alvo_pct ?? 0.15) * 100));
-  const [comissao, setComissao] = useState<number>(Math.round((params.custo_comissao_pct ?? 0.08) * 100));
+  // Prioridade: lucro_alvo_pct (novo motor reverso) → margem_alvo_pct (legado)
+  const [lucro, setLucro] = useState<number>(Math.round(((params.lucro_alvo_pct ?? params.margem_alvo_pct ?? 0.15)) * 100));
+  const [comissao, setComissao] = useState<number>(Math.round((params.comissao_padrao_pct ?? params.custo_comissao_pct ?? 0.08) * 100));
 
   return (
     <div className="space-y-5">
-      {/* Margem Geral */}
+      {/* Meta de Lucro Líquido — Motor Reverso */}
       <div className="space-y-2">
         <div className="flex justify-between items-center text-xs">
-          <Label className="text-slate-700 font-extrabold uppercase tracking-wider text-[10px]">Margem de Lucro Alvo Geral</Label>
-          <span className="font-mono text-[#2E44B8] font-black text-sm bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{margem}%</span>
+          <Label className="text-slate-700 font-extrabold uppercase tracking-wider text-[10px]">🎯 Lucro Líquido Alvo (Motor Reverso)</Label>
+          <span className="font-mono text-emerald-700 font-black text-sm bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">{lucro}%</span>
         </div>
         <Slider 
           min={5} 
-          max={40} 
+          max={35} 
           step={1} 
-          value={[margem]} 
-          onValueChange={(val) => setMargem(val[0])}
+          value={[lucro]} 
+          onValueChange={(val) => setLucro(val[0])}
           className="py-1"
         />
-        <p className="text-[10px] text-slate-500 font-medium">Usado no motor de cálculo para definir o preço sugerido do Wp nas propostas.</p>
+        <p className="text-[10px] text-slate-500 font-medium">
+          O motor calcula automaticamente o preço mínimo de venda para garantir exatamente este lucro líquido após todos os custos reais (frete, instalação, tributação, engenharia, marketing).
+        </p>
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-[10px] text-emerald-700 font-semibold">
+          ✅ Proposta direta (admin/sócio): sem comissão — lucro integral da empresa.<br/>
+          ⚠️ Proposta via parceiro: comissão {comissao}% é custo do projeto — lucro mantido pelo motor.
+        </div>
       </div>
 
-      {/* Comissão Geral */}
+      {/* Comissão Padrão — Parceiros */}
       <div className="space-y-2">
         <div className="flex justify-between items-center text-xs">
-          <Label className="text-slate-700 font-extrabold uppercase tracking-wider text-[10px]">Comissão Geral do Canal (Parceiros)</Label>
-          <span className="font-mono text-[#2E44B8] font-black text-sm bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{comissao}%</span>
+          <Label className="text-slate-700 font-extrabold uppercase tracking-wider text-[10px]">Comissão Padrão para Parceiros</Label>
+          <span className="font-mono text-amber-700 font-black text-sm bg-amber-50 px-2 py-0.5 rounded border border-amber-200">{comissao}%</span>
         </div>
         <Slider 
           min={1} 
@@ -107,18 +114,18 @@ function CockpitParamsForm({ params, onSave, onPropagate, saving }: {
           onValueChange={(val) => setComissao(val[0])}
           className="py-1"
         />
-        <p className="text-[10px] text-slate-500 font-medium">Taxa base/default do canal de consultores.</p>
+        <p className="text-[10px] text-slate-500 font-medium">Taxa base dos consultores/parceiros. Zero para propostas diretas da empresa.</p>
       </div>
 
       {/* Botões de Ação */}
       <div className="flex gap-2 pt-3 border-t border-slate-200 flex-wrap">
         <Button 
-          onClick={() => onSave(margem, comissao)} 
+          onClick={() => onSave(lucro, comissao)} 
           disabled={saving}
           className="flex-1 bg-[#2E44B8] hover:bg-[#1F3095] text-white font-bold text-xs h-9 rounded-lg flex items-center justify-center gap-1.5 shadow-sm border-0 cursor-pointer transition"
         >
           {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-          Salvar no Motor Geral
+          Salvar no Motor Reverso
         </Button>
         <Button 
           variant="outline"
@@ -342,20 +349,24 @@ function AdminDashboard() {
     }
   };
 
-  const handleSaveCockpitParams = async (margem: number, comissaoGeral: number) => {
+  const handleSaveCockpitParams = async (lucro: number, comissaoGeral: number) => {
     if (!cockpitParams) return;
     setSavingCockpit(true);
     try {
       const { error } = await supabase
         .from("parametros_comerciais")
         .update({
-          margem_alvo_pct: Number(margem) / 100,
-          custo_comissao_pct: Number(comissaoGeral) / 100
+          // Novo motor reverso — campo principal
+          lucro_alvo_pct: Number(lucro) / 100,
+          comissao_padrao_pct: Number(comissaoGeral) / 100,
+          // Retrocompatibilidade com código legado
+          margem_alvo_pct: Number(lucro) / 100,
+          custo_comissao_pct: Number(comissaoGeral) / 100,
         })
         .eq("id", cockpitParams.id);
       if (error) throw error;
       
-      toast.success("Parâmetros do Cockpit atualizados!");
+      toast.success(`✅ Motor reverso calibrado: Lucro alvo ${lucro}% | Comissão parceiros ${comissaoGeral}%`);
       loadCockpitData();
       loadData();
     } catch (err: any) {

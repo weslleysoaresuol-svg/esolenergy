@@ -7,96 +7,91 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { 
-  Settings, Save, Loader2, Plus, Trash2, Landmark, HelpCircle, ArrowRight,
-  Boxes, FileSpreadsheet, Upload, RefreshCw, Globe, Building2, Phone, Mail, Link2, MapPin, BadgeCheck
+  Settings, Save, Loader2, Plus, Trash2, Landmark, HelpCircle, Zap,
+  Boxes, FileSpreadsheet, Upload, RefreshCw, Globe, Building2, Phone, Mail, Link2, MapPin, BadgeCheck,
+  Truck, Wrench, Calculator, Target, ChevronDown, ChevronUp, AlertTriangle
 } from "lucide-react";
-import { calcularProposta, BRL, type TipoInstalacao } from "@/lib/proposta-calc";
+import { 
+  calcularProposta, calcularCustoInstalacao, calcularCustoFrete,
+  BRL, type TipoInstalacao, type TipoTelhado, TELHADO_LABEL, PARAMETROS_DEFAULT 
+} from "@/lib/proposta-calc";
+import { CONCESSIONARIAS, getConcessionariasPorUF } from "@/lib/concessionarias";
 
 export const Route = createFileRoute("/app/parametros")({
-  head: () => ({ meta: [{ title: "Tarifas & Parâmetros — ESOL Energy" }] }),
+  head: () => ({ meta: [{ title: "Parâmetros & Motor — ESOL Energy" }] }),
   component: Parametros,
 });
 
-const SECTIONS = [
-  { 
-    title: "☀️ HSP por Macrorregião (kWh/m²/dia) — Fallback quando UF não disponível", 
-    hint: "O motor usa automaticamente HSP específico por Estado (Atlas INPE). Esses valores são usados apenas como fallback para estados não mapeados.",
+// Seções do motor reverso — aba "Motor & Margens"
+const SECTIONS_MOTOR = [
+  {
+    title: "🎯 Meta de Lucro Líquido (Motor Reverso)",
+    hint: "O motor calcula automaticamente o preço mínimo de venda para garantir exatamente esta margem de lucro, após todos os custos reais.",
     fields: [
-      ["hsp_norte", "Região Norte (fallback)"], 
-      ["hsp_nordeste", "Região Nordeste (fallback)"], 
-      ["hsp_centro_oeste", "Região Centro-Oeste (fallback)"],
-      ["hsp_sudeste", "Região Sudeste (fallback)"], 
-      ["hsp_sul", "Região Sul (fallback)"],
+      ["lucro_alvo_pct", "Lucro Líquido Alvo (ex: 0.15 = 15%) — definido pelo administrador"],
+      ["comissao_padrao_pct", "Comissão Padrão para Parceiros (ex: 0.08 = 8%) — zero para admin/sócio"],
     ]
   },
-  { 
-    title: "💰 Preços de Referência de Venda (R$/Wp)", 
-    hint: "Preço de venda final ao cliente por Watt-pico instalado. Benchmark de mercado 2025/2026 — residencial R$3.6-R$4.8/Wp, comercial R$2.8-R$3.8/Wp.",
+  {
+    title: "📊 Tributação e Custos Operacionais",
+    hint: "Custos operacionais da ESOL deduzidos do lucro. Tributação: Simples Nacional faixa 2 = 6% | Lucro Presumido ≈ 14.53%",
     fields: [
-      ["preco_wp_residencial_pequeno", "Residencial até 5 kWp (R$/Wp)"], 
-      ["preco_wp_residencial_grande", "Residencial 5+ kWp (R$/Wp)"],
-      ["preco_wp_comercial_pequeno", "Comercial até 30 kWp (R$/Wp)"], 
-      ["preco_wp_comercial_grande", "Comercial 30+ kWp (R$/Wp)"],
-      ["preco_wp_industrial", "Industrial / Grande Porte (R$/Wp)"],
+      ["tributacao_empresa_pct", "Tributação (Simples Nac. faixa 2 = 0.06 = 6%)"],
+      ["custo_overhead_pct", "Overhead / SG&A: salários admin, ferramentas, aluguel (ex: 0.04 = 4%)"],
+      ["custo_garantia_pct", "Provisão de Garantia e Pós-venda (ex: 0.007 = 0.7%)"],
+      ["custo_impostos_compra_pct", "Impostos de Compra de Equipamentos: ICMS-ST (ex: 0.03 = 3%)"],
     ]
   },
-  { 
-    title: "⚙️ Parâmetros Técnicos Gerais", 
-    hint: "Base do motor de dimensionamento. Perdas típicas: 15-25% (temperatura, cabeamento, sujeira). Inflação energética histórica BR: 7-10%/ano.",
+  {
+    title: "💰 Custos Fixos por Projeto (R$)",
+    hint: "Custos fixos que incidem em todo projeto, independente do porte.",
     fields: [
-      ["tarifa_kwh_default", "Tarifa Média Nacional de Referência (R$/kWh com impostos)"], 
+      ["custo_marketing_fixo_brl", "Marketing / CAC por Projeto (R$ fixo, padrão: R$ 1.000)"],
+      ["custo_engenharia_fixo_brl", "Engenharia Fixa: ART + Projeto + Protocolo Concessionária (R$, padrão: R$ 950)"],
+    ]
+  },
+];
+
+const SECTIONS_TECNICOS = [
+  {
+    title: "☀️ HSP por Macrorregião (fallback quando UF não mapeada)",
+    hint: "O motor usa HSP específico por Estado (Atlas INPE/LABREN). Estes valores são fallback para estados sem mapeamento.",
+    fields: [
+      ["hsp_norte", "Região Norte (fallback, ex: 4.7)"],
+      ["hsp_nordeste", "Região Nordeste (fallback, ex: 5.6)"],
+      ["hsp_centro_oeste", "Região Centro-Oeste (fallback, ex: 5.2)"],
+      ["hsp_sudeste", "Região Sudeste (fallback, ex: 4.9)"],
+      ["hsp_sul", "Região Sul (fallback, ex: 4.5)"],
+    ]
+  },
+  {
+    title: "⚙️ Módulos e Sistema Fotovoltaico",
+    hint: "Configurações do hardware padrão. Módulos 555W são o padrão de mercado Tier 1 em 2025/2026.",
+    fields: [
+      ["potencia_modulo_w", "Potência do Módulo Padrão (W, ex: 555)"],
+      ["area_por_modulo_m2", "Área por Módulo (m², ex: 2.73)"],
       ["perdas_sistema", "Fator de Perdas do Sistema (ex: 0.18 = 18%)"],
-      ["inflacao_energetica", "Inflação Energética Anual (ex: 0.08 = 8% a.a.)"], 
+      ["inflacao_energetica", "Inflação Energética Anual (ex: 0.08 = 8%/ano)"],
       ["vida_util_anos", "Vida Útil do Sistema (anos, padrão: 25)"],
-      ["potencia_modulo_w", "Potência do Módulo (W, ex: 555)"], 
-      ["area_por_modulo_m2", "Área por Módulo (m², ex: 2.7)"],
-    ]
-  },
-  { 
-    title: "📦 Custos de Aquisição e Serviço (% do Preço de Venda)", 
-    hint: "Custos diretos do projeto: equipamentos (~45-52%), instalação (~12-15%), frete (~3-4%), impostos de compra/ICMS-ST (~2-4%), comissão do consultor/parceiro (~6-10%).",
-    fields: [
-      ["custo_equipamentos_pct", "Equipamentos: Kit solar do fornecedor (ex: 0.48 = 48%)"], 
-      ["custo_instalacao_pct", "Instalação: Mão de obra técnica (ex: 0.12 = 12%)"],
-      ["custo_frete_pct", "Frete e Logística (ex: 0.03 = 3%)"], 
-      ["custo_impostos_compra_pct", "Impostos de Compra: ICMS-ST + PIS/COFINS equipamentos (ex: 0.03 = 3%)"],
-      ["custo_comissao_pct", "Comissão do Parceiro / Consultor (ex: 0.08 = 8%)"], 
-      ["margem_alvo_pct", "Margem Bruta Alvo após custos diretos (ex: 0.24 = 24%)"],
+      ["tarifa_kwh_default", "Tarifa Nacional de Referência (fallback, R$/kWh, ex: 0.88)"],
     ]
   },
   {
-    title: "🏢 Custos Operacionais da ESOL Energy (% do Faturamento)",
-    hint: "Esses custos são deduzidos da Margem Bruta para calcular o Lucro Líquido Real. São invisíveis para o cliente mas determinam a saúde financeira da empresa.",
+    title: "⚡ Economia Honesta — Deduções para o Cliente",
+    hint: "Deduções que tornam a proposta honesta: o cliente nunca zera 100% da conta.",
     fields: [
-      ["tributacao_empresa_pct", "Tributação Corporativa: Simples/Presumido sobre faturamento (ex: 0.10 = 10%)"],
-      ["custo_marketing_pct", "CAC / Marketing: Google Ads, Redes Sociais por projeto (ex: 0.03 = 3%)"],
-      ["custo_overhead_pct", "SG&A / Overhead: Salários admin, ferramentas, aluguel rateado (ex: 0.05 = 5%)"],
-      ["custo_garantia_pct", "Provisão de Garantia e Pós-venda (ex: 0.008 = 0.8%)"],
+      ["percentual_fio_b", "Fio B (Lei 14.300/2022): 2026=0.60, 2027=0.75, 2028=0.90"],
+      ["cosip_estimada_brl", "COSIP / Iluminação Pública estimada (R$/mês, ex: 22)"],
+      ["custo_disponibilidade_mono_brl", "Disponibilidade Mono/Bifásico (calculado por tarifa se vazio)"],
+      ["custo_disponibilidade_tri_brl", "Disponibilidade Trifásico (calculado por tarifa se vazio)"],
     ]
   },
   {
-    title: "🔧 Custo Fixo de Engenharia por Projeto (R$)",
-    hint: "Custo fixo por instalação independente do porte: ART/TRT no CREA, projeto elétrico+estrutural, protocolo e acompanhamento junto à concessionária.",
+    title: "🚀 Operacional",
+    hint: "Capacidade da equipe de instalação e validade padrão das propostas.",
     fields: [
-      ["custo_engenharia_fixo_brl", "ART + Projeto + Protocolo Concessionária por Projeto (R$, ex: 900)"],
-    ]
-  },
-  {
-    title: "⚡ Parâmetros de Economia Real do Cliente (Descontos na Proposta)",
-    hint: "Valores que reduzem a economia projetada para o cliente, garantindo honestidade comercial. São deduzidos da economia bruta para exibir a economia real ajustada nas propostas.",
-    fields: [
-      ["custo_disponibilidade_mono_brl", "Custo de Disponibilidade — Mono/Bifásico (30 kWh × tarifa, R$/mês)"],
-      ["custo_disponibilidade_tri_brl", "Custo de Disponibilidade — Trifásico (100 kWh × tarifa, R$/mês)"],
-      ["cosip_estimada_brl", "COSIP / Iluminação Pública estimada — não abatida pelo solar (R$/mês)"],
-      ["percentual_fio_b", "% do Fio B cobrado (Lei 14.300/2022): 2026=0.60, 2027=0.75, 2028=0.90"],
-    ]
-  },
-  { 
-    title: "🚀 Capacidade e Validade Operacional", 
-    hint: "Controle de throughput da equipe de campo e validade das propostas geradas.",
-    fields: [
-      ["capacidade_instaladores_kwp_mes", "Capacidade dos Instaladores (kWp/Mês)"],
-      ["validade_proposta_dias", "Validade Padrão da Proposta (Dias)"],
+      ["capacidade_instaladores_kwp_mes", "Capacidade dos Instaladores (kWp/mês, ex: 50)"],
+      ["validade_proposta_dias", "Validade Padrão das Propostas (dias, ex: 30)"],
     ]
   },
 ];
@@ -104,20 +99,25 @@ const SECTIONS = [
 
 function Parametros() {
   const search = useSearch({ from: "/app/parametros" }) as any;
-  const [activeTab, setActiveTab] = useState<"tecnicos" | "financeiras" | "motor" | "kits">("tecnicos");
+  const [activeTab, setActiveTab] = useState<"motor" | "concessionarias" | "calculadoras" | "financeiras" | "tecnicos" | "preview" | "kits">("motor");
   const [geralData, setGeralData] = useState<any>(null);
   const [savingGeral, setSavingGeral] = useState(false);
 
-  // Estados para simulação interativa de teste do motor
+  // Estados para simulação do motor reverso (preview)
   const [testeConsumo, setTesteConsumo] = useState<number>(600);
-  const [testeTarifa, setTesteTarifa] = useState<number>(0.95);
+  const [testeTarifa, setTesteTarifa] = useState<number>(0.88);
   const [testeEstado, setTesteEstado] = useState<string>("SP");
   const [testeTipo, setTesteTipo] = useState<TipoInstalacao>("residencial");
+  const [testeTelhado, setTesteTelhado] = useState<TipoTelhado>("ceramico");
+  const [testeKitCusto, setTesteKitCusto] = useState<number>(9500);
+  const [testeEhAdmin, setTesteEhAdmin] = useState<boolean>(true);
+
+  // Estado das concessionárias
+  const [filtroUF, setFiltroUF] = useState<string>("SP");
 
   useEffect(() => {
-    if (search.tab === "kits") {
-      setActiveTab("kits");
-    }
+    if (search.tab === "kits") setActiveTab("kits");
+    else if (search.tab === "financeiras") setActiveTab("financeiras");
   }, [search.tab]);
   
   // Estados para gerenciamento de Financeiras
@@ -128,11 +128,15 @@ function Parametros() {
   const loadData = async () => {
     try {
       const { data: p } = await supabase.from("parametros_comerciais").select("*").limit(1).maybeSingle();
-      setGeralData(p);
-      if (p) setTesteTarifa(Number(p.tarifa_kwh_default));
+      // Mescla os defaults com os dados do banco (novos campos terão valores padrão se ausentes)
+      const merged = { ...PARAMETROS_DEFAULT, ...(p || {}) };
+      setGeralData(merged);
+      if (merged.tarifa_kwh_default) setTesteTarifa(Number(merged.tarifa_kwh_default));
     } catch (err) {
       console.error("Falha ao carregar parâmetros comerciais", err);
-      toast.error("Erro ao carregar dados do Supabase.");
+      // Em caso de erro, carrega com todos os defaults
+      setGeralData({ ...PARAMETROS_DEFAULT });
+      toast.warning("Modo offline: parâmetros padrão carregados. Salve para persistir.");
     }
   };
 
@@ -162,14 +166,19 @@ function Parametros() {
     if (!geralData) return;
     setSavingGeral(true);
     try {
-      const { error } = await supabase.from("parametros_comerciais").update(geralData).eq("id", geralData.id);
-      if (error) {
-        toast.error("Erro ao salvar no banco: " + error.message);
+      if (geralData.id) {
+        // Atualiza o registro existente
+        const { error } = await supabase.from("parametros_comerciais").update(geralData).eq("id", geralData.id);
+        if (error) throw error;
       } else {
-        toast.success("Parâmetros salvos com sucesso!");
+        // Cria o primeiro registro se não existe
+        const { data: novo, error } = await supabase.from("parametros_comerciais").insert(geralData).select().single();
+        if (error) throw error;
+        if (novo) setGeralData({ ...geralData, id: novo.id });
       }
-    } catch (err) {
-      toast.error("Falha na conexão com o banco de dados.");
+      toast.success("✅ Parâmetros do motor salvos com sucesso!");
+    } catch (err: any) {
+      toast.error("Falha ao salvar: " + (err?.message || "Verifique a conexão."));
     } finally {
       setSavingGeral(false);
     }
@@ -235,7 +244,7 @@ function Parametros() {
     ]);
   };
  
-  const handlePopularBancosPadrao = () => {
+  const handlePopularBancosPadrao = async () => {
     const defaultBancos = [
       { nome: 'Solfácil', taxa_juros_mes: 1.19, taxa_cet_mes: 1.39, prazo_maximo_meses: 120, taxa_aprovacao_media: 88, ativo: true },
       { nome: 'Banco BV Solar', taxa_juros_mes: 1.29, taxa_cet_mes: 1.48, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
@@ -254,8 +263,23 @@ function Parametros() {
       { nome: 'BNDES Finame Baixo Carbono', taxa_juros_mes: 0.75, taxa_cet_mes: 0.88, prazo_maximo_meses: 120, taxa_aprovacao_media: 60, ativo: true },
       { nome: 'Desenvolve SP (Economia Verde)', taxa_juros_mes: 0.90, taxa_cet_mes: 1.05, prazo_maximo_meses: 84, taxa_aprovacao_media: 65, ativo: true }
     ];
-    setFinanceiras(defaultBancos);
-    toast.success("16 bancos padrão populados! Clique em 'Salvar Alterações de Bancos' para persistir no banco de dados.");
+    // INSERT real no Supabase (não apenas estado local)
+    setSavingFin(true);
+    try {
+      // Primeiro limpa os existentes para evitar duplicatas
+      const { error: delErr } = await (supabase as any).from("financeiras_solar").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      if (delErr) console.warn("Aviso limpeza bancos:", delErr);
+      const { error: insErr } = await (supabase as any).from("financeiras_solar").insert(defaultBancos);
+      if (insErr) throw insErr;
+      toast.success("✅ 16 bancos padrão inseridos com sucesso no banco de dados!");
+      loadFinanceiras();
+    } catch (err: any) {
+      // Fallback: popula localmente se Supabase falhar
+      setFinanceiras(defaultBancos);
+      toast.warning("Banco de dados offline. Bancos carregados localmente. Salve manualmente.");
+    } finally {
+      setSavingFin(false);
+    }
   };
 
   const handleDeleteFinanceira = async (id: string, index: number) => {
@@ -274,57 +298,345 @@ function Parametros() {
     }
   };
 
+  // Verificação de saúde dos parâmetros
+  const saudeDosParametros = useMemo(() => {
+    if (!geralData) return null;
+    const lucro = geralData.lucro_alvo_pct ?? 0.15;
+    const tribut = geralData.tributacao_empresa_pct ?? 0.06;
+    const overhead = geralData.custo_overhead_pct ?? 0.04;
+    const garantia = geralData.custo_garantia_pct ?? 0.007;
+    const comissao = geralData.comissao_padrao_pct ?? 0.08;
+    const pVar = tribut + overhead + garantia + comissao;
+    const divisor = 1 - pVar - lucro;
+    return { pVar, divisor, valido: divisor > 0.05, lucro };
+  }, [geralData]);
+
   if (!geralData) {
     return (
       <div className="min-h-[400px] flex items-center justify-center text-muted-foreground text-sm">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" /> Carregando parâmetros técnicos do sistema...
+        <Loader2 className="w-5 h-5 animate-spin mr-2" /> Carregando parâmetros do motor central...
       </div>
     );
   }
 
+  const tabClass = (t: string) =>
+    `flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer whitespace-nowrap ${
+      activeTab === t ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"
+    }`;
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold text-navy flex items-center gap-2">
-          <Settings className="w-8 h-8 text-sun-deep" /> Tarifas & Parâmetros
-        </h1>
-        <p className="text-muted-foreground">
-          Gerencie tarifas padrão, índices regionais HSP, dimensionamento técnico e as taxas de bancos/financeiras de crédito solar.
-        </p>
+      <div className="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-3xl font-bold text-navy flex items-center gap-2">
+            <Settings className="w-8 h-8 text-sun-deep" /> Motor & Parâmetros
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Configure o motor de precificação reversa. O preço de venda é calculado automaticamente para garantir o lucro alvo definido.
+          </p>
+        </div>
+        {saudeDosParametros && !saudeDosParametros.valido && (
+          <div className="flex items-center gap-2 bg-rose-50 border border-rose-300 rounded-xl px-4 py-2 text-rose-700 text-xs font-bold">
+            <AlertTriangle className="w-4 h-4" /> Parâmetros inválidos: custos variáveis + lucro ≥ 100%!
+          </div>
+        )}
+        {saudeDosParametros && saudeDosParametros.valido && (
+          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-300 rounded-xl px-4 py-2 text-emerald-700 text-xs font-bold">
+            <Target className="w-4 h-4" /> Motor calibrado — Lucro alvo: {(saudeDosParametros.lucro * 100).toFixed(1)}%
+          </div>
+        )}
       </div>
 
-      {/* Abas */}
-      <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full sm:w-fit border border-slate-200/50 flex-wrap gap-1">
-        <button
-          onClick={() => setActiveTab("tecnicos")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${activeTab === "tecnicos" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"}`}
-        >
-          Parâmetros Gerais & HSP
+      {/* Abas — 7 seções */}
+      <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200/50 flex-wrap gap-1 overflow-x-auto">
+        <button onClick={() => setActiveTab("motor")} className={tabClass("motor")}>
+          <Target className="w-3.5 h-3.5" /> Motor & Margens
         </button>
-        <button
-          onClick={() => setActiveTab("financeiras")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${activeTab === "financeiras" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"}`}
-        >
-          <Landmark className="w-4 h-4 text-sun-deep" /> Bancos & Taxas Solar ({financeiras.length} Financeiras)
+        <button onClick={() => setActiveTab("concessionarias")} className={tabClass("concessionarias")}>
+          <Zap className="w-3.5 h-3.5" /> Concessionárias & Tarifas
         </button>
-        <button
-          onClick={() => setActiveTab("motor")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${activeTab === "motor" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"}`}
-        >
-          ⚙️ Como Funciona o Motor (Fórmulas)
+        <button onClick={() => setActiveTab("calculadoras")} className={tabClass("calculadoras")}>
+          <Calculator className="w-3.5 h-3.5" /> Calculadoras
         </button>
-        <button
-          onClick={() => setActiveTab("kits")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${activeTab === "kits" ? "bg-white text-navy shadow-sm border border-slate-200/40" : "text-muted-foreground hover:text-navy"}`}
-        >
-          <Boxes className="w-4 h-4 text-sun-deep" /> Importar Kits Solares (CSV/API)
+        <button onClick={() => setActiveTab("financeiras")} className={tabClass("financeiras")}>
+          <Landmark className="w-3.5 h-3.5" /> Bancos ({financeiras.length})
+        </button>
+        <button onClick={() => setActiveTab("tecnicos")} className={tabClass("tecnicos")}>
+          <Settings className="w-3.5 h-3.5" /> Técnicos & HSP
+        </button>
+        <button onClick={() => setActiveTab("preview")} className={tabClass("preview")}>
+          <HelpCircle className="w-3.5 h-3.5" /> Preview do Motor
+        </button>
+        <button onClick={() => setActiveTab("kits")} className={tabClass("kits")}>
+          <Boxes className="w-3.5 h-3.5" /> Importar Kits
         </button>
       </div>
 
-      {activeTab === "tecnicos" ? (
+      {/* ── ABA: MOTOR & MARGENS ─────────────────────────────────────────── */}
+      {activeTab === "motor" ? (
         <>
           <div className="grid gap-6">
-            {SECTIONS.map((s) => (
+            {SECTIONS_MOTOR.map((s) => (
+              <Card key={s.title} className="p-5 border-0 shadow-md bg-white">
+                <h3 className="font-bold text-navy text-sm border-b pb-3 mb-1">{s.title}</h3>
+                <p className="text-[11px] text-slate-500 mb-4 leading-relaxed">{s.hint}</p>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {s.fields.map(([k, label]) => (
+                    <div key={k} className="space-y-1">
+                      <Label className="text-xs text-slate-600 font-semibold">{label}</Label>
+                      <Input
+                        type="number"
+                        step="0.001"
+                        value={geralData[k] ?? (PARAMETROS_DEFAULT as any)[k] ?? ""}
+                        onChange={(e) => setGeralData({ ...geralData, [k]: Number(e.target.value) })}
+                        className="h-9 text-xs"
+                        placeholder={String((PARAMETROS_DEFAULT as any)[k] ?? "")}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            ))}
+
+            {/* Pré-visualização do Motor Reverso */}
+            {geralData && (() => {
+              const lucro = geralData.lucro_alvo_pct ?? 0.15;
+              const tribut = geralData.tributacao_empresa_pct ?? 0.06;
+              const overhead = geralData.custo_overhead_pct ?? 0.04;
+              const garantia = geralData.custo_garantia_pct ?? 0.007;
+              const comissao_parceiro = geralData.comissao_padrao_pct ?? 0.08;
+              const mkt_fixo = geralData.custo_marketing_fixo_brl ?? 1000;
+              const eng = geralData.custo_engenharia_fixo_brl ?? 950;
+              const imp = geralData.custo_impostos_compra_pct ?? 0.03;
+
+              // Exemplo: kit de R$ 10.000, 5 kWp
+              const c_kit_ex = 10000;
+              const c_inst_ex = 5 * (geralData.inst_ceramico_kwp ?? 250);
+              const c_frete_ex = geralData.custo_frete_minimo_brl ?? 350;
+              const c_imp_ex = c_kit_ex * imp;
+              const C_fixos_admin = c_kit_ex + c_inst_ex + c_frete_ex + c_imp_ex + mkt_fixo + eng;
+              const p_var_admin = tribut + overhead + garantia;
+              const C_fixos_parceiro = C_fixos_admin;
+              const p_var_parceiro = tribut + overhead + garantia + comissao_parceiro;
+
+              const preco_admin = C_fixos_admin / (1 - p_var_admin - lucro);
+              const preco_parceiro = C_fixos_parceiro / (1 - p_var_parceiro - lucro);
+              const divisor_valido = (1 - p_var_parceiro - lucro) > 0.05;
+
+              return (
+                <Card className="p-5 border-0 shadow-md bg-gradient-to-br from-navy/5 to-sun/5 border-l-4 border-l-sun-deep">
+                  <h3 className="font-bold text-navy text-sm border-b pb-3 mb-4 flex items-center gap-2">
+                    <Target className="w-4 h-4 text-sun-deep" />
+                    Pré-visualização do Motor — Exemplo: Kit R$ 10.000 / 5 kWp / Telhado Cerâmico
+                  </h3>
+                  {!divisor_valido ? (
+                    <div className="bg-rose-50 border border-rose-300 rounded-xl p-4 text-rose-700 text-sm font-bold flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4" />
+                      Parâmetros inválidos! A soma de (custos variáveis + lucro alvo) ≥ 100%. Reduza algum percentual.
+                    </div>
+                  ) : (
+                    <div className="grid md:grid-cols-2 gap-4 text-xs">
+                      <div className="space-y-2">
+                        <div className="font-bold text-slate-600 uppercase text-[10px] tracking-wider">Proposta Admin / Sócio (sem comissão)</div>
+                        <div className="bg-white rounded-xl p-3.5 border space-y-1.5">
+                          <div className="flex justify-between text-slate-500"><span>Kit fornecedor</span><span className="font-semibold text-navy">{BRL(c_kit_ex)}</span></div>
+                          <div className="flex justify-between text-slate-500"><span>Instalação (5kWp × R$250)</span><span className="font-semibold text-navy">{BRL(c_inst_ex)}</span></div>
+                          <div className="flex justify-between text-slate-500"><span>Frete estimado</span><span className="font-semibold text-navy">{BRL(c_frete_ex)}</span></div>
+                          <div className="flex justify-between text-slate-500"><span>Marketing fixo</span><span className="font-semibold text-navy">{BRL(mkt_fixo)}</span></div>
+                          <div className="flex justify-between text-slate-500"><span>Engenharia fixa</span><span className="font-semibold text-navy">{BRL(eng)}</span></div>
+                          <div className="flex justify-between text-slate-500"><span>Impostos compra ({(imp*100).toFixed(0)}%)</span><span className="font-semibold text-navy">{BRL(c_imp_ex)}</span></div>
+                          <div className="flex justify-between border-t pt-1.5 font-bold text-navy"><span>PREÇO MÍNIMO DE VENDA</span><span className="text-emerald-600">{BRL(Math.round(preco_admin))}</span></div>
+                          <div className="flex justify-between font-bold text-emerald-600"><span>→ Lucro Líquido Garantido</span><span>{BRL(Math.round(preco_admin * lucro))} ({(lucro*100).toFixed(0)}%)</span></div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="font-bold text-slate-600 uppercase text-[10px] tracking-wider">Proposta Parceiro (com comissão {(comissao_parceiro*100).toFixed(0)}%)</div>
+                        <div className="bg-white rounded-xl p-3.5 border space-y-1.5">
+                          <div className="flex justify-between text-slate-500"><span>Kit fornecedor</span><span className="font-semibold text-navy">{BRL(c_kit_ex)}</span></div>
+                          <div className="flex justify-between text-slate-500"><span>Instalação + Frete + Eng + Mkt</span><span className="font-semibold text-navy">{BRL(c_inst_ex + c_frete_ex + eng + mkt_fixo + c_imp_ex)}</span></div>
+                          <div className="flex justify-between text-amber-600"><span>Comissão Parceiro ({(comissao_parceiro*100).toFixed(0)}% sobre P)</span><span className="font-semibold">{BRL(Math.round(preco_parceiro * comissao_parceiro))}</span></div>
+                          <div className="flex justify-between border-t pt-1.5 font-bold text-navy"><span>PREÇO MÍNIMO DE VENDA</span><span className="text-amber-600">{BRL(Math.round(preco_parceiro))}</span></div>
+                          <div className="flex justify-between font-bold text-emerald-600"><span>→ Lucro Líquido Garantido</span><span>{BRL(Math.round(preco_parceiro * lucro))} ({(lucro*100).toFixed(0)}%)</span></div>
+                          <div className="text-[10px] text-slate-400 mt-1">Preço {BRL(Math.round(preco_parceiro - preco_admin))} maior que proposta direta para absorver a comissão</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              );
+            })()}
+          </div>
+          <div className="flex justify-end sticky bottom-4 z-10 pt-2">
+            <Button onClick={salvarGeral} disabled={savingGeral} className="bg-sun hover:bg-sun-deep text-navy font-bold shadow-lg rounded-full px-8 py-5 text-sm transition-all border-0 cursor-pointer">
+              {savingGeral ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+              Salvar Parâmetros do Motor
+            </Button>
+          </div>
+        </>
+
+      /* ── ABA: CONCESSIONÁRIAS & TARIFAS ─────────────────────────────── */
+      ) : activeTab === "concessionarias" ? (
+        <>
+          <Card className="p-5 border-0 shadow-md bg-white">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+              <div>
+                <h3 className="font-bold text-navy text-sm">⚡ Concessionárias de Energia — Tarifas ANEEL 2025</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Tarifas residencial / comercial / rural por estado. Atualize conforme reajustes anuais da ANEEL.</p>
+              </div>
+              <select
+                value={filtroUF}
+                onChange={(e) => setFiltroUF(e.target.value)}
+                className="h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none text-slate-800"
+              >
+                {["SP","MG","RJ","ES","PR","SC","RS","GO","MT","MS","DF","BA","PE","CE","MA","PI","AL","RN","PB","SE","PA","TO","AM","AC","RO","RR","AP"].map(uf => (
+                  <option key={uf} value={uf}>{uf}</option>
+                ))}
+              </select>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left border-collapse">
+                <thead className="bg-slate-50 border-b-2 border-slate-200">
+                  <tr>
+                    <th className="p-3 font-bold text-slate-600">Concessionária</th>
+                    <th className="p-3 font-bold text-slate-600">UF</th>
+                    <th className="p-3 font-bold text-slate-600 text-right">Residencial (R$/kWh)</th>
+                    <th className="p-3 font-bold text-slate-600 text-right">Comercial (R$/kWh)</th>
+                    <th className="p-3 font-bold text-slate-600 text-right">Rural (R$/kWh)</th>
+                    <th className="p-3 font-bold text-slate-600">Vigência</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {CONCESSIONARIAS.filter(c => !filtroUF || c.uf === filtroUF).map(c => (
+                    <tr key={c.id} className="hover:bg-slate-50/60">
+                      <td className="p-3">
+                        <div className="font-bold text-navy">{c.nome}</div>
+                        <a href={c.site} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline">{c.site}</a>
+                      </td>
+                      <td className="p-3"><span className="bg-slate-100 px-2 py-0.5 rounded font-bold text-slate-600">{c.uf}</span></td>
+                      <td className="p-3 text-right font-bold text-navy">R$ {c.tarifa_residencial.toFixed(3)}</td>
+                      <td className="p-3 text-right font-semibold text-slate-600">R$ {c.tarifa_comercial.toFixed(3)}</td>
+                      <td className="p-3 text-right font-semibold text-slate-600">R$ {c.tarifa_rural.toFixed(3)}</td>
+                      <td className="p-3 text-[10px] text-slate-400">{c.vigencia}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
+              <strong>ℹ️ Nota:</strong> Estas tarifas são pré-carregadas com dados ANEEL 2025. O motor usa automaticamente a tarifa do estado do cliente quando informado.
+              Reajustes ocorrem anualmente — atualize manualmente conforme publicações da ANEEL.
+            </div>
+          </Card>
+          <button onClick={() => setFiltroUF("")} className="text-xs text-blue-500 hover:underline">
+            {filtroUF ? "Ver todas as UFs" : "Filtrar por UF"}
+          </button>
+        </>
+
+      /* ── ABA: CALCULADORAS ──────────────────────────────────────────── */
+      ) : activeTab === "calculadoras" ? (
+        <>
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Calculadora de Instalação */}
+            <Card className="p-5 border-0 shadow-md bg-white space-y-4">
+              <div>
+                <h3 className="font-bold text-navy text-sm flex items-center gap-2">
+                  <Wrench className="w-4 h-4 text-sun-deep" /> Calculadora de Instalação (R$/kWp por Tipo de Telhado)
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">Custo de mão de obra por kWp instalado. Referência: Portal Solar / SunBrasil 2025.</p>
+              </div>
+              <div className="space-y-3">
+                {[
+                  ["inst_ceramico_kwp", "🏠 Cerâmico (colonial / romana)", "250"],
+                  ["inst_metalico_kwp", "🏭 Metálico / Fibrocimento", "200"],
+                  ["inst_laje_kwp", "🏢 Laje / Concreto", "300"],
+                  ["inst_solo_kwp", "🌱 Solo (ground mounting)", "220"],
+                  ["inst_especial_kwp", "⚠️ Especial (inclinação > 45°)", "380"],
+                  ["inst_adicional_grande_kwp", "➕ Adicional por kWp acima de 20 kWp", "80"],
+                ].map(([k, label, placeholder]) => (
+                  <div key={k} className="flex items-center gap-3">
+                    <Label className="text-xs text-slate-600 font-semibold flex-1">{label}</Label>
+                    <div className="flex items-center gap-1 w-36">
+                      <span className="text-xs text-slate-400">R$</span>
+                      <Input type="number" step="10"
+                        value={geralData[k] ?? placeholder}
+                        onChange={(e) => setGeralData({ ...geralData, [k]: Number(e.target.value) })}
+                        className="h-8 text-xs w-full" placeholder={placeholder}
+                      />
+                      <span className="text-xs text-slate-400">/kWp</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Preview da calculadora */}
+              <div className="bg-slate-50 rounded-xl p-3 border text-xs space-y-1">
+                <div className="font-bold text-slate-600 text-[10px] uppercase mb-2">Preview — Sistema 5 kWp em cada tipo:</div>
+                {(["ceramico","metalico","laje","solo","especial"] as TipoTelhado[]).map(t => {
+                  const custo = geralData ? (5 * (geralData[`inst_${t}_kwp`] ?? (PARAMETROS_DEFAULT as any)[`inst_${t}_kwp`] ?? 250)) : 0;
+                  return (
+                    <div key={t} className="flex justify-between">
+                      <span className="text-slate-500">{TELHADO_LABEL[t]}</span>
+                      <span className="font-bold text-navy">{BRL(custo)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+
+            {/* Calculadora de Frete */}
+            <Card className="p-5 border-0 shadow-md bg-white space-y-4">
+              <div>
+                <h3 className="font-bold text-navy text-sm flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-sun-deep" /> Calculadora de Frete (por Distância ao CD)
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">Custo baseado na distância rodoviária ao CD da distribuidora escolhida.</p>
+              </div>
+              <div className="space-y-3">
+                {[
+                  ["custo_frete_por_100km_kwp", "💰 Custo por kWp / 100km (R$)", "2.50"],
+                  ["custo_frete_minimo_brl", "📦 Frete mínimo por projeto (R$)", "350"],
+                ].map(([k, label, placeholder]) => (
+                  <div key={k} className="flex items-center gap-3">
+                    <Label className="text-xs text-slate-600 font-semibold flex-1">{label}</Label>
+                    <div className="flex items-center gap-1 w-36">
+                      <span className="text-xs text-slate-400">R$</span>
+                      <Input type="number" step="0.10"
+                        value={geralData[k] ?? placeholder}
+                        onChange={(e) => setGeralData({ ...geralData, [k]: Number(e.target.value) })}
+                        className="h-8 text-xs w-full" placeholder={placeholder}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-slate-50 rounded-xl p-3 border text-xs space-y-1">
+                <div className="font-bold text-slate-600 text-[10px] uppercase mb-2">Preview — Sistema 5 kWp em SP via Aldo Solar (SC, ~660km):</div>
+                {geralData && (() => {
+                  const custo = Math.max(
+                    5 * (660 / 100) * (geralData.custo_frete_por_100km_kwp ?? 2.5),
+                    geralData.custo_frete_minimo_brl ?? 350
+                  );
+                  return <div className="flex justify-between font-bold text-navy"><span>Frete estimado (660km)</span><span>{BRL(+custo.toFixed(2))}</span></div>;
+                })()}
+                <div className="text-[10px] text-slate-400 mt-2">
+                  As distâncias entre os CDs das 8 distribuidoras parceiras e as UFs do Brasil estão pré-mapeadas no sistema.
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <div className="flex justify-end sticky bottom-4 z-10 pt-2">
+            <Button onClick={salvarGeral} disabled={savingGeral} className="bg-sun hover:bg-sun-deep text-navy font-bold shadow-lg rounded-full px-8 py-5 text-sm transition-all border-0 cursor-pointer">
+              {savingGeral ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+              Salvar Calculadoras
+            </Button>
+          </div>
+        </>
+
+      /* ── ABA: TÉCNICOS & HSP ────────────────────────────────────────── */
+      ) : activeTab === "tecnicos" ? (
+        <>
+          <div className="grid gap-6">
+            {SECTIONS_TECNICOS.map((s) => (
               <Card key={s.title} className="p-5 border-0 shadow-md bg-white">
                 <h3 className="font-bold text-navy text-sm border-b pb-3 mb-1">{s.title}</h3>
                 {(s as any).hint && (
@@ -492,8 +804,8 @@ function Parametros() {
             </Button>
           </div>
         </>
-      ) : (
-        /* ABA DO MOTOR DE CÁLCULO INTERATIVO */
+      ) : activeTab === "preview" ? (
+        /* ABA PREVIEW DO MOTOR DE CÁLCULO INTERATIVO */
         <div className="grid lg:grid-cols-3 gap-6 items-start">
           {/* Coluna 1: Simulador Interativo Rápido */}
           <Card className="lg:col-span-1 p-5 border-0 shadow-md bg-white space-y-4">
@@ -501,6 +813,7 @@ function Parametros() {
               <h3 className="font-bold text-navy text-sm flex items-center gap-1.5">
                 <HelpCircle className="w-4 h-4 text-sun-deep" /> Laboratório do Motor
               </h3>
+
               <p className="text-xs text-muted-foreground mt-0.5">Altere os dados de simulação abaixo para ver as equações calcularem os resultados com seus parâmetros reais.</p>
             </div>
 
