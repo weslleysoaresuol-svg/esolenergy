@@ -27,6 +27,62 @@ export const Route = createFileRoute("/app/propostas/nova")({
 
 const UFS = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
 
+async function insertPropostaWithFallback(payload: any) {
+  const { data, error } = await supabase.from("propostas").insert(payload as any).select().single();
+  if (!error) return { data, error: null };
+
+  if (error.code === "42703" || error.message?.includes("column")) {
+    console.warn("Tabela 'propostas' não possui colunas novas. Salvando em formato de compatibilidade...");
+    const cleanPayload = { ...payload };
+    
+    // Removendo campos de Kit
+    delete (cleanPayload as any).kit_id;
+    delete (cleanPayload as any).kit_nome;
+    delete (cleanPayload as any).kit_inversor;
+    delete (cleanPayload as any).kit_fabricante_modulos;
+    delete (cleanPayload as any).kit_imagem_url;
+    delete (cleanPayload as any).kit_tecnologia_modulo;
+    delete (cleanPayload as any).kit_garantia_modulos_anos;
+    delete (cleanPayload as any).kit_garantia_inversor_anos;
+
+    // Removendo indicadores do motor
+    delete (cleanPayload as any).economia_ajustada_mensal;
+    delete (cleanPayload as any).economia_ajustada_anual;
+    delete (cleanPayload as any).economia_ajustada_25_anos;
+    delete (cleanPayload as any).payback_ajustado_meses;
+    delete (cleanPayload as any).tir_anual_pct;
+    delete (cleanPayload as any).vpl_brl;
+    delete (cleanPayload as any).custo_disponibilidade_mensal;
+    delete (cleanPayload as any).ajuste_fio_b_mensal;
+
+    // Removendo campos financeiros/espelho
+    delete (cleanPayload as any).fornecedor;
+    delete (cleanPayload as any).custo_equipamentos;
+    delete (cleanPayload as any).custo_instalacao;
+    delete (cleanPayload as any).custo_frete;
+    delete (cleanPayload as any).custo_impostos_compra;
+    delete (cleanPayload as any).custo_comissao;
+    delete (cleanPayload as any).custo_tributacao_empresa;
+    delete (cleanPayload as any).custo_marketing;
+    delete (cleanPayload as any).custo_engenharia_fixo;
+    delete (cleanPayload as any).custo_overhead;
+    delete (cleanPayload as any).custo_garantia;
+    delete (cleanPayload as any).custos_operacionais_totais;
+    delete (cleanPayload as any).lucro_liquido_real;
+    delete (cleanPayload as any).lucro_liquido_pct;
+    delete (cleanPayload as any).margem_bruta;
+
+    // Removendo campos do motor reverso v3
+    delete (cleanPayload as any).tipo_telhado;
+    delete (cleanPayload as any).eh_admin_proposta;
+    delete (cleanPayload as any).distribuidora_id;
+
+    return await supabase.from("propostas").insert(cleanPayload as any).select().single();
+  }
+
+  return { data: null, error };
+}
+
 function NovaProposta() {
   const navigate = useNavigate();
   const { user, role, profile } = useCurrentUser();
@@ -518,41 +574,9 @@ function NovaProposta() {
       };
       let prop: any = null;
       try {
-        const { data, error } = await supabase.from("propostas").insert(payload as any).select().single();
-        if (error) {
-          // Código 42703: coluna não existe (indica que a migração SQL de kit ainda não rodou no Supabase remoto)
-          if (error.code === "42703" || error.message?.includes("column")) {
-            console.warn("Tabela 'propostas' não possui colunas de kit. Salvando sem detalhes do kit...");
-            const cleanPayload = { ...payload };
-            delete (cleanPayload as any).kit_id;
-            delete (cleanPayload as any).kit_nome;
-            delete (cleanPayload as any).kit_inversor;
-            delete (cleanPayload as any).kit_fabricante_modulos;
-            delete (cleanPayload as any).kit_imagem_url;
-            delete (cleanPayload as any).kit_tecnologia_modulo;
-            delete (cleanPayload as any).kit_garantia_modulos_anos;
-            delete (cleanPayload as any).kit_garantia_modulos_anos;
-            delete (cleanPayload as any).kit_garantia_inversor_anos;
-
-            // Deleta os novos campos do motor em caso de Supabase legado
-            delete (cleanPayload as any).economia_ajustada_mensal;
-            delete (cleanPayload as any).economia_ajustada_anual;
-            delete (cleanPayload as any).economia_ajustada_25_anos;
-            delete (cleanPayload as any).payback_ajustado_meses;
-            delete (cleanPayload as any).tir_anual_pct;
-            delete (cleanPayload as any).vpl_brl;
-            delete (cleanPayload as any).custo_disponibilidade_mensal;
-            delete (cleanPayload as any).ajuste_fio_b_mensal;
-
-            const { data: retryData, error: retryError } = await supabase.from("propostas").insert(cleanPayload as any).select().single();
-            if (retryError) throw retryError;
-            prop = retryData;
-          } else {
-            throw error;
-          }
-        } else {
-          prop = data;
-        }
+        const { data, error } = await insertPropostaWithFallback(payload);
+        if (error) throw error;
+        prop = data;
       } catch (insertErr: any) {
         throw new Error(insertErr.message || "Falha ao gravar proposta no banco de dados.");
       }
@@ -677,7 +701,7 @@ function NovaProposta() {
       expDate.setDate(expDate.getDate() + (params.validade_proposta_dias || 15));
 
       // 3. Cadastra Proposta
-      const { data: prop, error: errProp } = await supabase.from("propostas").insert({
+      const payload = {
         titulo: `Proposta Solar ${tipo === "residencial" ? "Residencial" : tipo === "comercial" ? "Comercial" : tipo === "industrial" ? "Industrial" : "Rural"} - ${newClient.nome}`,
         parceiro_id: user.id,
         kwp_sistema: kwp,
@@ -724,7 +748,9 @@ function NovaProposta() {
         lucro_liquido_real: finalCalculo.lucro_liquido_real,
         lucro_liquido_pct: finalCalculo.lucro_liquido_pct,
         margem_bruta: finalCalculo.margem_bruta
-      } as any).select().single();
+      };
+
+      const { data: prop, error: errProp } = await insertPropostaWithFallback(payload);
 
       if (errProp) {
         console.error("Erro ao criar proposta do script:", errProp);
@@ -820,51 +846,48 @@ function NovaProposta() {
       expDate.setDate(expDate.getDate() + (params.validade_proposta_dias || 15));
 
       // 4. Cria Proposta
-      const { data: prop, error: errProp } = await supabase
-        .from("propostas")
-        .insert({
-          titulo: `Simulação de Crédito Solar — ${scriptName.split(" ")[0]}`,
-          status: "enviada",
-          kwp_sistema: kwp,
-          qtd_modulos: qtdModulos,
-          preco_total: precoTotal,
-          economia_mensal: finalCalculo.economia_mensal,
-          economia_anual: finalCalculo.economia_anual,
-          payback_meses: finalCalculo.payback_meses,
-          geracao_mensal_kwh: finalCalculo.geracao_mensal_kwh,
-          co2_evitado_ton: finalCalculo.co2_evitado_ton,
-          arvores_equivalentes: finalCalculo.arvores_equivalentes || 5,
-          area_necessaria_m2: finalCalculo.area_necessaria_m2,
-          condicoes_pagamento: finalCondicoes,
-          expires_at: expDate.toISOString(),
-          parceiro_id: user?.id,
-          tipo_instalacao: tipo || "residencial",
-          consumo_kwh: kwh,
-          tarifa_kwh: tarifa || 0.85,
-          estado: scriptEstado.trim().toUpperCase(),
-          cidade: scriptCidade.trim(),
-          codigo_publico: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-"),
-          validade_dias: params.validade_proposta_dias || 15,
-          preco_por_wp: +(precoTotal / (kwp * 1000)).toFixed(2),
-          fornecedor: kitRecomendado ? (kitRecomendado.fornecedor || "Aldo Solar") : null,
-          custo_equipamentos: finalCalculo.custo_equipamentos,
-          custo_instalacao: finalCalculo.custo_instalacao,
-          custo_frete: finalCalculo.custo_frete,
-          custo_impostos_compra: finalCalculo.custo_impostos_compra,
-          custo_comissao: finalCalculo.custo_comissao,
-          custo_tributacao_empresa: finalCalculo.custo_tributacao_empresa,
-          custo_marketing: finalCalculo.custo_marketing,
-          custo_engenharia_fixo: finalCalculo.custo_engenharia_fixo,
-          custo_overhead: finalCalculo.custo_overhead,
-          custo_garantia: finalCalculo.custo_garantia,
-          custos_operacionais_totais: finalCalculo.custos_operacionais_totais,
-          lucro_liquido_real: finalCalculo.lucro_liquido_real,
-          lucro_liquido_pct: finalCalculo.lucro_liquido_pct,
-          margem_bruta: finalCalculo.margem_bruta
-        } as any)
-        .select()
-        .single();
+      const payload = {
+        titulo: `Simulação de Crédito Solar — ${scriptName.split(" ")[0]}`,
+        status: "enviada",
+        kwp_sistema: kwp,
+        qtd_modulos: qtdModulos,
+        preco_total: precoTotal,
+        economia_mensal: finalCalculo.economia_mensal,
+        economia_anual: finalCalculo.economia_anual,
+        payback_meses: finalCalculo.payback_meses,
+        geracao_mensal_kwh: finalCalculo.geracao_mensal_kwh,
+        co2_evitado_ton: finalCalculo.co2_evitado_ton,
+        arvores_equivalentes: finalCalculo.arvores_equivalentes || 5,
+        area_necessaria_m2: finalCalculo.area_necessaria_m2,
+        condicoes_pagamento: finalCondicoes,
+        expires_at: expDate.toISOString(),
+        parceiro_id: user?.id,
+        tipo_instalacao: tipo || "residencial",
+        consumo_kwh: kwh,
+        tarifa_kwh: tarifa || 0.85,
+        estado: scriptEstado.trim().toUpperCase(),
+        cidade: scriptCidade.trim(),
+        codigo_publico: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-"),
+        validade_dias: params.validade_proposta_dias || 15,
+        preco_por_wp: +(precoTotal / (kwp * 1000)).toFixed(2),
+        fornecedor: kitRecomendado ? (kitRecomendado.fornecedor || "Aldo Solar") : null,
+        custo_equipamentos: finalCalculo.custo_equipamentos,
+        custo_instalacao: finalCalculo.custo_instalacao,
+        custo_frete: finalCalculo.custo_frete,
+        custo_impostos_compra: finalCalculo.custo_impostos_compra,
+        custo_comissao: finalCalculo.custo_comissao,
+        custo_tributacao_empresa: finalCalculo.custo_tributacao_empresa,
+        custo_marketing: finalCalculo.custo_marketing,
+        custo_engenharia_fixo: finalCalculo.custo_engenharia_fixo,
+        custo_overhead: finalCalculo.custo_overhead,
+        custo_garantia: finalCalculo.custo_garantia,
+        custos_operacionais_totais: finalCalculo.custos_operacionais_totais,
+        lucro_liquido_real: finalCalculo.lucro_liquido_real,
+        lucro_liquido_pct: finalCalculo.lucro_liquido_pct,
+        margem_bruta: finalCalculo.margem_bruta
+      };
 
+      const { data: prop, error: errProp } = await insertPropostaWithFallback(payload);
       if (errProp) throw errProp;
 
       // 5. Vincula
