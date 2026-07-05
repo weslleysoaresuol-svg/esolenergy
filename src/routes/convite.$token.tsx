@@ -48,53 +48,9 @@ function InvitePage() {
       if (!row.valid) return setState({ status: "invalid", reason: row.reason ?? "Convite inválido." });
       setState({ status: "valid", expiresAt: row.expires_at });
 
-      // Busca o cargo deste convite em ambas as tabelas (tratando indisponibilidade de schema cache)
-      let cargo = "corretor";
-      let emailPreenchido = "";
-      
-      try {
-        const { data: convData } = await supabase
-          .from("convites" as any)
-          .select("email, role_to_assign")
-          .eq("token", token)
-          .maybeSingle() as any;
-        if (convData) {
-          if (convData.role_to_assign) cargo = convData.role_to_assign;
-          if (convData.email) emailPreenchido = convData.email;
-        }
-      } catch (err) {
-        // Silencia erro caso a tabela convites não exista no banco
-      }
-
-      try {
-        if (cargo === "corretor") {
-          // Busca apenas a coluna note para evitar erro de schema cache da coluna role_to_assign
-          const { data: partnerData } = await supabase
-            .from("partner_invites")
-            .select("note")
-            .eq("token", token)
-            .maybeSingle() as any;
-            
-          if (partnerData?.note) {
-            const noteText = partnerData.note;
-            // Decodifica note format: "Equipe: email | Cargo: cargo" ou "Parceiro: email | Cargo: corretor"
-            if (noteText.includes("| Cargo:")) {
-              const parts = noteText.split("| Cargo:");
-              const emailPart = parts[0].replace("Equipe:", "").replace("Parceiro:", "").trim();
-              emailPreenchido = emailPart;
-              cargo = parts[1].trim();
-            } else {
-              const cleanNote = noteText.replace("Equipe:", "").replace("Parceiro:", "").trim();
-              emailPreenchido = cleanNote;
-              if (noteText.startsWith("Equipe:")) {
-                cargo = "auxiliar";
-              }
-            }
-          }
-        }
-      } catch (err) {
-        // Silencia erro de conexão
-      }
+      // Busca o cargo deste convite da resposta encapsulada da RPC para evitar vulnerabilidades de SELECT
+      let cargo = row.role_to_assign || "corretor";
+      let emailPreenchido = row.email || "";
       
       // Fallback via querystring
       const searchParams = new URLSearchParams(window.location.search);
