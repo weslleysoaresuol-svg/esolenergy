@@ -160,6 +160,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   const [selectedPrazo, setSelectedPrazo] = useState<number>(
     dadosAprovados ? dadosAprovados.prazo : 60
   );
+  const [activeTab, setActiveTab] = useState<"projeto" | "engenharia" | "financeiro" | "comercial">("projeto");
+  const [savingsView, setSavingsView] = useState<"anual" | "acumulado">("anual");
 
   const simFinanceiro = useMemo(() => {
     const valorOriginal = Number(p.preco_total);
@@ -218,6 +220,15 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
       finInfo: fin
     };
   }, [p.preco_total, p.economia_mensal, p.economia_anual, selectedFin, selectedPrazo, dadosAprovados]);
+
+  const custoInercia25Anos = useMemo(() => {
+    let soma = 0;
+    const faturaMensalAtual = (Number(p.consumo_kwh) * Number(p.tarifa_kwh)) + 22; // fatura com COSIP
+    for (let i = 0; i < 25; i++) {
+      soma += faturaMensalAtual * 12 * Math.pow(1 + 0.08, i);
+    }
+    return Math.round(soma);
+  }, [p.consumo_kwh, p.tarifa_kwh]);
 
   // Objeto de cálculo final reativo (com fallback para propostas legadas)
   const calc = useMemo(() => {
@@ -284,19 +295,25 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     }
   }, [p]);
 
-  const chartData = Array.from({ length: 25 }, (_, i) => {
-    const ano = i + 1;
-    const economiaAno = calc.economia_ajustada_anual * Math.pow(1 + calc.inflacao_energetica, i);
-    // Descontar custos de O&M (0.5% a.a. do preço a partir do ano 2)
-    const custoOM = ano >= 2 ? +(Number(p.preco_total) * 0.005) : 0;
-    // Descontar troca do inversor (15% no ano 12)
-    const custoInversor = ano === 12 ? +(Number(p.preco_total) * 0.15) : 0;
-    
-    return {
-      ano: `${ano}`,
-      economia: Math.round(Math.max(0, economiaAno - custoOM - custoInversor)),
-    };
-  });
+  const chartData = useMemo(() => {
+    let acumulado = 0;
+    return Array.from({ length: 25 }, (_, i) => {
+      const ano = i + 1;
+      const economiaAno = calc.economia_ajustada_anual * Math.pow(1 + calc.inflacao_energetica, i);
+      // Descontar custos de O&M (0.5% a.a. do preço a partir do ano 2)
+      const custoOM = ano >= 2 ? +(Number(p.preco_total) * 0.005) : 0;
+      // Descontar troca do inversor (15% no ano 12)
+      const custoInversor = ano === 12 ? +(Number(p.preco_total) * 0.15) : 0;
+      
+      const economiaLiquida = Math.max(0, economiaAno - custoOM - custoInversor);
+      acumulado += economiaLiquida;
+      
+      return {
+        ano: `${ano}`,
+        economia: Math.round(savingsView === "acumulado" ? acumulado : economiaLiquida),
+      };
+    });
+  }, [calc, p.preco_total, savingsView]);
 
   const validadeDias = p.validade_dias || 15;
   const expiraEm = p.expires_at ? new Date(p.expires_at) : null;
@@ -547,16 +564,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                     <div className="font-semibold">{parceiro.nome || "Consultor ESOL"}</div>
                     {parceiro.telefone && <div className="text-sm text-white/70 flex items-center gap-1"><Phone className="w-3 h-3" />{parceiro.telefone}</div>}
                     {parceiro.email && <div className="text-xs text-white/60 flex items-center gap-1"><Mail className="w-3 h-3" />{parceiro.email}</div>}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* DESTAQUES */}
-      <section className="max-w-5xl mx-auto px-6 md:px-12 -mt-8 relative z-10">
+                     {/* DESTAQUES */}
+      <section className="max-w-5xl mx-auto px-6 md:px-12 -mt-8 relative z-10 print:mt-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Stat icon={Zap} label="Sistema" value={`${NUM(Number(p.kwp_sistema), 2)} kWp`} />
           <Stat icon={TrendingDown} label="Economia Real/mês" value={BRL(calc.economia_ajustada_mensal)} highlight />
@@ -565,350 +574,147 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
         </div>
       </section>
 
-      {/* DETALHES DO KIT FOTOVOLTAICO SELECIONADO */}
-      <section className="max-w-5xl mx-auto px-6 md:px-12 py-10">
-        <div className="bg-slate-50 border border-slate-200/50 rounded-3xl p-6 md:p-8 shadow-sm space-y-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Ficha Técnica de Engenharia (Substitui Imagem Física do Kit) */}
-            <div className="bg-white rounded-2xl border p-5 shadow-sm space-y-4 font-sans text-xs">
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="font-extrabold text-navy uppercase text-[10px] tracking-wider">Ficha Técnica de Engenharia</span>
-                <span className="bg-navy/5 text-navy font-bold px-2.5 py-0.5 rounded-full text-[9px] uppercase font-mono">Especificações</span>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <div className="border-b pb-1.5">
-                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Potência do Arranjo</span>
-                  <strong className="text-navy text-sm font-black">{NUM(Number(p.kwp_sistema), 2)} kWp</strong>
-                </div>
-                <div className="border-b pb-1.5">
-                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Módulos Sugeridos</span>
-                  <strong className="text-navy text-sm font-black">{p.qtd_modulos} unid.</strong>
-                </div>
-                <div className="border-b pb-1.5">
-                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Área Mínima Requerida</span>
-                  <strong className="text-navy text-sm font-black">~{NUM(Number(p.area_necessaria_m2 || p.kwp_sistema * 6), 1)} m²</strong>
-                </div>
-                <div className="border-b pb-1.5">
-                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Carga de Telhado Estática</span>
-                  <strong className="text-navy text-sm font-black">~13.5 kg / m²</strong>
-                </div>
-                <div className="border-b pb-1.5 col-span-2">
-                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Tipo de Fixação & Estrutura</span>
-                  <strong className="text-navy text-sm font-black uppercase block">
-                    {p.tipo_telhado === "metalico" ? "Metálico (Perfil Alumínio)" : 
-                     p.tipo_telhado === "fibrocimento" ? "Fibrocimento / Eternit" : 
-                     p.tipo_telhado === "laje" ? "Laje (Estrutura Triângulo)" : 
-                     p.tipo_telhado === "solo" ? "Estrutura de Solo" : "Cerâmico (Telha Cerâmica)"}
-                  </strong>
-                </div>
-              </div>
-              
-              <div className="bg-slate-50 p-2.5 rounded-xl border flex items-start gap-2">
-                <ShieldCheck className="w-4.5 h-4.5 text-emerald-600 shrink-0 mt-0.5" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Gerador certificado pelo <strong>INMETRO (Classe A)</strong>. Equipamentos com proteção ativa contra surtos (DPS), disjuntores dedicados e conformidade técnica com as resoluções da ANEEL (REN 482/1000 e Lei 14.300).
-                </p>
-              </div>
-            </div>
+      {/* TABS NAVIGATION */}
+      <div className="sticky top-0 bg-white/80 backdrop-blur-md z-30 border-b border-slate-200/80 py-3.5 mt-8 print:hidden shadow-sm">
+        <div className="max-w-5xl mx-auto px-6 flex justify-between gap-2 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("projeto")}
+            className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === "projeto"
+                ? "bg-[#001F5C] text-white shadow-md shadow-navy/20"
+                : "text-slate-500 hover:bg-slate-100"
+            }`}
+          >
+            ☀️ O Projeto
+          </button>
+          <button
+            onClick={() => setActiveTab("engenharia")}
+            className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === "engenharia"
+                ? "bg-[#001F5C] text-white shadow-md shadow-navy/20"
+                : "text-slate-500 hover:bg-slate-100"
+            }`}
+          >
+            ⚙️ Engenharia
+          </button>
+          <button
+            onClick={() => setActiveTab("financeiro")}
+            className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === "financeiro"
+                ? "bg-[#001F5C] text-white shadow-md shadow-navy/20"
+                : "text-slate-500 hover:bg-slate-100"
+            }`}
+          >
+            📊 Retorno Financeiro
+          </button>
+          <button
+            onClick={() => setActiveTab("comercial")}
+            className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === "comercial"
+                ? "bg-[#001F5C] text-white shadow-md shadow-navy/20"
+                : "text-slate-500 hover:bg-slate-100"
+            }`}
+          >
+            💰 Proposta Comercial
+          </button>
+        </div>
+      </div>
 
-            {/* Descrição do Kit */}
-            <div className="space-y-4">
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-sun-deep">Equipamentos & Tecnologia</span>
-                <h3 className="font-display text-2xl font-bold text-navy mt-1">
-                  {p.kit_nome || "Dimensionamento Técnico Customizado"}
-                </h3>
-                <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                  Gerador fotovoltaico completo montado com equipamentos homologados pelo Inmetro e em total conformidade com a regulação da concessionária.
-                </p>
+      <main className="max-w-5xl mx-auto px-6 py-8 md:py-10 space-y-12">
+        {/* TAB 1: O PROJETO */}
+        <div className={activeTab === "projeto" ? "space-y-10 animate-fade-in" : "hidden print:block print:space-y-10"}>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 space-y-6">
+              <div className="bg-white/60 backdrop-blur-md border border-slate-200/50 rounded-3xl p-6 shadow-xl space-y-4">
+                <h3 className="font-extrabold text-sm text-[#001F5C] uppercase tracking-wider">Dimensionamento Inicial</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <SpecCard title="Geração & Consumo">
+                    <Row label="Consumo informado" value={`${NUM(Number(p.consumo_kwh))} kWh/mês`} />
+                    <Row label="Geração estimada" value={`${NUM(Number(p.geracao_mensal_kwh))} kWh/mês`} highlight />
+                    <Row label="Tarifa considerada" value={BRL(Number(p.tarifa_kwh)) + "/kWh"} />
+                    <Row label="HSP da região" value={`${Number(p.hsp).toFixed(1)} h`} />
+                  </SpecCard>
+                  <SpecCard title="Arranjo do Gerador">
+                    <Row label="Potência total" value={`${NUM(Number(p.kwp_sistema), 2)} kWp`} highlight />
+                    <Row label="Painéis solares" value={`${p.qtd_modulos} × ${p.potencia_modulo_w}W`} />
+                    <Row label="Inversor(es)" value={`${p.qtd_inversores} × ${Number(p.potencia_inversor_kw || 0).toFixed(1)} kW`} />
+                    <Row label="Área necessária" value={`~${NUM(Number(p.area_necessaria_m2), 1)} m²`} />
+                  </SpecCard>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-center">
-                <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
-                  <div className="text-[10px] text-muted-foreground font-semibold">Garantia Painéis</div>
-                  <div className="text-base font-bold text-emerald-700 mt-0.5">{p.kit_garantia_modulos_anos || 25} anos</div>
-                </div>
-                <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
-                  <div className="text-[10px] text-muted-foreground font-semibold">Garantia Inversor</div>
-                  <div className="text-base font-bold text-emerald-700 mt-0.5">{p.kit_garantia_inversor_anos || 10} anos</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Grid Visual de Equipamentos */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {componentesKit.map((item: string, idx: number) => {
-              let title = "Equipamento";
-              let icon = "⚡";
-              if (idx === 0) { title = "Módulos"; icon = "☀️"; }
-              if (idx === 1) { title = "Inversor"; icon = "📟"; }
-              if (idx === 2) { title = "Estrutura"; icon = "🛠️"; }
-              if (idx === 3) { title = "Cabos"; icon = "🔌"; }
-              if (idx === 4) { title = "Conectores"; icon = "🔗"; }
-              if (idx === 5) { title = "Proteções"; icon = "🛡️"; }
-
-              return (
-                <div key={idx} className="bg-white border rounded-2xl p-3 text-center space-y-1 shadow-sm flex flex-col items-center justify-between">
-                  <div className="text-2xl">{icon}</div>
-                  <div className="space-y-0.5">
-                    <span className="text-[9px] font-extrabold text-navy uppercase tracking-wider block">{title}</span>
-                    <span className="text-[10px] text-muted-foreground font-medium leading-tight line-clamp-2" title={item}>
-                      {item}
-                    </span>
+              {/* Pegada Ecológica Premium */}
+              <div className="bg-emerald-50/40 backdrop-blur-sm border border-emerald-200/60 rounded-3xl p-6 md:p-8 space-y-6">
+                <div className="flex items-center gap-2">
+                  <span className="p-2 bg-emerald-100 text-emerald-600 rounded-xl"><Leaf className="w-5 h-5" /></span>
+                  <div>
+                    <h3 className="font-display font-extrabold text-emerald-950 text-sm uppercase tracking-wider">Pegada Ecológica & Impacto Verde</h3>
+                    <p className="text-[11px] text-emerald-700/80">O impacto ambiental positivo gerado pelo seu sistema fotovoltaico todo ano</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Tabela de Itens Detalhada (BOM) */}
-          <div className="space-y-3">
-            <div className="text-xs uppercase font-extrabold tracking-wider text-navy/70">Composição Detalhada do Gerador Solar</div>
-            <div className="border rounded-2xl overflow-hidden bg-white shadow-sm">
-              <table className="w-full text-xs text-left border-collapse">
-                <thead className="bg-slate-100 text-[10px] uppercase font-bold text-navy/70 border-b">
-                  <tr>
-                    <th className="p-3">Componente</th>
-                    <th className="p-3">Descrição / Especificação Técnica</th>
-                    <th className="p-3 text-center">Qtd</th>
-                    <th className="p-3 text-right">Garantia</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  <tr>
-                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Módulos (Placas)</td>
-                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
-                      {componentesKit[0]}
-                    </td>
-                    <td className="p-3 text-center font-bold text-navy">{p.qtd_modulos}</td>
-                    <td className="p-3 text-right text-emerald-700">{p.kit_garantia_modulos_anos || 25} anos</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Inversor Solar</td>
-                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
-                      {componentesKit[1]}
-                    </td>
-                    <td className="p-3 text-center font-bold text-navy">{p.qtd_inversores || 1}</td>
-                    <td className="p-3 text-right text-emerald-700">{p.kit_garantia_inversor_anos || 10} anos</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Estrutura de Fixação</td>
-                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
-                      {componentesKit[2]}
-                    </td>
-                    <td className="p-3 text-center font-bold text-navy">1 Kit</td>
-                    <td className="p-3 text-right text-emerald-700">15 anos</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Cabeamento Solar</td>
-                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
-                      {componentesKit[3]}
-                    </td>
-                    <td className="p-3 text-center font-bold text-navy">1 Kit</td>
-                    <td className="p-3 text-right text-emerald-700">10 anos</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-bold text-navy text-[11px] md:text-xs">String Box e Conectores</td>
-                    <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">
-                      {componentesKit[5]} · Acompanha {componentesKit[4]}
-                    </td>
-                    <td className="p-3 text-center font-bold text-navy">1 Kit</td>
-                    <td className="p-3 text-right text-emerald-700">5 anos</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ECONOMIA 25 ANOS */}
-      <section className="max-w-5xl mx-auto px-6 md:px-12 py-10 md:py-14">
-        <div className="text-center mb-8">
-          <div className="text-xs uppercase tracking-widest text-sun-deep font-bold mb-2">A grande virada</div>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-navy">
-            Você vai economizar <span className="text-sun-deep">{BRL(calc.economia_ajustada_25_anos)}</span>
-          </h2>
-          <p className="text-muted-foreground mt-2">Em 25 anos deduzindo O&M anual e troca de inversor</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-4 md:p-6 border shadow-sm">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="ano" tick={{ fontSize: 11 }} />
-              <YAxis tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
-              <Tooltip formatter={(v: any) => BRL(Number(v))} labelFormatter={(l) => `Ano ${l}`} />
-              <Bar dataKey="economia" fill="hsl(48, 95%, 55%)" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
-
-      {/* SISTEMA TÉCNICO */}
-      <section className="bg-slate-50 py-10 md:py-14">
-        <div className="max-w-5xl mx-auto px-6 md:px-12">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-6">Seu sistema dimensionado</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            <SpecCard title="Geração & Consumo">
-              <Row label="Consumo informado" value={`${NUM(Number(p.consumo_kwh))} kWh/mês`} />
-              <Row label="Geração estimada" value={`${NUM(Number(p.geracao_mensal_kwh))} kWh/mês`} highlight />
-              <Row label="Tarifa considerada" value={BRL(Number(p.tarifa_kwh)) + "/kWh"} />
-              <Row label="HSP da região" value={`${Number(p.hsp).toFixed(1)} h`} />
-            </SpecCard>
-            <SpecCard title="Equipamentos">
-              <Row label="Potência total" value={`${NUM(Number(p.kwp_sistema), 2)} kWp`} highlight />
-              <Row label="Painéis solares" value={`${p.qtd_modulos} × ${p.potencia_modulo_w}W`} />
-              <Row label="Inversor(es)" value={`${p.qtd_inversores} × ${Number(p.potencia_inversor_kw || 0).toFixed(1)} kW`} />
-              <Row label="Área necessária" value={`~${NUM(Number(p.area_necessaria_m2), 1)} m²`} />
-            </SpecCard>
-            <SpecCard title="Retorno do investimento">
-              <Row label="Economia Real/mês" value={BRL(calc.economia_ajustada_mensal)} />
-              <Row label="Economia Real/ano" value={BRL(calc.economia_ajustada_anual)} />
-              <Row label="Payback Real Ajustado" value={`${(calc.payback_ajustado_meses / 12).toFixed(1)} anos`} highlight />
-              <Row label="Economia em 25 anos" value={BRL(calc.economia_ajustada_25_anos)} />
-            </SpecCard>
-          </div>
-          
-          {p.observacoes && (
-            <div className="mt-6 bg-slate-100/60 border border-slate-200/60 rounded-2xl p-6 text-sm">
-              <div className="text-xs uppercase tracking-wider text-navy/70 font-bold mb-3">Especificações & Observações Técnicas</div>
-              <div className="text-muted-foreground whitespace-pre-line leading-relaxed">{p.observacoes}</div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* SEÇÃO ADICIONAL: PÁGINA DE ANÁLISE TÉCNICA E ENGENHARIA */}
-      <section className="bg-white py-12 border-t border-b border-slate-100 font-sans">
-        <div className="max-w-5xl mx-auto px-6 md:px-12 space-y-12">
-          {/* Título da Seção */}
-          <div className="text-center md:text-left space-y-2">
-            <span className="bg-navy text-white text-[9px] uppercase font-bold tracking-widest px-3 py-1 rounded-full font-mono">
-              Estudo de Viabilidade Avançado
-            </span>
-            <h2 className="font-display text-3xl font-extrabold text-navy tracking-tight">
-              Análise Técnica & Engenharia de Operação
-            </h2>
-            <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
-              Detalhamento de engenharia elaborado para empresários, engenheiros e clientes técnicos que exigem precisão em cada etapa da operação.
-            </p>
-          </div>
-
-          {/* Diagrama Operacional On-Grid */}
-          <div className="bg-slate-50 border rounded-3xl p-6 md:p-8 space-y-6">
-            <h3 className="text-sm font-extrabold text-navy uppercase tracking-wider flex items-center gap-2">
-              <Sun className="w-4 h-4 text-sun-deep" /> Diagrama de Funcionamento do Sistema On-Grid
-            </h3>
-            
-            {/* Visual Fluxo Diagram */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative items-stretch">
-              {/* Box 1 */}
-              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm relative flex flex-col justify-between items-center">
-                <div className="text-3xl">☀️</div>
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-navy uppercase block">1. Captação (CC)</span>
-                  <p className="text-[9px] text-slate-500 leading-tight">Módulos absorvem a radiação solar e geram Corrente Contínua.</p>
-                </div>
-              </div>
-              
-              {/* Setas SVG para desktop */}
-              <div className="hidden md:flex items-center justify-center text-slate-300 text-xl font-bold">➔</div>
-
-              {/* Box 2 */}
-              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm relative flex flex-col justify-between items-center">
-                <div className="text-3xl">📟</div>
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-navy uppercase block">2. Conversão (CA)</span>
-                  <p className="text-[9px] text-slate-500 leading-tight">O Inversor converte a Corrente Contínua para Corrente Alternada.</p>
-                </div>
-              </div>
-
-              {/* Setas SVG para desktop */}
-              <div className="hidden md:flex items-center justify-center text-slate-300 text-xl font-bold">➔</div>
-
-              {/* Box 3 */}
-              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm relative flex flex-col justify-between items-center">
-                <div className="text-3xl">⚡</div>
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-navy uppercase block">3. Quadro (QGD)</span>
-                  <p className="text-[9px] text-slate-500 leading-tight">Distribui a energia convertida diretamente para o seu consumo interno.</p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
+                    <div className="text-[9px] text-slate-400 uppercase font-bold">CO₂ Evitado</div>
+                    <strong className="text-base font-black text-emerald-600 block">{NUM(Number(p.co2_evitado_ton), 1)} t/ano</strong>
+                    <span className="text-[9px] text-slate-400 block">Menos queima de carvão</span>
+                  </div>
+                  <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
+                    <div className="text-[9px] text-slate-400 uppercase font-bold">Carro Elétrico</div>
+                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 5200, 0).toLocaleString("pt-BR")} km</strong>
+                    <span className="text-[9px] text-slate-400 block">Rodados sem poluição</span>
+                  </div>
+                  <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
+                    <div className="text-[9px] text-slate-400 uppercase font-bold">Árvores Salvas</div>
+                    <strong className="text-base font-black text-emerald-600 block">{p.arvores_equivalentes} árvores</strong>
+                    <span className="text-[9px] text-slate-400 block">Equivalentes plantadas</span>
+                  </div>
+                  <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
+                    <div className="text-[9px] text-slate-400 uppercase font-bold">Celulares Carregados</div>
+                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 85000, 0).toLocaleString("pt-BR")}</strong>
+                    <span className="text-[9px] text-slate-400 block">Cargas completas</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Segunda parte do fluxo (Medição e Rede) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-200/60 items-center">
-              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm flex flex-col items-center">
-                <div className="text-3xl">📊</div>
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-navy uppercase block">Medidor Bidirecional</span>
-                  <p className="text-[9px] text-slate-500 leading-relaxed">
-                    Registra o consumo importado da rede local quando não há sol e o volume excedente que é injetado.
-                  </p>
-                </div>
-              </div>
-
-              <div className="text-center text-xs font-extrabold text-navy uppercase tracking-wider bg-sun/10 rounded-full py-1 px-3 border border-sun/30">
-                🔄 Compensação de Créditos ANEEL
-              </div>
-
-              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm flex flex-col items-center">
-                <div className="text-3xl">🔌</div>
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-navy uppercase block">Rede da Concessionária</span>
-                  <p className="text-[9px] text-slate-500 leading-relaxed">
-                    Recebe o excedente de energia injetado e gera créditos válidos por 5 anos (Lei 14.300).
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Faturamento Técnico Detalhado */}
-          <div className="grid md:grid-cols-2 gap-8 items-start">
+            {/* Faturamento Comparativo Detalhado */}
             <div className="space-y-4">
-              <h3 className="text-xs uppercase font-extrabold tracking-widest text-navy/70">
+              <h3 className="text-xs uppercase font-extrabold tracking-widest text-[#001F5C]/70">
                 Detalhamento Operacional de Faturamento
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Diferente de simulações básicas de mercado, detalhamos todos os encargos regulatórios para garantir a precisão matemática da sua fatura pós-instalação.
-              </p>
-              
-              <div className="border rounded-2xl overflow-hidden bg-white shadow-sm text-xs font-medium">
+              <div className="border rounded-2xl overflow-hidden bg-white shadow-md text-xs font-medium">
                 <table className="w-full text-left border-collapse">
                   <thead className="bg-slate-100 font-bold text-navy/70 border-b">
                     <tr>
                       <th className="p-3 text-[10px] uppercase">Encargo / Parâmetro</th>
                       <th className="p-3 text-[10px] uppercase text-right">Fatura Atual</th>
-                      <th className="p-3 text-[10px] uppercase text-right text-emerald-700">Fatura Pós-Solar</th>
+                      <th className="p-3 text-[10px] uppercase text-right text-emerald-700">Pós-Solar</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     <tr>
-                      <td className="p-3 font-semibold text-navy">Consumo Ativo de Energia</td>
+                      <td className="p-3 font-semibold text-navy">Consumo Ativo</td>
                       <td className="p-3 text-right text-muted-foreground">{BRL(Number(p.consumo_kwh) * Number(p.tarifa_kwh))}</td>
                       <td className="p-3 text-right text-emerald-700 font-bold">R$ 0,00</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-semibold text-navy">Custo de Disponibilidade (Mínimo)</td>
+                      <td className="p-3 font-semibold text-navy">Custo de Disponibilidade</td>
                       <td className="p-3 text-right text-slate-400">—</td>
                       <td className="p-3 text-right text-navy font-bold">{BRL(calc.custo_disponibilidade_mensal)}</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-semibold text-navy">Encargos Lei 14.300 (Fio B)</td>
+                      <td className="p-3 font-semibold text-navy">Encargos Lei 14.300</td>
                       <td className="p-3 text-right text-slate-400">—</td>
                       <td className="p-3 text-right text-navy font-bold">{BRL(calc.ajuste_fio_b_mensal)}</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-semibold text-navy">Iluminação Pública (COSIP)</td>
+                      <td className="p-3 font-semibold text-navy">Iluminação (COSIP)</td>
                       <td className="p-3 text-right text-navy font-bold">{BRL(22)}</td>
                       <td className="p-3 text-right text-navy font-bold">{BRL(22)}</td>
                     </tr>
                     <tr className="bg-slate-50 font-bold border-t">
-                      <td className="p-3 text-navy">Total Estimado Fatura</td>
+                      <td className="p-3 text-navy">Total Estimado</td>
                       <td className="p-3 text-right text-red-600 font-extrabold">{BRL((Number(p.consumo_kwh) * Number(p.tarifa_kwh)) + 22)}</td>
                       <td className="p-3 text-right text-emerald-700 font-extrabold">{BRL(calc.custo_disponibilidade_mensal + calc.ajuste_fio_b_mensal + 22)}</td>
                     </tr>
@@ -916,319 +722,600 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 </table>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Quebra de Objeções (FAQ Técnico) */}
-            <div className="space-y-4">
-              <h3 className="text-xs uppercase font-extrabold tracking-widest text-navy/70">
-                Mitigação de Riscos & Objeções de Engenharia
+        {/* TAB 2: ENGENHARIA */}
+        <div className={activeTab === "engenharia" ? "space-y-10 animate-fade-in" : "hidden print:block print:space-y-10"}>
+          <div className="bg-slate-50 border border-slate-200/50 rounded-3xl p-6 md:p-8 shadow-sm space-y-8">
+            <div className="grid md:grid-cols-2 gap-8 items-start">
+              {/* Ficha Técnica de Engenharia */}
+              <div className="bg-white rounded-2xl border p-5 shadow-sm space-y-4 font-sans text-xs">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="font-extrabold text-navy uppercase text-[10px] tracking-wider">Ficha Técnica de Engenharia</span>
+                  <span className="bg-[#001F5C]/5 text-[#001F5C] font-bold px-2.5 py-0.5 rounded-full text-[9px] uppercase font-mono">Especificações</span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                  <div className="border-b pb-1.5">
+                    <span className="text-slate-400 font-semibold block text-[9px] uppercase">Potência do Arranjo</span>
+                    <strong className="text-navy text-sm font-black">{NUM(Number(p.kwp_sistema), 2)} kWp</strong>
+                  </div>
+                  <div className="border-b pb-1.5">
+                    <span className="text-slate-400 font-semibold block text-[9px] uppercase">Módulos Sugeridos</span>
+                    <strong className="text-navy text-sm font-black">{p.qtd_modulos} unid.</strong>
+                  </div>
+                  <div className="border-b pb-1.5">
+                    <span className="text-slate-400 font-semibold block text-[9px] uppercase">Área Mínima Requerida</span>
+                    <strong className="text-navy text-sm font-black">~{NUM(Number(p.area_necessaria_m2 || p.kwp_sistema * 6), 1)} m²</strong>
+                  </div>
+                  <div className="border-b pb-1.5">
+                    <span className="text-slate-400 font-semibold block text-[9px] uppercase">Carga Estática Estimada</span>
+                    <strong className="text-navy text-sm font-black">~13.5 kg / m²</strong>
+                  </div>
+                  <div className="border-b pb-1.5 col-span-2">
+                    <span className="text-slate-400 font-semibold block text-[9px] uppercase">Tipo de Fixação & Estrutura</span>
+                    <strong className="text-navy text-sm font-black uppercase block">
+                      {p.tipo_telhado === "metalico" ? "Metálico (Perfil Alumínio)" : 
+                       p.tipo_telhado === "fibrocimento" ? "Fibrocimento / Eternit" : 
+                       p.tipo_telhado === "laje" ? "Laje (Estrutura Triângulo)" : 
+                       p.tipo_telhado === "solo" ? "Estrutura de Solo" : "Cerâmico (Telha Cerâmica)"}
+                    </strong>
+                  </div>
+                </div>
+                
+                <div className="bg-slate-50 p-2.5 rounded-xl border flex items-start gap-2">
+                  <ShieldCheck className="w-4.5 h-4.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    Gerador certificado pelo <strong>INMETRO (Classe A)</strong>. Equipamentos com proteção ativa contra surtos (DPS), disjuntores dedicados e conformidade técnica ANEEL (Lei 14.300).
+                  </p>
+                </div>
+              </div>
+
+              {/* Equipamentos & Tecnologias */}
+              <div className="space-y-4">
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-sun-deep">Equipamentos & Tecnologia</span>
+                  <h3 className="font-display text-2xl font-bold text-navy mt-1">
+                    {p.kit_nome || "Dimensionamento Técnico Customizado"}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                    Gerador fotovoltaico completo montado com equipamentos homologados pelas concessionárias locais de energia elétrica.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-center">
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
+                    <div className="text-[10px] text-muted-foreground font-semibold">Garantia Painéis</div>
+                    <div className="text-base font-bold text-emerald-700 mt-0.5">{p.kit_garantia_modulos_anos || 25} anos</div>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
+                    <div className="text-[10px] text-muted-foreground font-semibold">Garantia Inversor</div>
+                    <div className="text-base font-bold text-emerald-700 mt-0.5">{p.kit_garantia_inversor_anos || 10} anos</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Grid Visual de Equipamentos */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {componentesKit.map((item: string, idx: number) => {
+                let title = "Equipamento";
+                let icon = "⚡";
+                if (idx === 0) { title = "Módulos"; icon = "☀️"; }
+                if (idx === 1) { title = "Inversor"; icon = "📟"; }
+                if (idx === 2) { title = "Estrutura"; icon = "🛠️"; }
+                if (idx === 3) { title = "Cabos"; icon = "🔌"; }
+                if (idx === 4) { title = "Conectores"; icon = "🔗"; }
+                if (idx === 5) { title = "Proteções"; icon = "🛡️"; }
+
+                return (
+                  <div key={idx} className="bg-white border rounded-2xl p-3 text-center space-y-1 shadow-sm flex flex-col items-center justify-between">
+                    <div className="text-2xl">{icon}</div>
+                    <div className="space-y-0.5">
+                      <span className="text-[9px] font-extrabold text-navy uppercase tracking-wider block">{title}</span>
+                      <span className="text-[10px] text-muted-foreground font-medium leading-tight line-clamp-2" title={item}>
+                        {item}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Tabela BOM */}
+            <div className="space-y-3">
+              <div className="text-xs uppercase font-extrabold tracking-wider text-navy/70">Composição Detalhada do Gerador Solar</div>
+              <div className="border rounded-2xl overflow-hidden bg-white shadow-sm">
+                <table className="w-full text-xs text-left border-collapse">
+                  <thead className="bg-slate-100 text-[10px] uppercase font-bold text-navy/70 border-b">
+                    <tr>
+                      <th className="p-3">Componente</th>
+                      <th className="p-3">Descrição / Especificação Técnica</th>
+                      <th className="p-3 text-center">Qtd</th>
+                      <th className="p-3 text-right">Garantia</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    <tr>
+                      <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Módulos (Placas)</td>
+                      <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">{componentesKit[0]}</td>
+                      <td className="p-3 text-center font-bold text-navy">{p.qtd_modulos}</td>
+                      <td className="p-3 text-right text-emerald-700">{p.kit_garantia_modulos_anos || 25} anos</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Inversor Solar</td>
+                      <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">{componentesKit[1]}</td>
+                      <td className="p-3 text-center font-bold text-navy">{p.qtd_inversores || 1}</td>
+                      <td className="p-3 text-right text-emerald-700">{p.kit_garantia_inversor_anos || 10} anos</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Estrutura de Fixação</td>
+                      <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">{componentesKit[2]}</td>
+                      <td className="p-3 text-center font-bold text-navy">1 Kit</td>
+                      <td className="p-3 text-right text-emerald-700">15 anos</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-bold text-navy text-[11px] md:text-xs">Cabeamento Solar</td>
+                      <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">{componentesKit[3]}</td>
+                      <td className="p-3 text-center font-bold text-navy">1 Kit</td>
+                      <td className="p-3 text-right text-emerald-700">10 anos</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-bold text-navy text-[11px] md:text-xs">String Box e Conectores</td>
+                      <td className="p-3 text-muted-foreground text-[11px] md:text-xs leading-relaxed">{componentesKit[5]} · Acompanha {componentesKit[4]}</td>
+                      <td className="p-3 text-center font-bold text-navy">1 Kit</td>
+                      <td className="p-3 text-right text-emerald-700">5 anos</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Diagrama On-Grid Animado em SVG */}
+            <div className="bg-slate-900 border border-white/10 rounded-3xl p-6 md:p-8 space-y-6 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sun/5 blur-2xl pointer-events-none" />
+              <h3 className="text-sm font-extrabold uppercase tracking-wider flex items-center gap-2 text-sun">
+                <Sun className="w-4 h-4 text-sun animate-spin-slow" /> Fluxo de Operação e Conversão de Energia
               </h3>
               
-              <div className="space-y-3">
-                <ObjectionItem 
-                  question="Como a Lei 14.300 afeta meu retorno financeiro?"
-                  answer="A lei introduziu a cobrança escalonada do Fio B sobre a energia injetada. No entanto, sua fatura ainda cai em até 90%. O payback é apenas alguns meses maior em relação à legislação anterior, mas com o aumento das tarifas de energia tradicionais, a atratividade permanece excelente (TIR superior a 20% a.a.)."
-                />
-                <ObjectionItem 
-                  question="O que acontece se a rede da concessionária cair?"
-                  answer="Por segurança operacional (norma brasileira), o inversor possui proteção contra ilhamento (Anti-Islanding). Se a rede da concessionária cair, o inversor se desliga automaticamente em milissegundos para evitar que o sistema envie energia à rua e eletrocute os técnicos da concessionária que estão reparando os cabos."
-                />
-                <ObjectionItem 
-                  question="Como o sistema gera em dias de chuva ou nublados?"
-                  answer="O sistema fotovoltaico funciona através da radiação de luz (luz difusa), e não apenas do calor ou do sol direto. Nos dias chuvosos e nublados a geração diminui (varia entre 10% a 30% da potência nominal), mas essa variação é totalmente compensada no cálculo de média anual do dimensionamento. Os créditos acumulados em dias de sol cobrem o déficit."
-                />
-                <ObjectionItem 
-                  question="Qual é o custo e a frequência de manutenção?"
-                  answer="A manutenção é de baixíssima complexidade devido à ausência de peças móveis. Consiste basicamente em realizar a limpeza (lavagem com água) dos painéis uma a duas vezes ao ano (ou conforme a poeira da região) e monitorar a produção pelo aplicativo. Os painéis solares têm vida útil superior a 25 anos com degradação linear garantida."
-                />
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative items-stretch">
+                <div className="relative group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center space-y-3 flex flex-col justify-between items-center transition-all hover:bg-white/10 hover:border-sun/40">
+                  <div className="text-4xl filter drop-shadow-[0_0_10px_rgba(255,215,0,0.3)]">☀️</div>
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold text-sun uppercase block tracking-wider">1. Geração Solar</span>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">Os painéis captam a radiação e geram Corrente Contínua (CC).</p>
+                  </div>
+                </div>
+                <div className="relative group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center space-y-3 flex flex-col justify-between items-center transition-all hover:bg-white/10 hover:border-sun/40">
+                  <div className="text-4xl filter drop-shadow-[0_0_10px_rgba(37,99,235,0.3)]">📟</div>
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold text-sun uppercase block tracking-wider">2. O Inversor</span>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">Converte a energia CC em Corrente Alternada (CA) compatível com a sua casa.</p>
+                  </div>
+                </div>
+                <div className="relative group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center space-y-3 flex flex-col justify-between items-center transition-all hover:bg-white/10 hover:border-sun/40">
+                  <div className="text-4xl filter drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">⚡</div>
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold text-sun uppercase block tracking-wider">3. Consumo Interno</span>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">A eletricidade é injetada no quadro de luz, alimentando o local imediatamente.</p>
+                  </div>
+                </div>
+                <div className="relative group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center space-y-3 flex flex-col justify-between items-center transition-all hover:bg-white/10 hover:border-sun/40">
+                  <div className="text-4xl filter drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">🔄</div>
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold text-sun uppercase block tracking-wider">4. Injeção na Rede</span>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">O excedente vai para a rede e vira créditos válidos por 5 anos (Lei 14.300).</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Linha de energia animada */}
+              <div className="hidden md:block relative h-6 w-full mt-2">
+                <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="energyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#FFD700" />
+                      <stop offset="50%" stopColor="#2563EB" />
+                      <stop offset="100%" stopColor="#10B981" />
+                    </linearGradient>
+                  </defs>
+                  <path 
+                    d="M 120,10 L 800,10" 
+                    stroke="url(#energyGrad)" 
+                    strokeWidth="3" 
+                    strokeDasharray="6,8" 
+                    fill="none" 
+                    className="animate-[dash_10s_linear_infinite]" 
+                  />
+                </svg>
+                <style>{`
+                  @keyframes dash {
+                    to {
+                      stroke-dashoffset: -100;
+                    }
+                  }
+                `}</style>
               </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* CARD DE ATRATIVIDADE FINANCEIRA PREMIUM */}
-      {calc.tir_anual_pct > 0 && (
-        <section className="max-w-5xl mx-auto px-6 md:px-12 pb-10">
-          <div className="bg-[#001F5C]/5 border border-[#001F5C]/15 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
-            <div className="flex items-center gap-2">
-              <span className="p-2 bg-emerald-500/10 rounded-xl text-emerald-600"><Coins className="w-5 h-5" /></span>
-              <div>
-                <h3 className="font-display font-extrabold text-navy text-lg">Métricas de Atratividade Financeira</h3>
-                <p className="text-xs text-muted-foreground">Comparativo de rentabilidade sobre o capital investido</p>
-              </div>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white p-5 rounded-2xl border shadow-sm space-y-1 text-center">
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Taxa de Retorno (TIR Solar)</span>
-                <strong className="text-3xl font-black text-emerald-600 block">{calc.tir_anual_pct}% a.a.</strong>
-                <span className="text-[9px] text-slate-400 block">• Excelente rentabilidade, isenta de Imposto de Renda.</span>
-              </div>
-              
-              <div className="bg-white p-5 rounded-2xl border shadow-sm space-y-1 text-center">
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Valor Presente Líquido (VPL)</span>
-                <strong className="text-3xl font-black text-emerald-600 block">{BRL(calc.vpl_brl)}</strong>
-                <span className="text-[9px] text-slate-400 block">• Riqueza gerada acima de uma aplicação de 10% a.a.</span>
-              </div>
+        {/* TAB 3: RETORNO FINANCEIRO */}
+        <div className={activeTab === "financeiro" ? "space-y-10 animate-fade-in" : "hidden print:block print:space-y-10"}>
+          {/* Card de Viabilidade e Comparativo de Inércia */}
+          <div className="grid md:grid-cols-2 gap-6 items-stretch">
+            {/* Atratividade Premium */}
+            {calc.tir_anual_pct > 0 && (
+              <div className="bg-[#001F5C]/5 border border-[#001F5C]/15 rounded-3xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="p-2 bg-emerald-500/10 rounded-xl text-emerald-600"><Coins className="w-5 h-5" /></span>
+                  <div>
+                    <h3 className="font-display font-extrabold text-[#001F5C] text-sm uppercase tracking-wider">Atratividade Financeira</h3>
+                    <p className="text-[10px] text-slate-500">Rentabilidade de capital em relação a investimentos tradicionais</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white p-4 rounded-xl border text-center">
+                    <span className="text-[9px] text-slate-400 uppercase font-bold">TIR Solar</span>
+                    <strong className="text-xl font-black text-emerald-600 block">{calc.tir_anual_pct}% a.a.</strong>
+                    <span className="text-[8px] text-slate-400 block">• Retorno Isento de IR</span>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border text-center">
+                    <span className="text-[9px] text-slate-400 uppercase font-bold">VPL Gerado</span>
+                    <strong className="text-xl font-black text-emerald-600 block">{BRL(calc.vpl_brl)}</strong>
+                    <span className="text-[8px] text-slate-400 block">• Acima do CDI de 10%</span>
+                  </div>
+                </div>
 
-              <div className="bg-white p-5 rounded-2xl border shadow-sm space-y-3">
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block text-center animate-pulse">Comparativo de Rendimento</span>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-slate-500">Poupança (Poupa):</span>
+                <div className="bg-white/60 p-3 rounded-2xl border text-xs space-y-2">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="font-semibold text-slate-500">Poupança Média:</span>
                     <span className="font-bold text-slate-700">~6.0% a.a.</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-slate-500">Renda Fixa / CDI:</span>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="font-semibold text-slate-500">CDB / CDI Médio:</span>
                     <span className="font-bold text-slate-700">~10.0% a.a.</span>
                   </div>
-                  <div className="flex justify-between items-center border-t pt-1.5 font-bold">
-                    <span className="text-navy">SOLAR ESOL:</span>
+                  <div className="flex justify-between items-center text-[11px] border-t pt-1.5 font-bold">
+                    <span className="text-navy">RETORNO SOLAR ESOL:</span>
                     <span className="text-emerald-600 font-extrabold">{calc.tir_anual_pct}% a.a.</span>
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* O CUSTO DA INÉRCIA */}
+            <div className="bg-red-50/50 border border-red-200/60 rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between">
+              <div className="flex items-center gap-2">
+                <span className="p-2 bg-red-100 text-red-600 rounded-xl"><AlertTriangle className="w-5 h-5" /></span>
+                <div>
+                  <h3 className="font-display font-extrabold text-red-950 text-sm uppercase tracking-wider">O Custo de Não Fazer Nada</h3>
+                  <p className="text-[11px] text-red-700/80">Projeção do dinheiro perdido pagando faturas de luz com inflação de 8% a.a.</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-[9px] text-slate-500 uppercase font-bold block">Gasto Total Acumulado (Sem Solar)</span>
+                  <strong className="text-2xl font-black text-red-600 block">{BRL(custoInercia25Anos)}</strong>
+                </div>
+                <p className="text-[10px] text-slate-600 leading-relaxed bg-white/60 p-3.5 rounded-xl border">
+                  Se você decidir adiar o sistema, transferirá cerca de <strong className="text-red-700">{BRL(custoInercia25Anos)}</strong> para a distribuidora local nos próximos 25 anos. O investimento solar representa uma fração desse custo.
+                </p>
+              </div>
             </div>
           </div>
-        </section>
-      )}
 
-      {/* SIMULADOR FINANCEIRO E ANÁLISE DE VIABILIDADE OU CARD SIMPLIFICADO */}
-      {!docFinAprovado ? (
-        <section className="max-w-5xl mx-auto px-6 md:px-12 py-8 md:py-12 border-t border-slate-100 font-sans">
-          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-sun-deep block">Investimento Comercial</span>
-              <h2 className="text-3xl font-black text-navy">{BRL(simFinanceiro.valorVista)}</h2>
-              <p className="text-xs text-muted-foreground">Preço com desconto à vista (5% de desconto de tabela já aplicado).</p>
-              
-              {p.condicoes_pagamento && (
-                <div className="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-600 leading-relaxed">
-                  <strong>Condições de Pagamento:</strong> {p.condicoes_pagamento.replace(/\[FOCO:[A-Z:]+\]\n?/g, "").replace(/\[DOC:[A-Z_]+\]\n?/g, "")}
-                </div>
-              )}
-            </div>
-
-            <div className="flex-shrink-0 space-y-3 w-full md:w-auto">
-              <div className="bg-white p-4 rounded-2xl border text-center shadow-sm">
-                <span className="text-[10px] text-muted-foreground block font-bold">Validade da Proposta</span>
-                <strong className="text-navy text-sm font-extrabold">{p.validade_dias || 15} dias</strong>
+          {/* Gráfico customizado de Economia 25 anos */}
+          <div className="space-y-6">
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+              <div>
+                <h3 className="font-display font-bold text-navy text-base">Projeção Acumulada de Economia (25 Anos)</h3>
+                <p className="text-[11px] text-muted-foreground">Economia real deduzindo despesas operacionais da planta</p>
               </div>
-              {parceiro && (
-                <a
-                  href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${(parceiro.nome || "ESOL").split(" ")[0]}!%20Gostaria%20de%20fechar%20a%20proposta%20solar%20nº%20${String(p.id).slice(0, 8).toUpperCase()}.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-extrabold text-xs h-10 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
+              <div className="inline-flex bg-slate-100 p-1 rounded-xl border print:hidden text-xs">
+                <button
+                  onClick={() => setSavingsView("anual")}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+                    savingsView === "anual"
+                      ? "bg-white text-navy shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
                 >
-                  💬 Chamar no WhatsApp
-                </a>
-              )}
-            </div>
-          </div>
-        </section>
-      ) : (
-        <section className="max-w-5xl mx-auto px-6 md:px-12 py-8 md:py-10 border-t border-slate-100">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-1.5 bg-sun/10 text-sun-deep px-3 py-1 rounded-full text-xs font-bold mb-2">
-              <Coins className="w-3.5 h-3.5" /> PLANEJAMENTO FINANCEIRO INTELIGENTE
-            </div>
-            <h2 className="font-display text-3xl font-bold text-navy">
-              Simulador de Pagamento & Viabilidade
-            </h2>
-            <p className="text-muted-foreground mt-1 text-sm">Compare as vantagens de pagar à vista ou trocar a sua conta de luz pela parcela do banco.</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 items-stretch">
-            {/* Coluna 1 e 2: O Simulador */}
-            <div className="md:col-span-2 bg-slate-50 border border-slate-200/50 rounded-3xl p-6 flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center flex-wrap gap-2 border-b border-slate-200 pb-3">
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-navy flex items-center gap-1.5 font-sans">
-                    <Scale className="w-4 h-4 text-sun-deep" /> Condição Comercial
-                  </span>
-                  
-                  <Badge className="bg-sun text-navy font-extrabold uppercase text-[10px] tracking-wider">
-                    🔒 Financiamento via {FINANCEIRAS[finForcada as keyof typeof FINANCEIRAS]?.nome || finForcada.toUpperCase()}
-                  </Badge>
-                </div>
-
-                <div className="space-y-5 py-2">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-navy font-bold">Instituição Financeira Parceira</Label>
-                      <Select disabled={true} value={selectedFin} onValueChange={(v: any) => setSelectedFin(v)}>
-                        <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="solfacil">🏦 Solfácil (CET 1,29% a.m.)</SelectItem>
-                          <SelectItem value="bv">🏢 Banco BV Solar (CET 1,39% a.m.)</SelectItem>
-                          <SelectItem value="santander">🏛️ Santander Financiamentos (CET 1,45% a.m.)</SelectItem>
-                          <SelectItem value="sicredi">🤝 Sicredi Cooperativa (CET 1,24% a.m.)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <span className="text-[10px] text-muted-foreground block">{simFinanceiro.finInfo.info}</span>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-navy font-bold">Prazo de Pagamento</Label>
-                      <Select disabled={true} value={String(selectedPrazo)} onValueChange={(v) => setSelectedPrazo(Number(v))}>
-                        <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="24">24 meses</SelectItem>
-                          <SelectItem value="36">36 meses</SelectItem>
-                          <SelectItem value="48">48 meses</SelectItem>
-                          <SelectItem value="60">60 meses (Padrão)</SelectItem>
-                          <SelectItem value="72">72 meses</SelectItem>
-                          <SelectItem value="84">84 meses</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <span className="text-[10px] text-muted-foreground block">Carência para início sob aprovação do cadastro.</span>
-                    </div>
-                  </div>
-
-                  {/* Detalhamento de Custo Efetivo Total (CET) */}
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
-                    <div className="text-[10px] uppercase font-extrabold tracking-wider text-navy/70">Taxas e Detalhamento do Banco (CET)</div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                      <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                        <div className="text-[9px] text-muted-foreground font-bold uppercase">Taxa Nominal</div>
-                        <div className="text-sm font-extrabold text-navy mt-0.5">{simFinanceiro.finInfo.taxaNominal}% a.m.</div>
-                      </div>
-                      <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                        <div className="text-[9px] text-muted-foreground font-bold uppercase">CET Mensal</div>
-                        <div className="text-sm font-extrabold text-navy mt-0.5">{simFinanceiro.finInfo.cetMensal}% a.m.</div>
-                      </div>
-                      <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                        <div className="text-[9px] text-muted-foreground font-bold uppercase">CET Anual</div>
-                        <div className="text-sm font-extrabold text-navy mt-0.5">{simFinanceiro.finInfo.cetAnual}% a.a.</div>
-                      </div>
-                      <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                        <div className="text-[9px] text-muted-foreground font-bold uppercase">Juros Totais</div>
-                        <div className="text-sm font-extrabold text-red-600 mt-0.5">{BRL(simFinanceiro.jurosTotais)}</div>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-1.5 border-t border-slate-100">
-                      <span>Custo Total Financiado (Equipamentos + Juros):</span>
-                      <span className="font-bold text-navy">{BRL(simFinanceiro.custoTotalFinanciado)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Diagnóstico Inteligente de Viabilidade */}
-              <div className={`mt-4 p-4 rounded-2xl border flex gap-3 items-start bg-emerald-50/40 border-emerald-200 text-emerald-800`}>
-                <ThumbsUp className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <span className="text-xs font-extrabold uppercase tracking-wider block">
-                    ⚡ Viabilidade Máxima: O sistema se paga!
-                  </span>
-                  <p className="text-[11px] leading-relaxed opacity-90">{simFinanceiro.descViabilidade}</p>
-                </div>
+                  Economia Anual
+                </button>
+                <button
+                  onClick={() => setSavingsView("acumulado")}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+                    savingsView === "acumulado"
+                      ? "bg-white text-navy shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  Patrimônio Acumulado 📈
+                </button>
               </div>
             </div>
 
-            {/* Coluna 3: Indicadores de Retorno Dinâmicos */}
-            <div className="bg-navy text-white rounded-3xl p-6 flex flex-col justify-between shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sun/10 blur-2xl" />
-              
-              <div className="space-y-4">
-                <span className="text-[10px] text-sun uppercase font-bold tracking-widest block">Resumo do Retorno</span>
-                
-                <div className="space-y-1 border-b border-white/10 pb-4">
-                  <span className="text-[10px] text-white/50 block font-semibold uppercase">Economia Mensal Média</span>
-                  <div className="text-2xl font-extrabold text-sun">
-                    {BRL(Number(p.economia_mensal))}
-                  </div>
-                  <span className="text-[10px] text-white/40 block">Redução imediata de até 95% na conta.</span>
-                </div>
-
-                <div className="space-y-1 border-b border-white/10 pb-4">
-                  <span className="text-[10px] text-white/50 block font-semibold uppercase">Prestação Mensal ({selectedPrazo}x)</span>
-                  <div className="text-2xl font-extrabold text-white">
-                    {BRL(simFinanceiro.valorParcela)}/mês
-                  </div>
-                  <span className="text-[10px] text-white/40 block">Taxas calculadas via tabela Price.</span>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[10px] text-white/50 block font-semibold uppercase">Payback Financiado Ajustado</span>
-                  <div className="text-3xl font-extrabold text-white flex items-baseline gap-1">
-                    {simFinanceiro.paybackFinanciadoAnos.toFixed(1)} <span className="text-xs text-white/60 font-medium">anos</span>
-                  </div>
-                  <span className="text-[10px] text-white/40 block">Retorno real considerando os juros cobrados.</span>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-white/10 text-[9px] text-white/40 leading-relaxed">
-                * Simulação aproximada de crédito. Sujeita a análise de perfil, score e alterações sem aviso prévio pelas financeiras.
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* INVESTIMENTO */}
-      <section className="max-w-5xl mx-auto px-6 md:px-12 py-10 md:py-14">
-        <div className="bg-gradient-to-br from-navy to-[#001533] text-white rounded-3xl p-8 md:p-10 relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-72 h-72 rounded-full bg-sun/20 blur-3xl" />
-          <div className="relative grid md:grid-cols-2 gap-6 items-center">
-            <div>
-              <div className="text-sm uppercase tracking-widest text-sun font-bold mb-2">Investimento total</div>
-              <div className="font-display text-5xl md:text-6xl font-bold mb-2">{BRL(Number(p.preco_total))}</div>
-              <div className="text-white/70">
-                Equivale a <strong className="text-white">{BRL(Number(p.preco_por_wp))}/Wp</strong> instalado
-              </div>
-              {p.condicoes_pagamento && (
-                <div className="mt-4 text-sm text-white/80 bg-white/10 rounded-lg p-3 border border-white/15 whitespace-pre-line">
-                  <strong className="text-sun">Condições:</strong>{"\n"}{p.condicoes_pagamento}
-                </div>
-              )}
-            </div>
-            <div className="space-y-2 text-sm">
-              <Bullet>Sistema completo: módulos, inversor, estrutura, cabeamento e conectores</Bullet>
-              <Bullet>Projeto técnico e ART (Anotação de Responsabilidade Técnica)</Bullet>
-              <Bullet>Homologação na concessionária local</Bullet>
-              <Bullet>Instalação por equipe certificada</Bullet>
-              <Bullet>Monitoramento via aplicativo</Bullet>
-              <Bullet>Garantia de 25 anos nos módulos / 10 anos no inversor</Bullet>
+            <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-4 md:p-6 border shadow-sm">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={chartData}>
+                  <defs>
+                    <linearGradient id="barSolarGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#FFD700" />
+                      <stop offset="100%" stopColor="#FF8C00" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.15} vertical={false} />
+                  <XAxis dataKey="ano" tick={{ fontSize: 10, fill: "hsl(215, 25%, 35%)" }} axisLine={false} tickLine={false} />
+                  <YAxis 
+                    tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} 
+                    tick={{ fontSize: 10, fill: "hsl(215, 25%, 35%)" }} 
+                    axisLine={false} 
+                    tickLine={false} 
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      background: "rgba(255, 255, 255, 0.82)", 
+                      backdropFilter: "blur(8px)", 
+                      border: "1px solid rgba(226, 232, 240, 0.8)",
+                      borderRadius: "14px",
+                      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.05)"
+                    }}
+                    formatter={(v: any) => [BRL(Number(v)), savingsView === "acumulado" ? "Patrimônio Acumulado" : "Economia Líquida"]} 
+                    labelFormatter={(l) => `Ano ${l}`} 
+                  />
+                  <Bar dataKey="economia" fill="url(#barSolarGrad)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* CTA / AÇÕES */}
-      {publico && (
-        <section className="max-w-5xl mx-auto px-6 md:px-12 pb-14">
-          <div className="bg-white border-2 border-sun rounded-3xl p-8 text-center shadow-xl">
-            <h3 className="font-display text-2xl md:text-3xl font-bold text-navy mb-2">Pronto para começar a economizar?</h3>
-            <p className="text-muted-foreground mb-6">Proposta válida por {validadeDias} dias{expiraEm ? ` (até ${expiraEm.toLocaleDateString("pt-BR")})` : ""}.</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={onAceitar} className="bg-sun hover:bg-sun-deep text-navy font-bold px-8 py-4 rounded-xl text-lg transition shadow-lg hover:scale-105">
-                ✅ Aceitar proposta
-              </button>
-              <button onClick={() => window.print()} className="bg-navy hover:bg-navy-deep text-white font-semibold px-6 py-4 rounded-xl transition">
-                📄 Baixar PDF
-              </button>
-              <button onClick={onRecusar} className="border border-muted-foreground/30 text-muted-foreground hover:bg-slate-50 px-6 py-4 rounded-xl transition">
-                Não tenho interesse
-              </button>
+        {/* TAB 4: PROPOSTA COMERCIAL */}
+        <div className={activeTab === "comercial" ? "space-y-10 animate-fade-in" : "hidden print:block print:space-y-10"}>
+          {/* Simulador Financeiro */}
+          {!docFinAprovado ? (
+            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-sun-deep block">Investimento Comercial</span>
+                <h2 className="text-3xl font-black text-navy">{BRL(simFinanceiro.valorVista)}</h2>
+                <p className="text-xs text-muted-foreground">Preço líquido com desconto de 5% de tabela já aplicado à vista.</p>
+                
+                {p.condicoes_pagamento && (
+                  <div className="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-600 leading-relaxed">
+                    <strong>Condições de Pagamento:</strong> {p.condicoes_pagamento.replace(/\[FOCO:[A-Z:]+\]\n?/g, "").replace(/\[DOC:[A-Z_]+\]\n?/g, "")}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-shrink-0 space-y-3 w-full md:w-auto">
+                <div className="bg-white p-4 rounded-2xl border text-center shadow-sm">
+                  <span className="text-[10px] text-muted-foreground block font-bold">Validade da Proposta</span>
+                  <strong className="text-navy text-sm font-extrabold">{p.validade_dias || 15} dias</strong>
+                </div>
+                {parceiro && (
+                  <a
+                    href={`https://wa.me/55${parceiro.telefone?.replace(/\D/g, "")}?text=Olá%20${(parceiro.nome || "ESOL").split(" ")[0]}!%20Gostaria%20de%20fechar%20a%20proposta%20solar%20nº%20${String(p.id).slice(0, 8).toUpperCase()}.`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-extrabold text-xs h-10 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
+                  >
+                    💬 Chamar no WhatsApp
+                  </a>
+                )}
+              </div>
             </div>
-            {parceiro?.telefone && (
-              <a
-                href={`https://wa.me/55${parceiro.telefone.replace(/\D/g, "")}?text=${encodeURIComponent(`Olá ${parceiro.nome}, recebi a proposta e gostaria de tirar uma dúvida.`)}`}
-                target="_blank" rel="noreferrer"
-                className="inline-flex items-center gap-2 mt-4 text-sm text-navy hover:underline"
-              >
-                💬 Falar com {parceiro.nome?.split(" ")[0]} no WhatsApp
-              </a>
-            )}
+          ) : (
+            <div className="space-y-6">
+              <div className="grid md:grid-cols-3 gap-6 items-stretch">
+                <div className="md:col-span-2 bg-slate-50 border border-slate-200/50 rounded-3xl p-6 flex flex-col justify-between space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center flex-wrap gap-2 border-b border-slate-200 pb-3">
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-navy flex items-center gap-1.5 font-sans">
+                        <Scale className="w-4 h-4 text-sun-deep" /> Condição Comercial
+                      </span>
+                      <Badge className="bg-sun text-navy font-extrabold uppercase text-[10px] tracking-wider">
+                        🔒 Financiamento via {FINANCEIRAS[finForcada as keyof typeof FINANCEIRAS]?.nome || finForcada.toUpperCase()}
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-5 py-2">
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-navy font-bold">Instituição Financeira Parceira</Label>
+                          <Select disabled={true} value={selectedFin} onValueChange={(v: any) => setSelectedFin(v)}>
+                            <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="solfacil">🏦 Solfácil (CET 1,29% a.m.)</SelectItem>
+                              <SelectItem value="bv">🏢 Banco BV Solar (CET 1,39% a.m.)</SelectItem>
+                              <SelectItem value="santander">🏛️ Santander Financiamentos (CET 1,45% a.m.)</SelectItem>
+                              <SelectItem value="sicredi">🤝 Sicredi Cooperativa (CET 1,24% a.m.)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <span className="text-[10px] text-muted-foreground block">{simFinanceiro.finInfo.info}</span>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-navy font-bold">Prazo de Pagamento</Label>
+                          <Select disabled={true} value={String(selectedPrazo)} onValueChange={(v) => setSelectedPrazo(Number(v))}>
+                            <SelectTrigger className="h-9 bg-white border"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="24">24 meses</SelectItem>
+                              <SelectItem value="36">36 meses</SelectItem>
+                              <SelectItem value="48">48 meses</SelectItem>
+                              <SelectItem value="60">60 meses (Padrão)</SelectItem>
+                              <SelectItem value="72">72 meses</SelectItem>
+                              <SelectItem value="84">84 meses</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <span className="text-[10px] text-muted-foreground block">Carência para início sob aprovação do cadastro.</span>
+                        </div>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
+                        <div className="text-[10px] uppercase font-extrabold tracking-wider text-navy/70">Taxas e Detalhamento do Banco (CET)</div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                          <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <div className="text-[9px] text-muted-foreground font-bold uppercase">Taxa Nominal</div>
+                            <div className="text-sm font-extrabold text-navy mt-0.5">{simFinanceiro.finInfo.taxaNominal}% a.m.</div>
+                          </div>
+                          <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <div className="text-[9px] text-muted-foreground font-bold uppercase">CET Mensal</div>
+                            <div className="text-sm font-extrabold text-navy mt-0.5">{simFinanceiro.finInfo.cetMensal}% a.m.</div>
+                          </div>
+                          <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <div className="text-[9px] text-muted-foreground font-bold uppercase">CET Anual</div>
+                            <div className="text-sm font-extrabold text-navy mt-0.5">{simFinanceiro.finInfo.cetAnual}% a.a.</div>
+                          </div>
+                          <div className="bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <div className="text-[9px] text-muted-foreground font-bold uppercase">Juros Totais</div>
+                            <div className="text-sm font-extrabold text-red-600 mt-0.5">{BRL(simFinanceiro.jurosTotais)}</div>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-1.5 border-t border-slate-100">
+                          <span>Custo Total Financiado (Equipamentos + Juros):</span>
+                          <span className="font-bold text-navy">{BRL(simFinanceiro.custoTotalFinanciado)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-4 rounded-2xl border flex gap-3 items-start bg-emerald-50/40 border-emerald-200 text-emerald-800">
+                    <ThumbsUp className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <span className="text-xs font-extrabold uppercase tracking-wider block">⚡ Viabilidade Máxima: O sistema se paga!</span>
+                      <p className="text-[11px] leading-relaxed opacity-90">{simFinanceiro.descViabilidade}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-navy text-white rounded-3xl p-6 flex flex-col justify-between shadow-lg relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-sun/10 blur-2xl" />
+                  
+                  <div className="space-y-4">
+                    <span className="text-[10px] text-sun uppercase font-bold tracking-widest block">Resumo do Retorno</span>
+                    <div className="space-y-1 border-b border-white/10 pb-4">
+                      <span className="text-[10px] text-white/50 block font-semibold uppercase">Economia Mensal Média</span>
+                      <div className="text-2xl font-extrabold text-sun">{BRL(Number(p.economia_mensal))}</div>
+                      <span className="text-[10px] text-white/40 block">Redução imediata de até 95% na conta.</span>
+                    </div>
+                    <div className="space-y-1 border-b border-white/10 pb-4">
+                      <span className="text-[10px] text-white/50 block font-semibold uppercase">Prestação Mensal ({selectedPrazo}x)</span>
+                      <div className="text-2xl font-extrabold text-white">{BRL(simFinanceiro.valorParcela)}/mês</div>
+                      <span className="text-[10px] text-white/40 block">Taxas calculadas via tabela Price.</span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-white/50 block font-semibold uppercase">Payback Financiado Ajustado</span>
+                      <div className="text-3xl font-extrabold text-white flex items-baseline gap-1">
+                        {simFinanceiro.paybackFinanciadoAnos.toFixed(1)} <span className="text-xs text-white/60 font-medium">anos</span>
+                      </div>
+                      <span className="text-[10px] text-white/40 block">Retorno real considerando os juros cobrados.</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10 text-[9px] text-white/40 leading-relaxed">
+                    * Simulação aproximada de crédito. Sujeita a análise pelas financeiras.
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Investimento Detalhado */}
+          <div className="bg-gradient-to-br from-navy to-[#001533] text-white rounded-3xl p-8 md:p-10 relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-72 h-72 rounded-full bg-sun/20 blur-3xl" />
+            <div className="relative grid md:grid-cols-2 gap-6 items-center">
+              <div>
+                <div className="text-sm uppercase tracking-widest text-sun font-bold mb-2">Investimento total</div>
+                <div className="font-display text-5xl md:text-6xl font-bold mb-2">{BRL(Number(p.preco_total))}</div>
+                <div className="text-white/70">
+                  Equivale a <strong className="text-white">{BRL(Number(p.preco_por_wp))}/Wp</strong> instalado
+                </div>
+                {p.condicoes_pagamento && (
+                  <div className="mt-4 text-sm text-white/80 bg-white/10 rounded-lg p-3 border border-white/15 whitespace-pre-line">
+                    <strong className="text-sun">Condições:</strong>{"\n"}{p.condicoes_pagamento}
+                  </div>
+                )}
+              </div>
+              <div className="space-y-2 text-sm">
+                <Bullet>Sistema completo: módulos, inversor, estrutura, cabeamento e conectores</Bullet>
+                <Bullet>Projeto técnico e ART (Anotação de Responsabilidade Técnica)</Bullet>
+                <Bullet>Homologação na concessionária local</Bullet>
+                <Bullet>Instalação por equipe certificada</Bullet>
+                <Bullet>Monitoramento via aplicativo</Bullet>
+                <Bullet>Garantia de 25 anos nos módulos / 10 anos no inversor</Bullet>
+              </div>
+            </div>
           </div>
-        </section>
-      )}
+
+          {/* FAQ e Objeções */}
+          <div className="space-y-4 max-w-3xl mx-auto">
+            <h3 className="text-xs uppercase font-extrabold tracking-widest text-navy/70 text-center">
+              Mitigação de Riscos & Objeções de Engenharia
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <ObjectionItem 
+                question="Como a Lei 14.300 afeta meu retorno financeiro?"
+                answer="A lei introduziu a cobrança escalonada do Fio B sobre a energia injetada. No entanto, sua fatura ainda cai em até 90%. O payback é apenas alguns meses maior em relação à legislação anterior, mas com o aumento das tarifas de energia tradicionais, a atratividade permanece excelente (TIR superior a 20% a.a.)."
+              />
+              <ObjectionItem 
+                question="O que acontece se a rede da concessionária cair?"
+                answer="Por segurança operacional (norma brasileira), o inversor possui proteção contra ilhamento (Anti-Islanding). Se a rede da concessionária cair, o inversor se desliga automaticamente em milissegundos para evitar que o sistema envie energia à rua e coloque em risco técnicos locais."
+              />
+              <ObjectionItem 
+                question="Como o sistema gera em dias de chuva ou nublados?"
+                answer="O sistema fotovoltaico funciona através da radiação de luz (luz difusa), e não apenas do calor ou do sol direto. Nos dias chuvosos e nublados a geração diminui (varia entre 10% a 30% da potência nominal), mas essa variação é totalmente compensada no cálculo de média anual do dimensionamento."
+              />
+              <ObjectionItem 
+                question="Qual é o custo e a frequência de manutenção?"
+                answer="A manutenção é de baixíssima complexidade devido à ausência de peças móveis. Consiste basicamente em realizar a limpeza (lavagem com água) dos painéis uma a duas vezes ao ano (ou conforme a poeira da região) e monitorar a produção pelo aplicativo."
+              />
+            </div>
+          </div>
+
+          {/* CTA / Ações */}
+          {publico && (
+            <div className="bg-white border-2 border-sun rounded-3xl p-8 text-center shadow-xl max-w-2xl mx-auto">
+              <h3 className="font-display text-2xl md:text-3xl font-bold text-navy mb-2">Pronto para começar a economizar?</h3>
+              <p className="text-muted-foreground mb-6 text-sm">Proposta válida por {validadeDias} dias{expiraEm ? ` (até ${expiraEm.toLocaleDateString("pt-BR")})` : ""}.</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button onClick={onAceitar} className="bg-sun hover:bg-sun-deep text-navy font-bold px-8 py-3.5 rounded-xl text-base transition shadow-lg hover:scale-105">
+                  ✅ Aceitar proposta
+                </button>
+                <button onClick={() => window.print()} className="bg-navy hover:bg-navy-deep text-white font-semibold px-6 py-3.5 rounded-xl transition">
+                  📄 Baixar PDF
+                </button>
+                <button onClick={onRecusar} className="border border-muted-foreground/30 text-muted-foreground hover:bg-slate-50 px-6 py-3.5 rounded-xl transition">
+                  Não tenho interesse
+                </button>
+              </div>
+              {parceiro?.telefone && (
+                <a
+                  href={`https://wa.me/55${parceiro.telefone.replace(/\D/g, "")}?text=${encodeURIComponent(`Olá ${parceiro.nome}, recebi a proposta e gostaria de tirar uma dúvida.`)}`}
+                  target="_blank" rel="noreferrer"
+                  className="inline-flex items-center gap-2 mt-4 text-sm text-navy hover:underline"
+                >
+                  💬 Falar com {parceiro.nome?.split(" ")[0]} no WhatsApp
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* GARANTIAS / CONFIANÇA */}
-      <section className="bg-slate-50 py-10">
+      <section className="bg-slate-50 py-10 print:mt-10">
         <div className="max-w-5xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <Trust icon={ShieldCheck} title="25 anos" subtitle="Garantia dos módulos" />
+          <Trust icon={Award} title="Certificada" subtitle="Equipe especializada" />
+          <Trust icon={Home} title="Homologação" subtitle="Concessionária local" />
+          <Trust icon={Leaf} title={`${p.arvores_equivalentes} árvores`} subtitle="Equivalente plantadas" />
+        </div>
+      </section>
+2 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <Trust icon={ShieldCheck} title="25 anos" subtitle="Garantia dos módulos" />
           <Trust icon={Award} title="Certificada" subtitle="Equipe especializada" />
           <Trust icon={Home} title="Homologação" subtitle="Concessionária local" />
