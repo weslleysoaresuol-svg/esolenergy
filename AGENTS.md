@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+<!-- COMANDOS:BEGIN -->
+> [!IMPORTANT]
+> Sempre proponha a execução de comandos de terminal (como `git add`, `git commit`, `git push`, etc.) diretamente pela IDE utilizando a ferramenta `run_command` primeiro. O usuário revisará e aprovará a execução na IDE. Somente forneça o passo a passo para colar no PowerShell externo como fallback caso a execução direta falhe.
+<!-- COMANDOS:END -->
