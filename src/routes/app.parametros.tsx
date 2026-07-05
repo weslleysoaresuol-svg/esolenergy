@@ -1515,7 +1515,7 @@ function ImportadorKitsSolar() {
       }
 
       // Tenta gravar no Supabase
-      const { error } = await supabase.from("kits_produtos").insert(listToInsert);
+      const { error } = await supabase.from("kits_produtos").insert(listToInsert as any);
       if (error) {
         // Fallback localStorage caso o banco local/Supabase remoto não esteja configurado
         console.warn("Falha no banco, gravando no localStorage...", error);
