@@ -314,12 +314,17 @@ function NovaProposta() {
 
   const getPrecoVendaKit = (kit: any) => {
     if (!params) return Number(kit.preco);
+    const p = params as any;
     const comissao_pct = profile?.comissao_percent !== null && profile?.comissao_percent !== undefined
       ? Number(profile.comissao_percent) / 100
-      : params.custo_comissao_pct;
-    const impostos_compra_pct = params.custo_impostos_compra_pct ?? params.custo_impostos_pct ?? 0.03;
-    const divisor = 1 - (params.custo_instalacao_pct + params.custo_frete_pct + impostos_compra_pct + comissao_pct + params.margem_alvo_pct);
-    return Number(kit.preco) / (divisor > 0.1 ? divisor : params.custo_equipamentos_pct);
+      : (p.custo_comissao_pct ?? p.comissao_padrao_pct ?? 0.08);
+    const impostos_compra_pct = p.custo_impostos_compra_pct ?? p.custo_impostos_pct ?? 0.03;
+    const instalacao_pct = p.custo_instalacao_pct ?? 0.15;
+    const frete_pct = p.custo_frete_pct ?? 0.05;
+    const margem_pct = p.margem_alvo_pct ?? p.lucro_alvo_pct ?? 0.15;
+    const equipamentos_pct = p.custo_equipamentos_pct ?? 0.5;
+    const divisor = 1 - (instalacao_pct + frete_pct + impostos_compra_pct + comissao_pct + margem_pct);
+    return Number(kit.preco) / (divisor > 0.1 ? divisor : equipamentos_pct);
   };
 
   // Sincroniza o consumo com base nas entradas do script de vendas (cotacao rapida ou financiamento)
