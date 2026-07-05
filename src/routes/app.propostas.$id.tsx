@@ -57,7 +57,7 @@ function PropostaDetail() {
       estado: proposta.estado,
       tipo: proposta.tipo_instalacao || "residencial",
       tipo_telhado: proposta.tipo_telhado || "ceramico",
-      distribuidora_id: proposta.distribuidora_id || null,
+      distribuidora_id: proposta.distribuidora_id || proposta.fornecedor || null,
       preco_override: proposta.preco_total,
       kwp_override: proposta.kwp_sistema,
       qtd_modulos_override: proposta.qtd_modulos,

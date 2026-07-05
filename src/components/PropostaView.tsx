@@ -569,24 +569,46 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
       <section className="max-w-5xl mx-auto px-6 md:px-12 py-10">
         <div className="bg-slate-50 border border-slate-200/50 rounded-3xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Imagem do Kit */}
-            <div className="relative rounded-2xl overflow-hidden shadow-md bg-white p-3 border">
-              <img
-                src={
-                  p.kit_imagem_url || 
-                  (p.tipo_instalacao === "rural" 
-                    ? "/kits/kit-rural.png" 
-                    : Number(p.kwp_sistema) <= 4.0 
-                      ? "/kits/kit-residencial-pequeno.png" 
-                      : Number(p.kwp_sistema) <= 10.0 
-                        ? "/kits/kit-residencial-grande.png" 
-                        : "/kits/kit-comercial-industrial.png")
-                }
-                alt={p.kit_nome || "Kit Solar"}
-                className="w-full h-64 md:h-72 object-contain mx-auto"
-              />
-              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur text-navy text-[10px] font-extrabold px-3 py-1 rounded-full border shadow-sm">
-                🎁 KIT OFICIAL
+            {/* Ficha Técnica de Engenharia (Substitui Imagem Física do Kit) */}
+            <div className="bg-white rounded-2xl border p-5 shadow-sm space-y-4 font-sans text-xs">
+              <div className="flex items-center justify-between border-b pb-2">
+                <span className="font-extrabold text-navy uppercase text-[10px] tracking-wider">Ficha Técnica de Engenharia</span>
+                <span className="bg-navy/5 text-navy font-bold px-2.5 py-0.5 rounded-full text-[9px] uppercase font-mono">Especificações</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <div className="border-b pb-1.5">
+                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Potência do Arranjo</span>
+                  <strong className="text-navy text-sm font-black">{NUM(Number(p.kwp_sistema), 2)} kWp</strong>
+                </div>
+                <div className="border-b pb-1.5">
+                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Módulos Sugeridos</span>
+                  <strong className="text-navy text-sm font-black">{p.qtd_modulos} unid.</strong>
+                </div>
+                <div className="border-b pb-1.5">
+                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Área Mínima Requerida</span>
+                  <strong className="text-navy text-sm font-black">~{NUM(Number(p.area_necessaria_m2 || p.kwp_sistema * 6), 1)} m²</strong>
+                </div>
+                <div className="border-b pb-1.5">
+                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Carga de Telhado Estática</span>
+                  <strong className="text-navy text-sm font-black">~13.5 kg / m²</strong>
+                </div>
+                <div className="border-b pb-1.5 col-span-2">
+                  <span className="text-slate-400 font-semibold block text-[9px] uppercase">Tipo de Fixação & Estrutura</span>
+                  <strong className="text-navy text-sm font-black uppercase block">
+                    {p.tipo_telhado === "metalico" ? "Metálico (Perfil Alumínio)" : 
+                     p.tipo_telhado === "fibrocimento" ? "Fibrocimento / Eternit" : 
+                     p.tipo_telhado === "laje" ? "Laje (Estrutura Triângulo)" : 
+                     p.tipo_telhado === "solo" ? "Estrutura de Solo" : "Cerâmico (Telha Cerâmica)"}
+                  </strong>
+                </div>
+              </div>
+              
+              <div className="bg-slate-50 p-2.5 rounded-xl border flex items-start gap-2">
+                <ShieldCheck className="w-4.5 h-4.5 text-emerald-600 shrink-0 mt-0.5" />
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  Gerador certificado pelo <strong>INMETRO (Classe A)</strong>. Equipamentos com proteção ativa contra surtos (DPS), disjuntores dedicados e conformidade técnica com as resoluções da ANEEL (REN 482/1000 e Lei 14.300).
+                </p>
               </div>
             </div>
 
@@ -756,6 +778,171 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
               <div className="text-muted-foreground whitespace-pre-line leading-relaxed">{p.observacoes}</div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* SEÇÃO ADICIONAL: PÁGINA DE ANÁLISE TÉCNICA E ENGENHARIA */}
+      <section className="bg-white py-12 border-t border-b border-slate-100 font-sans">
+        <div className="max-w-5xl mx-auto px-6 md:px-12 space-y-12">
+          {/* Título da Seção */}
+          <div className="text-center md:text-left space-y-2">
+            <span className="bg-navy text-white text-[9px] uppercase font-bold tracking-widest px-3 py-1 rounded-full font-mono">
+              Estudo de Viabilidade Avançado
+            </span>
+            <h2 className="font-display text-3xl font-extrabold text-navy tracking-tight">
+              Análise Técnica & Engenharia de Operação
+            </h2>
+            <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
+              Detalhamento de engenharia elaborado para empresários, engenheiros e clientes técnicos que exigem precisão em cada etapa da operação.
+            </p>
+          </div>
+
+          {/* Diagrama Operacional On-Grid */}
+          <div className="bg-slate-50 border rounded-3xl p-6 md:p-8 space-y-6">
+            <h3 className="text-sm font-extrabold text-navy uppercase tracking-wider flex items-center gap-2">
+              <Sun className="w-4 h-4 text-sun-deep" /> Diagrama de Funcionamento do Sistema On-Grid
+            </h3>
+            
+            {/* Visual Fluxo Diagram */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative items-stretch">
+              {/* Box 1 */}
+              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm relative flex flex-col justify-between items-center">
+                <div className="text-3xl">☀️</div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-navy uppercase block">1. Captação (CC)</span>
+                  <p className="text-[9px] text-slate-500 leading-tight">Módulos absorvem a radiação solar e geram Corrente Contínua.</p>
+                </div>
+              </div>
+              
+              {/* Setas SVG para desktop */}
+              <div className="hidden md:flex items-center justify-center text-slate-300 text-xl font-bold">➔</div>
+
+              {/* Box 2 */}
+              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm relative flex flex-col justify-between items-center">
+                <div className="text-3xl">📟</div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-navy uppercase block">2. Conversão (CA)</span>
+                  <p className="text-[9px] text-slate-500 leading-tight">O Inversor converte a Corrente Contínua para Corrente Alternada.</p>
+                </div>
+              </div>
+
+              {/* Setas SVG para desktop */}
+              <div className="hidden md:flex items-center justify-center text-slate-300 text-xl font-bold">➔</div>
+
+              {/* Box 3 */}
+              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm relative flex flex-col justify-between items-center">
+                <div className="text-3xl">⚡</div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-navy uppercase block">3. Quadro (QGD)</span>
+                  <p className="text-[9px] text-slate-500 leading-tight">Distribui a energia convertida diretamente para o seu consumo interno.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Segunda parte do fluxo (Medição e Rede) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-200/60 items-center">
+              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm flex flex-col items-center">
+                <div className="text-3xl">📊</div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-navy uppercase block">Medidor Bidirecional</span>
+                  <p className="text-[9px] text-slate-500 leading-relaxed">
+                    Registra o consumo importado da rede local quando não há sol e o volume excedente que é injetado.
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center text-xs font-extrabold text-navy uppercase tracking-wider bg-sun/10 rounded-full py-1 px-3 border border-sun/30">
+                🔄 Compensação de Créditos ANEEL
+              </div>
+
+              <div className="bg-white border rounded-2xl p-4 text-center space-y-2 shadow-sm flex flex-col items-center">
+                <div className="text-3xl">🔌</div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-navy uppercase block">Rede da Concessionária</span>
+                  <p className="text-[9px] text-slate-500 leading-relaxed">
+                    Recebe o excedente de energia injetado e gera créditos válidos por 5 anos (Lei 14.300).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Faturamento Técnico Detalhado */}
+          <div className="grid md:grid-cols-2 gap-8 items-start">
+            <div className="space-y-4">
+              <h3 className="text-xs uppercase font-extrabold tracking-widest text-navy/70">
+                Detalhamento Operacional de Faturamento
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Diferente de simulações básicas de mercado, detalhamos todos os encargos regulatórios para garantir a precisão matemática da sua fatura pós-instalação.
+              </p>
+              
+              <div className="border rounded-2xl overflow-hidden bg-white shadow-sm text-xs font-medium">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-slate-100 font-bold text-navy/70 border-b">
+                    <tr>
+                      <th className="p-3 text-[10px] uppercase">Encargo / Parâmetro</th>
+                      <th className="p-3 text-[10px] uppercase text-right">Fatura Atual</th>
+                      <th className="p-3 text-[10px] uppercase text-right text-emerald-700">Fatura Pós-Solar</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    <tr>
+                      <td className="p-3 font-semibold text-navy">Consumo Ativo de Energia</td>
+                      <td className="p-3 text-right text-muted-foreground">{BRL(Number(p.consumo_kwh) * Number(p.tarifa_kwh))}</td>
+                      <td className="p-3 text-right text-emerald-700 font-bold">R$ 0,00</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-semibold text-navy">Custo de Disponibilidade (Mínimo)</td>
+                      <td className="p-3 text-right text-slate-400">—</td>
+                      <td className="p-3 text-right text-navy font-bold">{BRL(calc.custo_disponibilidade_mensal)}</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-semibold text-navy">Encargos Lei 14.300 (Fio B)</td>
+                      <td className="p-3 text-right text-slate-400">—</td>
+                      <td className="p-3 text-right text-navy font-bold">{BRL(calc.ajuste_fio_b_mensal)}</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-semibold text-navy">Iluminação Pública (COSIP)</td>
+                      <td className="p-3 text-right text-navy font-bold">{BRL(22)}</td>
+                      <td className="p-3 text-right text-navy font-bold">{BRL(22)}</td>
+                    </tr>
+                    <tr className="bg-slate-50 font-bold border-t">
+                      <td className="p-3 text-navy">Total Estimado Fatura</td>
+                      <td className="p-3 text-right text-red-600 font-extrabold">{BRL((Number(p.consumo_kwh) * Number(p.tarifa_kwh)) + 22)}</td>
+                      <td className="p-3 text-right text-emerald-700 font-extrabold">{BRL(calc.custo_disponibilidade_mensal + calc.ajuste_fio_b_mensal + 22)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Quebra de Objeções (FAQ Técnico) */}
+            <div className="space-y-4">
+              <h3 className="text-xs uppercase font-extrabold tracking-widest text-navy/70">
+                Mitigação de Riscos & Objeções de Engenharia
+              </h3>
+              
+              <div className="space-y-3">
+                <ObjectionItem 
+                  question="Como a Lei 14.300 afeta meu retorno financeiro?"
+                  answer="A lei introduziu a cobrança escalonada do Fio B sobre a energia injetada. No entanto, sua fatura ainda cai em até 90%. O payback é apenas alguns meses maior em relação à legislação anterior, mas com o aumento das tarifas de energia tradicionais, a atratividade permanece excelente (TIR superior a 20% a.a.)."
+                />
+                <ObjectionItem 
+                  question="O que acontece se a rede da concessionária cair?"
+                  answer="Por segurança operacional (norma brasileira), o inversor possui proteção contra ilhamento (Anti-Islanding). Se a rede da concessionária cair, o inversor se desliga automaticamente em milissegundos para evitar que o sistema envie energia à rua e eletrocute os técnicos da concessionária que estão reparando os cabos."
+                />
+                <ObjectionItem 
+                  question="Como o sistema gera em dias de chuva ou nublados?"
+                  answer="O sistema fotovoltaico funciona através da radiação de luz (luz difusa), e não apenas do calor ou do sol direto. Nos dias chuvosos e nublados a geração diminui (varia entre 10% a 30% da potência nominal), mas essa variação é totalmente compensada no cálculo de média anual do dimensionamento. Os créditos acumulados em dias de sol cobrem o déficit."
+                />
+                <ObjectionItem 
+                  question="Qual é o custo e a frequência de manutenção?"
+                  answer="A manutenção é de baixíssima complexidade devido à ausência de peças móveis. Consiste basicamente em realizar a limpeza (lavagem com água) dos painéis uma a duas vezes ao ano (ou conforme a poeira da região) e monitorar a produção pelo aplicativo. Os painéis solares têm vida útil superior a 25 anos com degradação linear garantida."
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1094,6 +1281,27 @@ function Trust({ icon: Icon, title, subtitle }: any) {
       <Icon className="w-7 h-7 text-sun-deep" />
       <div className="font-bold text-navy">{title}</div>
       <div className="text-xs text-muted-foreground">{subtitle}</div>
+    </div>
+  );
+}
+
+function ObjectionItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="bg-white border rounded-xl p-3.5 shadow-sm space-y-1.5 transition-all text-left">
+      <button 
+        type="button" 
+        onClick={() => setIsOpen(!isOpen)} 
+        className="w-full flex justify-between items-center font-bold text-navy text-[11px] text-left uppercase tracking-wide gap-2"
+      >
+        <span>{question}</span>
+        <span className="text-amber-500 font-extrabold text-sm">{isOpen ? "−" : "+"}</span>
+      </button>
+      {isOpen && (
+        <p className="text-[10px] text-slate-500 leading-relaxed pt-1.5 border-t border-slate-100 animate-fade-in font-medium">
+          {answer}
+        </p>
+      )}
     </div>
   );
 }

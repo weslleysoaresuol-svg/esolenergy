@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Fragment } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
@@ -37,6 +37,7 @@ function PropostasList() {
   const { modo } = Route.useSearch();
 
   const [params, setParams] = useState<any>(null);
+  const [expandedPropostaId, setExpandedPropostaId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -73,6 +74,7 @@ function PropostasList() {
       preco_override: p.preco_total,
       kwp_override: p.kwp_sistema,
       qtd_modulos_override: p.qtd_modulos,
+      distribuidora_id: p.distribuidora_id || p.fornecedor || null,
       eh_admin: !p.parceiro_id,
       comissao_percent_override: p.parceiro_id && p.parceiro?.comissao_percent !== null && p.parceiro?.comissao_percent !== undefined ? Number(p.parceiro.comissao_percent) : undefined,
     }, params);
@@ -263,43 +265,53 @@ function PropostasList() {
             <tbody>
               {filtered.map((p) => {
                 const s = STATUS_LABEL[p.status] || STATUS_LABEL.rascunho;
+                const isExpanded = expandedPropostaId === p.id;
                 return (
-                  <tr key={p.id} className="border-t hover:bg-slate-50">
-                    <td className="p-3">
-                      <Link to="/app/propostas/$id" params={{ id: p.id }} className="font-semibold text-navy hover:underline">{p.titulo}</Link>
-                    </td>
-                    <td className="p-3 text-muted-foreground">{p.proposta_clientes?.map((pc: any) => pc.cliente?.nome).filter(Boolean).join(", ") || "—"}</td>
-                    {role === "admin" && <td className="p-3 text-muted-foreground">{p.parceiro?.nome}</td>}
-                    <td className="p-3">{Number(p.kwp_sistema).toFixed(2)} kWp</td>
-                    <td className="p-3 font-semibold">{BRL(Number(p.preco_total))}</td>
-                    <td className="p-3"><Badge className={s.color}>{s.label}</Badge></td>
-                    <td className="p-3">{getValidade(p)}</td>
-                    <td className="p-3 text-center">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="icon" variant="ghost" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg">
-                            <FileText className="w-4 h-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-3xl overflow-y-auto max-h-[85vh]">
-                          <DialogHeader>
-                            <DialogTitle className="text-navy text-base uppercase tracking-wider font-extrabold flex items-center gap-2">
-                              <FileText className="text-sun w-5 h-5" /> 
-                              {role === "admin" ? "Espelho de Operação (Administrador)" : "Seu Espelho de Comissão (Parceiro)"}
-                            </DialogTitle>
-                            <DialogDescription className="text-xs text-muted-foreground">
-                              {role === "admin" 
-                                ? "Detalhamento completo de custos diretos, indiretos e margens da ESOL Energy."
-                                : "Informações do produto, valor total de venda e sua comissão estimada."}
-                            </DialogDescription>
-                          </DialogHeader>
-
-                          {renderEspelhoDialogContent(p)}
-                        </DialogContent>
-                      </Dialog>
-                    </td>
-                    <td className="p-3 text-xs text-muted-foreground">{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
-                  </tr>
+                  <Fragment key={p.id}>
+                    <tr className="border-t hover:bg-slate-50 transition-colors">
+                      <td className="p-3">
+                        <Link to="/app/propostas/$id" params={{ id: p.id }} className="font-semibold text-navy hover:underline">{p.titulo}</Link>
+                      </td>
+                      <td className="p-3 text-muted-foreground">{p.proposta_clientes?.map((pc: any) => pc.cliente?.nome).filter(Boolean).join(", ") || "—"}</td>
+                      {role === "admin" && <td className="p-3 text-muted-foreground">{p.parceiro?.nome}</td>}
+                      <td className="p-3">{Number(p.kwp_sistema).toFixed(2)} kWp</td>
+                      <td className="p-3 font-semibold">{BRL(Number(p.preco_total))}</td>
+                      <td className="p-3"><Badge className={s.color}>{s.label}</Badge></td>
+                      <td className="p-3">{getValidade(p)}</td>
+                      <td className="p-3 text-center">
+                        <Button 
+                          type="button"
+                          size="icon" 
+                          variant="ghost" 
+                          onClick={() => setExpandedPropostaId(isExpanded ? null : p.id)}
+                          className={`h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-transform ${isExpanded ? "rotate-90 bg-amber-50" : ""}`}
+                        >
+                          <FileText className="w-4 h-4" />
+                        </Button>
+                      </td>
+                      <td className="p-3 text-xs text-muted-foreground">{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
+                    </tr>
+                    {isExpanded && (
+                      <tr className="bg-slate-50/70 border-t border-b">
+                        <td colSpan={role === "admin" ? 9 : 8} className="p-4">
+                          <div className="bg-white rounded-2xl border p-5 shadow-sm space-y-4 max-w-5xl mx-auto">
+                            <div className="flex items-center justify-between border-b pb-2">
+                              <div className="flex items-center gap-2">
+                                <FileText className="text-sun w-5 h-5" />
+                                <h4 className="text-navy text-sm font-extrabold uppercase tracking-wider">
+                                  {role === "admin" ? "Espelho de Operação (Administrador)" : "Seu Espelho de Comissão (Parceiro)"}
+                                </h4>
+                              </div>
+                              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest font-mono">
+                                Proposta #{String(p.id).slice(0, 8).toUpperCase()}
+                              </span>
+                            </div>
+                            {renderEspelhoDialogContent(p)}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 );
               })}
             </tbody>

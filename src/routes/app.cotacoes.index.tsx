@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Fragment } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Card } from "@/components/ui/card";
@@ -63,6 +63,7 @@ function CotacoesList() {
   const [clienteTipo, setClienteTipo] = useState<"existente" | "novo">("existente");
   const [novoCliente, setNovoCliente] = useState({ nome: "", email: "", telefone: "", cep: "", endereco: "", cidade: "", estado: "SP" });
   const [params, setParams] = useState<any>(null);
+  const [expandedCotacaoId, setExpandedCotacaoId] = useState<string | null>(null);
 
   // Estados locais para edição de campos do cliente selecionado no ato da cotação
   const [editCep, setEditCep] = useState("");
@@ -232,6 +233,7 @@ function CotacoesList() {
       preco_override: c.preco_total,
       kwp_override: kwp,
       qtd_modulos_override: modulos,
+      distribuidora_id: c.kit?.fornecedor || c.kit_snapshot?.fornecedor || c.fornecedor || null,
       eh_admin: role === "admin",
       comissao_percent_override: role !== "admin" && c.parceiro?.comissao_percent !== null && c.parceiro?.comissao_percent !== undefined ? Number(c.parceiro.comissao_percent) : undefined,
     }, params);
@@ -536,49 +538,59 @@ function CotacoesList() {
             <tbody>
               {filtered.map((c) => {
                 const st = STATUS_LABEL[c.status] || STATUS_LABEL.rascunho;
+                const isExpanded = expandedCotacaoId === c.id;
                 return (
-                  <tr key={c.id} className="border-t hover:bg-slate-50">
-                    <td className="p-3 font-semibold text-navy">
-                      <Link to="/app/cotacoes/$id" params={{ id: c.id }} className="hover:underline">
-                        {c.cliente?.nome || "Lead Sem Nome"}
-                      </Link>
-                    </td>
-                    <td className="p-3 text-slate-600 font-medium">
-                      {c.kit?.nome || c.kit_snapshot?.nome || "Kit personalizado"}
-                    </td>
-                    <td className="p-3 text-slate-500 font-bold">{c.quantidade}</td>
-                    <td className="p-3 font-semibold text-navy">{BRL(Number(c.preco_total))}</td>
-                     <td className="p-3">
-                      <Badge className={st.color}>{st.label}</Badge>
-                    </td>
-                    <td className="p-3 text-center">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="icon" variant="ghost" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg">
-                            <FileText className="w-4 h-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-3xl overflow-y-auto max-h-[85vh]">
-                          <DialogHeader>
-                            <DialogTitle className="text-navy text-base uppercase tracking-wider font-extrabold flex items-center gap-2">
-                              <FileText className="text-sun w-5 h-5" /> 
-                              {role === "admin" ? "Espelho de Operação (Administrador)" : "Seu Espelho de Comissão (Parceiro)"}
-                            </DialogTitle>
-                            <DialogDescription className="text-xs text-muted-foreground">
-                              {role === "admin" 
-                                ? "Detalhamento completo de custos diretos, indiretos e margens da ESOL Energy."
-                                : "Informações do produto, valor total de venda e sua comissão estimada."}
-                            </DialogDescription>
-                          </DialogHeader>
-
-                          {renderEspelhoDialogContent(c)}
-                        </DialogContent>
-                      </Dialog>
-                    </td>
-                    <td className="p-3 text-xs text-muted-foreground text-right sm:text-left">
-                      {new Date(c.created_at).toLocaleDateString("pt-BR")}
-                    </td>
-                  </tr>
+                  <Fragment key={c.id}>
+                    <tr className="border-t hover:bg-slate-50 transition-colors">
+                      <td className="p-3 font-semibold text-navy">
+                        <Link to="/app/cotacoes/$id" params={{ id: c.id }} className="hover:underline">
+                          {c.cliente?.nome || "Lead Sem Nome"}
+                        </Link>
+                      </td>
+                      <td className="p-3 text-slate-600 font-medium">
+                        {c.kit?.nome || c.kit_snapshot?.nome || "Kit personalizado"}
+                      </td>
+                      <td className="p-3 text-slate-500 font-bold">{c.quantidade}</td>
+                      <td className="p-3 font-semibold text-navy">{BRL(Number(c.preco_total))}</td>
+                      <td className="p-3">
+                        <Badge className={st.color}>{st.label}</Badge>
+                      </td>
+                      <td className="p-3 text-center">
+                        <Button 
+                          type="button"
+                          size="icon" 
+                          variant="ghost" 
+                          onClick={() => setExpandedCotacaoId(isExpanded ? null : c.id)}
+                          className={`h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-transform ${isExpanded ? "rotate-90 bg-amber-50" : ""}`}
+                        >
+                          <FileText className="w-4 h-4" />
+                        </Button>
+                      </td>
+                      <td className="p-3 text-xs text-muted-foreground text-right sm:text-left">
+                        {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                      </td>
+                    </tr>
+                    {isExpanded && (
+                      <tr className="bg-slate-50/70 border-t border-b">
+                        <td colSpan={7} className="p-4">
+                          <div className="bg-white rounded-2xl border p-5 shadow-sm space-y-4 max-w-5xl mx-auto">
+                            <div className="flex items-center justify-between border-b pb-2">
+                              <div className="flex items-center gap-2">
+                                <FileText className="text-sun w-5 h-5" />
+                                <h4 className="text-navy text-sm font-extrabold uppercase tracking-wider">
+                                  {role === "admin" ? "Espelho de Operação (Administrador)" : "Seu Espelho de Comissão (Parceiro)"}
+                                </h4>
+                              </div>
+                              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest font-mono">
+                                Cotação #{String(c.id).slice(0, 8).toUpperCase()}
+                              </span>
+                            </div>
+                            {renderEspelhoDialogContent(c)}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 );
               })}
             </tbody>
