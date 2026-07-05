@@ -157,7 +157,7 @@ function NovoCliente() {
           tarifa_kwh: tarifaKwh,
           estado: f.estado || "SP",
           tipo: f.imovel_tipo || "residencial"
-        }, paramsComerciais);
+        }, paramsComerciais as any);
 
         // Carrega Kits fotovoltaicos do Supabase (ou fallback)
         let loadedKits = [...KITS_FALLBACK];
@@ -188,7 +188,7 @@ function NovoCliente() {
           kwp_override: kwpFinal,
           qtd_modulos_override: qtdModulosFinal,
           comissao_percent_override: profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? Number(profile.comissao_percent) : undefined,
-        }, paramsComerciais);
+        }, paramsComerciais as any);
 
         const precoFinal = finalCalculo.preco_total;
 
