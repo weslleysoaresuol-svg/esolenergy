@@ -157,7 +157,7 @@ function NovoCliente() {
           tarifa_kwh: tarifaKwh,
           estado: f.estado || "SP",
           tipo: f.imovel_tipo || "residencial"
-        }, paramsComerciais);
+        }, paramsComerciais as any);
 
         // Carrega Kits fotovoltaicos do Supabase (ou fallback)
         let loadedKits = [...KITS_FALLBACK];
