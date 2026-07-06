@@ -81,32 +81,10 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
   // ── Framer Motion: Scroll progress ──────────────────────────────────────────
   const { scrollYProgress } = useScroll();
   const navbarOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
-  const heroRotateY = useTransform(scrollYProgress, [0, 0.25], [0, -14]);
-  const heroRotateX = useTransform(scrollYProgress, [0, 0.25], [0, 8]);
-  const heroScale   = useTransform(scrollYProgress, [0, 0.25], [1, 1.06]);
-  const heroY       = useTransform(scrollYProgress, [0, 1], [0, -70]);
+  const heroScale   = useTransform(scrollYProgress, [0, 0.25], [1, 1.03]);
+  const heroY       = useTransform(scrollYProgress, [0, 0.25], [0, -35]);
   const readingScaleX = scrollYProgress;
 
-  // Camadas de animação 2.5D (Corpo do Instalador vs Painel Solar)
-  const bodyY = useTransform(scrollYProgress, [0, 0.35], [0, -25]);
-  const bodyRotateY = useTransform(scrollYProgress, [0, 0.35], [0, -5]);
-  const panelY = useTransform(scrollYProgress, [0, 0.35], [0, -55]);
-  const panelRotateX = useTransform(scrollYProgress, [0, 0.35], [0, 15]);
-  const panelRotateZ = useTransform(scrollYProgress, [0, 0.35], [0, -8]);
-  const panelScale = useTransform(scrollYProgress, [0, 0.35], [1, 1.04]);
-
-
-  // ── Hero card mouse-tilt (micro-rotation on hover) ───────────────────────────
-  const heroRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = heroRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    setTilt({ x: ((e.clientY - cy) / rect.height) * -8, y: ((e.clientX - cx) / rect.width) * 8 });
-  }, []);
-  const handleHeroMouseLeave = useCallback(() => setTilt({ x: 0, y: 0 }), []);
 
   // ── Counter-up animation ─────────────────────────────────────────────────────
   const [inertiaVisible, setInertiaVisible] = useState(false);
@@ -712,63 +690,24 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
             {/* ── Instalador Solar 3D Scroll-Tilt ── */}
             <div className="md:col-span-5 relative print:hidden">
               <motion.div
-                ref={heroRef}
                 className="relative group cursor-default"
                 style={{
-                  rotateY: heroRotateY,
-                  rotateX: heroRotateX,
                   scale: heroScale,
                   y: heroY,
-                  transformStyle: "preserve-3d",
-                  perspective: "1200px",
                 }}
-                animate={{
-                  rotateX: tilt.x,
-                  rotateY: tilt.y,
-                }}
-                transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                onMouseMove={handleHeroMouseMove}
-                onMouseLeave={handleHeroMouseLeave}
               >
                 {/* Halo de luz atrás da imagem */}
                 <div className="absolute -inset-2 bg-gradient-to-tr from-sun/25 via-amber-500/10 to-[#2E44B8]/20 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-1000" />
                 
                 <div className="relative rounded-2xl overflow-hidden border border-white/15 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] aspect-[4/3] bg-[#001046]">
-                  {/* Camada 1: O Corpo do Instalador (com a Polo/Cap da marca ESOL) */}
-                  <motion.div 
-                    className="absolute inset-0 w-full h-full"
-                    style={{ y: bodyY, rotateY: bodyRotateY }}
-                  >
-                    <img
-                      src={installerImg}
-                      alt="Instalador profissional ESOL Energy"
-                      className="w-full h-full object-cover"
-                      style={{ clipPath: "polygon(0 0, 72% 0, 58% 100%, 0 100%)" }}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.background = "linear-gradient(135deg, #001046 0%, #FFC107 100%)";
-                      }}
-                    />
-                  </motion.div>
-
-                  {/* Camada 2: O Painel Solar (Elemento Móvel) */}
-                  <motion.div 
-                    className="absolute inset-0 w-full h-full"
-                    style={{ 
-                      y: panelY, 
-                      rotateX: panelRotateX, 
-                      rotateZ: panelRotateZ, 
-                      scale: panelScale,
-                      transformOrigin: "bottom right"
+                  <img
+                    src={installerImg}
+                    alt="Instalador profissional ESOL Energy"
+                    className="w-full h-full object-cover transform group-hover:scale-[1.02] transition-all duration-700"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.background = "linear-gradient(135deg, #001046 0%, #FFC107 100%)";
                     }}
-                  >
-                    <img
-                      src={installerImg}
-                      alt="Painel solar em movimento"
-                      className="w-full h-full object-cover"
-                      style={{ clipPath: "polygon(70% 0, 100% 0, 100% 100%, 56% 100%)" }}
-                    />
-                  </motion.div>
-
+                  />
                   {/* Overlay gradiente no rodapé */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
                   <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
