@@ -11,10 +11,10 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import logo from "@/assets/esol-logo.png";
+import installerImg from "@/assets/installer-solar-premium.png";
+import heroSolarImg from "@/assets/hero-solar-premium.png";
+import trustSealsImg from "@/assets/trust-seals-solar.png";
 import { obterComponentesKit } from "@/lib/kits-fallback";
-
-// Imagem premium do instalador — asset exclusivo gerado via IA para ESOL Energy
-const INSTALLER_IMG = "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&auto=format&fit=crop&q=80";
 
 export interface PropostaViewProps {
   proposta: any;
@@ -24,6 +24,7 @@ export interface PropostaViewProps {
   onAceitar?: () => void;
   onRecusar?: () => void;
 }
+
 
 const FINANCEIRAS = {
   solfacil: {
@@ -724,7 +725,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 <div className="absolute -inset-2 bg-gradient-to-tr from-sun/25 via-amber-500/10 to-[#2E44B8]/20 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-1000" />
                 <div className="relative rounded-2xl overflow-hidden border border-white/15 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] aspect-[4/3]">
                   <img
-                    src={INSTALLER_IMG}
+                    src={installerImg}
                     alt="Instalador profissional ESOL Energy"
                     className="w-full h-full object-cover transform group-hover:scale-[1.02] transition-all duration-700"
                     onError={(e) => {
@@ -925,6 +926,41 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
           </div>
 
+        </div>
+      </section>
+
+      {/* ── PARALLAX BANNER CINEMATOGRÁFICO (V6) ── */}
+      <section className="relative h-[35vh] md:h-[48vh] overflow-hidden my-12 border-y border-white/10 print:hidden">
+        <motion.div 
+          className="absolute inset-0 w-full h-[120%]"
+          style={{ y: useTransform(scrollYProgress, [0.1, 0.5], ["-12%", "12%"]) }}
+        >
+          <img 
+            src={heroSolarImg} 
+            alt="Usinas fotovoltaicas de alta performance ESOL" 
+            className="w-full h-full object-cover brightness-[0.7] contrast-[1.05]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#000512] via-transparent to-[#000512]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#000512]/60 via-transparent to-transparent" />
+        </motion.div>
+        
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="max-w-4xl mx-auto px-6 text-center space-y-4 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h3 className="font-display text-2xl md:text-4xl font-black uppercase tracking-tight text-white leading-tight">
+                Engenharia de precisão para<br />
+                <span className="bg-gradient-to-r from-sun via-amber-300 to-sun bg-clip-text text-transparent">máxima geração de patrimônio</span>
+              </h3>
+              <p className="text-white/60 text-xs md:text-sm font-semibold max-w-lg mx-auto mt-2">
+                "Deixe o sol trabalhar por você." Cada detalhe do seu projeto foi planejado para maximizar a captura de fótons e acelerar o retorno do seu capital.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -1342,6 +1378,20 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                     answer="A única manutenção necessária é a lavagem periódica com água corrente das placas para remoção de poeira e detritos (duas vezes ao ano são recomendadas), garantindo que a captação permaneça em eficiência máxima." 
                   />
                 </div>
+              </div>
+
+              {/* Selos de Confiança (Trust Seals) da ESOL */}
+              <div className="bg-white/[0.02] border border-white/[0.06] backdrop-blur-xl rounded-3xl p-5 flex flex-col items-center gap-3 text-center print:hidden">
+                <span className="text-[10px] uppercase font-black text-white/50 tracking-widest">Garantia, Segurança &amp; Homologação ESOL</span>
+                <img 
+                  src={trustSealsImg} 
+                  alt="Selos de segurança e garantia ESOL Energy" 
+                  className="h-10 md:h-12 w-auto object-contain brightness-[0.95] contrast-[1.05]" 
+                  onError={(e) => {
+                    // Ocultar se o arquivo físico ainda não estiver compilado/disponível
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
               </div>
 
               {/* Botões de Ações de Fechamento */}
