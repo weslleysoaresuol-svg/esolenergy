@@ -205,15 +205,16 @@ export function hspForEstado(p: Parametros, uf?: string | null): number {
 /** Retorna o custo de mão de obra de instalação em R$ para o sistema inteiro */
 export function calcularCustoInstalacao(kwp: number, tipoTelhado: TipoTelhado, p: Parametros): number {
   let custoBase: number;
+  const d = PARAMETROS_DEFAULT;
   switch (tipoTelhado) {
-    case "ceramico":  custoBase = p.inst_ceramico_kwp; break;
-    case "metalico":  custoBase = p.inst_metalico_kwp; break;
-    case "laje":      custoBase = p.inst_laje_kwp; break;
-    case "solo":      custoBase = p.inst_solo_kwp; break;
-    case "especial":  custoBase = p.inst_especial_kwp; break;
-    default:          custoBase = p.inst_ceramico_kwp;
+    case "ceramico":  custoBase = p.inst_ceramico_kwp ?? d.inst_ceramico_kwp; break;
+    case "metalico":  custoBase = p.inst_metalico_kwp ?? d.inst_metalico_kwp; break;
+    case "laje":      custoBase = p.inst_laje_kwp ?? d.inst_laje_kwp; break;
+    case "solo":      custoBase = p.inst_solo_kwp ?? d.inst_solo_kwp; break;
+    case "especial":  custoBase = p.inst_especial_kwp ?? d.inst_especial_kwp; break;
+    default:          custoBase = p.inst_ceramico_kwp ?? d.inst_ceramico_kwp;
   }
-  const adicionalGrande = kwp > 20 ? (kwp - 20) * p.inst_adicional_grande_kwp : 0;
+  const adicionalGrande = kwp > 20 ? (kwp - 20) * (p.inst_adicional_grande_kwp ?? d.inst_adicional_grande_kwp) : 0;
   return +((kwp * custoBase) + adicionalGrande).toFixed(2);
 }
 
@@ -247,14 +248,16 @@ export function calcularCustoFrete(
   uf_destino: string | null | undefined,
   p: Parametros
 ): number {
-  if (!distribuidoraId || !uf_destino) return p.custo_frete_minimo_brl;
+  const d = PARAMETROS_DEFAULT;
+  const freteMinimo = p.custo_frete_minimo_brl ?? d.custo_frete_minimo_brl;
+  if (!distribuidoraId || !uf_destino) return freteMinimo;
   
   const distancia = getDistanciaCD(distribuidoraId, uf_destino);
   const mult = getMultiplicadorRegiao(uf_destino);
   
   // Calcula o custo base e o mínimo ajustado regionalmente
-  const custoBase = kwp * (distancia / 100) * p.custo_frete_por_100km_kwp * mult;
-  const minimoRegional = p.custo_frete_minimo_brl * mult;
+  const custoBase = kwp * (distancia / 100) * (p.custo_frete_por_100km_kwp ?? d.custo_frete_por_100km_kwp) * mult;
+  const minimoRegional = freteMinimo * mult;
   
   return +Math.max(custoBase, minimoRegional).toFixed(2);
 }
@@ -302,15 +305,16 @@ export function calcularPrecoMinimo(
   comissaoParceiroPct: number,
   p: Parametros
 ): { preco_minimo: number; breakdown: BreakdownCustos } {
-  const lucro_alvo = p.lucro_alvo_pct ?? 0.15;
+  const d = PARAMETROS_DEFAULT;
+  const lucro_alvo = p.lucro_alvo_pct ?? d.lucro_alvo_pct;
   const comissao_pct = ehAdmin ? 0 : comissaoParceiroPct;
 
   // Custos fixos conhecidos
   const c_instalacao    = calcularCustoInstalacao(kwp, tipoTelhado, p);
   const c_frete         = calcularCustoFrete(kwp, distribuidoraId, uf, p);
-  const c_imp_compra    = +(c_kit * (p.custo_impostos_compra_pct ?? 0.03)).toFixed(2);
-  const c_engenharia    = p.custo_engenharia_fixo_brl ?? 950;
-  const c_marketing     = p.custo_marketing_fixo_brl ?? 1000;
+  const c_imp_compra    = +(c_kit * (p.custo_impostos_compra_pct ?? d.custo_impostos_compra_pct)).toFixed(2);
+  const c_engenharia    = p.custo_engenharia_fixo_brl ?? d.custo_engenharia_fixo_brl;
+  const c_marketing     = p.custo_marketing_fixo_brl ?? d.custo_marketing_fixo_brl;
 
   const C_fixos = c_kit + c_instalacao + c_frete + c_imp_compra + c_engenharia + c_marketing;
 
