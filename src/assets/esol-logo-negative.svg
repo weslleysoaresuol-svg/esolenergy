@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewBox="0 0 915 416" width="100%" height="100%">
   <style>
-    .esol-navy { fill: #001046; }
+    .esol-navy { fill: #FFFFFF; }
     .esol-yellow { fill: #FFC107; }
-    .esol-gray { fill: #6B7280; }
+    .esol-gray { fill: #E5E7EB; }
     
     /* Regras dinamicas para modo escuro ou marcas especificas */
     .theme-dark .esol-navy { fill: #FFFFFF; }

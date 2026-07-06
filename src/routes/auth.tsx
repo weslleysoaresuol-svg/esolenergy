@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft, ShieldAlert, Mail, Lock } from "lucide-react";
 import logo from "@/assets/esol-logo.svg";
+import logoNegative from "@/assets/esol-logo-negative.svg";
 import heroHouse from "@/assets/hero-house.jpg";
 
 export const Route = createFileRoute("/auth")({
@@ -234,7 +235,7 @@ function AuthPage() {
             <span className="block text-[6px] text-slate-350 font-bold uppercase tracking-wider">Premium Tech</span>
           </div>
           <div className="h-5 w-px bg-white/20" />
-          <img src={logo} alt="ESOL Energy" className="h-10 w-auto filter brightness-0 invert opacity-90" />
+          <img src={logoNegative} alt="ESOL Energy" className="h-10 w-auto opacity-90" />
         </div>
 
         {/* Textos Principais / Slogan Concept */}
