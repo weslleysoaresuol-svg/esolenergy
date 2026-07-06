@@ -680,7 +680,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                   </div>
                   <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
                     <div className="text-[9px] text-slate-400 uppercase font-bold">Celulares Carregados</div>
-                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 85000, 0).toLocaleString("pt-BR")}</strong>
+                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 85000, 0)}</strong>
                     <span className="text-[9px] text-slate-400 block">Cargas completas</span>
                   </div>
                 </div>
