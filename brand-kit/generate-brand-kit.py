@@ -3,7 +3,7 @@ from PIL import Image
 
 def build_brand_kit():
     input_path = "src/assets/esol-logo-transparent.png"
-    output_dir = "brand-kit/1. Web-SVG"
+    output_dir = "public/brand-kit/1. Web-SVG"
     
     if not os.path.exists(input_path):
         print(f"ERROR: Logo transparente nao encontrada em: {input_path}")
@@ -77,8 +77,7 @@ def build_brand_kit():
     # 2. SUN ICON (Yellow)
     yellow_path_d = pixels_to_rle_paths(yellow_pixels)
     # 3. ENERGY/SLOGAN (Gray)
-    # Separar a palavra ENERGY da tagline ( ENERGY fica no meio, tagline no rodape )
-    # Separacao simples por coordenada Y
+    # Separar a palavra ENERGY da tagline
     energy_pixels = [p for p in gray_pixels if p[1] < height * 0.7]
     tagline_pixels = [p for p in gray_pixels if p[1] >= height * 0.7]
     
@@ -104,19 +103,16 @@ def build_brand_kit():
 
     save_stacked("esol-logo-stacked.svg", False)
     save_stacked("esol-logo-stacked-negative.svg", True)
-    print("Generated Stacked SVGs...")
 
     # ── 2. ESOL Brandmark (Apenas o Sol) ──
-    # Bounding box do sol
     sx, sy, sx2, sy2 = yellow_bbox
-    sw = (sx2 - sx) + 1
-    sh = (sy2 - sy) + 1
+    sun_w = (sx2 - sx) + 1
+    sun_h = (sy2 - sy) + 1
     
-    # Criar caminhos relativos ao sol
     sun_rel_path = pixels_to_rle_paths(yellow_pixels, offset=(sx, sy))
     
     def save_brandmark(filename, fill_color):
-        content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {sw} {sh}" width="100%" height="100%" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+        content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {sun_w} {sun_h}" width="100%" height="100%" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
   <path fill="{fill_color}" d="{sun_rel_path}" />
 </svg>
 '''
@@ -125,29 +121,23 @@ def build_brand_kit():
             
     save_brandmark("esol-logo-brandmark.svg", "#FFC107")
     save_brandmark("esol-logo-brandmark-white.svg", "#FFFFFF")
-    print("Generated Brandmark SVGs...")
 
-    # ── 3. ESOL Horizontal (Lado a Lado: ESOL à esquerda, ENERGY à direita) ──
-    # Precisamos encontrar a largura e altura do bloco ESOL (Navy + Sun)
+    # ── 3. ESOL Horizontal ──
     esol_pixels = navy_pixels + yellow_pixels
     ex, ey, ex2, ey2 = get_bbox(esol_pixels)
     esol_w = (ex2 - ex) + 1
     esol_h = (ey2 - ey) + 1
     
-    # Encontrar a largura e altura do bloco ENERGY
     en_x, en_y, en_x2, en_y2 = get_bbox(energy_pixels)
     energy_w = (en_x2 - en_x) + 1
     energy_h = (en_y2 - en_y) + 1
     
-    # Afastar ENERGY 30px para a direita
     gap = 40
     total_w = esol_w + gap + energy_w
     total_h = max(esol_h, energy_h)
     
-    # Alinhamento vertical do ENERGY (centralizado em relacao a altura do ESOL)
     vertical_offset = (total_h - energy_h) // 2
     
-    # Gerar os caminhos relativos
     esol_navy_rel = pixels_to_rle_paths(navy_pixels, offset=(ex, ey))
     esol_sun_rel = pixels_to_rle_paths(yellow_pixels, offset=(ex, ey))
     energy_rel = pixels_to_rle_paths(energy_pixels, offset=(en_x, en_y))
@@ -158,12 +148,10 @@ def build_brand_kit():
         
         content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {total_w} {total_h}" width="100%" height="100%" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
   <g class="esol-horizontal">
-    <!-- Bloco ESOL (esquerda) -->
     <g>
       <path fill="{navy_color}" d="{esol_navy_rel}" />
       <path fill="#FFC107" d="{esol_sun_rel}" />
     </g>
-    <!-- Bloco ENERGY (direita) -->
     <g transform="translate({esol_w + gap}, {vertical_offset})">
       <path fill="{gray_color}" d="{energy_rel}" />
     </g>
@@ -175,7 +163,7 @@ def build_brand_kit():
 
     save_horizontal("esol-logo-horizontal.svg", False)
     save_horizontal("esol-logo-horizontal-negative.svg", True)
-    print("Generated Horizontal SVGs...")
+    print("SUCCESS: 6 SVGs built inside public/brand-kit/1. Web-SVG/")
 
 if __name__ == "__main__":
     build_brand_kit()

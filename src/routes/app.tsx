@@ -8,7 +8,7 @@ import {
   LayoutDashboard, Users, UserCircle, LogOut, Briefcase, UserCog,
   Plus, FileText, Link2, FileSpreadsheet, BarChart3, Settings,
   Bell, CheckCheck, X, ExternalLink, Sun, ShoppingCart, Landmark, Zap,
-  CheckCircle2, Clock, AlertTriangle, Target, Calendar, Moon
+  CheckCircle2, Clock, AlertTriangle, Target, Calendar, Moon, BookOpen
 } from "lucide-react";
 import logo from "@/assets/esol-logo.svg";
 
@@ -243,6 +243,7 @@ function AppShell() {
     { to: "/app/kits", icon: Sun, label: "Kits Solares" },
     { to: "/app/corretores", icon: Briefcase, label: "Parceiros & Convites" },
     { to: "/app/equipe", icon: UserCog, label: "Equipe & Acessos" },
+    { to: "/app/marca", icon: BookOpen, label: "Manual de Marca" },
     { to: "/app/parametros", icon: Settings, label: "Parâmetros" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
