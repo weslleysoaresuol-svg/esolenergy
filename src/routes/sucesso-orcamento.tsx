@@ -278,7 +278,7 @@ function SucessoOrcamento() {
       {/* Header com Logotipo */}
       <header className="relative z-10 w-full max-w-6xl mx-auto px-6 py-4 flex justify-center sm:justify-start items-center">
         <Link to="/" className="transition hover:opacity-90">
-          <img src={logo} alt="ESOL Energy" className="h-8 w-auto" />
+          <img src={logo} alt="ESOL Energy" className="h-10 sm:h-11 w-auto" />
         </Link>
       </header>
 
