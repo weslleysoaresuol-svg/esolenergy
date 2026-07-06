@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ImageFilter
 
 def build_brand_kit_pngs():
     input_path = "src/assets/esol-logo-transparent.png"
@@ -10,14 +10,21 @@ def build_brand_kit_pngs():
         return
         
     os.makedirs(output_dir, exist_ok=True)
-    print("Loading and upscaling cropped logo 4x for extreme PNG nitidity...")
+    print("Loading, upscaling 4x and applying mathematical edge-smoothing (Gaussian Blur + Threshold) for PNGs...")
     original_img = Image.open(input_path).convert("RGBA")
     orig_w, orig_h = original_img.size
     
+    # 1. Upscale 4x
     scale = 4
     width = orig_w * scale
     height = orig_h * scale
-    img = original_img.resize((width, height), Image.Resampling.LANCZOS)
+    img_large = original_img.resize((width, height), Image.Resampling.LANCZOS)
+    
+    # 2. Suavizacao das bordas
+    r, g, b, a = img_large.split()
+    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=5))
+    a_thresholded = a_blurred.point(lambda p: 255 if p > 130 else 0)
+    img = Image.merge("RGBA", (r, g, b, a_thresholded))
     
     threshold_esol = 230 * scale
     threshold_energy = 340 * scale
@@ -26,32 +33,32 @@ def build_brand_kit_pngs():
     img_stacked = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     for y in range(height):
         for x in range(width):
-            r, g, b, a = img.getpixel((x, y))
-            if a > 40:
+            r_val, g_val, b_val, a_val = img.getpixel((x, y))
+            if a_val > 0:
                 if y <= threshold_esol:
-                    is_yellow = (r > 160 and g > 110 and b < 110)
+                    is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
-                        img_stacked.putpixel((x, y), (255, 193, 7, a)) # Solar Yellow (#FFC107)
+                        img_stacked.putpixel((x, y), (255, 193, 7, a_val)) # Solar Yellow (#FFC107)
                     else:
-                        img_stacked.putpixel((x, y), (0, 31, 92, a)) # Navy Royal (#001F5C)
+                        img_stacked.putpixel((x, y), (0, 31, 92, a_val)) # Navy Royal (#001F5C)
                 else:
-                    img_stacked.putpixel((x, y), (71, 85, 105, a)) # Slate Gray (#475569)
+                    img_stacked.putpixel((x, y), (71, 85, 105, a_val)) # Slate Gray (#475569)
     img_stacked.save(os.path.join(output_dir, "esol-logo-stacked.png"), "PNG")
     
     # ── 2. ESOL Stacked Negativo ──
     img_stacked_neg = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     for y in range(height):
         for x in range(width):
-            r, g, b, a = img.getpixel((x, y))
-            if a > 40:
+            r_val, g_val, b_val, a_val = img.getpixel((x, y))
+            if a_val > 0:
                 if y <= threshold_esol:
-                    is_yellow = (r > 160 and g > 110 and b < 110)
+                    is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
-                        img_stacked_neg.putpixel((x, y), (255, 193, 7, a))
+                        img_stacked_neg.putpixel((x, y), (255, 193, 7, a_val))
                     else:
-                        img_stacked_neg.putpixel((x, y), (255, 255, 255, a))
+                        img_stacked_neg.putpixel((x, y), (255, 255, 255, a_val))
                 else:
-                    img_stacked_neg.putpixel((x, y), (229, 231, 235, a)) # Silver Gray (#E5E7EB)
+                    img_stacked_neg.putpixel((x, y), (229, 231, 235, a_val)) # Silver Gray (#E5E7EB)
     img_stacked_neg.save(os.path.join(output_dir, "esol-logo-stacked-negative.png"), "PNG")
     
     # Mapeamento de pixels baseado em Y-range
@@ -61,10 +68,10 @@ def build_brand_kit_pngs():
     
     for y in range(height):
         for x in range(width):
-            r, g, b, a = img.getpixel((x, y))
-            if a > 40:
+            r_val, g_val, b_val, a_val = img.getpixel((x, y))
+            if a_val > 0:
                 if y <= threshold_esol:
-                    is_yellow = (r > 160 and g > 110 and b < 110)
+                    is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
                         yellow_pixels.append((x, y))
                     else:
@@ -92,9 +99,9 @@ def build_brand_kit_pngs():
     sun_crop_color = Image.new("RGBA", (sun_w, sun_h), (0, 0, 0, 0))
     for y in range(sun_h):
         for x in range(sun_w):
-            r, g, b, a = sun_crop.getpixel((x, y))
-            if a > 0:
-                sun_crop_color.putpixel((x, y), (255, 193, 7, a))
+            r_val, g_val, b_val, a_val = sun_crop.getpixel((x, y))
+            if a_val > 0:
+                sun_crop_color.putpixel((x, y), (255, 193, 7, a_val))
     
     def create_brandmark_png(filename, recolor_white=False):
         canvas = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
@@ -107,9 +114,9 @@ def build_brand_kit_pngs():
         if recolor_white:
             for y in range(new_h):
                 for x in range(new_w):
-                    r, g, b, a = resized_sun.getpixel((x, y))
-                    if a > 0:
-                        resized_sun.putpixel((x, y), (255, 255, 255, a))
+                    r_val, g_val, b_val, a_val = resized_sun.getpixel((x, y))
+                    if a_val > 0:
+                        resized_sun.putpixel((x, y), (255, 255, 255, a_val))
                         
         px = (512 - new_w) // 2
         py = (512 - new_h) // 2
@@ -145,32 +152,32 @@ def build_brand_kit_pngs():
         esol_block = Image.new("RGBA", (esol_w, esol_h), (0, 0, 0, 0))
         for y in range(esol_h):
             for x in range(esol_w):
-                r, g, b, a = esol_crop.getpixel((x, y))
-                if a > 40:
-                    is_yellow = (r > 160 and g > 110 and b < 110)
+                r_val, g_val, b_val, a_val = esol_crop.getpixel((x, y))
+                if a_val > 0:
+                    is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
-                        esol_block.putpixel((x, y), (255, 193, 7, a))
+                        esol_block.putpixel((x, y), (255, 193, 7, a_val))
                     elif is_negative:
-                        esol_block.putpixel((x, y), (255, 255, 255, a))
+                        esol_block.putpixel((x, y), (255, 255, 255, a_val))
                     else:
-                        esol_block.putpixel((x, y), (0, 31, 92, a))
+                        esol_block.putpixel((x, y), (0, 31, 92, a_val))
         canvas.paste(esol_block, (0, vertical_offset_esol), esol_block)
         
         energy_block = Image.new("RGBA", (energy_w, energy_h), (0, 0, 0, 0))
         for y in range(energy_h):
             for x in range(energy_w):
-                r, g, b, a = energy_crop.getpixel((x, y))
-                if a > 40:
+                r_val, g_val, b_val, a_val = energy_crop.getpixel((x, y))
+                if a_val > 0:
                     if is_negative:
-                        energy_block.putpixel((x, y), (229, 231, 235, a))
+                        energy_block.putpixel((x, y), (229, 231, 235, a_val))
                     else:
-                        energy_block.putpixel((x, y), (71, 85, 105, a))
+                        energy_block.putpixel((x, y), (71, 85, 105, a_val))
         canvas.paste(energy_block, (esol_w + gap, vertical_offset_energy), energy_block)
         canvas.save(os.path.join(output_dir, filename), "PNG")
 
     save_horizontal_png("esol-logo-horizontal.png", False)
     save_horizontal_png("esol-logo-horizontal-negative.png", True)
-    print("SUCCESS: 6 PNGs built in high resolution inside public/brand-kit/2. Imagens-PNG/")
+    print("SUCCESS: 6 PNGs built in high resolution and mathematically smoothed inside public/brand-kit/2. Imagens-PNG/")
 
 if __name__ == "__main__":
     build_brand_kit_pngs()

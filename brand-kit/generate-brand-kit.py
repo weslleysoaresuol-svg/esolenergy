@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ImageFilter
 
 def build_brand_kit():
     input_path = "src/assets/esol-logo-transparent.png"
@@ -10,15 +10,23 @@ def build_brand_kit():
         return
         
     os.makedirs(output_dir, exist_ok=True)
-    print("Reading and upscaling cropped logo 4x for extreme nitidity (LANCZOS)...")
+    print("Reading cropped logo, upscaling 4x and applying mathematical edge-smoothing (Gaussian Blur + Threshold)...")
     original_img = Image.open(input_path).convert("RGBA")
     orig_w, orig_h = original_img.size
     
-    # Upscale 4x
+    # 1. Upscale 4x
     scale = 4
     width = orig_w * scale
     height = orig_h * scale
-    img = original_img.resize((width, height), Image.Resampling.LANCZOS)
+    img_large = original_img.resize((width, height), Image.Resampling.LANCZOS)
+    
+    # 2. Suavizacao matematica das bordas via Blur + Threshold no canal Alpha
+    r, g, b, a = img_large.split()
+    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=5))
+    a_thresholded = a_blurred.point(lambda p: 255 if p > 130 else 0)
+    
+    # Recompor imagem base para processamento
+    img = Image.merge("RGBA", (r, g, b, a_thresholded))
     
     # Escalar os thresholds de Y
     threshold_esol = 230 * scale
@@ -30,16 +38,14 @@ def build_brand_kit():
     energy_pixels = []
     tagline_pixels = []
     
-    # Ajuste de cores oficiais da ESOL Energy (Harmonizadas com o site principal)
-    # Navy: #001F5C | Yellow: #FFC107 | Gray: #475569
+    # Cores oficiais da ESOL Energy (Navy: #001F5C | Yellow: #FFC107 | Gray: #475569)
     for y in range(height):
         for x in range(width):
-            r, g, b, a = img.getpixel((x, y))
-            if a > 40:
+            r_val, g_val, b_val, a_val = img.getpixel((x, y))
+            if a_val > 0:
                 if y <= threshold_esol:
                     # Separacao interna da primeira linha (ESOL Navy vs Sol Yellow)
-                    # No upscale a tonalidade de cor pode suavizar, por isso o threshold de amarelo e ligeiramente adaptado
-                    is_yellow = (r > 160 and g > 110 and b < 110)
+                    is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
                         yellow_pixels.append((x, y))
                     else:
@@ -175,7 +181,7 @@ def build_brand_kit():
 
     save_horizontal("esol-logo-horizontal.svg", False)
     save_horizontal("esol-logo-horizontal-negative.svg", True)
-    print("SUCCESS: 6 SVGs built in high resolution inside public/brand-kit/1. Web-SVG/")
+    print("SUCCESS: 6 SVGs built in high resolution and mathematically smoothed inside public/brand-kit/1. Web-SVG/")
 
 if __name__ == "__main__":
     build_brand_kit()
