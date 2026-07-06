@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Sun, Zap, TrendingDown, Leaf, ShieldCheck, Clock, Home, Award, Phone, Mail, MapPin,
-  AlertTriangle
+  AlertTriangle, TreePine, Car, Smartphone, ChevronDown
 } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
 import heroHouse from "@/assets/hero-house.jpg";
@@ -509,8 +509,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
   return (
     <div className="bg-[#000512] text-white font-sans min-h-screen relative overflow-hidden" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" } as React.CSSProperties}>
-      {/* Background Film Grain Overlay */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.015] bg-repeat animate-pulse" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`, animationDuration: "8s" }} />
+      {/* Background Film Grain Overlay - Using explicit inline opacity to guarantee it remains micro-subtle */}
+      <div className="absolute inset-0 pointer-events-none bg-repeat animate-pulse" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`, animationDuration: "8s", opacity: 0.012 }} />
       
       {/* Global Glowing Coronas */}
       <div className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-sun/10 to-transparent blur-[120px] pointer-events-none" />
@@ -531,7 +531,9 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           
           {/* Header */}
           <div className="flex justify-between items-center w-full">
-            <img src={logo} alt="ESOL Energy" className="h-11 md:h-14 w-auto brightness-0 invert transition-all" />
+            <div className="bg-white/95 px-4 py-2 rounded-2xl shadow-lg border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-[1.03]">
+              <img src={logo} alt="ESOL Energy" className="h-7 md:h-9 w-auto object-contain" />
+            </div>
             <div className="text-right">
               <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">Estudo Técnico-Comercial</span>
               <div className="font-mono text-xs font-black text-sun tracking-wider mt-0.5">
@@ -697,27 +699,33 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
               </p>
               
               <div className="space-y-4">
-                <div className="flex items-center gap-4 bg-white/[0.01] border border-white/[0.05] p-3 rounded-2xl">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-black">🌳</div>
+                <div className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                    <TreePine className="w-5 h-5" />
+                  </div>
                   <div>
                     <strong className="text-sm font-black text-white">{p.arvores_equivalentes || 25} mudas</strong>
-                    <div className="text-[10px] text-white/50">Árvores plantadas equivalentes por ano</div>
+                    <div className="text-[10px] text-white/40 font-medium">Árvores plantadas equivalentes por ano</div>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-4 bg-white/[0.01] border border-white/[0.05] p-3 rounded-2xl">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-black">🚗</div>
+                <div className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                    <Car className="w-5 h-5" />
+                  </div>
                   <div>
                     <strong className="text-sm font-black text-white">{(Number(p.kwp_sistema) * 1400).toFixed(0)} km</strong>
-                    <div className="text-[10px] text-white/50">Rodados em veículos elétricos sem emitir CO₂</div>
+                    <div className="text-[10px] text-white/40 font-medium">Rodados em veículos elétricos sem emitir CO₂</div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-white/[0.01] border border-white/[0.05] p-3 rounded-2xl">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-black">🔌</div>
+                <div className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                    <Smartphone className="w-5 h-5" />
+                  </div>
                   <div>
                     <strong className="text-sm font-black text-white">{(Number(p.kwp_sistema) * 125000).toLocaleString("pt-BR")}</strong>
-                    <div className="text-[10px] text-white/50">Recargas de bateria de celular evitadas da rede</div>
+                    <div className="text-[10px] text-white/40 font-medium">Recargas de bateria de celular evitadas da rede</div>
                   </div>
                 </div>
               </div>
@@ -1211,15 +1219,21 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 }
 
 function Stat({ icon: Icon, label, value, highlight }: any) {
+  const iconColorClass = highlight 
+    ? "bg-sun/10 text-sun border-sun/20" 
+    : "bg-white/5 text-white/80 border-white/10";
+
   return (
-    <div className={`rounded-3xl p-5 border text-center transition-all ${
+    <div className={`rounded-2xl p-6 border text-center transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 ${
       highlight 
-        ? "bg-white/[0.03] border-sun/30 shadow-glow" 
-        : "bg-white/[0.01] border-white/[0.06]"
-    }`} style={{ shadowColor: "rgba(255, 193, 7, 0.04)" } as any}>
-      <Icon className={`w-6 h-6 mx-auto mb-2 ${highlight ? "text-sun animate-pulse" : "text-white/40"}`} />
-      <div className="text-[10px] text-white/50 uppercase tracking-widest font-black">{label}</div>
-      <div className="font-display font-black text-lg md:text-xl text-white mt-1 leading-none">{value}</div>
+        ? "bg-gradient-to-b from-white/[0.04] to-white/[0.01] border-sun/30 shadow-[0_8px_30px_rgb(245,158,11,0.06)]" 
+        : "bg-gradient-to-b from-white/[0.02] to-white/[0.00] border-white/10 shadow-sm"
+    }`}>
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 border backdrop-blur-sm ${iconColorClass}`}>
+        <Icon className={`w-5 h-5 ${highlight ? "animate-pulse" : ""}`} />
+      </div>
+      <div className="text-[10px] text-white/40 uppercase tracking-wider font-bold">{label}</div>
+      <div className="font-display font-black text-xl md:text-2xl text-white mt-1.5 leading-none">{value}</div>
     </div>
   );
 }
@@ -1260,17 +1274,17 @@ function Trust({ icon: Icon, title, subtitle }: any) {
 function ObjectionItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="bg-white/[0.01] border border-white/[0.06] rounded-2xl p-4 space-y-1.5 transition-all text-left">
+    <div className="bg-gradient-to-b from-white/[0.02] to-transparent border border-white/[0.06] rounded-2xl p-4.5 space-y-2 transition-all text-left hover:bg-white/[0.01]">
       <button 
         type="button" 
         onClick={() => setIsOpen(!isOpen)} 
-        className="w-full flex justify-between items-center font-bold text-white text-[11px] text-left uppercase tracking-wider gap-2 focus:outline-none"
+        className="w-full flex justify-between items-center font-bold text-white text-xs text-left uppercase tracking-wider gap-2 focus:outline-none cursor-pointer"
       >
         <span>{question}</span>
-        <span className="text-sun font-extrabold text-sm">{isOpen ? "−" : "+"}</span>
+        <ChevronDown className={`w-4 h-4 text-sun transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
       </button>
       {isOpen && (
-        <p className="text-[10px] text-slate-300 leading-relaxed pt-2 border-t border-white/[0.06] animate-fade-in font-medium">
+        <p className="text-[11px] text-slate-300 leading-relaxed pt-3 border-t border-white/[0.06] animate-fade-in font-medium">
           {answer}
         </p>
       )}
