@@ -509,8 +509,6 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
   return (
     <div className="bg-[#000512] text-white font-sans min-h-screen relative overflow-hidden" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" } as React.CSSProperties}>
-      {/* Background Film Grain Overlay - Using explicit inline opacity to guarantee it remains micro-subtle */}
-      <div className="absolute inset-0 pointer-events-none bg-repeat animate-pulse" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`, animationDuration: "8s", opacity: 0.012 }} />
       
       {/* Global Glowing Coronas */}
       <div className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-sun/10 to-transparent blur-[120px] pointer-events-none" />
@@ -551,7 +549,11 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
               </div>
               
               <h1 className="font-display text-4xl md:text-6xl font-black leading-[1.08] tracking-tight">
-                Olá, <span className="bg-gradient-to-r from-sun to-amber-400 bg-clip-text text-transparent">{cliente?.nome?.split(" ")[0] || "cliente"}</span>
+                Olá, <span className="bg-gradient-to-r from-sun to-amber-400 bg-clip-text text-transparent">
+                  {cliente?.nome 
+                    ? cliente.nome.split(" ")[0].charAt(0).toUpperCase() + cliente.nome.split(" ")[0].slice(1).toLowerCase()
+                    : "Cliente"}
+                </span>
                 <br />Deixe o sol trabalhar por você.
               </h1>
               
@@ -951,8 +953,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 <BarChart data={chartData} margin={{ top: 20, right: 10, left: 0, bottom: 5 }}>
                   <defs>
                     <linearGradient id="barSolarGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--sun)" stopOpacity={1} />
-                      <stop offset="100%" stopColor="var(--sun-deep)" stopOpacity={0.4} />
+                      <stop offset="0%" stopColor="#F59E0B" stopOpacity={1} />
+                      <stop offset="100%" stopColor="#D97706" stopOpacity={0.4} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
