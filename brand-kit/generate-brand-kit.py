@@ -27,8 +27,8 @@ def build_brand_kit():
     img = Image.merge("RGBA", (r, g, b, a_thresholded))
     
     # Thresholds baseados no perfil real da nova logo reconstruida (4x)
-    threshold_esol = 270 * scale
-    threshold_energy = 420 * scale
+    threshold_esol = 290 * scale
+    threshold_energy = 450 * scale
     
     # Camadas de pixels segmentadas matematicamente por Y-range
     navy_pixels = []

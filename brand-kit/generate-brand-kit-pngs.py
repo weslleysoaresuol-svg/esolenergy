@@ -26,8 +26,8 @@ def build_brand_kit_pngs():
     a_thresholded = a_blurred.point(lambda p: 255 if p > 120 else 0)
     img = Image.merge("RGBA", (r, g, b, a_thresholded))
     
-    threshold_esol = 270 * scale
-    threshold_energy = 420 * scale
+    threshold_esol = 290 * scale
+    threshold_energy = 450 * scale
     
     # ── 1. ESOL Stacked Colorido ──
     img_stacked = Image.new("RGBA", (width, height), (0, 0, 0, 0))
