@@ -1,5 +1,5 @@
 import os
-from PIL import Image, ImageFilter
+from PIL import Image
 
 def build_brand_kit():
     input_path = "src/assets/esol-logo-transparent.png"
@@ -10,25 +10,13 @@ def build_brand_kit():
         return
         
     os.makedirs(output_dir, exist_ok=True)
-    print("Reading reconstructed logo, upscaling 4x and applying smooth rendering...")
-    original_img = Image.open(input_path).convert("RGBA")
-    orig_w, orig_h = original_img.size
+    print("Reading ultra-high-resolution original master logo...")
+    img = Image.open(input_path).convert("RGBA")
+    width, height = img.size
     
-    # 1. Upscale 4x
-    scale = 4
-    width = orig_w * scale
-    height = orig_h * scale
-    img_large = original_img.resize((width, height), Image.Resampling.LANCZOS)
-    
-    # 2. Suavizacao leve das bordas
-    r, g, b, a = img_large.split()
-    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=1.5))
-    a_thresholded = a_blurred.point(lambda p: 255 if p > 120 else 0)
-    img = Image.merge("RGBA", (r, g, b, a_thresholded))
-    
-    # Thresholds baseados no perfil real da nova logo reconstruida (4x)
-    threshold_esol = 290 * scale
-    threshold_energy = 450 * scale
+    # Thresholds baseados na logo master 2920x1320px
+    threshold_esol = 760
+    threshold_energy = 1080
     
     # Camadas de pixels segmentadas matematicamente por Y-range
     navy_pixels = []
@@ -36,13 +24,12 @@ def build_brand_kit():
     energy_pixels = []
     tagline_pixels = []
     
-    # Cores oficiais da ESOL Energy (Navy: #001F5C | Yellow: #FFC107 | Gray: #475569)
     for y in range(height):
         for x in range(width):
             r_val, g_val, b_val, a_val = img.getpixel((x, y))
-            if a_val > 0:
+            if a_val > 50:
                 if y <= threshold_esol:
-                    # Separacao interna (ESOL Navy vs Sol Yellow)
+                    # Separacao por cor (Navy vs Sol Amarelo)
                     is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
                         yellow_pixels.append((x, y))
@@ -100,8 +87,8 @@ def build_brand_kit():
 
     # ── 1. ESOL Stacked (Vertical Original) ──
     def save_stacked(filename, is_negative):
-        navy_color = "#FFFFFF" if is_negative else "#001F5C" # Navy do Site Oficial
-        gray_color = "#E5E7EB" if is_negative else "#475569" # Slate Gray do Site Oficial
+        navy_color = "#FFFFFF" if is_negative else "#001F5C"
+        gray_color = "#E5E7EB" if is_negative else "#475569"
         
         content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%" height="100%" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
   <g class="esol-stacked">
@@ -145,7 +132,7 @@ def build_brand_kit():
     energy_w = (en_x2 - en_x) + 1
     energy_h = (en_y2 - en_y) + 1
     
-    gap = 40 * scale
+    gap = 40 * 4 # Espacamento proporcional ao tamanho grande
     total_w = esol_w + gap + energy_w
     total_h = max(esol_h, energy_h)
     
@@ -179,7 +166,7 @@ def build_brand_kit():
 
     save_horizontal("esol-logo-horizontal.svg", False)
     save_horizontal("esol-logo-horizontal-negative.svg", True)
-    print("SUCCESS: 6 SVGs built inside public/brand-kit/1. Web-SVG/")
+    print("SUCCESS: 6 SVGs built from original master logo shapes.")
 
 if __name__ == "__main__":
     build_brand_kit()

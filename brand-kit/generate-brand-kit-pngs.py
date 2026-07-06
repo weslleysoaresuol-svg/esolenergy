@@ -1,5 +1,5 @@
 import os
-from PIL import Image, ImageFilter
+from PIL import Image
 
 def build_brand_kit_pngs():
     input_path = "src/assets/esol-logo-transparent.png"
@@ -10,47 +10,22 @@ def build_brand_kit_pngs():
         return
         
     os.makedirs(output_dir, exist_ok=True)
-    print("Loading, upscaling 4x and applying smooth rendering for PNGs...")
-    original_img = Image.open(input_path).convert("RGBA")
-    orig_w, orig_h = original_img.size
+    print("Reading and building PNG variations from original master logo...")
+    img = Image.open(input_path).convert("RGBA")
+    width, height = img.size
     
-    # 1. Upscale 4x
-    scale = 4
-    width = orig_w * scale
-    height = orig_h * scale
-    img_large = original_img.resize((width, height), Image.Resampling.LANCZOS)
-    
-    # 2. Suavizacao leve
-    r, g, b, a = img_large.split()
-    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=1.5))
-    a_thresholded = a_blurred.point(lambda p: 255 if p > 120 else 0)
-    img = Image.merge("RGBA", (r, g, b, a_thresholded))
-    
-    threshold_esol = 290 * scale
-    threshold_energy = 450 * scale
+    threshold_esol = 760
+    threshold_energy = 1080
     
     # ── 1. ESOL Stacked Colorido ──
-    img_stacked = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    for y in range(height):
-        for x in range(width):
-            r_val, g_val, b_val, a_val = img.getpixel((x, y))
-            if a_val > 0:
-                if y <= threshold_esol:
-                    is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
-                    if is_yellow:
-                        img_stacked.putpixel((x, y), (255, 193, 7, a_val)) # Solar Yellow (#FFC107)
-                    else:
-                        img_stacked.putpixel((x, y), (0, 31, 92, a_val)) # Navy Royal (#001F5C)
-                else:
-                    img_stacked.putpixel((x, y), (71, 85, 105, a_val)) # Slate Gray (#475569)
-    img_stacked.save(os.path.join(output_dir, "esol-logo-stacked.png"), "PNG")
+    img.save(os.path.join(output_dir, "esol-logo-stacked.png"), "PNG")
     
     # ── 2. ESOL Stacked Negativo ──
     img_stacked_neg = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     for y in range(height):
         for x in range(width):
             r_val, g_val, b_val, a_val = img.getpixel((x, y))
-            if a_val > 0:
+            if a_val > 50:
                 if y <= threshold_esol:
                     is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
@@ -69,7 +44,7 @@ def build_brand_kit_pngs():
     for y in range(height):
         for x in range(width):
             r_val, g_val, b_val, a_val = img.getpixel((x, y))
-            if a_val > 0:
+            if a_val > 50:
                 if y <= threshold_esol:
                     is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
@@ -139,7 +114,7 @@ def build_brand_kit_pngs():
     esol_crop = img.crop((ex, ey, ex2 + 1, ey2 + 1))
     energy_crop = img.crop((en_x, en_y, en_x2 + 1, en_y2 + 1))
     
-    gap = 40 * scale
+    gap = 40 * 4
     total_w = esol_w + gap + energy_w
     total_h = max(esol_h, energy_h) + 10
     
@@ -177,7 +152,7 @@ def build_brand_kit_pngs():
 
     save_horizontal_png("esol-logo-horizontal.png", False)
     save_horizontal_png("esol-logo-horizontal-negative.png", True)
-    print("SUCCESS: 6 PNGs built inside public/brand-kit/2. Imagens-PNG/")
+    print("SUCCESS: 6 PNGs built from original master logo shapes.")
 
 if __name__ == "__main__":
     build_brand_kit_pngs()
