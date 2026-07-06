@@ -564,8 +564,17 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                     <div className="font-semibold">{parceiro.nome || "Consultor ESOL"}</div>
                     {parceiro.telefone && <div className="text-sm text-white/70 flex items-center gap-1"><Phone className="w-3 h-3" />{parceiro.telefone}</div>}
                     {parceiro.email && <div className="text-xs text-white/60 flex items-center gap-1"><Mail className="w-3 h-3" />{parceiro.email}</div>}
-                     {/* DESTAQUES */}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* DESTAQUES */}
       <section className="max-w-5xl mx-auto px-6 md:px-12 -mt-8 relative z-10 print:mt-4">
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Stat icon={Zap} label="Sistema" value={`${NUM(Number(p.kwp_sistema), 2)} kWp`} />
           <Stat icon={TrendingDown} label="Economia Real/mês" value={BRL(calc.economia_ajustada_mensal)} highlight />
@@ -661,7 +670,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                   </div>
                   <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
                     <div className="text-[9px] text-slate-400 uppercase font-bold">Carro Elétrico</div>
-                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 5200, 0).toLocaleString("pt-BR")} km</strong>
+                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 5200, 0)} km</strong>
                     <span className="text-[9px] text-slate-400 block">Rodados sem poluição</span>
                   </div>
                   <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
@@ -671,7 +680,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                   </div>
                   <div className="bg-white p-4 rounded-2xl border text-center shadow-sm space-y-1">
                     <div className="text-[9px] text-slate-400 uppercase font-bold">Celulares Carregados</div>
-                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 85000, 0).toLocaleString("pt-BR")}</strong>
+                    <strong className="text-base font-black text-emerald-600 block">~{NUM(Number(p.co2_evitado_ton) * 85000, 0)}</strong>
                     <span className="text-[9px] text-slate-400 block">Cargas completas</span>
                   </div>
                 </div>

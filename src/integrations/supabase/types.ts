@@ -172,58 +172,127 @@ export type Database = {
       }
       cotacoes: {
         Row: {
+          ajuste_fio_b_mensal: number | null
           cliente_id: string
           codigo_publico: string
           created_at: string
+          custo_comissao: number | null
+          custo_disponibilidade_mensal: number | null
+          custo_engenharia_fixo: number | null
+          custo_equipamentos: number | null
+          custo_frete: number | null
+          custo_garantia: number | null
+          custo_impostos_compra: number | null
+          custo_instalacao: number | null
+          custo_marketing: number | null
+          custo_overhead: number | null
+          custo_tributacao_empresa: number | null
+          custos_operacionais_totais: number | null
+          economia_ajustada_25_anos: number | null
+          economia_ajustada_anual: number | null
+          economia_ajustada_mensal: number | null
           expires_at: string
+          fornecedor: string | null
           id: string
           kit_id: string | null
           kit_snapshot: Json | null
+          lucro_liquido_pct: number | null
+          lucro_liquido_real: number | null
+          margem_bruta: number | null
           observacoes: string | null
           parceiro_id: string
+          payback_ajustado_meses: number | null
           pedido_id: string | null
           preco_total: number
           preco_unit: number
           proposta_id: string | null
           quantidade: number
           status: Database["public"]["Enums"]["cotacao_status"]
+          tir_anual_pct: number | null
           updated_at: string
+          vpl_brl: number | null
         }
         Insert: {
+          ajuste_fio_b_mensal?: number | null
           cliente_id: string
           codigo_publico?: string
           created_at?: string
+          custo_comissao?: number | null
+          custo_disponibilidade_mensal?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_equipamentos?: number | null
+          custo_frete?: number | null
+          custo_garantia?: number | null
+          custo_impostos_compra?: number | null
+          custo_instalacao?: number | null
+          custo_marketing?: number | null
+          custo_overhead?: number | null
+          custo_tributacao_empresa?: number | null
+          custos_operacionais_totais?: number | null
+          economia_ajustada_25_anos?: number | null
+          economia_ajustada_anual?: number | null
+          economia_ajustada_mensal?: number | null
           expires_at?: string
+          fornecedor?: string | null
           id?: string
           kit_id?: string | null
           kit_snapshot?: Json | null
+          lucro_liquido_pct?: number | null
+          lucro_liquido_real?: number | null
+          margem_bruta?: number | null
           observacoes?: string | null
           parceiro_id: string
+          payback_ajustado_meses?: number | null
           pedido_id?: string | null
           preco_total: number
           preco_unit: number
           proposta_id?: string | null
           quantidade?: number
           status?: Database["public"]["Enums"]["cotacao_status"]
+          tir_anual_pct?: number | null
           updated_at?: string
+          vpl_brl?: number | null
         }
         Update: {
+          ajuste_fio_b_mensal?: number | null
           cliente_id?: string
           codigo_publico?: string
           created_at?: string
+          custo_comissao?: number | null
+          custo_disponibilidade_mensal?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_equipamentos?: number | null
+          custo_frete?: number | null
+          custo_garantia?: number | null
+          custo_impostos_compra?: number | null
+          custo_instalacao?: number | null
+          custo_marketing?: number | null
+          custo_overhead?: number | null
+          custo_tributacao_empresa?: number | null
+          custos_operacionais_totais?: number | null
+          economia_ajustada_25_anos?: number | null
+          economia_ajustada_anual?: number | null
+          economia_ajustada_mensal?: number | null
           expires_at?: string
+          fornecedor?: string | null
           id?: string
           kit_id?: string | null
           kit_snapshot?: Json | null
+          lucro_liquido_pct?: number | null
+          lucro_liquido_real?: number | null
+          margem_bruta?: number | null
           observacoes?: string | null
           parceiro_id?: string
+          payback_ajustado_meses?: number | null
           pedido_id?: string | null
           preco_total?: number
           preco_unit?: number
           proposta_id?: string | null
           quantidade?: number
           status?: Database["public"]["Enums"]["cotacao_status"]
+          tir_anual_pct?: number | null
           updated_at?: string
+          vpl_brl?: number | null
         }
         Relationships: [
           {
@@ -248,6 +317,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      financeiras_solar: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          prazo_maximo_meses: number
+          taxa_aprovacao_media: number
+          taxa_cet_mes: number
+          taxa_juros_mes: number
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          prazo_maximo_meses?: number
+          taxa_aprovacao_media?: number
+          taxa_cet_mes?: number
+          taxa_juros_mes?: number
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          prazo_maximo_meses?: number
+          taxa_aprovacao_media?: number
+          taxa_cet_mes?: number
+          taxa_juros_mes?: number
+        }
+        Relationships: []
       }
       financiamento_eventos: {
         Row: {
@@ -915,6 +1017,7 @@ export type Database = {
       propostas: {
         Row: {
           aceita_em: string | null
+          ajuste_fio_b_mensal: number | null
           area_necessaria_m2: number
           arvores_equivalentes: number
           cidade: string | null
@@ -923,8 +1026,23 @@ export type Database = {
           condicoes_pagamento: string | null
           consumo_kwh: number
           created_at: string
+          custo_comissao: number | null
+          custo_disponibilidade_mensal: number | null
+          custo_engenharia_fixo: number | null
+          custo_equipamentos: number | null
+          custo_frete: number | null
+          custo_garantia: number | null
+          custo_impostos_compra: number | null
+          custo_instalacao: number | null
+          custo_marketing: number | null
+          custo_overhead: number | null
+          custo_tributacao_empresa: number | null
+          custos_operacionais_totais: number | null
           distribuidora_id: string | null
           economia_25_anos: number
+          economia_ajustada_25_anos: number | null
+          economia_ajustada_anual: number | null
+          economia_ajustada_mensal: number | null
           economia_anual: number
           economia_mensal: number
           editada_pelo_admin: boolean
@@ -932,12 +1050,17 @@ export type Database = {
           enviada_em: string | null
           estado: string | null
           expires_at: string
+          fornecedor: string | null
           geracao_mensal_kwh: number
           hsp: number
           id: string
           kwp_sistema: number
+          lucro_liquido_pct: number | null
+          lucro_liquido_real: number | null
+          margem_bruta: number | null
           observacoes: string | null
           parceiro_id: string
+          payback_ajustado_meses: number | null
           payback_meses: number
           potencia_inversor_kw: number | null
           potencia_modulo_w: number
@@ -951,13 +1074,16 @@ export type Database = {
           tarifa_kwh: number
           tipo_instalacao: Database["public"]["Enums"]["tipo_instalacao"]
           tipo_telhado: string | null
+          tir_anual_pct: number | null
           titulo: string
           updated_at: string
           validade_dias: number
           visualizada_em: string | null
+          vpl_brl: number | null
         }
         Insert: {
           aceita_em?: string | null
+          ajuste_fio_b_mensal?: number | null
           area_necessaria_m2: number
           arvores_equivalentes?: number
           cidade?: string | null
@@ -966,8 +1092,23 @@ export type Database = {
           condicoes_pagamento?: string | null
           consumo_kwh: number
           created_at?: string
+          custo_comissao?: number | null
+          custo_disponibilidade_mensal?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_equipamentos?: number | null
+          custo_frete?: number | null
+          custo_garantia?: number | null
+          custo_impostos_compra?: number | null
+          custo_instalacao?: number | null
+          custo_marketing?: number | null
+          custo_overhead?: number | null
+          custo_tributacao_empresa?: number | null
+          custos_operacionais_totais?: number | null
           distribuidora_id?: string | null
           economia_25_anos: number
+          economia_ajustada_25_anos?: number | null
+          economia_ajustada_anual?: number | null
+          economia_ajustada_mensal?: number | null
           economia_anual: number
           economia_mensal: number
           editada_pelo_admin?: boolean
@@ -975,12 +1116,17 @@ export type Database = {
           enviada_em?: string | null
           estado?: string | null
           expires_at?: string
+          fornecedor?: string | null
           geracao_mensal_kwh: number
           hsp: number
           id?: string
           kwp_sistema: number
+          lucro_liquido_pct?: number | null
+          lucro_liquido_real?: number | null
+          margem_bruta?: number | null
           observacoes?: string | null
           parceiro_id: string
+          payback_ajustado_meses?: number | null
           payback_meses: number
           potencia_inversor_kw?: number | null
           potencia_modulo_w: number
@@ -994,13 +1140,16 @@ export type Database = {
           tarifa_kwh: number
           tipo_instalacao?: Database["public"]["Enums"]["tipo_instalacao"]
           tipo_telhado?: string | null
+          tir_anual_pct?: number | null
           titulo: string
           updated_at?: string
           validade_dias?: number
           visualizada_em?: string | null
+          vpl_brl?: number | null
         }
         Update: {
           aceita_em?: string | null
+          ajuste_fio_b_mensal?: number | null
           area_necessaria_m2?: number
           arvores_equivalentes?: number
           cidade?: string | null
@@ -1009,8 +1158,23 @@ export type Database = {
           condicoes_pagamento?: string | null
           consumo_kwh?: number
           created_at?: string
+          custo_comissao?: number | null
+          custo_disponibilidade_mensal?: number | null
+          custo_engenharia_fixo?: number | null
+          custo_equipamentos?: number | null
+          custo_frete?: number | null
+          custo_garantia?: number | null
+          custo_impostos_compra?: number | null
+          custo_instalacao?: number | null
+          custo_marketing?: number | null
+          custo_overhead?: number | null
+          custo_tributacao_empresa?: number | null
+          custos_operacionais_totais?: number | null
           distribuidora_id?: string | null
           economia_25_anos?: number
+          economia_ajustada_25_anos?: number | null
+          economia_ajustada_anual?: number | null
+          economia_ajustada_mensal?: number | null
           economia_anual?: number
           economia_mensal?: number
           editada_pelo_admin?: boolean
@@ -1018,12 +1182,17 @@ export type Database = {
           enviada_em?: string | null
           estado?: string | null
           expires_at?: string
+          fornecedor?: string | null
           geracao_mensal_kwh?: number
           hsp?: number
           id?: string
           kwp_sistema?: number
+          lucro_liquido_pct?: number | null
+          lucro_liquido_real?: number | null
+          margem_bruta?: number | null
           observacoes?: string | null
           parceiro_id?: string
+          payback_ajustado_meses?: number | null
           payback_meses?: number
           potencia_inversor_kw?: number | null
           potencia_modulo_w?: number
@@ -1037,10 +1206,12 @@ export type Database = {
           tarifa_kwh?: number
           tipo_instalacao?: Database["public"]["Enums"]["tipo_instalacao"]
           tipo_telhado?: string | null
+          tir_anual_pct?: number | null
           titulo?: string
           updated_at?: string
           validade_dias?: number
           visualizada_em?: string | null
+          vpl_brl?: number | null
         }
         Relationships: [
           {
@@ -1126,48 +1297,7 @@ export type Database = {
       }
     }
     Views: {
-      parametros_publicos: {
-        Row: {
-          area_por_modulo_m2: number | null
-          capacidade_instaladores_kwp_mes: number | null
-          comissao_padrao_pct: number | null
-          cosip_estimada_brl: number | null
-          custo_comissao_pct: number | null
-          custo_disponibilidade_mono_brl: number | null
-          custo_disponibilidade_tri_brl: number | null
-          custo_engenharia_fixo_brl: number | null
-          custo_frete_minimo_brl: number | null
-          custo_frete_por_100km_kwp: number | null
-          custo_garantia_pct: number | null
-          custo_impostos_compra_pct: number | null
-          custo_marketing_fixo_brl: number | null
-          custo_marketing_pct: number | null
-          custo_overhead_pct: number | null
-          hsp_centro_oeste: number | null
-          hsp_nordeste: number | null
-          hsp_norte: number | null
-          hsp_sudeste: number | null
-          hsp_sul: number | null
-          id: string | null
-          inflacao_energetica: number | null
-          inst_adicional_grande_kwp: number | null
-          inst_ceramico_kwp: number | null
-          inst_especial_kwp: number | null
-          inst_laje_kwp: number | null
-          inst_metalico_kwp: number | null
-          inst_solo_kwp: number | null
-          lucro_alvo_pct: number | null
-          margem_alvo_pct: number | null
-          percentual_fio_b: number | null
-          perdas_sistema: number | null
-          potencia_modulo_w: number | null
-          tarifa_kwh_default: number | null
-          tributacao_empresa_pct: number | null
-          validade_proposta_dias: number | null
-          vida_util_anos: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       consume_invite: { Args: { _token: string }; Returns: boolean }
