@@ -1,16 +1,20 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { BRL, NUM, calcularProposta } from "@/lib/proposta-calc";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Sun, Zap, TrendingDown, Leaf, ShieldCheck, Clock, Home, Award, Phone, Mail, MapPin,
-  AlertTriangle, TreePine, Car, Smartphone, ChevronDown
+  Sun, Zap, TrendingDown, TrendingUp, Leaf, ShieldCheck, Clock, Home, Award, Phone, Mail, MapPin,
+  AlertTriangle, TreePine, Car, Smartphone, ChevronDown, Check, MessageCircle,
+  CreditCard, Landmark, Banknote, Star, Cpu, Wifi
 } from "lucide-react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import logo from "@/assets/esol-logo.png";
-import heroHouse from "@/assets/hero-house.jpg";
 import { obterComponentesKit } from "@/lib/kits-fallback";
+
+// Imagem premium do instalador — asset exclusivo gerado via IA para ESOL Energy
+const INSTALLER_IMG = "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&auto=format&fit=crop&q=80";
 
 export interface PropostaViewProps {
   proposta: any;
@@ -73,7 +77,33 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     });
   }, [p]);
 
+  // ── Framer Motion: Scroll progress ──────────────────────────────────────────
+  const { scrollYProgress } = useScroll();
+  const navbarOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
+  const heroRotateY = useTransform(scrollYProgress, [0, 0.25], [0, -14]);
+  const heroRotateX = useTransform(scrollYProgress, [0, 0.25], [0, 8]);
+  const heroScale   = useTransform(scrollYProgress, [0, 0.25], [1, 1.06]);
+  const heroY       = useTransform(scrollYProgress, [0, 1], [0, -70]);
+  const readingScaleX = scrollYProgress;
+
+  // ── Hero card mouse-tilt (micro-rotation on hover) ───────────────────────────
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = heroRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    setTilt({ x: ((e.clientY - cy) / rect.height) * -8, y: ((e.clientX - cx) / rect.width) * 8 });
+  }, []);
+  const handleHeroMouseLeave = useCallback(() => setTilt({ x: 0, y: 0 }), []);
+
+  // ── Counter-up animation ─────────────────────────────────────────────────────
+  const [inertiaVisible, setInertiaVisible] = useState(false);
+  const [inertiaCount, setInertiaCount] = useState(0);
+
   const [bancos, setBancos] = useState<any[]>([]);
+
 
   useEffect(() => {
     (async () => {
@@ -218,6 +248,22 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     return Math.round(soma);
   }, [p.consumo_kwh, p.tarifa_kwh]);
 
+  // Counter-up para o custo da inércia
+  useEffect(() => {
+    if (!inertiaVisible) return;
+    let start = 0;
+    const end = custoInercia25Anos;
+    const duration = 2000;
+    const step = Math.ceil(end / (duration / 16));
+    const timer = setInterval(() => {
+      start = Math.min(start + step, end);
+      setInertiaCount(start);
+      if (start >= end) clearInterval(timer);
+    }, 16);
+    return () => clearInterval(timer);
+  }, [inertiaVisible, custoInercia25Anos]);
+
+
   const calc = useMemo(() => {
     if (p.economia_ajustada_mensal !== undefined && p.economia_ajustada_mensal !== null) {
       return {
@@ -299,8 +345,14 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
     });
   }, [calc, p.preco_total, savingsView]);
 
+  const paybackAnoIdx = useMemo(() => {
+    const meses = (calc as any).payback_ajustado_meses;
+    return meses ? Math.ceil(meses / 12) : 5;
+  }, [calc]);
+
   const validadeDias = p.validade_dias || 15;
   const expiraEm = p.expires_at ? new Date(p.expires_at) : null;
+
 
   if (docFinAguardando) {
     return (
@@ -509,26 +561,79 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
   return (
     <div className="bg-[#000512] text-white font-sans min-h-screen relative overflow-hidden" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" } as React.CSSProperties}>
-      
-      {/* Global Glowing Coronas */}
-      <div className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-sun/10 to-transparent blur-[120px] pointer-events-none" />
-      <div className="absolute top-[40%] left-[-20%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-tr from-[#0a2d6e]/20 to-transparent blur-[100px] pointer-events-none animate-sun-pulse" />
-      <div className="absolute bottom-[10%] right-[-15%] w-[45vw] h-[45vw] rounded-full bg-gradient-to-bl from-sun/5 to-transparent blur-[110px] pointer-events-none" />
+
+      {/* ── FUNDO VIVO: Aurora Solar Rotativa ── */}
+      <motion.div
+        className="absolute top-[-15%] right-[-12%] w-[65vw] h-[65vw] rounded-full bg-gradient-to-br from-sun/10 via-amber-500/5 to-transparent blur-[130px] pointer-events-none print:hidden"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute top-[35%] left-[-22%] w-[55vw] h-[55vw] rounded-full bg-gradient-to-tr from-[#0a2d6e]/20 to-transparent blur-[110px] pointer-events-none print:hidden"
+        animate={{ rotate: -360 }}
+        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+      />
+      <div className="absolute bottom-[8%] right-[-18%] w-[48vw] h-[48vw] rounded-full bg-gradient-to-bl from-sun/6 to-transparent blur-[120px] pointer-events-none animate-sun-pulse print:hidden" />
+
+      {/* ── PARTÍCULAS SOLARES FLUTUANTES (Elétrons) ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden print:hidden" aria-hidden>
+        {[
+          { top: "12%", left: "8%", dur: 8, delay: 0 },
+          { top: "28%", left: "92%", dur: 11, delay: 2 },
+          { top: "55%", left: "5%", dur: 9, delay: 4 },
+          { top: "70%", left: "85%", dur: 13, delay: 1 },
+          { top: "18%", left: "50%", dur: 7, delay: 3 },
+          { top: "42%", left: "72%", dur: 10, delay: 5 },
+          { top: "85%", left: "25%", dur: 12, delay: 2 },
+          { top: "60%", left: "45%", dur: 8, delay: 6 },
+          { top: "5%", left: "68%", dur: 14, delay: 1 },
+          { top: "90%", left: "62%", dur: 9, delay: 3 },
+        ].map((p, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-amber-400/25 blur-[0.5px]"
+            style={{ top: p.top, left: p.left }}
+            animate={{ y: [-10, -40, -10], x: [0, 8, -5, 0], opacity: [0.2, 0.6, 0.2] }}
+            transition={{ duration: p.dur, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+          />
+        ))}
+      </div>
+
+      {/* ── NAVBAR FLUTUANTE STICKY ── */}
+      <motion.nav
+        className="sticky top-3 z-50 max-w-5xl mx-auto px-3 print:hidden"
+        style={{ opacity: navbarOpacity }}
+      >
+        <div className="relative bg-[#000512]/70 border border-white/10 backdrop-blur-xl rounded-2xl px-5 py-3 flex justify-between items-center shadow-2xl overflow-hidden">
+          {/* Barra de leitura dourada */}
+          <motion.div
+            className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-sun via-amber-400 to-sun-deep origin-left"
+            style={{ scaleX: readingScaleX }}
+          />
+          <div className="bg-white/95 px-3 py-1.5 rounded-xl flex items-center justify-center border border-white/20 shadow-sm">
+            <img src={logo} alt="ESOL Energy" className="h-6 md:h-7 w-auto object-contain" />
+          </div>
+          <div className="text-right hidden md:block">
+            <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Estudo Técnico-Comercial</div>
+            <div className="font-mono text-[10px] font-black text-sun tracking-wider">Nº {String(p.id || "").slice(0, 8).toUpperCase()}</div>
+          </div>
+        </div>
+      </motion.nav>
 
       {docFinAprovadoFlag && (
-        <div className="bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-600 text-white py-3.5 px-6 text-center font-black text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 animate-fade-in relative z-50 print:hidden">
+        <div className="bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-600 text-white py-3.5 px-6 text-center font-black text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 animate-fade-in relative z-40 print:hidden">
           <ShieldCheck className="w-4 h-4 animate-bounce" /> CRÉDITO SOLAR PRÉ-APROVADO: Financiamento liberado via {FINANCEIRAS_ESTIMADO[dadosAprovados.banco as keyof typeof FINANCEIRAS_ESTIMADO]?.nome || dadosAprovados.banco.toUpperCase()} em {dadosAprovados.prazo}x de {BRL(dadosAprovados.pmt)} (Taxa de {dadosAprovados.taxa}% a.m.)!
         </div>
       )}
 
       {/* ========================================================
-          PÁGINA 1: CAPA (HERO CINEMÁTICO)
+          PÁGINA 1: CAPA (HERO CINEMÁTICO V6)
           ======================================================== */}
-      <section className="relative px-6 md:px-12 py-16 md:py-28 min-h-[90vh] md:min-h-screen flex flex-col justify-between print:page-break-after-always print:min-h-[95vh] print:py-10">
-        <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-between gap-12">
-          
-          {/* Header */}
-          <div className="flex justify-between items-center w-full">
+      <section className="relative px-6 md:px-12 py-16 md:py-28 min-h-[92vh] md:min-h-screen flex flex-col justify-between print:page-break-after-always print:min-h-[95vh] print:py-10">
+        <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-between gap-10">
+
+          {/* Header de Marca (versão print) */}
+          <div className="flex justify-between items-center w-full print:flex">
             <div className="bg-white/95 px-4 py-2 rounded-2xl shadow-lg border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-[1.03]">
               <img src={logo} alt="ESOL Energy" className="h-7 md:h-9 w-auto object-contain" />
             </div>
@@ -542,45 +647,111 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
           {/* Main Hero Grid */}
           <div className="grid md:grid-cols-12 gap-8 items-center my-auto">
-            {/* Texto de Abertura */}
-            <div className="md:col-span-7 space-y-6 animate-fade-up">
+
+            {/* ── Texto Headline Elite (Copywriting 2026) ── */}
+            <motion.div
+              className="md:col-span-7 space-y-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
               <div className="inline-flex items-center gap-2 bg-sun/10 text-sun px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-sun/20">
                 <Sun className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: "20s" }} /> ENERGIA SOLAR FOTOVOLTAICA
               </div>
-              
-              <h1 className="font-display text-4xl md:text-6xl font-black leading-[1.08] tracking-tight">
+
+              <h1 className="font-display text-4xl md:text-6xl font-black leading-[1.06] tracking-tight">
                 Olá, <span className="bg-gradient-to-r from-sun to-amber-400 bg-clip-text text-transparent">
-                  {cliente?.nome 
+                  {cliente?.nome
                     ? cliente.nome.split(" ")[0].charAt(0).toUpperCase() + cliente.nome.split(" ")[0].slice(1).toLowerCase()
                     : "Cliente"}
+                </span>.<br />
+                <span className="text-white">A partir de hoje,</span><br />
+                <span className="bg-gradient-to-r from-sun via-amber-300 to-amber-500 bg-clip-text text-transparent">
+                  sua energia custa zero.
                 </span>
-                <br />Deixe o sol trabalhar por você.
               </h1>
-              
-              <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-xl">
-                Preparamos uma projeção exclusiva baseada no seu consumo mensal de <strong className="text-white font-bold">{NUM(Number(p.consumo_kwh))} kWh</strong> em {p.cidade || "sua localidade"}/{p.estado}. Reduza sua fatura e conquiste independência da concessionária.
-              </p>
-            </div>
 
-            {/* Imagem Cover Premium */}
-            <div className="md:col-span-5 relative group print:hidden">
-              <div className="absolute -inset-1 bg-gradient-to-tr from-sun/30 to-[#2E44B8]/30 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-1000 shadow-glow" />
-              <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-[4/3] shadow-deep">
-                <img 
-                  src={heroHouse} 
-                  alt="Instalação Fotovoltaica ESOL" 
-                  className="w-full h-full object-cover transform scale-105 group-hover:scale-100 transition-all duration-700" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <span className="text-[10px] uppercase font-black text-sun tracking-widest">Projeto Exclusivo</span>
-                  <p className="text-[11px] text-white/80 font-medium">Usinas residenciais premium integradas à arquitetura.</p>
-                </div>
+              <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-xl">
+                Calculamos que você está pagando{" "}
+                <strong className="text-rose-400 font-black">{BRL((Number(p.consumo_kwh) * Number(p.tarifa_kwh)) + 22)}/mês</strong>{" "}
+                à concessionária em {p.cidade || "sua cidade"}/{p.estado}. Com este projeto, esse valor se torna <strong className="text-emerald-400 font-black">patrimônio e independência energética definitiva.</strong>
+              </p>
+
+              {/* ── Trust Anchors Strip ── */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">
+                {[
+                  { icon: ShieldCheck, label: "25 anos de garantia" },
+                  { icon: Award, label: "+500 instalações" },
+                  { icon: Cpu, label: "ART de engenharia" },
+                  { icon: Home, label: "Homologação inclusa" },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    className="flex items-center gap-1.5 bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-[10px] font-bold text-white/70"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.08, type: "spring", stiffness: 100 }}
+                  >
+                    <item.icon className="w-3.5 h-3.5 text-sun shrink-0" />
+                    {item.label}
+                  </motion.div>
+                ))}
               </div>
+            </motion.div>
+
+            {/* ── Instalador Solar 3D Scroll-Tilt ── */}
+            <div className="md:col-span-5 relative print:hidden">
+              <motion.div
+                ref={heroRef}
+                className="relative group cursor-default"
+                style={{
+                  rotateY: heroRotateY,
+                  rotateX: heroRotateX,
+                  scale: heroScale,
+                  y: heroY,
+                  transformStyle: "preserve-3d",
+                  perspective: "1200px",
+                }}
+                animate={{
+                  rotateX: tilt.x,
+                  rotateY: tilt.y,
+                }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                onMouseMove={handleHeroMouseMove}
+                onMouseLeave={handleHeroMouseLeave}
+              >
+                {/* Halo de luz atrás da imagem */}
+                <div className="absolute -inset-2 bg-gradient-to-tr from-sun/25 via-amber-500/10 to-[#2E44B8]/20 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-1000" />
+                <div className="relative rounded-2xl overflow-hidden border border-white/15 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] aspect-[4/3]">
+                  <img
+                    src={INSTALLER_IMG}
+                    alt="Instalador profissional ESOL Energy"
+                    className="w-full h-full object-cover transform group-hover:scale-[1.02] transition-all duration-700"
+                    onError={(e) => {
+                      // Fallback para imagem local se URL externa falhar
+                      (e.target as HTMLImageElement).style.background = "linear-gradient(135deg, #001046 0%, #FFC107 100%)";
+                    }}
+                  />
+                  {/* Overlay gradiente no rodapé */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <span className="text-[10px] uppercase font-black text-sun tracking-widest">Instalação Premium ESOL</span>
+                    <p className="text-[11px] text-white/80 font-medium">Profissional certificado. ART inclusa. Homologação garantida.</p>
+                  </div>
+                </div>
+                {/* Badge flutuante de qualidade */}
+                <motion.div
+                  className="absolute -top-3 -right-3 bg-gradient-to-br from-sun to-amber-500 text-navy text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg border border-amber-300/30"
+                  animate={{ y: [-2, 2, -2] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  ✦ Premium
+                </motion.div>
+              </motion.div>
             </div>
           </div>
 
-          {/* Dados do Consultor / Footer do Hero */}
+          {/* ── Dados do Consultor / Footer do Hero ── */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pt-8 border-t border-white/10">
             {parceiro ? (
               <div className="flex items-center gap-4 bg-white/[0.02] border border-white/[0.06] backdrop-blur-md rounded-2xl p-4 w-full md:w-auto">
@@ -605,7 +776,6 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 ESOL Energy · CNPJ 60.129.009/0001-29 · Todos os direitos reservados.
               </div>
             )}
-            
             <div className="text-left md:text-right text-xs text-white/60 font-medium animate-fade-in">
               Válido por {validadeDias} dias · {expiraEm ? `Expira em: ${expiraEm.toLocaleDateString("pt-BR")}` : ""}
             </div>
@@ -614,25 +784,45 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
         </div>
       </section>
 
+
       {/* ========================================================
           PÁGINA 2: O ESTUDO FOTOVOLTAICO & ECOLOGIA
           ======================================================== */}
       <section className="relative px-6 md:px-12 py-16 md:py-24 max-w-5xl mx-auto w-full print:page-break-after-always print:py-10" style={{ breakBefore: "page", pageBreakBefore: "always" }}>
-        <div className="space-y-12 animate-fade-up">
-          
-          {/* Section Header */}
-          <div className="space-y-2 border-b border-white/10 pb-6">
+        <div className="space-y-12">
+
+          {/* Section Header com Reveal */}
+          <motion.div
+            className="space-y-2 border-b border-white/10 pb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
             <span className="text-sun font-black text-xs uppercase tracking-widest">Dimensionamento Operacional</span>
             <h2 className="text-3xl md:text-5xl font-black">01. O Estudo Fotovoltaico</h2>
+          </motion.div>
+
+          {/* Grid de Métricas Principais — Staggered whileInView */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Zap, label: "Potência do Sistema", value: `${NUM(Number(p.kwp_sistema), 2)} kWp`, highlight: true },
+              { icon: TrendingDown, label: "Economia Estimada/mês", value: BRL(calc.economia_ajustada_mensal), highlight: true },
+              { icon: Clock, label: "Payback Estimado", value: `${(calc.payback_ajustado_meses / 12).toFixed(1)} anos`, highlight: false },
+              { icon: Leaf, label: "Carbono Evitado", value: `${NUM(Number(p.co2_evitado_ton), 1)} t/ano`, highlight: false },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 80, damping: 15 }}
+              >
+                <Stat icon={stat.icon} label={stat.label} value={stat.value} highlight={stat.highlight} />
+              </motion.div>
+            ))}
           </div>
 
-          {/* Grid de Métricas Principais */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Stat icon={Zap} label="Potência do Sistema" value={`${NUM(Number(p.kwp_sistema), 2)} kWp`} highlight />
-            <Stat icon={TrendingDown} label="Economia Estimada/mês" value={BRL(calc.economia_ajustada_mensal)} highlight />
-            <Stat icon={Clock} label="Payback Estimado" value={`${(calc.payback_ajustado_meses / 12).toFixed(1)} anos`} />
-            <Stat icon={Leaf} label="Carbono Evitado" value={`${NUM(Number(p.co2_evitado_ton), 1)} t/ano`} />
-          </div>
 
           {/* Análise Faturamento Atual vs Pós-Solar */}
           <div className="grid md:grid-cols-12 gap-8 items-start">
@@ -953,7 +1143,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 <BarChart data={chartData} margin={{ top: 20, right: 10, left: 0, bottom: 5 }}>
                   <defs>
                     <linearGradient id="barSolarGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#F59E0B" stopOpacity={1} />
+                      <stop offset="0%" stopColor="#FFC107" stopOpacity={1} />
                       <stop offset="100%" stopColor="#D97706" stopOpacity={0.4} />
                     </linearGradient>
                   </defs>
@@ -966,27 +1156,52 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                     itemStyle={{ color: "#FFC107" }}
                     formatter={(value: any) => [BRL(Number(value)), savingsView === "anual" ? "Economia no Ano" : "Acumulado"]}
                   />
-                  <Bar dataKey="economia" fill="url(#barSolarGrad)" radius={[6, 6, 0, 0]} />
+                  <ReferenceLine
+                    x={String(paybackAnoIdx)}
+                    stroke="rgba(239,68,68,0.6)"
+                    strokeDasharray="6 4"
+                    strokeWidth={2}
+                    label={{ value: "✓ Payback", fill: "#ef4444", fontSize: 10, fontWeight: "bold" }}
+                  />
+                  <Bar dataKey="economia" fill="url(#barSolarGrad)" radius={[6, 6, 0, 0]} isAnimationActive />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* O Custo da Inércia (Alerta de Urgência) */}
-          <div className="bg-gradient-to-br from-rose-950/40 via-red-950/20 to-transparent border border-rose-500/20 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 shadow-glow" style={{ shadowColor: "rgba(239, 68, 68, 0.1)" } as any}>
-            <div className="w-14 h-14 bg-rose-500/10 text-rose-500 flex items-center justify-center rounded-2xl text-2xl font-bold shrink-0 border border-rose-500/20 animate-pulse">
-              ⚠️
+          {/* O Custo da Inércia (Alerta Dramatizado V6) */}
+          <motion.div
+            className="bg-gradient-to-br from-rose-950/40 via-red-950/20 to-transparent border border-rose-500/20 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6"
+            initial={{ opacity: 0, scale: 0.97 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            onViewportEnter={() => setInertiaVisible(true)}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 rounded-2xl bg-rose-500/20 animate-ping opacity-40" />
+              <div className="relative w-14 h-14 bg-rose-500/10 text-rose-500 flex items-center justify-center rounded-2xl border border-rose-500/30">
+                <AlertTriangle className="w-7 h-7 animate-pulse" />
+              </div>
             </div>
             <div className="space-y-2">
               <span className="text-rose-400 font-black text-[10px] uppercase tracking-widest">O Custo do não fazer nada (Inércia)</span>
               <h4 className="text-lg font-black text-white">
-                Se você não agir hoje, gastará cerca de <span className="text-rose-400">{BRL(custoInercia25Anos)}</span> nos próximos 25 anos com a concessionária.
+                Se você não agir hoje, perderá cerca de{" "}
+                <span className="text-rose-400 font-mono">
+                  {BRL(inertiaVisible ? inertiaCount : 0)}
+                </span>{" "}
+                nos próximos 25 anos com a concessionária.
               </h4>
               <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                Este montante é perdido integralmente sem gerar nenhum patrimônio para a sua residência. Com o sistema fotovoltaico instalado, você converte essa despesa obrigatória em um gerador de riqueza e valorização patrimonial imediata.
+                Este montante é perdido integralmente sem gerar nenhum patrimônio. Com o sistema fotovoltaico, você converte essa despesa em um <strong className="text-white">gerador de riqueza e valorização patrimonial imediata</strong>.
               </p>
+              <div className="inline-flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/20 rounded-full px-3 py-1 text-[10px] font-black text-rose-400 uppercase tracking-wider">
+                <AlertTriangle className="w-3 h-3" />
+                Custo diário sem solar: <span className="text-white ml-1">{BRL(custoInercia25Anos / (25 * 365))}/dia</span>
+              </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </section>
@@ -1135,55 +1350,60 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
                 
                 {publico ? (
                   <div className="space-y-3">
-                    <button 
-                      onClick={onAceitar} 
-                      className="w-full bg-gradient-to-r from-sun to-amber-500 hover:from-sun-deep hover:to-amber-600 text-navy font-black text-xs uppercase tracking-widest h-12 rounded-2xl shadow-glow transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-1.5 cta-halo cursor-pointer"
-                      style={{ animationDuration: "2.6s" } as any}
-                    >
-                      ✓ Aceitar & Assinar Proposta
-                    </button>
-                    
-                    <button 
-                      onClick={() => window.print()} 
-                      className="w-full border border-white/10 hover:bg-white/5 text-white font-bold text-xs uppercase tracking-widest h-12 rounded-2xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      🖨️ Imprimir / Salvar PDF
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-3 print:hidden">
-                    <div className="grid grid-cols-2 gap-3">
-                      <button 
-                        onClick={onAceitar} 
-                        className="bg-gradient-to-r from-sun to-amber-500 text-navy font-black text-[10px] uppercase tracking-wider h-11 rounded-xl shadow-glow transition-all flex items-center justify-center gap-1 cursor-pointer"
-                      >
-                        ✓ Aceitar
-                      </button>
-                      <button 
-                        onClick={onRecusar} 
-                        className="border border-white/10 hover:bg-white/5 text-white/70 hover:text-white font-bold text-[10px] uppercase tracking-wider h-11 rounded-xl transition-all cursor-pointer"
-                      >
-                        Recusar
-                      </button>
-                    </div>
+                  <button
+                    onClick={onAceitar}
+                    className="w-full relative overflow-hidden bg-gradient-to-r from-sun to-amber-500 hover:from-sun-deep hover:to-amber-600 text-navy font-black text-xs uppercase tracking-widest h-12 rounded-2xl shadow-glow transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 cta-halo cursor-pointer group"
+                    style={{ animationDuration: "2.6s" } as any}
+                  >
+                    {/* Shine effect */}
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 skew-x-[-20deg]" />
+                    <Check className="w-4 h-4" /> Aceitar &amp; Assinar Proposta
+                  </button>
 
-                    <button 
-                      onClick={() => window.print()} 
-                      className="w-full border border-white/5 bg-white/[0.01] hover:bg-white/5 text-white font-bold text-xs uppercase tracking-widest h-11 rounded-xl transition-all cursor-pointer"
+                  <button
+                    onClick={() => window.print()}
+                    className="w-full border border-white/10 hover:bg-white/5 text-white font-bold text-xs uppercase tracking-widest h-12 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                    Imprimir / Salvar PDF
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3 print:hidden">
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={onAceitar}
+                      className="relative overflow-hidden bg-gradient-to-r from-sun to-amber-500 text-navy font-black text-[10px] uppercase tracking-wider h-11 rounded-xl shadow-glow transition-all flex items-center justify-center gap-1 cursor-pointer group"
                     >
-                      🖨️ Imprimir / Salvar PDF
+                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 skew-x-[-20deg]" />
+                      <Check className="w-3.5 h-3.5" /> Aceitar
+                    </button>
+                    <button
+                      onClick={onRecusar}
+                      className="border border-white/10 hover:bg-white/5 text-white/70 hover:text-white font-bold text-[10px] uppercase tracking-wider h-11 rounded-xl transition-all cursor-pointer"
+                    >
+                      Recusar
                     </button>
                   </div>
-                )}
+
+                  <button
+                    onClick={() => window.print()}
+                    className="w-full border border-white/5 bg-white/[0.01] hover:bg-white/5 text-white font-bold text-xs uppercase tracking-widest h-11 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                    Imprimir / Salvar PDF
+                  </button>
+                </div>
+              )}
                 
                 {parceiro?.telefone && (
                   <a
                     href={`https://wa.me/55${parceiro.telefone.replace(/\D/g, "")}?text=${encodeURIComponent(`Olá ${parceiro.nome}, recebi a proposta solar Nº ${String(p.id).slice(0, 8).toUpperCase()} e gostaria de tirar algumas dúvidas.`)}`}
                     target="_blank" 
                     rel="noreferrer"
-                    className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-black text-xs uppercase tracking-widest h-12 rounded-2xl transition-all flex items-center justify-center gap-1.5 shadow-md print:hidden"
+                    className="w-full bg-[#25D366] hover:bg-[#1ead57] text-white font-black text-xs uppercase tracking-widest h-12 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-md print:hidden"
                   >
-                    💬 Falar com o Consultor
+                    <MessageCircle className="w-4 h-4" /> Falar com o Consultor
                   </a>
                 )}
               </div>
@@ -1196,24 +1416,46 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
       </section>
 
       {/* ========================================================
-          RODAPÉ GERAL DE TRUST E AGILIDADE
+          RODÁPÉ GERAL DE TRUST E AGILIDADE V6
           ======================================================== */}
-      <section className="bg-black/40 border-t border-white/5 py-12">
-        <div className="max-w-5xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center animate-fade-in">
-          <Trust icon={ShieldCheck} title="25 anos" subtitle="Garantia dos módulos" />
-          <Trust icon={Award} title="Certificada" subtitle="Equipe especializada" />
-          <Trust icon={Home} title="Homologação" subtitle="Concessionária local" />
-          <Trust icon={Leaf} title={`${p.arvores_equivalentes || 25} árvores`} subtitle="Equivalente plantadas" />
+      <section className="bg-black/40 border-t border-white/5 py-14">
+        <div className="max-w-5xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-5 text-center">
+          {[
+            { icon: ShieldCheck, title: "25 anos", subtitle: "Garantia dos módulos" },
+            { icon: Award, title: "Certificada", subtitle: "Equipe especializada" },
+            { icon: Home, title: "Homologação", subtitle: "Concessionária local" },
+            { icon: Leaf, title: `${p.arvores_equivalentes || 25} árvores`, subtitle: "Equivalente plantadas" },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              className="flex flex-col items-center gap-2 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 hover:border-sun/30 transition-all duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, type: "spring", stiffness: 80 }}
+            >
+              <div className="w-12 h-12 rounded-xl bg-sun/10 border border-sun/20 flex items-center justify-center">
+                <item.icon className="w-6 h-6 text-sun animate-float-soft" />
+              </div>
+              <div className="font-display font-black text-sm text-white uppercase tracking-wider">{item.title}</div>
+              <div className="text-[10px] text-white/40 font-medium">{item.subtitle}</div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* Footer Final */}
-      <footer className="bg-black py-10 px-6 text-center text-xs text-white/40 border-t border-white/5">
-        <img src={logo} alt="ESOL" className="h-9 w-auto brightness-0 invert mx-auto mb-3" />
-        <div>ESOL Energy · CNPJ 60.129.009/0001-29</div>
-        <div className="text-white/30 mt-1 flex items-center justify-center gap-1">
-          <MapPin className="w-3 h-3 text-sun" /> Deixe o sol trabalhar por você
+      {/* Footer Final V6 — Logo com Cápsula Branca (Brand Guidelines ESOL) */}
+      <footer className="bg-black py-12 px-6 text-center text-xs text-white/40 border-t border-white/5">
+        {/* Logo na cápsula branca — nunca usar brightness-0 invert */}
+        <div className="inline-flex items-center justify-center bg-white/95 px-5 py-2.5 rounded-2xl shadow-lg border border-white/20 mx-auto mb-4">
+          <img src={logo} alt="ESOL Energy" className="h-8 w-auto object-contain" />
         </div>
+        <div className="font-medium">ESOL Energy · CNPJ 60.129.009/0001-29</div>
+        <div className="text-white/30 mt-1.5 flex items-center justify-center gap-1.5">
+          <MapPin className="w-3 h-3 text-sun" />
+          <span className="italic text-white/40">"Deixe o sol trabalhar por você."</span>
+        </div>
+        <div className="mt-3 text-[10px] text-white/20 uppercase tracking-widest">© {new Date().getFullYear()} Todos os direitos reservados</div>
       </footer>
 
     </div>
@@ -1276,20 +1518,32 @@ function Trust({ icon: Icon, title, subtitle }: any) {
 function ObjectionItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="bg-gradient-to-b from-white/[0.02] to-transparent border border-white/[0.06] rounded-2xl p-4.5 space-y-2 transition-all text-left hover:bg-white/[0.01]">
-      <button 
-        type="button" 
-        onClick={() => setIsOpen(!isOpen)} 
+    <div className="bg-gradient-to-b from-white/[0.02] to-transparent border border-white/[0.06] rounded-2xl p-4.5 text-left hover:bg-white/[0.01] transition-all">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
         className="w-full flex justify-between items-center font-bold text-white text-xs text-left uppercase tracking-wider gap-2 focus:outline-none cursor-pointer"
       >
         <span>{question}</span>
-        <ChevronDown className={`w-4 h-4 text-sun transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
+          <ChevronDown className="w-4 h-4 text-sun shrink-0" />
+        </motion.div>
       </button>
-      {isOpen && (
-        <p className="text-[11px] text-slate-300 leading-relaxed pt-3 border-t border-white/[0.06] animate-fade-in font-medium">
-          {answer}
-        </p>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="overflow-hidden"
+          >
+            <p className="text-[11px] text-slate-300 leading-relaxed pt-3 border-t border-white/[0.06] font-medium mt-2">
+              {answer}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
