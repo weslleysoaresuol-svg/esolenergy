@@ -10,7 +10,7 @@ def build_brand_kit_pngs():
         return
         
     os.makedirs(output_dir, exist_ok=True)
-    print("Loading, upscaling 4x and applying mathematical edge-smoothing (Gaussian Blur + Threshold) for PNGs...")
+    print("Loading, upscaling 4x and applying smooth rendering for PNGs...")
     original_img = Image.open(input_path).convert("RGBA")
     orig_w, orig_h = original_img.size
     
@@ -20,14 +20,14 @@ def build_brand_kit_pngs():
     height = orig_h * scale
     img_large = original_img.resize((width, height), Image.Resampling.LANCZOS)
     
-    # 2. Suavizacao das bordas
+    # 2. Suavizacao leve
     r, g, b, a = img_large.split()
-    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=5))
-    a_thresholded = a_blurred.point(lambda p: 255 if p > 130 else 0)
+    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=1.5))
+    a_thresholded = a_blurred.point(lambda p: 255 if p > 120 else 0)
     img = Image.merge("RGBA", (r, g, b, a_thresholded))
     
-    threshold_esol = 230 * scale
-    threshold_energy = 340 * scale
+    threshold_esol = 360 * scale
+    threshold_energy = 530 * scale
     
     # ── 1. ESOL Stacked Colorido ──
     img_stacked = Image.new("RGBA", (width, height), (0, 0, 0, 0))
@@ -177,7 +177,7 @@ def build_brand_kit_pngs():
 
     save_horizontal_png("esol-logo-horizontal.png", False)
     save_horizontal_png("esol-logo-horizontal-negative.png", True)
-    print("SUCCESS: 6 PNGs built in high resolution and mathematically smoothed inside public/brand-kit/2. Imagens-PNG/")
+    print("SUCCESS: 6 PNGs built inside public/brand-kit/2. Imagens-PNG/")
 
 if __name__ == "__main__":
     build_brand_kit_pngs()

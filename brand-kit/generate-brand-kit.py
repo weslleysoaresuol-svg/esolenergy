@@ -10,7 +10,7 @@ def build_brand_kit():
         return
         
     os.makedirs(output_dir, exist_ok=True)
-    print("Reading cropped logo, upscaling 4x and applying mathematical edge-smoothing (Gaussian Blur + Threshold)...")
+    print("Reading reconstructed logo, upscaling 4x and applying smooth rendering...")
     original_img = Image.open(input_path).convert("RGBA")
     orig_w, orig_h = original_img.size
     
@@ -20,17 +20,15 @@ def build_brand_kit():
     height = orig_h * scale
     img_large = original_img.resize((width, height), Image.Resampling.LANCZOS)
     
-    # 2. Suavizacao matematica das bordas via Blur + Threshold no canal Alpha
+    # 2. Suavizacao das bordas da logo reconstruida (desfoque muito leve de 1.5px apenas para o sol original)
     r, g, b, a = img_large.split()
-    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=5))
-    a_thresholded = a_blurred.point(lambda p: 255 if p > 130 else 0)
-    
-    # Recompor imagem base para processamento
+    a_blurred = a.filter(ImageFilter.GaussianBlur(radius=1.5))
+    a_thresholded = a_blurred.point(lambda p: 255 if p > 120 else 0)
     img = Image.merge("RGBA", (r, g, b, a_thresholded))
     
-    # Escalar os thresholds de Y
-    threshold_esol = 230 * scale
-    threshold_energy = 340 * scale
+    # Thresholds baseados no perfil real da nova logo reconstruida (4x)
+    threshold_esol = 360 * scale
+    threshold_energy = 530 * scale
     
     # Camadas de pixels segmentadas matematicamente por Y-range
     navy_pixels = []
@@ -44,7 +42,7 @@ def build_brand_kit():
             r_val, g_val, b_val, a_val = img.getpixel((x, y))
             if a_val > 0:
                 if y <= threshold_esol:
-                    # Separacao interna da primeira linha (ESOL Navy vs Sol Yellow)
+                    # Separacao interna (ESOL Navy vs Sol Yellow)
                     is_yellow = (r_val > 160 and g_val > 110 and b_val < 110)
                     if is_yellow:
                         yellow_pixels.append((x, y))
@@ -181,7 +179,7 @@ def build_brand_kit():
 
     save_horizontal("esol-logo-horizontal.svg", False)
     save_horizontal("esol-logo-horizontal-negative.svg", True)
-    print("SUCCESS: 6 SVGs built in high resolution and mathematically smoothed inside public/brand-kit/1. Web-SVG/")
+    print("SUCCESS: 6 SVGs built inside public/brand-kit/1. Web-SVG/")
 
 if __name__ == "__main__":
     build_brand_kit()
