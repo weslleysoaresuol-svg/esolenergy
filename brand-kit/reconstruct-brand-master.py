@@ -1,6 +1,17 @@
 import os
 import urllib.request
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
+
+def download_with_fallbacks(url_list, dest_path):
+    for url in url_list:
+        try:
+            print(f"Trying download from: {url}")
+            urllib.request.urlretrieve(url, dest_path)
+            print(f"Success! Downloaded to {dest_path}")
+            return True
+        except Exception as e:
+            print(f"Failed download from {url}: {e}")
+    return False
 
 def reconstruct_logo():
     input_path = "src/assets/esol-logo-transparent.png"
@@ -13,22 +24,32 @@ def reconstruct_logo():
         
     os.makedirs(font_dir, exist_ok=True)
     
-    # 1. Download das fontes Montserrat do Google Fonts
-    fonts = {
-        "BlackItalic": "https://github.com/JulietaUla/Montserrat/raw/master/fonts/ttf/Montserrat-BlackItalic.ttf",
-        "SemiBoldItalic": "https://github.com/JulietaUla/Montserrat/raw/master/fonts/ttf/Montserrat-SemiBoldItalic.ttf",
-        "Regular": "https://github.com/JulietaUla/Montserrat/raw/master/fonts/ttf/Montserrat-Regular.ttf"
+    # Lista de URLs candidatas para garantir que encontremos os TTFs do Librestile (Eurostile Clone)
+    fonts_urls = {
+        "LibrestileOblique": [
+            "https://raw.githubusercontent.com/ocelothe/librestile/master/LibrestileExtBoldOblique.ttf",
+            "https://raw.githubusercontent.com/ocelothe/librestile/main/LibrestileExtBoldOblique.ttf",
+            "https://raw.githubusercontent.com/ocelothe/librestile/master/fonts/ttf/LibrestileExtBoldOblique.ttf",
+            "https://github.com/ocelothe/librestile/raw/master/LibrestileExtBoldOblique.ttf?raw=true"
+        ],
+        "LibrestileBold": [
+            "https://raw.githubusercontent.com/ocelothe/librestile/master/LibrestileExtBold.ttf",
+            "https://raw.githubusercontent.com/ocelothe/librestile/main/LibrestileExtBold.ttf",
+            "https://raw.githubusercontent.com/ocelothe/librestile/master/fonts/ttf/LibrestileExtBold.ttf",
+            "https://github.com/ocelothe/librestile/raw/master/LibrestileExtBold.ttf?raw=true"
+        ],
+        "MontserratRegular": [
+            "https://github.com/JulietaUla/Montserrat/raw/master/fonts/ttf/Montserrat-Regular.ttf",
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/montserrat/Montserrat-Regular.ttf"
+        ]
     }
     
-    for name, url in fonts.items():
+    for name, urls in fonts_urls.items():
         dest = os.path.join(font_dir, f"{name}.ttf")
         if not os.path.exists(dest):
-            print(f"Downloading font: {name}...")
-            try:
-                urllib.request.urlretrieve(url, dest)
-                print(f"Downloaded {name}.ttf successfully.")
-            except Exception as e:
-                print(f"Error downloading {name}: {e}")
+            success = download_with_fallbacks(urls, dest)
+            if not success:
+                print(f"CRITICAL ERROR: Nao foi possivel baixar a fonte {name}")
                 return
 
     # 2. Carregar a logo original para isolar o Sol Dourado
@@ -42,7 +63,7 @@ def reconstruct_logo():
         for x in range(orig_w):
             r, g, b, a = orig.getpixel((x, y))
             if a > 50:
-                is_yellow = (r > 180 and g > 130 and b < 100)
+                is_yellow = (r > 160 and g > 110 and b < 110)
                 if is_yellow:
                     yellow_pixels.append((x, y))
                     
@@ -64,10 +85,10 @@ def reconstruct_logo():
     canvas = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(canvas)
     
-    # Carregar fontes com resolucao proporcional
-    font_esol = ImageFont.truetype(os.path.join(font_dir, "BlackItalic.ttf"), 480)
-    font_energy = ImageFont.truetype(os.path.join(font_dir, "SemiBoldItalic.ttf"), 110)
-    font_tagline = ImageFont.truetype(os.path.join(font_dir, "Regular.ttf"), 80)
+    # Carregar fontes com resolucao de Eurostile
+    font_esol = ImageFont.truetype(os.path.join(font_dir, "LibrestileOblique.ttf"), 380)
+    font_energy = ImageFont.truetype(os.path.join(font_dir, "LibrestileOblique.ttf"), 95)
+    font_tagline = ImageFont.truetype(os.path.join(font_dir, "MontserratRegular.ttf"), 75)
     
     # Cores Oficiais Harmonizadas
     navy_color = (0, 31, 92, 255)     # #001F5C
@@ -75,25 +96,23 @@ def reconstruct_logo():
     gray_color = (71, 85, 105, 255)   # #475569 (Slate Gray)
     
     # 3. Desenhar a palavra "ES"
-    # Bounding box do texto "ES"
-    es_x = 300
+    es_x = 350
     es_y = 200
     draw.text((es_x, es_y), "ES", font=font_esol, fill=navy_color)
     
     es_bbox = draw.textbbox((es_x, es_y), "ES", font=font_esol)
     es_w = es_bbox[2] - es_bbox[0]
+    es_h = es_bbox[3] - es_bbox[1]
     
     # 4. Redimensionar o Sol e posicionar
-    # Altura ideal do sol: aproximadamente 82% da altura de "ES" (es_bbox[3] - es_bbox[1])
-    es_h = es_bbox[3] - es_bbox[1]
-    sun_target_h = int(es_h * 0.82)
+    sun_target_h = int(es_h * 0.95)
     sun_aspect = sun_crop.width / sun_crop.height
     sun_target_w = int(sun_target_h * sun_aspect)
     
     # Escalar o sol com Lanczos
     sun_resized = sun_crop.resize((sun_target_w, sun_target_h), Image.Resampling.LANCZOS)
     
-    # Repintar os pixels do sol escalado para o amarelo solar oficial (#FFC107)
+    # Repintar os pixels do sol
     for sy_pixel in range(sun_target_h):
         for sx_pixel in range(sun_target_w):
             r, g, b, a = sun_resized.getpixel((sx_pixel, sy_pixel))
@@ -101,16 +120,13 @@ def reconstruct_logo():
                 sun_resized.putpixel((sx_pixel, sy_pixel), (255, 193, 7, a))
                 
     # Posicionar o sol logo apos a letra "S"
-    # Ajuste visual de gap (-10px de overlap para compensar o skew inclinado do Italic)
-    sun_x = es_bbox[2] - 15
-    # Alinhamento vertical (centralizar com a altura do "ES")
+    sun_x = es_bbox[2] + 25
     sun_y = es_bbox[1] + (es_h - sun_target_h) // 2 + 10
     
     canvas.paste(sun_resized, (sun_x, sun_y), sun_resized)
     
     # 5. Desenhar a letra "L"
-    # Posicionar L logo apos o sol
-    l_x = sun_x + sun_target_w - 5
+    l_x = sun_x + sun_target_w + 35
     draw.text((l_x, es_y), "L", font=font_esol, fill=navy_color)
     
     # Encontrar os limites da primeira linha toda
@@ -119,22 +135,18 @@ def reconstruct_logo():
     line1_center = es_bbox[0] + (line1_w // 2)
     
     # 6. Desenhar a palavra "ENERGY"
-    # Desenhamos letra a letra com tracking (espaçamento largo) customizado
     energy_text = "ENERGY"
-    # Calcular largura total de ENERGY com tracking para centralizar
-    # Obter larguras de cada letra
     char_widths = [draw.textbbox((0, 0), c, font=font_energy)[2] for c in energy_text]
-    tracking_gap = 52 # 52px de espacamento entre caracteres
+    tracking_gap = 48
     total_energy_w = sum(char_widths) + (tracking_gap * (len(energy_text) - 1))
     
-    # Centralizar ENERGY em relacao ao bloco "ESOL"
+    # Centralizar ENERGY
     energy_x_start = line1_center - (total_energy_w // 2)
-    energy_y = l_bbox[3] + 90
+    energy_y = l_bbox[3] + 110
     
     cursor_x = energy_x_start
     for char in energy_text:
         draw.text((cursor_x, energy_y), char, font=font_energy, fill=gray_color)
-        # Obter largura da letra atual
         c_bbox = draw.textbbox((0, 0), char, font=font_energy)
         c_w = c_bbox[2] - c_bbox[0]
         cursor_x += c_w + tracking_gap
@@ -146,20 +158,14 @@ def reconstruct_logo():
     tagline_bbox = draw.textbbox((0, 0), tagline_text, font=font_tagline)
     tagline_w = tagline_bbox[2] - tagline_bbox[0]
     
-    # Centralizar a tagline em relacao ao bloco "ESOL"
     tagline_x = line1_center - (tagline_w // 2)
-    tagline_y = energy_end_y + 110
+    tagline_y = energy_end_y + 120
     draw.text((tagline_x, tagline_y), tagline_text, font=font_tagline, fill=gray_color)
     
-    tagline_end_y = tagline_y + tagline_bbox[3]
-    
     # ── 8. Fazer o Crop Final e Salvar ──
-    # Encontrar a bounding box real do canvas desenhado
-    # getbbox() em um canvas RGBA encontra a area minima ocupada
     bbox = canvas.getbbox()
     if bbox:
-        # Adicionar um padding de seguranca de 15px ao redor
-        padding = 20
+        padding = 30
         crop_box = (
             max(0, bbox[0] - padding),
             max(0, bbox[1] - padding),
@@ -168,13 +174,12 @@ def reconstruct_logo():
         )
         final_logo = canvas.crop(crop_box)
         
-        # Redimensionar para um tamanho padrão de produção muito nitido (por exemplo, 1000px de largura)
         prod_w = 1100
         prod_h = int(prod_w * (final_logo.height / final_logo.width))
         prod_logo = final_logo.resize((prod_w, prod_h), Image.Resampling.LANCZOS)
         
         prod_logo.save(output_path, "PNG")
-        print(f"SUCCESS: Master logo reconstruida e salva em: {output_path} ({prod_w}x{prod_h}px)")
+        print(f"SUCCESS: Master logo reconstruida com Eurostile (Librestile) e salva em: {output_path} ({prod_w}x{prod_h}px)")
     else:
         print("ERROR: Falha ao recortar o canvas reconstruido.")
 

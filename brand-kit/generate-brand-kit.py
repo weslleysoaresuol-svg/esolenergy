@@ -20,15 +20,15 @@ def build_brand_kit():
     height = orig_h * scale
     img_large = original_img.resize((width, height), Image.Resampling.LANCZOS)
     
-    # 2. Suavizacao das bordas da logo reconstruida (desfoque muito leve de 1.5px apenas para o sol original)
+    # 2. Suavizacao leve das bordas
     r, g, b, a = img_large.split()
     a_blurred = a.filter(ImageFilter.GaussianBlur(radius=1.5))
     a_thresholded = a_blurred.point(lambda p: 255 if p > 120 else 0)
     img = Image.merge("RGBA", (r, g, b, a_thresholded))
     
     # Thresholds baseados no perfil real da nova logo reconstruida (4x)
-    threshold_esol = 360 * scale
-    threshold_energy = 530 * scale
+    threshold_esol = 270 * scale
+    threshold_energy = 420 * scale
     
     # Camadas de pixels segmentadas matematicamente por Y-range
     navy_pixels = []
