@@ -10,32 +10,45 @@ def build_brand_kit():
         return
         
     os.makedirs(output_dir, exist_ok=True)
-    print("Reading cropped logo...")
-    img = Image.open(input_path).convert("RGBA")
-    width, height = img.size
+    print("Reading and upscaling cropped logo 4x for extreme nitidity (LANCZOS)...")
+    original_img = Image.open(input_path).convert("RGBA")
+    orig_w, orig_h = original_img.size
     
-    # Camadas de pixels segmentadas matematicamente por Y-range (Horizontal Projection Profile)
+    # Upscale 4x
+    scale = 4
+    width = orig_w * scale
+    height = orig_h * scale
+    img = original_img.resize((width, height), Image.Resampling.LANCZOS)
+    
+    # Escalar os thresholds de Y
+    threshold_esol = 230 * scale
+    threshold_energy = 340 * scale
+    
+    # Camadas de pixels segmentadas matematicamente por Y-range
     navy_pixels = []
     yellow_pixels = []
     energy_pixels = []
     tagline_pixels = []
     
+    # Ajuste de cores oficiais da ESOL Energy (Harmonizadas com o site principal)
+    # Navy: #001F5C | Yellow: #FFC107 | Gray: #475569
     for y in range(height):
         for x in range(width):
             r, g, b, a = img.getpixel((x, y))
             if a > 40:
-                if y <= 230:
+                if y <= threshold_esol:
                     # Separacao interna da primeira linha (ESOL Navy vs Sol Yellow)
-                    is_yellow = (r > 180 and g > 130 and b < 100)
+                    # No upscale a tonalidade de cor pode suavizar, por isso o threshold de amarelo e ligeiramente adaptado
+                    is_yellow = (r > 160 and g > 110 and b < 110)
                     if is_yellow:
                         yellow_pixels.append((x, y))
                     else:
                         navy_pixels.append((x, y))
-                elif 230 < y <= 340:
+                elif threshold_esol < y <= threshold_energy:
                     # Linha 2: "ENERGY"
                     energy_pixels.append((x, y))
                 else:
-                    # Linha 3: Tagline "Deixe o sol trabalhar..."
+                    # Linha 3: Tagline
                     tagline_pixels.append((x, y))
 
     # Encontrar as bounding boxes reais de cada componente
@@ -83,13 +96,13 @@ def build_brand_kit():
 
     # ── 1. ESOL Stacked (Vertical Original) ──
     def save_stacked(filename, is_negative):
-        navy_color = "#FFFFFF" if is_negative else "#00246B" # Navy Royal Oficial
-        gray_color = "#E5E7EB" if is_negative else "#555555" # Slate Gray Oficial
+        navy_color = "#FFFFFF" if is_negative else "#001F5C" # Navy do Site Oficial
+        gray_color = "#E5E7EB" if is_negative else "#475569" # Slate Gray do Site Oficial
         
         content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%" height="100%" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
   <g class="esol-stacked">
     <path fill="{navy_color}" d="{navy_path_d}" />
-    <path fill="#FFB300" d="{yellow_path_d}" />
+    <path fill="#FFC107" d="{yellow_path_d}" />
     <path fill="{gray_color}" d="{energy_path_d}" />
     <path fill="{gray_color}" d="{tagline_path_d}" />
   </g>
@@ -115,22 +128,20 @@ def build_brand_kit():
         with open(os.path.join(output_dir, filename), "w", encoding="utf-8") as f:
             f.write(content)
             
-    save_brandmark("esol-logo-brandmark.svg", "#FFB300")
+    save_brandmark("esol-logo-brandmark.svg", "#FFC107")
     save_brandmark("esol-logo-brandmark-white.svg", "#FFFFFF")
 
     # ── 3. ESOL Horizontal ──
-    # Obter bounding box do bloco "ESOL"
     esol_pixels = navy_pixels + yellow_pixels
     ex, ey, ex2, ey2 = get_bbox(esol_pixels)
     esol_w = (ex2 - ex) + 1
     esol_h = (ey2 - ey) + 1
     
-    # Obter bounding box do bloco "ENERGY"
     en_x, en_y, en_x2, en_y2 = energy_bbox
     energy_w = (en_x2 - en_x) + 1
     energy_h = (en_y2 - en_y) + 1
     
-    gap = 40
+    gap = 40 * scale
     total_w = esol_w + gap + energy_w
     total_h = max(esol_h, energy_h)
     
@@ -144,14 +155,14 @@ def build_brand_kit():
     energy_rel = pixels_to_rle_paths(energy_pixels, offset=(en_x, en_y))
 
     def save_horizontal(filename, is_negative):
-        navy_color = "#FFFFFF" if is_negative else "#00246B"
-        gray_color = "#E5E7EB" if is_negative else "#555555"
+        navy_color = "#FFFFFF" if is_negative else "#001F5C"
+        gray_color = "#E5E7EB" if is_negative else "#475569"
         
         content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {total_w} {total_h}" width="100%" height="100%" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
   <g class="esol-horizontal">
     <g transform="translate(0, {vertical_offset_esol})">
       <path fill="{navy_color}" d="{esol_navy_rel}" />
-      <path fill="#FFB300" d="{esol_sun_rel}" />
+      <path fill="#FFC107" d="{esol_sun_rel}" />
     </g>
     <g transform="translate({esol_w + gap}, {vertical_offset_energy})">
       <path fill="{gray_color}" d="{energy_rel}" />
@@ -164,7 +175,7 @@ def build_brand_kit():
 
     save_horizontal("esol-logo-horizontal.svg", False)
     save_horizontal("esol-logo-horizontal-negative.svg", True)
-    print("SUCCESS: 6 SVGs built inside public/brand-kit/1. Web-SVG/")
+    print("SUCCESS: 6 SVGs built in high resolution inside public/brand-kit/1. Web-SVG/")
 
 if __name__ == "__main__":
     build_brand_kit()
