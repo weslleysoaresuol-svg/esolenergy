@@ -1318,7 +1318,7 @@ function Footer() {
     <footer className="bg-navy-deep text-white">
       <div className="mx-auto max-w-7xl px-6 py-10 sm:py-12 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
-          <img src={logoWhite} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto opacity-75 hover:opacity-100 transition-opacity duration-300" width={137} height={60} />
+          <img src={logo} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto brightness-0 invert opacity-75 hover:opacity-100 transition-opacity duration-300" />
           <p className="mt-5 max-w-sm text-white/80 text-sm leading-relaxed">
             Engenharia solar fotovoltaica de alta performance. Deixe o sol trabalhar por você.
           </p>
