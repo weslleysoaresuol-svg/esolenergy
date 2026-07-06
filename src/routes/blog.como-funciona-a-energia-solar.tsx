@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Sun, Zap, Battery, Home, Leaf, DollarSign, ArrowRight, BookOpen, Clock, Calendar, Check } from "lucide-react";
 import logo from "@/assets/esol-logo.png";
+import logoWhite from "@/assets/esol-logo-white.png";
 
 const TITLE = "Como funciona a energia solar? Guia completo (2026) — ESOL Energy";
 const DESCRIPTION =
@@ -359,7 +360,7 @@ function FooterBlog() {
     <footer className="bg-gradient-to-br from-navy to-navy-deep text-white border-t border-white/5">
       <div className="mx-auto max-w-7xl px-6 py-12 grid md:grid-cols-4 gap-8">
         <div className="md:col-span-2">
-          <img src={logo} alt="ESOL Energy" className="h-12 w-auto brightness-0 invert opacity-90" />
+          <img src={logoWhite} alt="ESOL Energy" className="h-14 w-auto" />
           <p className="mt-5 max-w-sm text-white/80 text-sm leading-relaxed">
             Engenharia solar fotovoltaica de alta performance. Deixe o sol trabalhar por você.
           </p>
