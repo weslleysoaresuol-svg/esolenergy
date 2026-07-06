@@ -1297,48 +1297,7 @@ export type Database = {
       }
     }
     Views: {
-      parametros_publicos: {
-        Row: {
-          area_por_modulo_m2: number | null
-          capacidade_instaladores_kwp_mes: number | null
-          comissao_padrao_pct: number | null
-          cosip_estimada_brl: number | null
-          custo_comissao_pct: number | null
-          custo_disponibilidade_mono_brl: number | null
-          custo_disponibilidade_tri_brl: number | null
-          custo_engenharia_fixo_brl: number | null
-          custo_frete_minimo_brl: number | null
-          custo_frete_por_100km_kwp: number | null
-          custo_garantia_pct: number | null
-          custo_impostos_compra_pct: number | null
-          custo_marketing_fixo_brl: number | null
-          custo_marketing_pct: number | null
-          custo_overhead_pct: number | null
-          hsp_centro_oeste: number | null
-          hsp_nordeste: number | null
-          hsp_norte: number | null
-          hsp_sudeste: number | null
-          hsp_sul: number | null
-          id: string | null
-          inflacao_energetica: number | null
-          inst_adicional_grande_kwp: number | null
-          inst_ceramico_kwp: number | null
-          inst_especial_kwp: number | null
-          inst_laje_kwp: number | null
-          inst_metalico_kwp: number | null
-          inst_solo_kwp: number | null
-          lucro_alvo_pct: number | null
-          margem_alvo_pct: number | null
-          percentual_fio_b: number | null
-          perdas_sistema: number | null
-          potencia_modulo_w: number | null
-          tarifa_kwh_default: number | null
-          tributacao_empresa_pct: number | null
-          validade_proposta_dias: number | null
-          vida_util_anos: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       consume_invite: { Args: { _token: string }; Returns: boolean }
