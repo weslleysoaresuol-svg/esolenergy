@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import logo from "@/assets/esol-logo.png";
+import logo from "@/assets/esol-logo.svg";
 import logoWhite from "@/assets/esol-logo-white.png";
 import portfolioResidential from "@/assets/portfolio-residential.jpg";
 import portfolioCommercial from "@/assets/portfolio-commercial.jpg";
@@ -1318,7 +1318,7 @@ function Footer() {
     <footer className="bg-navy-deep text-white">
       <div className="mx-auto max-w-7xl px-6 py-10 sm:py-12 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
-          <img src={logoWhite} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-14 sm:h-16 w-auto" width={137} height={60} />
+          <img src={logoWhite} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto opacity-75 hover:opacity-100 transition-opacity duration-300" width={137} height={60} />
           <p className="mt-5 max-w-sm text-white/80 text-sm leading-relaxed">
             Engenharia solar fotovoltaica de alta performance. Deixe o sol trabalhar por você.
           </p>

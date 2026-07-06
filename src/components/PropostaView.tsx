@@ -10,7 +10,7 @@ import {
   CreditCard, Landmark, Banknote, Star, Cpu, Wifi
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import logo from "@/assets/esol-logo.png";
+import logo from "@/assets/esol-logo.svg";
 import logoWhite from "@/assets/esol-logo-white.png";
 import installerImg from "@/assets/installer-solar-premium.png";
 import heroSolarImg from "@/assets/hero-solar-premium.png";
@@ -599,8 +599,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
             className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-sun via-amber-400 to-sun-deep origin-left"
             style={{ scaleX: readingScaleX }}
           />
-          <div className="bg-white/95 px-3 py-1.5 rounded-xl flex items-center justify-center border border-white/20 shadow-sm">
-            <img src={logo} alt="ESOL Energy" className="h-6 md:h-7 w-auto object-contain" />
+          <div className="bg-white/95 px-4 py-2 rounded-xl flex items-center justify-center border border-white/20 shadow-sm transition-all duration-300 hover:scale-[1.02]">
+            <img src={logo} alt="ESOL Energy" className="h-10 w-auto object-contain" />
           </div>
           <div className="text-right hidden md:block">
             <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Estudo Técnico-Comercial</div>
@@ -623,8 +623,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
           {/* Header de Marca (versão print) */}
           <div className="flex justify-between items-center w-full print:flex">
-            <div className="bg-white/95 px-4 py-2 rounded-2xl shadow-lg border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-[1.03]">
-              <img src={logo} alt="ESOL Energy" className="h-7 md:h-9 w-auto object-contain" />
+            <div className="bg-white/95 px-5 py-2.5 rounded-2xl shadow-lg border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-[1.03]">
+              <img src={logo} alt="ESOL Energy" className="h-14 w-auto object-contain" />
             </div>
             <div className="text-right">
               <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">Estudo Técnico-Comercial</span>
@@ -1474,8 +1474,8 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
       {/* Footer Final V6 — Logo com Cápsula Branca (Brand Guidelines ESOL) */}
       <footer className="bg-black py-12 px-6 text-center text-xs text-white/40 border-t border-white/5">
         {/* Logo na cápsula branca — nunca usar brightness-0 invert */}
-        <div className="inline-flex items-center justify-center bg-white/95 px-5 py-2.5 rounded-2xl shadow-lg border border-white/20 mx-auto mb-4">
-          <img src={logo} alt="ESOL Energy" className="h-8 w-auto object-contain" />
+        <div className="inline-flex items-center justify-center bg-white/95 px-6 py-3 rounded-2xl shadow-lg border border-white/20 mx-auto mb-4">
+          <img src={logo} alt="ESOL Energy" className="h-12 w-auto object-contain" />
         </div>
         <div className="font-medium">ESOL Energy · CNPJ 60.129.009/0001-29</div>
         <div className="text-white/30 mt-1.5 flex items-center justify-center gap-1.5">

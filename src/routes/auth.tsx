@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft, ShieldAlert, Mail, Lock } from "lucide-react";
-import logo from "@/assets/esol-logo.png";
+import logo from "@/assets/esol-logo.svg";
 import heroHouse from "@/assets/hero-house.jpg";
 
 export const Route = createFileRoute("/auth")({
@@ -87,7 +87,7 @@ function AuthPage() {
         {/* Cabeçalho */}
         <div className="flex items-center justify-between">
           <Link to="/" className="transition hover:opacity-95">
-            <img src={logo} alt="ESOL Energy" className="h-9 w-auto" />
+            <img src={logo} alt="ESOL Energy" className="h-16 w-auto" />
           </Link>
           <Link to="/" className="inline-flex items-center gap-1 text-[10px] font-black text-slate-400 hover:text-navy transition-all uppercase tracking-wider">
             <ArrowLeft className="w-3 h-3" /> Site
@@ -234,7 +234,7 @@ function AuthPage() {
             <span className="block text-[6px] text-slate-350 font-bold uppercase tracking-wider">Premium Tech</span>
           </div>
           <div className="h-5 w-px bg-white/20" />
-          <img src={logo} alt="ESOL Energy" className="h-6 w-auto filter brightness-0 invert opacity-90" />
+          <img src={logo} alt="ESOL Energy" className="h-10 w-auto filter brightness-0 invert opacity-90" />
         </div>
 
         {/* Textos Principais / Slogan Concept */}
