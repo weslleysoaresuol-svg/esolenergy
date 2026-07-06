@@ -27,7 +27,7 @@ function copyEsolAssets() {
       console.log("⚡ [ESOL Favicon] Cópia de favicon efetuada com sucesso!");
     }
 
-    const sourceInstaller = "C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/installer_solar_premium_1783309508885.png";
+    const sourceInstaller = "C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/installer_solar_branded_1783346973969.png";
     const destInstaller = path.join(__dirname, "src", "assets", "installer-solar-premium.png");
     if (fs.existsSync(sourceInstaller)) {
       fs.copyFileSync(sourceInstaller, destInstaller);

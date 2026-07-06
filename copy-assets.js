@@ -16,9 +16,9 @@ const filesToCopy = [
     name: "Favicon"
   },
   {
-    src: "C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/installer_solar_premium_1783309508885.png",
+    src: "C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/installer_solar_branded_1783346973969.png",
     dest: path.join(__dirname, "src", "assets", "installer-solar-premium.png"),
-    name: "Instalador Premium Solar"
+    name: "Instalador Premium Solar (Branded)"
   },
   {
     src: "C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/hero_solar_premium_1783308641338.png",
