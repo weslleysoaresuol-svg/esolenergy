@@ -58,33 +58,32 @@ def trace_and_reconstruct():
     svg_paths["S"] = contour_to_svg_path(approx_S)
     print(f"Letra S vetorizada com {len(approx_S)} pontos.")
     
-    # 3. Construir O (Normal) Matemático Perfeito com o Slant de 13.76° e Haste de 44px
-    # Seguindo exatamente as proporções do Sol original:
-    # Diâmetro Externo: 203px (Rx = 101.5), Diâmetro Interno: 115px (Rx = 57.5)
-    cx_o, cy_o = 626.5, 256
-    rx_out, ry_out = 101.5, 86.0
-    rx_in, ry_in = 57.5, 43.0
+    # 3. Construir O (Normal) como uma Elipse Rotacionada Real (Rotated Ellipse)
+    # Ajustando ao centro real da logo (620.1, 251.9) com os diâmetros exatos (206px x 173.6px)
+    cx_o, cy_o = 620.1, 251.9
+    rx_out, ry_out = 103.0, 86.8
+    rx_in, ry_in = 103.0 - 44.0, 86.8 - 44.0
     
-    def make_slanted_ellipse_path(cx, cy, rx, ry, slant):
+    def make_rotated_ellipse_path(cx, cy, rx, ry, angle_deg):
         pts = []
-        num_pts = 100
+        num_pts = 120
+        angle_rad = math.radians(angle_deg)
+        cos_a = math.cos(angle_rad)
+        sin_a = math.sin(angle_rad)
         for i in range(num_pts):
             theta = i * 2 * math.pi / num_pts
             x = rx * math.cos(theta)
             y = ry * math.sin(theta)
-            # Aplicar slant: x' = x + (cy - y_canvas) * slant?
-            # Na nossa convenção: y vai para baixo, então a baseline está no fundo (y = cy + ry).
-            # O deslocamento é baseado na distância vertical do centro:
-            # x_slant = x - y * slant
-            x_slant = x - y * slant
-            pts.append(f"{cx + x_slant:.1f} {cy + y:.1f}")
+            # Rotação anti-horária/horária em Y-down
+            x_rot = x * cos_a - y * sin_a
+            y_rot = x * sin_a + y * cos_a
+            pts.append(f"{cx + x_rot:.1f} {cy + y_rot:.1f}")
         return "M " + " L ".join(pts) + " Z"
         
-    path_O_out = make_slanted_ellipse_path(cx_o, cy_o, rx_out, ry_out, slant_tan)
-    path_O_in = make_slanted_ellipse_path(cx_o, cy_o, rx_in, ry_in, slant_tan)
-    # Em SVG, buracos são desenhados combinando os dois caminhos
+    path_O_out = make_rotated_ellipse_path(cx_o, cy_o, rx_out, ry_out, 13.76)
+    path_O_in = make_rotated_ellipse_path(cx_o, cy_o, rx_in, ry_in, 13.76)
     svg_paths["O"] = path_O_out + " " + path_O_in
-    print("Letra O (Normal) construída matematicamente.")
+    print("Letra O (Normal) construída via elipse rotacionada de alta precisão.")
     
     # 4. Vetorizar L
     # Bounding box do L: X=728 a 885, Y=174 a 340
