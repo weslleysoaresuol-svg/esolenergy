@@ -57,7 +57,7 @@ export function useCurrentUser(): CurrentUser {
           ativo: true,
           onboarding_completo: true,
           contrato_assinado: true
-        };
+        } as any;
       }
 
       setRole(resolved);
