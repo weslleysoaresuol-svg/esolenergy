@@ -68,8 +68,8 @@ function PerfilPage() {
     e.preventDefault();
     if (!user) return;
 
-    // Apenas a chave Pix é obrigatória
-    if (!form.pix_tipo || !form.pix_chave || !form.pix_chave.trim()) {
+    // Apenas a chave Pix é obrigatória (opcional para administradores)
+    if (role !== "admin" && (!form.pix_tipo || !form.pix_chave || !form.pix_chave.trim())) {
       toast.error("A chave Pix (Tipo e Chave) é obrigatória para o recebimento de comissões.");
       return;
     }
@@ -132,7 +132,7 @@ function PerfilPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label>Foto do consultor</Label>
+              <Label>Foto {role === "admin" ? "do administrador (Opcional)" : "do consultor"}</Label>
               <div className="flex gap-2 flex-wrap">
                 <input
                   ref={fileRef}
@@ -170,8 +170,19 @@ function PerfilPage() {
           <div><Label>Bio profissional</Label><Textarea value={form.bio || ""} onChange={(e) => set("bio", e.target.value)} rows={3} /></div>
 
           {role === "admin" && (
-            <div className="bg-amber-50 border border-amber-200 p-3 rounded text-sm text-amber-900">
-              Você é <strong>administrador</strong>. Acesso total ao sistema.
+            <div className="bg-amber-50 border border-amber-200 p-3 rounded text-sm text-amber-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                Você é <strong>administrador</strong>. Acesso total ao sistema.
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="text-xs shrink-0 bg-white border border-amber-300 text-amber-900 hover:bg-amber-100"
+                onClick={() => navigate({ to: "/app/contrato" })}
+              >
+                📝 {profile?.contrato_assinado ? "Visualizar Termo Assinado" : "Assinar Termo de Uso/Confidencialidade"}
+              </Button>
             </div>
           )}
           {role !== "admin" && !profile?.contrato_assinado && (
@@ -206,12 +217,12 @@ function PerfilPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <QrCode className="w-4 h-4 text-navy" />
-              <h3 className="font-semibold text-navy text-sm">Chave Pix *</h3>
+              <h3 className="font-semibold text-navy text-sm">Chave Pix {role !== "admin" && "*"}</h3>
               {temPix && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">✓ Cadastrado</span>}
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs">Tipo da chave Pix *</Label>
+                <Label className="text-xs">Tipo da chave Pix {role !== "admin" && "*"}</Label>
                 <Select value={form.pix_tipo || ""} onValueChange={(v) => set("pix_tipo", v)}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Selecione o tipo" />
@@ -225,7 +236,7 @@ function PerfilPage() {
                 </Select>
               </div>
               <div>
-                <Label className="text-xs">Chave Pix *</Label>
+                <Label className="text-xs">Chave Pix {role !== "admin" && "*"}</Label>
                 <Input
                   className="mt-1"
                   placeholder={

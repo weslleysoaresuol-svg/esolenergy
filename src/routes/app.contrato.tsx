@@ -37,7 +37,7 @@ function ContratoPage() {
 
   useEffect(() => {
     if (loading || !profile) return;
-    if (role === "admin" || role !== "corretor" || profile.contrato_assinado) {
+    if (profile.contrato_assinado) {
       navigate({ to: "/app" });
       return;
     }
@@ -84,10 +84,12 @@ function ContratoPage() {
     if (!assinatura) return toast.error("Desenhe sua assinatura");
     if (!nome.trim() || !cpf.trim()) return toast.error("Preencha nome e CPF");
 
-    // Valida uploads obrigatórios
-    if (!selfieFile) return toast.error("Por favor, envie a Selfie segurando o documento.");
-    if (!docFrenteFile) return toast.error("Por favor, envie a foto da Frente do seu documento.");
-    if (!docVersoFile) return toast.error("Por favor, envie a foto do Verso do seu documento.");
+    // Valida uploads obrigatórios (apenas para não-administradores)
+    if (role !== "admin") {
+      if (!selfieFile) return toast.error("Por favor, envie a Selfie segurando o documento.");
+      if (!docFrenteFile) return toast.error("Por favor, envie a foto da Frente do seu documento.");
+      if (!docVersoFile) return toast.error("Por favor, envie a foto do Verso do seu documento.");
+    }
 
     setSaving(true);
     try {
@@ -101,31 +103,40 @@ function ContratoPage() {
       if (up.error) throw up.error;
 
       // 2. Upload Selfie
-      const selfieExt = selfieFile.name.split(".").pop();
-      const selfiePath = `${user.id}/selfie-${Date.now()}.${selfieExt}`;
-      const upSelfie = await supabase.storage.from("parceiros").upload(selfiePath, selfieFile, {
-        contentType: selfieFile.type,
-        upsert: false,
-      });
-      if (upSelfie.error) throw upSelfie.error;
+      let selfiePath = null;
+      if (selfieFile) {
+        const selfieExt = selfieFile.name.split(".").pop();
+        selfiePath = `${user.id}/selfie-${Date.now()}.${selfieExt}`;
+        const upSelfie = await supabase.storage.from("parceiros").upload(selfiePath, selfieFile, {
+          contentType: selfieFile.type,
+          upsert: false,
+        });
+        if (upSelfie.error) throw upSelfie.error;
+      }
 
       // 3. Upload Frente
-      const frenteExt = docFrenteFile.name.split(".").pop();
-      const frentePath = `${user.id}/doc-frente-${Date.now()}.${frenteExt}`;
-      const upFrente = await supabase.storage.from("parceiros").upload(frentePath, docFrenteFile, {
-        contentType: docFrenteFile.type,
-        upsert: false,
-      });
-      if (upFrente.error) throw upFrente.error;
+      let frentePath = null;
+      if (docFrenteFile) {
+        const frenteExt = docFrenteFile.name.split(".").pop();
+        frentePath = `${user.id}/doc-frente-${Date.now()}.${frenteExt}`;
+        const upFrente = await supabase.storage.from("parceiros").upload(frentePath, docFrenteFile, {
+          contentType: docFrenteFile.type,
+          upsert: false,
+        });
+        if (upFrente.error) throw upFrente.error;
+      }
 
       // 4. Upload Verso
-      const versoExt = docVersoFile.name.split(".").pop();
-      const versoPath = `${user.id}/doc-verso-${Date.now()}.${versoExt}`;
-      const upVerso = await supabase.storage.from("parceiros").upload(versoPath, docVersoFile, {
-        contentType: docVersoFile.type,
-        upsert: false,
-      });
-      if (upVerso.error) throw upVerso.error;
+      let versoPath = null;
+      if (docVersoFile) {
+        const versoExt = docVersoFile.name.split(".").pop();
+        versoPath = `${user.id}/doc-verso-${Date.now()}.${versoExt}`;
+        const upVerso = await supabase.storage.from("parceiros").upload(versoPath, docVersoFile, {
+          contentType: docVersoFile.type,
+          upsert: false,
+        });
+        if (upVerso.error) throw upVerso.error;
+      }
 
       // capture IP
       let ip = "";
@@ -151,9 +162,9 @@ function ContratoPage() {
         assinatura_url: up.data.path,
         ip_assinatura: ip,
         user_agent: navigator.userAgent,
-        selfie_url: upSelfie.data.path,
-        documento_frente_url: upFrente.data.path,
-        documento_verso_url: upVerso.data.path,
+        selfie_url: selfiePath,
+        documento_frente_url: frentePath,
+        documento_verso_url: versoPath,
         codigo_verificacao_email: user.email,
         hash_conteudo_contrato: hashHex,
       });
@@ -221,7 +232,7 @@ function ContratoPage() {
               {/* Selfie */}
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                  1. Selfie com o Documento *
+                  1. Selfie com o Documento {role !== "admin" && " *"}
                 </Label>
                 <div 
                   onClick={() => document.getElementById("file-selfie")?.click()}
@@ -229,7 +240,7 @@ function ContratoPage() {
                 >
                   {selfiePreview ? (
                     <div className="space-y-2">
-                      <img src={selfiePreview} alt="Selfie" className="w-16 h-16 object-cover rounded-full mx-auto border-2 border-emerald-500 shadow" />
+                       <img src={selfiePreview} alt="Selfie" className="w-16 h-16 object-cover rounded-full mx-auto border-2 border-emerald-500 shadow" />
                       <span className="text-[10px] text-emerald-700 font-bold block">✓ Selfie Carregada</span>
                     </div>
                   ) : (
@@ -256,7 +267,7 @@ function ContratoPage() {
               {/* Frente do Documento */}
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                  2. Documento (Frente) *
+                  2. Documento (Frente) {role !== "admin" && " *"}
                 </Label>
                 <div 
                   onClick={() => document.getElementById("file-frente")?.click()}
@@ -290,7 +301,7 @@ function ContratoPage() {
               {/* Verso do Documento */}
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                  3. Documento (Verso) *
+                  3. Documento (Verso) {role !== "admin" && " *"}
                 </Label>
                 <div 
                   onClick={() => document.getElementById("file-verso")?.click()}
