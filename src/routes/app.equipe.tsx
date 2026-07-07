@@ -821,8 +821,8 @@ function AdminEquipe() {
                       disabled={membroSel.role === "admin"}
                       onChange={async (e) => {
                         const novaRole = e.target.value;
-                        if (membroSel.role === "admin" || novaRole === "admin") {
-                          toast.error("🛡️ Acesso negado: Administradores não podem ter o cargo alterado no painel. Novos administradores devem ser convidados via link de acesso.");
+                        if (membroSel.role === "admin") {
+                          toast.error("🛡️ Acesso negado: Administradores não podem ser rebaixados no painel por motivos de segurança.");
                           return;
                         }
                         try {
@@ -836,9 +836,24 @@ function AdminEquipe() {
                               role: novaRole as any
                             });
                             if (error) throw error;
+
+                            // Se promovido a administrador, ativa o perfil e marca o termo como assinado automaticamente
+                            if (novaRole === "admin") {
+                              await supabase.from("profiles").update({
+                                ativo: true,
+                                onboarding_completo: true,
+                                contrato_assinado: true
+                              }).eq("id", membroSel.id);
+                              toast.success("Acesso completo de Administrador liberado e termo assinado!");
+                            }
+                          } else {
+                            // Se for suspenso (pendente), desativa o perfil
+                            await supabase.from("profiles").update({
+                              ativo: false
+                            }).eq("id", membroSel.id);
                           }
                           
-                          toast.success("Cargo de acesso acesso atualizado!");
+                          toast.success("Cargo de acesso atualizado com sucesso!");
                           setMembroSel((prev: any) => ({ ...prev, role: novaRole }));
                           loadEquipe();
                         } catch (err: any) {
