@@ -28,8 +28,9 @@ export function useCurrentUser(): CurrentUser {
         supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
       ]);
       const isMarcos = u.user.email?.toLowerCase() === "marcos.nubank777@gmail.com";
+      const isTestAdmin = u.user.email?.toLowerCase() === "teste.admin@esolenergy.com";
       const roles = (r ?? []).map((row: any) => row.role as AppRole);
-      let resolved: AppRole | null = (roles.includes("admin") || isMarcos)
+      let resolved: AppRole | null = (roles.includes("admin") || isMarcos || isTestAdmin)
         ? "admin"
         : roles.includes("auxiliar")
           ? "auxiliar"
@@ -48,11 +49,11 @@ export function useCurrentUser(): CurrentUser {
                       : null;
 
       let profileData = p ?? null;
-      if (isMarcos || resolved === "admin") {
+      if (isMarcos || isTestAdmin || resolved === "admin") {
         profileData = {
           ...(profileData || {}),
           id: u.user.id,
-          nome: profileData?.nome || u.user.user_metadata?.full_name || (isMarcos ? "Marcos Barbosa da Silva" : u.user.email?.split("@")[0]),
+          nome: profileData?.nome || u.user.user_metadata?.full_name || (isMarcos ? "Marcos Barbosa da Silva" : (isTestAdmin ? "Administrador de Teste" : u.user.email?.split("@")[0])),
           email: u.user.email || null,
           ativo: true,
           onboarding_completo: true,
