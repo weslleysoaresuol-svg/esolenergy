@@ -1,82 +1,187 @@
 import os
-from PIL import Image, ImageFilter
+import urllib.request
+from PIL import Image, ImageDraw, ImageFont
 
-def reconstruct_original():
-    input_path = "src/assets/esol-logo.png"
+def reconstruct_logo():
     output_path = "src/assets/esol-logo-transparent.png"
+    font_dir = "brand-kit/temp-fonts"
     
-    if not os.path.exists(input_path):
-        print(f"ERROR: Logo original nao encontrada em: {input_path}")
+    os.makedirs(font_dir, exist_ok=True)
+    
+    # 1. Downloads de fontes oficiais do Google Fonts e de repositorios publicos (Neo Sans Std)
+    fonts = {
+        "NeoSansMedium": "https://raw.githubusercontent.com/ottz0/swd-portfolio/master/dist/assets/fonts/Neo%20Sans%20Std%20Medium.ttf",
+        "MontserratRegular": "https://github.com/JulietaUla/Montserrat/raw/master/fonts/ttf/Montserrat-Regular.ttf"
+    }
+    
+    for name, url in fonts.items():
+        dest = os.path.join(font_dir, f"{name}.ttf")
+        if not os.path.exists(dest):
+            print(f"Downloading font: {name}...")
+            try:
+                urllib.request.urlretrieve(url.replace(" ", "%20"), dest)
+                print(f"Downloaded {name}.ttf successfully.")
+            except Exception as e:
+                print(f"Error downloading {name}: {e}")
+                return
+
+    # 2. Carregar original para recortar o Sol de forma limpa e transparente
+    print("Isolating the golden sun from the original logo...")
+    orig = Image.open("src/assets/esol-logo.png").convert("RGB")
+    w, h = orig.size
+    
+    # Encontrar os pixels amarelos do sol
+    yellow_pixels = []
+    for y in range(h):
+        for x in range(w):
+            r, g, b = orig.getpixel((x, y))
+            is_yellow = (r > 180 and g > 130 and b < 100)
+            if is_yellow:
+                yellow_pixels.append((x, y))
+                
+    if not yellow_pixels:
+        print("ERROR: Golden sun pixels not found.")
         return
         
-    print("Loading original logo with baked checkerboard...")
-    img = Image.open(input_path).convert("RGB")
+    xs = [p[0] for p in yellow_pixels]
+    ys = [p[1] for p in yellow_pixels]
+    sun_bbox = (min(xs), min(ys), max(xs), max(ys))
     
-    # Bounding box refinado da logo original (1024x682)
-    xmin, ymin, xmax, ymax = 156, 168, 885, 497
-    crop_w = xmax - xmin + 1
-    crop_h = ymax - ymin + 1
+    # Crop do sol transparente
+    sun_w = sun_bbox[2] - sun_bbox[0] + 1
+    sun_h = sun_bbox[3] - sun_bbox[1] + 1
+    sun_transparent = Image.new("RGBA", (sun_w, sun_h), (0, 0, 0, 0))
     
-    # 1. Recortar a logo firmemente
-    logo_cropped = img.crop((xmin, ymin, xmax + 1, ymax + 1))
-    
-    # 2. Upscale 4x para gerar uma matriz de alta definicao (2920 x 1320)
-    scale = 4
-    width = crop_w * scale
-    height = crop_h * scale
-    print(f"Upscaling logo 4x to {width}x{height} (LANCZOS)...")
-    img_large = logo_cropped.resize((width, height), Image.Resampling.LANCZOS)
-    
-    # 3. Gerar mascara binaria limpa removendo o fundo quadriculado fake
-    mask = Image.new("L", (width, height), 0)
-    for y in range(height):
-        for x in range(width):
-            r, g, b = img_large.getpixel((x, y))
-            # Identificar pixels claros neutros do quadriculado
-            is_bg = (r > 238 and g > 238 and b > 238) and (abs(r - g) < 10 and abs(g - b) < 10 and abs(r - b) < 10)
-            if not is_bg:
-                mask.putpixel((x, y), 255)
+    for sy in range(sun_h):
+        for sx in range(sun_w):
+            x_orig = sun_bbox[0] + sx
+            y_orig = sun_bbox[1] + sy
+            r, g, b = orig.getpixel((x_orig, y_orig))
+            is_yellow = (r > 160 and g > 110 and b < 110)
+            if is_yellow:
+                sun_transparent.putpixel((sx, sy), (255, 193, 7, 255))
                 
-    # 4. Suavizar as bordas da mascara binaria com Blur + Threshold
-    # Isso elimina qualquer serrilhado de pixel herdado do quadriculado original, gerando contornos lisos
-    mask_blurred = mask.filter(ImageFilter.GaussianBlur(radius=2.0))
-    mask_smoothed = mask_blurred.point(lambda p: 255 if p > 128 else 0)
+    # ── Criar o Canvas Master Reconstruído ──
+    # Para ter altissima nitidez, desenharemos em um canvas gigante (3600 x 1400)
+    canvas_w = 3600
+    canvas_h = 1400
+    canvas = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
     
-    # 5. Criar a nova imagem master transparente com cores corporativas oficiais do site
-    # Navy: #001F5C (0, 31, 92) | Yellow: #FFC107 (255, 193, 7) | Gray: #475569 (71, 85, 105)
-    canvas = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    # Carregar fontes com resolucao proporcional
+    font_esol_base = ImageFont.truetype(os.path.join(font_dir, "NeoSansMedium.ttf"), 360)
+    font_energy_base = ImageFont.truetype(os.path.join(font_dir, "NeoSansMedium.ttf"), 90)
+    font_tagline = ImageFont.truetype(os.path.join(font_dir, "MontserratRegular.ttf"), 75)
     
-    # Coordenadas relativas escaladas
-    threshold_esol = 190 * scale
-    threshold_energy = 270 * scale
+    # Cores Oficiais Harmonizadas
+    navy_color = (0, 31, 92, 255)     # #001F5C
+    gray_color = (71, 85, 105, 255)   # #475569 (Slate Gray)
     
-    # X-range do Sol Dourado original relativo ao crop (escala 4x)
-    sun_xmin = 369 * scale
-    sun_xmax = 570 * scale
+    # Matriz de transformacao Affine para fazer o Neo Sans Extended Italic:
+    # Sx = 1.28 (Escala horizontal para estender a largura do Neo Sans)
+    # Kx = 0.22 (Skew horizontal para inclinar Italic em 12.5 graus)
+    Sx = 1.28
+    Kx = 0.22
+    a = 1.0 / Sx
+    b = -Kx / Sx
+    c = 0
+    d = 0
+    e = 1.0
+    f = 0
+    affine_matrix = (a, b, c, d, e, f)
     
-    for y in range(height):
-        for x in range(width):
-            m_val = mask_smoothed.getpixel((x, y))
-            if m_val == 255:
-                # Colorir dependendo do Y-range (linhas) e X-range (sol)
-                if y <= threshold_esol:
-                    # Linha 1: ESOL
-                    if sun_xmin <= x <= sun_xmax:
-                        # Sol Dourado
-                        canvas.putpixel((x, y), (255, 193, 7, 255))
-                    else:
-                        # Letras ES e L
-                        canvas.putpixel((x, y), (0, 31, 92, 255))
-                elif threshold_esol < y <= threshold_energy:
-                    # Linha 2: ENERGY
-                    canvas.putpixel((x, y), (71, 85, 105, 255))
-                else:
-                    # Linha 3: Tagline
-                    canvas.putpixel((x, y), (71, 85, 105, 255))
-                    
-    # Salvar a nova master transparente em alta definicao
-    canvas.save(output_path, "PNG")
-    print(f"SUCCESS: Master original restaurada com bordas lisas em: {output_path} ({width}x{height}px)")
+    # 3. Renderizar a palavra "ES" (com bolding artificial de 9px no contorno)
+    temp_es = Image.new("RGBA", (1500, 600), (0, 0, 0, 0))
+    draw_es = ImageDraw.Draw(temp_es)
+    draw_es.text((100, 100), "ES", font=font_esol_base, fill=navy_color, stroke_width=9, stroke_fill=navy_color)
+    transformed_es = temp_es.transform((1500, 600), Image.Transform.AFFINE, affine_matrix, resample=Image.Resampling.BICUBIC)
+    es_bbox = transformed_es.getbbox()
+    canvas.paste(transformed_es, (200, 100), transformed_es)
+    
+    # 4. Redimensionar o Sol e posicionar
+    es_real_w = es_bbox[2] - es_bbox[0]
+    es_real_h = es_bbox[3] - es_bbox[1]
+    
+    # Altura ideal do sol: aproximadamente 95% da altura de "ES"
+    sun_target_h = int(es_real_h * 0.95)
+    sun_aspect = sun_transparent.width / sun_transparent.height
+    sun_target_w = int(sun_target_h * sun_aspect)
+    
+    # Escalar o sol com Lanczos
+    sun_resized = sun_transparent.resize((sun_target_w, sun_target_h), Image.Resampling.LANCZOS)
+                
+    # Posicionar o sol logo apos a letra "S"
+    sun_x = 200 + es_bbox[0] + es_real_w + 30
+    sun_y = 100 + es_bbox[1] + (es_real_h - sun_target_h) // 2 + 5
+    canvas.paste(sun_resized, (sun_x, sun_y), sun_resized)
+    
+    # 5. Desenhar a letra "L"
+    temp_l = Image.new("RGBA", (800, 600), (0, 0, 0, 0))
+    draw_l = ImageDraw.Draw(temp_l)
+    draw_l.text((50, 100), "L", font=font_esol_base, fill=navy_color, stroke_width=9, stroke_fill=navy_color)
+    transformed_l = temp_l.transform((800, 600), Image.Transform.AFFINE, affine_matrix, resample=Image.Resampling.BICUBIC)
+    l_bbox = transformed_l.getbbox()
+    
+    l_x_pos = sun_x + sun_target_w + 30 - l_bbox[0]
+    canvas.paste(transformed_l, (l_x_pos, 100), transformed_l)
+    
+    # Encontrar os limites da primeira linha toda
+    line1_end_x = l_x_pos + l_bbox[2]
+    line1_center = 200 + es_bbox[0] + (line1_end_x - (200 + es_bbox[0])) // 2
+    
+    # 6. Desenhar a palavra "ENERGY" (com bolding de 2px no contorno)
+    energy_text = "ENERGY"
+    temp_energy = Image.new("RGBA", (2500, 300), (0, 0, 0, 0))
+    draw_energy = ImageDraw.Draw(temp_energy)
+    
+    tracking_gap = 40
+    cursor_x = 100
+    for char in energy_text:
+        draw_energy.text((cursor_x, 50), char, font=font_energy_base, fill=gray_color, stroke_width=2, stroke_fill=gray_color)
+        c_w = draw_energy.textbbox((0, 0), char, font=font_energy_base)[2]
+        cursor_x += c_w + tracking_gap
+        
+    transformed_energy = temp_energy.transform((2500, 300), Image.Transform.AFFINE, affine_matrix, resample=Image.Resampling.BICUBIC)
+    energy_bbox = transformed_energy.getbbox()
+    energy_real_w = energy_bbox[2] - energy_bbox[0]
+    
+    # Centralizar ENERGY
+    energy_x = line1_center - (energy_real_w // 2) - energy_bbox[0]
+    energy_y = 100 + l_bbox[3] + 90
+    canvas.paste(transformed_energy, (energy_x, energy_y), transformed_energy)
+    
+    # 7. Desenhar a tagline "Deixe o sol trabalhar por você."
+    tagline_text = "Deixe o sol trabalhar por você."
+    temp_tagline = Image.new("RGBA", (2500, 200), (0, 0, 0, 0))
+    draw_tag = ImageDraw.Draw(temp_tagline)
+    draw_tag.text((100, 50), tagline_text, font=font_tagline, fill=gray_color)
+    
+    tag_bbox = temp_tagline.getbbox()
+    tag_real_w = tag_bbox[2] - tag_bbox[0]
+    
+    tag_x = line1_center - (tag_real_w // 2) - tag_bbox[0]
+    tag_y = energy_y + energy_bbox[3] + 45
+    canvas.paste(temp_tagline, (tag_x, tag_y), temp_tagline)
+    
+    # ── 8. Fazer o Crop Final e Salvar ──
+    bbox = canvas.getbbox()
+    if bbox:
+        padding = 30
+        crop_box = (
+            max(0, bbox[0] - padding),
+            max(0, bbox[1] - padding),
+            min(canvas_w, bbox[2] + padding),
+            min(canvas_h, bbox[3] + padding)
+        )
+        final_logo = canvas.crop(crop_box)
+        
+        prod_w = 1100
+        prod_h = int(prod_w * (final_logo.height / final_logo.width))
+        prod_logo = final_logo.resize((prod_w, prod_h), Image.Resampling.LANCZOS)
+        
+        prod_logo.save(output_path, "PNG")
+        print(f"SUCCESS: Master logo reconstruida com Neo Sans real e salva em: {output_path} ({prod_w}x{prod_h}px)")
+    else:
+        print("ERROR: Falha ao recortar o canvas reconstruido.")
 
 if __name__ == "__main__":
-    reconstruct_original()
+    reconstruct_logo()
