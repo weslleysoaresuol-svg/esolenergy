@@ -122,6 +122,14 @@ function InvitePage() {
                 user_id: userData.user.id,
                 role: roleToAssign as any
               });
+              
+              if (roleToAssign === "admin") {
+                await supabase.from("profiles").update({
+                  onboarding_completo: true,
+                  contrato_assinado: true,
+                  ativo: true
+                }).eq("id", userData.user.id);
+              }
             }
 
             try { localStorage.removeItem("pending_invite_token"); } catch {}
@@ -199,6 +207,14 @@ function InvitePage() {
               user_id: data.session.user.id,
               role: roleToAssign as any
             });
+            
+            if (roleToAssign === "admin") {
+              await supabase.from("profiles").update({
+                onboarding_completo: true,
+                contrato_assinado: true,
+                ativo: true
+              }).eq("id", data.session.user.id);
+            }
           }
           
           consumeErr = null; // Zera erro pois contornamos com sucesso!
