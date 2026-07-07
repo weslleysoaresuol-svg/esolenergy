@@ -33,3 +33,8 @@ dist-ssr
 
 # Local cache for brand fonts
 brand-kit/temp-fonts/
+
+# Python Virtual Environment
+.venv/
+__pycache__/
+

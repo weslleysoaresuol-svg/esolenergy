@@ -99,6 +99,7 @@ const BRAND_ASSETS = [
 function BrandManualPage() {
   const [activeTab, setActiveTab] = useState<"ativos" | "cores" | "tipografia" | "tom">("ativos");
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
+  const [testText, setTestText] = useState("ESOL energy");
 
   const handleCopyColor = (hex: string) => {
     navigator.clipboard.writeText(hex);
@@ -311,6 +312,75 @@ function BrandManualPage() {
                   <p className="text-2xl font-light text-slate-800">Montserrat Light - 16px</p>
                   <p className="text-2xl font-bold text-slate-800">Montserrat Bold - 16px</p>
                   <p className="text-2xl font-black text-[#00246B]">Montserrat Black - 16px</p>
+                </div>
+              </div>
+
+              {/* CUSTOM LOGO FONT CONTAINER */}
+              <div className="md:col-span-2 border border-slate-100 rounded-2xl p-6 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#FFB300]/10 flex items-center justify-center text-[#FFB300] font-bold text-sm">
+                      <Sun className="w-4 h-4 text-[#FFB300]" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm">Fonte Exclusiva da Marca: EsolDisplay</h3>
+                      <p className="text-slate-400 text-[10px] mt-0.5">Tipografia bespoke extraída diretamente da geometria do logotipo original.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <a 
+                      href="/fonts/EsolDisplay-Regular.ttf" 
+                      download 
+                      className="inline-flex items-center gap-1.5 bg-[#00246B] hover:bg-[#001D56] text-white font-bold px-3 py-1.5 rounded-lg text-[10px] transition duration-200"
+                    >
+                      <Download className="w-3.5 h-3.5" /> Baixar TTF (Desktop)
+                    </a>
+                    <a 
+                      href="/fonts/EsolDisplay-Regular.woff2" 
+                      download 
+                      className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-[10px] transition duration-200"
+                    >
+                      <Download className="w-3.5 h-3.5" /> Baixar WOFF2 (Web)
+                    </a>
+                  </div>
+                </div>
+
+                <div className="grid lg:grid-cols-3 gap-6">
+                  <div className="lg:col-span-1 space-y-3 text-xs text-slate-500 leading-relaxed">
+                    <p>
+                      A <strong className="text-slate-800">EsolDisplay</strong> é a nossa tipografia institucional proprietária, desenvolvida para garantir 100% de consistência na reprodução do nosso logo em qualquer plataforma.
+                    </p>
+                    <div className="space-y-1.5 p-3 bg-slate-50 rounded-xl">
+                      <p className="font-bold text-slate-700">Regras de Digitação:</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        <li><strong>Maiúsculas (ESOL):</strong> Renderizam as letras do logotipo principal (com a letra <code>O</code> correspondendo ao Sol Dourado).</li>
+                        <li><strong>Minúsculas (energy):</strong> Renderizam as letras do subtítulo <code>ENERGY</code> em caixa alta com cantos retos/vivos.</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-2 space-y-3">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Área de Teste Interativa (Experimente digitar):</span>
+                    <input 
+                      type="text" 
+                      value={testText} 
+                      onChange={(e) => setTestText(e.target.value)}
+                      className="w-full border border-slate-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-[#FFB300] focus:ring-1 focus:ring-[#FFB300] transition"
+                      placeholder="Ex: ESOL energy"
+                    />
+                    
+                    {/* Renderizador com a fonte customizada */}
+                    <div className="p-6 bg-slate-900 rounded-xl min-h-[100px] flex items-center justify-center relative overflow-hidden border border-white/5">
+                      <div className="absolute top-2 right-2 text-[9px] text-slate-500 font-mono">Renderização Real-time (EsolDisplay)</div>
+                      <p 
+                        className="text-white text-3xl md:text-5xl tracking-wide select-none break-all text-center" 
+                        style={{ fontFamily: "'EsolDisplay', sans-serif" }}
+                      >
+                        {testText || "ESOL energy"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

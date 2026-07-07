@@ -2,6 +2,15 @@
 @source "../src";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: 'EsolDisplay';
+  src: url('/fonts/EsolDisplay-Regular.woff2') format('woff2'),
+       url('/fonts/EsolDisplay-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 
 /*
  * ESOL Energy design system.
