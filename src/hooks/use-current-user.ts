@@ -52,8 +52,8 @@ export function useCurrentUser(): CurrentUser {
         profileData = {
           ...(profileData || {}),
           id: u.user.id,
-          nome: profileData?.nome || u.user.raw_user_meta_data?.full_name || "Marcos Barbosa da Silva",
-          email: u.user.email,
+          nome: profileData?.nome || u.user.user_metadata?.full_name || "Marcos Barbosa da Silva",
+          email: u.user.email || null,
           ativo: true,
           onboarding_completo: true,
           contrato_assinado: true
