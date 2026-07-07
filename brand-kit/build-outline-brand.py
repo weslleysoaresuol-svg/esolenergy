@@ -4,6 +4,76 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.misc.transform import Transform
 
+class ExplicitSVGPathPen(SVGPathPen):
+    def _lineTo(self, pt):
+        x, y = pt
+        if x == self._lastX and y == self._lastY:
+            return
+        pts = f"{self._ntos(x)} {self._ntos(y)}"
+        self._commands.append("L" + pts)
+        self._lastCommand = "L"
+        self._lastX, self._lastY = pt
+
+def get_slanted_sun_path():
+    import math
+    R_out = 362.65
+    R_in = 177.15
+    c = 35.78
+    Cy = 350
+    steps = 80
+    
+    # Half 1 (Top-Left)
+    pts_half1 = []
+    for i in range(steps + 1):
+        theta = math.radians(49.0 + (221.0 - 49.0) * i / steps)
+        x = R_out * math.cos(theta)
+        y = R_out * math.sin(theta)
+        pts_half1.append((x, y + Cy))
+        
+    for i in range(steps + 1):
+        theta = math.radians(216.78 - (216.78 - 53.22) * i / steps)
+        x = R_in * math.cos(theta)
+        y = R_in * math.sin(theta)
+        pts_half1.append((x, y + Cy))
+        
+    tf_half1 = []
+    for x, y in pts_half1:
+        tx = 1.28 * x + 0.245 * y
+        ty = y
+        tf_half1.append((tx, ty))
+        
+    cmd_half1 = "M" + f"{tf_half1[0][0]:.3f} {tf_half1[0][1]:.3f}"
+    for tx, ty in tf_half1[1:]:
+        cmd_half1 += f" L {tx:.3f} {ty:.3f}"
+    cmd_half1 += " Z"
+    
+    # Half 2 (Bottom-Right)
+    pts_half2 = []
+    for i in range(steps + 1):
+        theta = math.radians(229.0 + (401.0 - 229.0) * i / steps)
+        x = R_out * math.cos(theta)
+        y = R_out * math.sin(theta)
+        pts_half2.append((x, y + Cy))
+        
+    for i in range(steps + 1):
+        theta = math.radians(36.78 - (36.78 - (-126.78)) * i / steps)
+        x = R_in * math.cos(theta)
+        y = R_in * math.sin(theta)
+        pts_half2.append((x, y + Cy))
+        
+    tf_half2 = []
+    for x, y in pts_half2:
+        tx = 1.28 * x + 0.245 * y
+        ty = y
+        tf_half2.append((tx, ty))
+        
+    cmd_half2 = "M" + f"{tf_half2[0][0]:.3f} {tf_half2[0][1]:.3f}"
+    for tx, ty in tf_half2[1:]:
+        cmd_half2 += f" L {tx:.3f} {ty:.3f}"
+    cmd_half2 += " Z"
+    
+    return cmd_half1 + " " + cmd_half2
+
 def build_outline_brand():
     print("Gerando nova logo em formato Outline (contornos matemáticos perfeitos e sem slogan)...")
     
@@ -27,7 +97,7 @@ def build_outline_brand():
     svg_paths = {}
     
     def get_svg_path(glyph_set, src_name, transform_matrix):
-        svg_pen = SVGPathPen(glyph_set)
+        svg_pen = ExplicitSVGPathPen(glyph_set)
         trans_pen = TransformPen(svg_pen, transform_matrix)
         glyph_set[src_name].draw(trans_pen)
         return svg_pen.getCommands()
@@ -35,7 +105,7 @@ def build_outline_brand():
     # Extrair glifos com curvas nativas suavizadas
     svg_paths["E"] = get_svg_path(glyph_set_neo, "E", t_neo)
     svg_paths["S"] = get_svg_path(glyph_set_neo, "S", t_neo)
-    svg_paths["O"] = get_svg_path(glyph_set_neo, "O", t_neo)
+    svg_paths["O"] = get_slanted_sun_path()
     svg_paths["L"] = get_svg_path(glyph_set_neo, "L", t_neo)
     
     svg_paths["e"] = get_svg_path(glyph_set_euro, "E", t_euro)
