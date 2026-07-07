@@ -59,6 +59,18 @@ async function convert() {
   } catch (err) {
     console.error('Erro ao gerar favicon.png:', err);
   }
+
+  // Converter a logo Outline temporária para exibição no chat
+  try {
+    const outlineSvg = 'public/brand-kit/1. Web-SVG/esol-logo-outline-temp.svg';
+    const destOutlinePng = 'C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/esol-logo-outline.png';
+    await sharp(outlineSvg, { density: 300 })
+      .png()
+      .toFile(destOutlinePng);
+    console.log('Sucesso: esol-logo-outline.png gerado no brain.');
+  } catch (err) {
+    console.error('Erro ao gerar esol-logo-outline.png:', err);
+  }
 }
 
 convert();
