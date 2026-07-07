@@ -48,11 +48,11 @@ export function useCurrentUser(): CurrentUser {
                       : null;
 
       let profileData = p ?? null;
-      if (isMarcos) {
+      if (isMarcos || resolved === "admin") {
         profileData = {
           ...(profileData || {}),
           id: u.user.id,
-          nome: profileData?.nome || u.user.user_metadata?.full_name || "Marcos Barbosa da Silva",
+          nome: profileData?.nome || u.user.user_metadata?.full_name || (isMarcos ? "Marcos Barbosa da Silva" : u.user.email?.split("@")[0]),
           email: u.user.email || null,
           ativo: true,
           onboarding_completo: true,
