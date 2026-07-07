@@ -915,7 +915,7 @@ function NovaProposta() {
     <div className="space-y-6 max-w-5xl mx-auto font-sans">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
         <div className="flex items-center gap-3">
-          <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
+          <Link to="/app/propostas" search={{ modo: "proposta" }}><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Voltar</Button></Link>
           <div>
             <h1 className="text-xl font-extrabold text-navy leading-tight">Nova Proposta Comercial</h1>
             <p className="text-[10px] text-muted-foreground">Wizard estruturado para dimensionamento técnico e comercial solar</p>

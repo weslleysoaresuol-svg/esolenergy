@@ -1173,7 +1173,7 @@ function AdminDashboard() {
             <h4 className="font-extrabold text-navy text-sm leading-tight">Geração de proposta</h4>
             <p className="text-[10.5px] text-slate-500 leading-normal">Crie e envie propostas comerciais personalizadas para seus clientes.</p>
           </div>
-          <Link to="/app/propostas" className="w-full">
+          <Link to="/app/propostas" search={{ modo: "proposta" }} className="w-full">
             <Button className="w-full suns-btn-primary font-bold text-xs py-2 rounded-lg cursor-pointer">
               Gerar Agora
             </Button>

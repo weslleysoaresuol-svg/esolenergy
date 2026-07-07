@@ -35,7 +35,7 @@ function ContratoDetalhePage() {
 
   return (
     <div className="max-w-3xl space-y-5">
-      <Link to="/app/contratos" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-navy">
+      <Link to="/app/corretores" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-navy">
         <ArrowLeft className="w-4 h-4" /> Voltar
       </Link>
       <div>

@@ -301,7 +301,7 @@ function AdminClientes() {
                       <div className="text-[10px] text-slate-400 font-medium">{c.cidade || "—"}/{c.estado || "—"}</div>
                       
                       <div className="flex justify-between items-center pt-2 border-t border-slate-50 mt-1">
-                        <Link to={`/app/cliente/${c.id}`} className="text-[10px] text-[#2E44B8] hover:underline font-bold">
+                        <Link to="/app/cliente/$id" params={{ id: c.id }} className="text-[10px] text-[#2E44B8] hover:underline font-bold">
                           Ver ficha
                         </Link>
                         {c.telefone && (

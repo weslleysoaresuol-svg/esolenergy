@@ -84,7 +84,7 @@ function PropostaDetail() {
     if (!confirm("Excluir esta proposta?")) return;
     await supabase.from("propostas").delete().eq("id", id);
     toast.success("Proposta excluída");
-    navigate({ to: "/app/propostas" });
+    navigate({ to: "/app/propostas", search: { modo: "proposta" } });
   }
 
   const gerarPedido = async () => {
@@ -174,7 +174,7 @@ function PropostaDetail() {
   return (
     <div className="max-w-6xl space-y-5 print:max-w-none">
       <div className="flex items-center justify-between print:hidden">
-        <Link to="/app/propostas"><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Propostas</Button></Link>
+        <Link to="/app/propostas" search={{ modo: "proposta" }}><Button variant="ghost" size="sm"><ChevronLeft className="w-4 h-4 mr-1" />Propostas</Button></Link>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="w-4 h-4 mr-1" />PDF</Button>
           
