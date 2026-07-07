@@ -42,20 +42,10 @@ function InvitePage() {
   // Valida convite + se já está logado, consome direto
   useEffect(() => {
     (async () => {
-      let row: any;
-      if (token === "00000000-0000-0000-0000-000000000000") {
-        row = {
-          valid: true,
-          expires_at: new Date(Date.now() + 86400000 * 365).toISOString(),
-          role_to_assign: "admin",
-          email: "teste.admin@esolenergy.com"
-        };
-      } else {
-        const { data, error } = await supabase.rpc("validate_invite" as any, { _token: token });
-        row = Array.isArray(data) ? data[0] : data;
-        if (error || !row) return setState({ status: "invalid", reason: "Link de convite não encontrado." });
-        if (!row.valid) return setState({ status: "invalid", reason: row.reason ?? "Convite inválido." });
-      }
+      const { data, error } = await supabase.rpc("validate_invite" as any, { _token: token });
+      const row = Array.isArray(data) ? data[0] : data;
+      if (error || !row) return setState({ status: "invalid", reason: "Link de convite não encontrado." });
+      if (!row.valid) return setState({ status: "invalid", reason: row.reason ?? "Convite inválido." });
       setState({ status: "valid", expiresAt: row.expires_at });
 
       // Busca o cargo deste convite da resposta encapsulada da RPC para evitar vulnerabilidades de SELECT
