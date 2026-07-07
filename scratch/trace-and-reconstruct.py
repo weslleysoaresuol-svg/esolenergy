@@ -59,10 +59,11 @@ def trace_and_reconstruct():
     print(f"Letra S vetorizada com {len(approx_S)} pontos.")
     
     # 3. Construir O (Normal) Matemático Perfeito com o Slant de 13.76° e Haste de 44px
-    # Centro do Sol original: cx = 626.5, cy = 256. Altura = 166px. Width = 188px.
+    # Seguindo exatamente as proporções do Sol original:
+    # Diâmetro Externo: 203px (Rx = 101.5), Diâmetro Interno: 115px (Rx = 57.5)
     cx_o, cy_o = 626.5, 256
-    rx_out, ry_out = 94, 83
-    rx_in, ry_in = 94 - 44, 83 - 44
+    rx_out, ry_out = 101.5, 86.0
+    rx_in, ry_in = 57.5, 43.0
     
     def make_slanted_ellipse_path(cx, cy, rx, ry, slant):
         pts = []
