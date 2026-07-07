@@ -14,7 +14,8 @@ def get_signed_area(pts):
     return 0.5 * area
 
 def build_font():
-    img_path = "src/assets/esol-logo.png"
+    # Carregar a partir do PNG transparente master ja reconstruido com alta nitidez e Faux Bold!
+    img_path = "src/assets/esol-logo-transparent.png"
     output_dir = "public/fonts"
     os.makedirs(output_dir, exist_ok=True)
     
@@ -22,16 +23,16 @@ def build_font():
         print(f"Error: {img_path} not found.")
         return
         
-    print(f"Loading {img_path} and isolating glyphs...")
-    img = cv2.imread(img_path)
+    print(f"Loading {img_path} and isolating glyphs from alpha channel...")
+    # Carregar com IMREAD_UNCHANGED para ler o canal alpha
+    img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
     h, w, c = img.shape
     
-    # 1. Converter para escala de cinza e limiarizar
-    # O fundo quadriculado e muito claro, entao threshold de 220 e ideal
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, thresh = cv2.threshold(gray, 220, 255, cv2.THRESH_BINARY_INV)
+    # Extrair canal alpha e limiarizar
+    alpha = img[:, :, 3]
+    _, thresh = cv2.threshold(alpha, 120, 255, cv2.THRESH_BINARY)
     
-    # 2. Encontrar contornos
+    # Encontrar contornos
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)
     
     if not contours:
@@ -48,7 +49,7 @@ def build_font():
         if parent == -1: # Contorno externo
             x, y, gw, gh = cv2.boundingRect(c_item)
             area = cv2.contourArea(c_item)
-            # Filtramos contornos muito pequenos
+            # Filtrar ruidos
             if area > 100 and gh > 15:
                 outer_contours.append({
                     "index": i,
@@ -69,18 +70,18 @@ def build_font():
                     
     print(f"Detected {len(outer_contours)} valid outer glyph elements.")
     
-    # 3. Separar por linhas usando Y center
-    # Linha 1 (ESOL): cy < 330
-    # Linha 2 (ENERGY): 330 <= cy < 440
+    # Separar por linhas usando Y center do PNG transparente
+    # Linha 1 (ESOL): cy < 340
+    # Linha 2 (ENERGY): 340 <= cy < 510
     line1 = []
     line2 = []
     
     for g in outer_contours:
         x1, y1, x2, y2 = g["bbox"]
         cy = (y1 + y2) / 2
-        if cy < 330:
+        if cy < 340:
             line1.append(g)
-        elif 330 <= cy < 440:
+        elif 340 <= cy < 510:
             line2.append(g)
             
     # Ordenar cada linha da esquerda para a direita (por X1)
@@ -134,7 +135,7 @@ def build_font():
         "contours": [{"points": line1[4]["contour"], "is_hole": False}] + [{"points": ch, "is_hole": True} for ch in line1[4]["children"]]
     })
     
-    # Consolidar letras da linha 2
+    # Consolidar letras da linha 2 (ENERGY)
     energy_letters = []
     for g in line2:
         energy_letters.append({

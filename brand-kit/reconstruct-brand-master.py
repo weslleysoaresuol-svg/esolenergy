@@ -8,9 +8,10 @@ def reconstruct_logo():
     
     os.makedirs(font_dir, exist_ok=True)
     
-    # 1. Downloads de fontes oficiais do Google Fonts e de repositorios publicos (Neo Sans Std)
+    # 1. Downloads de fontes oficiais e publicas
     fonts = {
         "NeoSansMedium": "https://raw.githubusercontent.com/ottz0/swd-portfolio/master/dist/assets/fonts/Neo%20Sans%20Std%20Medium.ttf",
+        "EurostileBold": "https://github.com/aaron-m/Font-Awesome/raw/master/src/main/resources/fonts/EurostileBold.ttf",
         "MontserratRegular": "https://github.com/JulietaUla/Montserrat/raw/master/fonts/ttf/Montserrat-Regular.ttf"
     }
     
@@ -62,22 +63,22 @@ def reconstruct_logo():
                 sun_transparent.putpixel((sx, sy), (255, 193, 7, 255))
                 
     # ── Criar o Canvas Master Reconstruído ──
-    # Para ter altissima nitidez, desenharemos em um canvas gigante (3600 x 1400)
+    # Para ter altíssima nitidez, desenharemos em um canvas gigante (3600 x 1400)
     canvas_w = 3600
     canvas_h = 1400
     canvas = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
     
-    # Carregar fontes com resolucao proporcional
+    # Carregar fontes com resolução proporcional
     font_esol_base = ImageFont.truetype(os.path.join(font_dir, "NeoSansMedium.ttf"), 360)
-    font_energy_base = ImageFont.truetype(os.path.join(font_dir, "NeoSansMedium.ttf"), 90)
+    font_energy_base = ImageFont.truetype(os.path.join(font_dir, "EurostileBold.ttf"), 90)
     font_tagline = ImageFont.truetype(os.path.join(font_dir, "MontserratRegular.ttf"), 75)
     
     # Cores Oficiais Harmonizadas
-    navy_color = (0, 31, 92, 255)     # #001F5C
+    navy_color = (0, 31, 92, 255)     # #001F5C (Navy Royal)
     gray_color = (71, 85, 105, 255)   # #475569 (Slate Gray)
     
-    # Matriz de transformacao Affine para fazer o Neo Sans Extended Italic:
-    # Sx = 1.28 (Escala horizontal para estender a largura do Neo Sans)
+    # Matriz de transformação Affine para fazer o Extended Italic:
+    # Sx = 1.28 (Escala horizontal para estender a largura)
     # Kx = 0.22 (Skew horizontal para inclinar Italic em 12.5 graus)
     Sx = 1.28
     Kx = 0.22
@@ -89,10 +90,15 @@ def reconstruct_logo():
     f = 0
     affine_matrix = (a, b, c, d, e, f)
     
-    # 3. Renderizar a palavra "ES" (com bolding artificial de 9px no contorno)
+    # 3. Renderizar a palavra "ES" (Faux Bold preservando cantos retos e pontas planas!)
     temp_es = Image.new("RGBA", (1500, 600), (0, 0, 0, 0))
     draw_es = ImageDraw.Draw(temp_es)
-    draw_es.text((100, 100), "ES", font=font_esol_base, fill=navy_color, stroke_width=9, stroke_fill=navy_color)
+    
+    # Faux Bold com offsets na horizontal e vertical
+    for dx in range(-16, 17):
+        for dy in range(-7, 8):
+            draw_es.text((100 + dx, 100 + dy), "ES", font=font_esol_base, fill=navy_color)
+            
     transformed_es = temp_es.transform((1500, 600), Image.Transform.AFFINE, affine_matrix, resample=Image.Resampling.BICUBIC)
     es_bbox = transformed_es.getbbox()
     canvas.paste(transformed_es, (200, 100), transformed_es)
@@ -109,15 +115,19 @@ def reconstruct_logo():
     # Escalar o sol com Lanczos
     sun_resized = sun_transparent.resize((sun_target_w, sun_target_h), Image.Resampling.LANCZOS)
                 
-    # Posicionar o sol logo apos a letra "S"
+    # Posicionar o sol logo após a letra "S"
     sun_x = 200 + es_bbox[0] + es_real_w + 30
     sun_y = 100 + es_bbox[1] + (es_real_h - sun_target_h) // 2 + 5
     canvas.paste(sun_resized, (sun_x, sun_y), sun_resized)
     
-    # 5. Desenhar a letra "L"
+    # 5. Desenhar a letra "L" (Faux Bold preservando cantos retos e pontas planas!)
     temp_l = Image.new("RGBA", (800, 600), (0, 0, 0, 0))
     draw_l = ImageDraw.Draw(temp_l)
-    draw_l.text((50, 100), "L", font=font_esol_base, fill=navy_color, stroke_width=9, stroke_fill=navy_color)
+    
+    for dx in range(-16, 17):
+        for dy in range(-7, 8):
+            draw_l.text((50 + dx, 100 + dy), "L", font=font_esol_base, fill=navy_color)
+            
     transformed_l = temp_l.transform((800, 600), Image.Transform.AFFINE, affine_matrix, resample=Image.Resampling.BICUBIC)
     l_bbox = transformed_l.getbbox()
     
@@ -128,19 +138,28 @@ def reconstruct_logo():
     line1_end_x = l_x_pos + l_bbox[2]
     line1_center = 200 + es_bbox[0] + (line1_end_x - (200 + es_bbox[0])) // 2
     
-    # 6. Desenhar a palavra "ENERGY" (com bolding de 2px no contorno)
+    # 6. Desenhar a palavra "ENERGY" (usando Eurostile Bold + Faux Bold)
     energy_text = "ENERGY"
     temp_energy = Image.new("RGBA", (2500, 300), (0, 0, 0, 0))
     draw_energy = ImageDraw.Draw(temp_energy)
     
+    # Para o Eurostile Bold, a escala horizontal de ENERGY na logo original e de 1.35
+    # Aplicaremos o Extended na transformacao Affine
+    Sx_energy = 1.35
+    affine_matrix_energy = (1.0 / Sx_energy, -Kx / Sx_energy, 0, 0, 1.0, 0)
+    
     tracking_gap = 40
     cursor_x = 100
     for char in energy_text:
-        draw_energy.text((cursor_x, 50), char, font=font_energy_base, fill=gray_color, stroke_width=2, stroke_fill=gray_color)
+        # Faux Bold para a palavra ENERGY (dx: -3..3, dy: -1..1 para manter os cantos perfeitamente vivos!)
+        for dx in range(-3, 4):
+            for dy in range(-1, 2):
+                draw_energy.text((cursor_x + dx, 50 + dy), char, font=font_energy_base, fill=gray_color)
+                
         c_w = draw_energy.textbbox((0, 0), char, font=font_energy_base)[2]
         cursor_x += c_w + tracking_gap
         
-    transformed_energy = temp_energy.transform((2500, 300), Image.Transform.AFFINE, affine_matrix, resample=Image.Resampling.BICUBIC)
+    transformed_energy = temp_energy.transform((2500, 300), Image.Transform.AFFINE, affine_matrix_energy, resample=Image.Resampling.BICUBIC)
     energy_bbox = transformed_energy.getbbox()
     energy_real_w = energy_bbox[2] - energy_bbox[0]
     
@@ -149,7 +168,7 @@ def reconstruct_logo():
     energy_y = 100 + l_bbox[3] + 90
     canvas.paste(transformed_energy, (energy_x, energy_y), transformed_energy)
     
-    # 7. Desenhar a tagline "Deixe o sol trabalhar por você."
+    # 7. Desenhar a tagline "Deixe o sol trabalhar por você." (Montserrat Regular)
     tagline_text = "Deixe o sol trabalhar por você."
     temp_tagline = Image.new("RGBA", (2500, 200), (0, 0, 0, 0))
     draw_tag = ImageDraw.Draw(temp_tagline)
@@ -179,7 +198,7 @@ def reconstruct_logo():
         prod_logo = final_logo.resize((prod_w, prod_h), Image.Resampling.LANCZOS)
         
         prod_logo.save(output_path, "PNG")
-        print(f"SUCCESS: Master logo reconstruida com Neo Sans real e salva em: {output_path} ({prod_w}x{prod_h}px)")
+        print(f"SUCCESS: Master logo reconstruida com Neo Sans + Eurostile real e salva em: {output_path} ({prod_w}x{prod_h}px)")
     else:
         print("ERROR: Falha ao recortar o canvas reconstruido.")
 
