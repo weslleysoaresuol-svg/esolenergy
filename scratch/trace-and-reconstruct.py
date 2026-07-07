@@ -58,32 +58,26 @@ def trace_and_reconstruct():
     svg_paths["S"] = contour_to_svg_path(approx_S)
     print(f"Letra S vetorizada com {len(approx_S)} pontos.")
     
-    # 3. Construir O (Normal) como uma Elipse Rotacionada Real (Rotated Ellipse)
-    # Ajustando ao centro real da logo (620.1, 251.9) com os diâmetros exatos (206px x 173.6px)
-    cx_o, cy_o = 620.1, 251.9
-    rx_out, ry_out = 103.0, 86.8
-    rx_in, ry_in = 103.0 - 44.0, 86.8 - 44.0
+    # 3. Vetorizar O (Normal) Diretamente do Sol Original Fechando a Diagonal
+    # Recortar e preencher a diagonal do Sol O
+    sol_crop = mask[170:342, 525:728].copy()
+    cv2.line(sol_crop, (130, 100), (195, 165), 255, 20)
     
-    def make_rotated_ellipse_path(cx, cy, rx, ry, angle_deg):
-        pts = []
-        num_pts = 120
-        angle_rad = math.radians(angle_deg)
-        cos_a = math.cos(angle_rad)
-        sin_a = math.sin(angle_rad)
-        for i in range(num_pts):
-            theta = i * 2 * math.pi / num_pts
-            x = rx * math.cos(theta)
-            y = ry * math.sin(theta)
-            # Rotação anti-horária/horária em Y-down
-            x_rot = x * cos_a - y * sin_a
-            y_rot = x * sin_a + y * cos_a
-            pts.append(f"{cx + x_rot:.1f} {cy + y_rot:.1f}")
-        return "M " + " L ".join(pts) + " Z"
+    # Achar os contornos
+    contours_O, _ = cv2.findContours(sol_crop, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # Pegar os dois contornos maiores (externo e interno)
+    large_contours_O = [c for c in contours_O if cv2.contourArea(c) > 100]
+    large_contours_O = sorted(large_contours_O, key=cv2.contourArea, reverse=True)
+    
+    o_paths = []
+    for idx, c in enumerate(large_contours_O[:2]):
+        approx_O = cv2.approxPolyDP(c, 0.8, True)
+        approx_O[:, 0, 0] += 525
+        approx_O[:, 0, 1] += 170
+        o_paths.append(contour_to_svg_path(approx_O))
         
-    path_O_out = make_rotated_ellipse_path(cx_o, cy_o, rx_out, ry_out, 13.76)
-    path_O_in = make_rotated_ellipse_path(cx_o, cy_o, rx_in, ry_in, 13.76)
-    svg_paths["O"] = path_O_out + " " + path_O_in
-    print("Letra O (Normal) construída via elipse rotacionada de alta precisão.")
+    svg_paths["O"] = " ".join(o_paths)
+    print("Letra O (Normal) vetorizada diretamente a partir do Sol original fechado.")
     
     # 4. Vetorizar L
     # Bounding box do L: X=728 a 885, Y=174 a 340

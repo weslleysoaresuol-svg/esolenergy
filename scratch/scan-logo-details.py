@@ -1,70 +1,38 @@
+import cv2
 from PIL import Image
 import numpy as np
 
-def scan_e():
+def scan_details():
     img = Image.open("src/assets/esol-logo-original.png")
     rgb = np.array(img.convert("RGB"))
     bg_color = rgb[0, 0, :]
     
     diff = np.sum(np.abs(rgb.astype(np.int32) - bg_color), axis=2)
-    mask = diff > 30
+    mask = (diff > 30).astype(np.uint8) * 255
     
-    # E is in Y: 174 to 340, X: 156 to 344
-    E_mask = mask[174:340, 156:344]
-    h, w = E_mask.shape
+    # Recortar o O original (Sol)
+    sol_crop = mask[170:342, 525:728].copy()
     
-    # We want to scan the horizontal arms.
-    # Let's take a vertical slice near the right edge of E (e.g. x = w - 20)
-    col_idx = w - 20
-    slice_y = E_mask[:, col_idx]
+    # Salvar a máscara pura do Sol para visualizarmos
+    cv2.imwrite("C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/esol-logo-details-scan.png", sol_crop)
     
-    # Find runs of 1s and 0s
-    runs = []
-    current_run = slice_y[0]
-    run_len = 1
-    run_start = 0
+    # Preencher o rasgo diagonal de 45°
+    # O rasgo fica no quadrante inferior direito. No recorte de 172x203,
+    # vamos desenhar linhas brancas espessas para fechar o rasgo diagonal.
+    # Coordenadas aproximadas do rasgo no crop: de (140, 110) a (190, 160)
+    # Vamos preencher desenhando linhas brancas
+    filled_sol = sol_crop.copy()
+    cv2.line(filled_sol, (130, 100), (195, 165), 255, 20)
     
-    for y in range(1, h):
-        if slice_y[y] == current_run:
-            run_len += 1
-        else:
-            runs.append((current_run, run_start, run_len))
-            current_run = slice_y[y]
-            run_start = y
-            run_len = 1
-    runs.append((current_run, run_start, run_len))
+    # Salvar a imagem com o rasgo fechado
+    cv2.imwrite("C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/esol-logo-details-scan-pure.png", filled_sol)
     
-    print("E Vertical Slice Runs at X =", 156 + col_idx)
-    for run_val, start, length in runs:
-        state = "SOLID (Arm)" if run_val else "GAP"
-        print(f"  {state}: Y={174+start} to {174+start+length-1} (Height = {length}px)")
-
-    # Let's measure stem thickness:
-    # Take a horizontal slice near the middle of E's height (e.g. y = h // 2, which is Y = 174 + 83 = 257)
-    # But wait, the letter is slanted, so the stem is shifted.
-    # At Y = 257, let's find the horizontal run of the stem.
-    # The stem is the left-most solid part of the E.
-    row_idx = h // 2
-    slice_x = E_mask[row_idx, :]
-    
-    runs_x = []
-    current_run_x = slice_x[0]
-    run_len_x = 1
-    run_start_x = 0
-    for x in range(1, w):
-        if slice_x[x] == current_run_x:
-            run_len_x += 1
-        else:
-            runs_x.append((current_run_x, run_start_x, run_len_x))
-            current_run_x = slice_x[x]
-            run_start_x = x
-            run_len_x = 1
-    runs_x.append((current_run_x, run_start_x, run_len_x))
-    
-    print("\nE Horizontal Slice Runs at Y =", 174 + row_idx)
-    for run_val, start, length in runs_x:
-        state = "SOLID" if run_val else "GAP"
-        print(f"  {state}: X={156+start} to {156+start+length-1} (Width = {length}px)")
+    # Achar contornos na imagem preenchida
+    contours, _ = cv2.findContours(filled_sol, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    print(f"Encontrados {len(contours)} contornos no Sol preenchido:")
+    for idx, c in enumerate(contours):
+        area = cv2.contourArea(c)
+        print(f"  Contorno {idx}: Área = {area:.1f} | Pontos = {len(c)}")
 
 if __name__ == "__main__":
-    scan_e()
+    scan_details()
