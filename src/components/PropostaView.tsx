@@ -352,7 +352,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
         <header className="bg-white/[0.01] border-b border-white/[0.06] backdrop-blur-md py-6 px-6 md:px-12 relative z-10">
           <div className="max-w-5xl mx-auto flex justify-between items-center">
-            <img src={logoWhite} alt="ESOL Energy" className="h-11 w-auto" />
+            <img src={logoWhite} alt="ESOL Energy" className="h-14 w-auto" />
             <Badge className="bg-sun/10 text-sun border border-sun/20 font-black uppercase tracking-widest text-[9px] px-3 py-1">Ficha de Crédito em Análise</Badge>
           </div>
         </header>
@@ -439,7 +439,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
         
         <header className="bg-white/[0.01] border-b border-white/[0.06] backdrop-blur-md py-8 px-6 md:px-12 relative z-10">
           <div className="max-w-5xl mx-auto flex justify-between items-center">
-            <img src={logoWhite} alt="ESOL Energy" className="h-11 w-auto" />
+            <img src={logoWhite} alt="ESOL Energy" className="h-14 w-auto" />
             <div className="text-right text-xs">
               <span className="text-white/40 text-[9px] uppercase tracking-widest font-black">Cotação Solar</span>
               <div className="font-mono font-black text-sun tracking-wider">#{String(p.id || "").slice(0, 8).toUpperCase()}</div>
@@ -600,7 +600,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
             style={{ scaleX: readingScaleX }}
           />
           <div className="bg-white/95 px-4 py-2 rounded-xl flex items-center justify-center border border-white/20 shadow-sm transition-all duration-300 hover:scale-[1.02]">
-            <img src={logo} alt="ESOL Energy" className="h-10 w-auto object-contain" />
+            <img src={logo} alt="ESOL Energy" className="h-12 w-auto object-contain" />
           </div>
           <div className="text-right hidden md:block">
             <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Estudo Técnico-Comercial</div>
@@ -624,7 +624,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           {/* Header de Marca (versão print) */}
           <div className="flex justify-between items-center w-full print:flex">
             <div className="bg-white/95 px-5 py-2.5 rounded-2xl shadow-lg border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-[1.03]">
-              <img src={logo} alt="ESOL Energy" className="h-14 w-auto object-contain" />
+              <img src={logo} alt="ESOL Energy" className="h-16 w-auto object-contain" />
             </div>
             <div className="text-right">
               <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">Estudo Técnico-Comercial</span>
