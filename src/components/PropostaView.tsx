@@ -624,7 +624,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           {/* Header de Marca (versão print) */}
           <div className="flex justify-between items-center w-full print:flex">
             <div className="bg-white/95 px-5 py-2.5 rounded-2xl shadow-lg border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-[1.03]">
-              <img src={logo} alt="ESOL Energy" className="h-14 w-auto object-contain" />
+              <img src={logo} alt="ESOL Energy" className="h-16 w-auto object-contain" />
             </div>
             <div className="text-right">
               <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">Estudo Técnico-Comercial</span>
