@@ -235,7 +235,7 @@ function AuthPage() {
             <span className="block text-[6px] text-slate-350 font-bold uppercase tracking-wider">Premium Tech</span>
           </div>
           <div className="h-5 w-px bg-white/20" />
-          <img src={logoNegative} alt="ESOL Energy" className="h-10 w-auto opacity-90" />
+          <img src={logoNegative} alt="ESOL Energy" className="h-14 w-auto opacity-90" />
         </div>
 
         {/* Textos Principais / Slogan Concept */}
