@@ -1,112 +1,29 @@
-import os
-from fontTools.ttLib import TTFont
-from fontTools.pens.svgPathPen import SVGPathPen
-from fontTools.pens.transformPen import TransformPen
-from fontTools.misc.transform import Transform
-
 def build_outline_brand():
     print("Gerando nova logo em formato Outline (contornos matemáticos perfeitos e sem slogan)...")
     
-    neo_path = "brand-kit/temp-fonts/NeoSansMedium.ttf"
-    euro_path = "brand-kit/temp-fonts/EurostileBold.ttf"
-    
-    if not os.path.exists(neo_path) or not os.path.exists(euro_path):
-        print("Erro: Fontes originais não encontradas.")
-        return
-        
-    font_neo = TTFont(neo_path)
-    font_euro = TTFont(euro_path)
-    
-    glyph_set_neo = font_neo.getGlyphSet()
-    glyph_set_euro = font_euro.getGlyphSet()
-    
-    # transformações de slant (13.76 graus) e escala
-    t_neo = Transform(1.28, 0, 0.245, 1, 0, 0)
-    t_euro = Transform(1.35, 0, 0.245, 1, 0, 0)
-    
-    svg_paths = {}
-    
-    def get_svg_path(glyph_set, src_name, transform_matrix):
-        svg_pen = SVGPathPen(glyph_set)
-        trans_pen = TransformPen(svg_pen, transform_matrix)
-        glyph_set[src_name].draw(trans_pen)
-        return svg_pen.getCommands()
-        
-    # Extrair glifos com curvas nativas suavizadas
-    svg_paths["E"] = get_svg_path(glyph_set_neo, "E", t_neo)
-    svg_paths["S"] = get_svg_path(glyph_set_neo, "S", t_neo)
-    svg_paths["O"] = get_svg_path(glyph_set_neo, "O", t_neo)
-    svg_paths["L"] = get_svg_path(glyph_set_neo, "L", t_neo)
-    
-    svg_paths["e"] = get_svg_path(glyph_set_euro, "E", t_euro)
-    svg_paths["n"] = get_svg_path(glyph_set_euro, "N", t_euro)
-    svg_paths["r"] = get_svg_path(glyph_set_euro, "R", t_euro)
-    svg_paths["g"] = get_svg_path(glyph_set_euro, "G", t_euro)
-    svg_paths["y"] = get_svg_path(glyph_set_euro, "Y", t_euro)
-    
-    # Calcular larguras proporcionais para o kerning
-    aw_E = int(glyph_set_neo["E"].width * 1.28)
-    aw_S = int(glyph_set_neo["S"].width * 1.28)
-    aw_O = int(glyph_set_neo["O"].width * 1.28)
-    aw_L = int(glyph_set_neo["L"].width * 1.28)
-    
-    aw_e = int(glyph_set_euro["E"].width * 1.35)
-    aw_n = int(glyph_set_euro["N"].width * 1.35)
-    aw_r = int(glyph_set_euro["R"].width * 1.35)
-    aw_g = int(glyph_set_euro["G"].width * 1.35)
-    aw_y = int(glyph_set_euro["Y"].width * 1.35)
-    
-    # Spacing ESOL
-    k_esol = 40
-    esol_pos = [0, aw_E - k_esol, (aw_E - k_esol) + (aw_S - k_esol), (aw_E - k_esol) + (aw_S - k_esol) + (aw_O - k_esol)]
-    w_esol_total = esol_pos[-1] + aw_L
-    
-    # Spacing ENERGY justificado sob o ESOL
-    scale_energy = 0.29
-    w_target_energy = w_esol_total / scale_energy
-    
-    energy_letters = ["e", "n", "e", "r", "g", "y"]
-    energy_aws = {"e": aw_e, "n": aw_n, "r": aw_r, "g": aw_g, "y": aw_y}
-    w_energy_sum = sum(energy_aws[c] for c in energy_letters)
-    gap_energy = (w_target_energy - w_energy_sum) / 5
-    
-    energy_pos = []
-    curr_x = 0
-    for c in energy_letters:
-        energy_pos.append(curr_x)
-        curr_x += energy_aws[c] + gap_energy
-        
-    # Outlines SVG
-    esol_paths = ""
-    for i, c in enumerate(["E", "S", "O", "L"]):
-        esol_paths += f'    <path d="{svg_paths[c]}" transform="translate({esol_pos[i]}, 0)" />' + "\n"
-        
-    energy_paths = ""
-    for i, c in enumerate(energy_letters):
-        energy_paths += f'    <path d="{svg_paths[c]}" transform="translate({energy_pos[i]}, 0)" />' + "\n"
-        
-    margin = 150
-    view_w = int(w_esol_total + 2 * margin)
-    view_h = 1200
-    dx = margin
-    
-    # Construir SVG Outline perfeito (stroke-width proporcional: 12 no ESOL, 40 no ENERGY que é reduzido)
-    svg_horiz = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {view_w} {view_h}" width="100%" height="100%">
-  <!-- ESOL (Outline) -->
-  <g transform="translate({dx}, 750) scale(1, -1)" fill="none" stroke="#001F5C" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
-{esol_paths}
+    # SVG contornado gerado a partir do rastreamento direto de alta fidelidade
+    svg_content = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 682" width="100%" height="100%">
+  <!-- ESOL (Contornos Traced) -->
+  <g fill="none" stroke="#001F5C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M199.0 179.0 L191.0 187.0 L186.0 197.0 L156.0 339.0 L310.0 339.0 L317.0 308.0 L207.0 307.0 L216.0 270.0 L305.0 270.0 L312.0 239.0 L223.0 239.0 L230.0 205.0 L335.0 205.0 L343.0 174.0 L211.0 174.0 Z" />
+    <path d="M527.0 174.0 L403.0 174.0 L386.0 178.0 L371.0 186.0 L362.0 195.0 L358.0 201.0 L352.0 216.0 L351.0 238.0 L353.0 245.0 L357.0 252.0 L368.0 261.0 L384.0 267.0 L389.0 267.0 L394.0 269.0 L401.0 269.0 L402.0 270.0 L409.0 270.0 L410.0 271.0 L456.0 275.0 L462.0 277.0 L467.0 283.0 L467.0 293.0 L465.0 298.0 L459.0 304.0 L446.0 308.0 L337.0 308.0 L330.0 335.0 L330.0 339.0 L455.0 339.0 L474.0 335.0 L491.0 326.0 L500.0 317.0 L505.0 309.0 L511.0 290.0 L511.0 270.0 L505.0 257.0 L497.0 250.0 L489.0 246.0 L481.0 244.0 L456.0 241.0 L455.0 240.0 L424.0 238.0 L423.0 237.0 L409.0 236.0 L401.0 234.0 L395.0 227.0 L395.0 219.0 L397.0 214.0 L402.0 209.0 L411.0 205.0 L520.0 205.0 L523.0 190.0 L525.0 186.0 L525.0 182.0 L527.0 178.0 Z" />
+    <path d="M701.0 186.0 L685.0 177.0 L669.0 172.0 L664.0 172.0 L657.0 170.0 L622.0 170.0 L621.0 171.0 L605.0 173.0 L589.0 178.0 L582.0 182.0 L580.0 182.0 L563.0 193.0 L548.0 208.0 L538.0 222.0 L532.0 234.0 L526.0 254.0 L526.0 261.0 L525.0 262.0 L526.0 287.0 L532.0 305.0 L539.0 316.0 L549.0 326.0 L562.0 334.0 L581.0 340.0 L595.0 341.0 L649.0 283.0 L718.0 206.0 L713.0 198.0 Z M668.0 215.0 L676.0 225.0 L678.0 231.0 L678.0 239.0 L667.0 250.0 L616.0 308.0 L605.0 308.0 L595.0 306.0 L587.0 302.0 L579.0 295.0 L575.0 288.0 L572.0 270.0 L571.0 269.0 L572.0 258.0 L576.0 243.0 L582.0 231.0 L590.0 221.0 L599.0 214.0 L609.0 209.0 L628.0 205.0 L639.0 205.0 L640.0 206.0 L652.0 207.0 Z M720.0 211.0 L680.0 257.0 L678.0 270.0 L670.0 287.0 L655.0 301.0 L645.0 306.0 L635.0 308.0 L606.0 341.0 L644.0 341.0 L662.0 337.0 L681.0 329.0 L694.0 320.0 L705.0 309.0 L712.0 299.0 L718.0 287.0 L723.0 273.0 L726.0 258.0 L727.0 236.0 L723.0 217.0 Z M527.0 174.0 L525.0 174.0 L525.0 186.0 Z" />
+    <path d="M764.0 174.0 L728.0 339.0 L878.0 339.0 L884.0 308.0 L781.0 307.0 L810.0 174.0 Z" />
   </g>
-  <!-- ENERGY (Outline) -->
-  <g transform="translate({dx}, 1079) scale(1, -1) scale({scale_energy})" fill="none" stroke="#475569" stroke-width="40" stroke-linejoin="round" stroke-linecap="round">
-{energy_paths}
+  <!-- ENERGY (Contornos Traced) -->
+  <g fill="none" stroke="#475569" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M206.0 376.0 L205.0 380.0 L204.0 381.0 L204.0 385.0 L203.0 386.0 L203.0 389.0 L202.0 390.0 L201.0 398.0 L200.0 399.0 L200.0 404.0 L198.0 408.0 L198.0 412.0 L197.0 413.0 L197.0 416.0 L196.0 417.0 L196.0 422.0 L247.0 422.0 L249.0 418.0 L249.0 414.0 L212.0 414.0 L211.0 413.0 L211.0 409.0 L212.0 408.0 L212.0 405.0 L214.0 402.0 L247.0 402.0 L248.0 401.0 L249.0 395.0 L232.0 395.0 L231.0 394.0 L216.0 395.0 L215.0 394.0 L215.0 390.0 L216.0 389.0 L216.0 387.0 L218.0 383.0 L255.0 383.0 L256.0 379.0 L257.0 378.0 L257.0 376.0 Z" />
+    <path d="M313.0 376.0 L313.0 378.0 L312.0 379.0 L312.0 383.0 L311.0 384.0 L311.0 387.0 L310.0 388.0 L310.0 392.0 L309.0 393.0 L309.0 396.0 L308.0 397.0 L308.0 401.0 L307.0 402.0 L307.0 405.0 L306.0 406.0 L306.0 410.0 L305.0 411.0 L305.0 414.0 L304.0 415.0 L304.0 419.0 L303.0 420.0 L303.0 422.0 L316.0 422.0 L317.0 420.0 L317.0 415.0 L318.0 414.0 L318.0 411.0 L319.0 410.0 L319.0 405.0 L320.0 404.0 L320.0 401.0 L321.0 400.0 L321.0 395.0 L322.0 394.0 L322.0 391.0 L323.0 390.0 L324.0 390.0 L356.0 422.0 L368.0 422.0 L369.0 421.0 L369.0 417.0 L370.0 416.0 L371.0 408.0 L372.0 407.0 L372.0 404.0 L373.0 403.0 L373.0 398.0 L373.0 397.0 L374.0 397.0 L374.0 394.0 L375.0 393.0 L375.0 388.0 L376.0 387.0 L376.0 384.0 L377.0 383.0 L377.0 379.0 L378.0 378.0 L378.0 376.0 L365.0 376.0 L364.0 384.0 L363.0 385.0 L363.0 388.0 L362.0 389.0 L362.0 394.0 L361.0 395.0 L360.0 403.0 L359.0 404.0 L359.0 407.0 L358.0 408.0 L349.0 399.0 L349.0 398.0 L348.0 398.0 L347.0 396.0 L346.0 396.0 L341.0 391.0 L341.0 390.0 L339.0 388.0 L338.0 388.0 L335.0 385.0 L335.0 384.0 L334.0 384.0 L333.0 382.0 L331.0 381.0 L331.0 380.0 L329.0 379.0 L329.0 378.0 L327.0 376.0 Z" />
+    <path d="M442.0 376.0 L441.0 377.0 L440.0 385.0 L439.0 386.0 L439.0 389.0 L438.0 390.0 L438.0 394.0 L437.0 395.0 L436.0 404.0 L435.0 405.0 L434.0 413.0 L433.0 414.0 L433.0 417.0 L432.0 418.0 L432.0 422.0 L483.0 422.0 L484.0 416.0 L485.0 415.0 L466.0 415.0 L465.0 414.0 L451.0 414.0 L450.0 415.0 L448.0 415.0 L446.0 413.0 L447.0 412.0 L447.0 408.0 L448.0 407.0 L448.0 405.0 L450.0 402.0 L482.0 402.0 L483.0 401.0 L484.0 395.0 L466.0 395.0 L465.0 394.0 L461.0 394.0 L460.0 395.0 L452.0 395.0 L451.0 394.0 L451.0 390.0 L452.0 389.0 L452.0 386.0 L454.0 383.0 L490.0 383.0 L491.0 382.0 L491.0 378.0 L492.0 376.0 Z" />
+    <path d="M550.0 376.0 L550.0 381.0 L549.0 382.0 L548.0 390.0 L547.0 391.0 L547.0 394.0 L546.0 395.0 L546.0 399.0 L545.0 400.0 L545.0 403.0 L544.0 404.0 L544.0 408.0 L543.0 409.0 L543.0 412.0 L542.0 413.0 L541.0 422.0 L553.0 422.0 L554.0 421.0 L554.0 418.0 L555.0 417.0 L556.0 409.0 L558.0 405.0 L574.0 405.0 L578.0 409.0 L578.0 410.0 L582.0 414.0 L582.0 415.0 L587.0 420.0 L588.0 422.0 L604.0 422.0 L604.0 421.0 L589.0 405.0 L592.0 403.0 L595.0 403.0 L601.0 400.0 L605.0 396.0 L607.0 392.0 L607.0 384.0 L602.0 379.0 L598.0 378.0 L597.0 377.0 L595.0 377.0 L594.0 376.0 Z M559.0 397.0 L560.0 391.0 L561.0 390.0 L561.0 386.0 L563.0 383.0 L587.0 383.0 L588.0 384.0 L590.0 384.0 L593.0 387.0 L593.0 392.0 L589.0 396.0 L587.0 396.0 L586.0 397.0 L583.0 397.0 L582.0 398.0 L560.0 398.0 Z" />
+    <path d="M724.0 379.0 L722.0 378.0 L719.0 378.0 L718.0 377.0 L715.0 377.0 L714.0 376.0 L711.0 376.0 L710.0 375.0 L704.0 375.0 L703.0 374.0 L693.0 374.0 L692.0 375.0 L687.0 375.0 L686.0 376.0 L682.0 376.0 L681.0 377.0 L676.0 378.0 L670.0 381.0 L662.0 388.0 L658.0 396.0 L658.0 408.0 L660.0 412.0 L668.0 419.0 L670.0 419.0 L673.0 421.0 L676.0 421.0 L677.0 422.0 L681.0 422.0 L682.0 423.0 L699.0 423.0 L700.0 422.0 L706.0 422.0 L707.0 421.0 L711.0 421.0 L712.0 420.0 L718.0 419.0 L719.0 417.0 L720.0 409.0 L721.0 408.0 L721.0 404.0 L722.0 403.0 L722.0 400.0 L723.0 399.0 L723.0 396.0 L696.0 396.0 L695.0 400.0 L694.0 401.0 L694.0 403.0 L708.0 403.0 L709.0 404.0 L709.0 406.0 L708.0 407.0 L708.0 411.0 L706.0 414.0 L703.0 414.0 L702.0 415.0 L684.0 415.0 L683.0 414.0 L680.0 414.0 L678.0 413.0 L672.0 407.0 L671.0 405.0 L671.0 398.0 L672.0 397.0 L672.0 395.0 L674.0 391.0 L678.0 387.0 L684.0 384.0 L686.0 384.0 L687.0 383.0 L693.0 383.0 L694.0 382.0 L705.0 382.0 L706.0 383.0 L712.0 383.0 L715.0 385.0 L718.0 385.0 L721.0 387.0 Z" />
+    <path d="M791.0 422.0 L803.0 422.0 L804.0 421.0 L804.0 417.0 L805.0 416.0 L805.0 412.0 L806.0 411.0 L806.0 408.0 L807.0 407.0 L807.0 403.0 L824.0 387.0 L825.0 387.0 L836.0 376.0 L822.0 376.0 L803.0 394.0 L802.0 394.0 L800.0 392.0 L800.0 391.0 L797.0 388.0 L797.0 387.0 L792.0 381.0 L792.0 380.0 L789.0 376.0 L774.0 376.0 L780.0 383.0 L780.0 384.0 L784.0 388.0 L784.0 389.0 L788.0 393.0 L788.0 394.0 L794.0 402.0 L794.0 408.0 L793.0 409.0 L793.0 412.0 L792.0 413.0 L792.0 418.0 L791.0 419.0 Z" />
   </g>
 </svg>"""
 
-    # Salvar outline oficial
     with open("public/brand-kit/1. Web-SVG/esol-logo-outline-temp.svg", "w", encoding="utf-8") as f:
-        f.write(svg_horiz)
-        
-    print("Vetor Outline temporário gerado com sucesso!")
+        f.write(svg_content)
+    print("Vetor Outline oficial gerado com sucesso!")
 
 if __name__ == "__main__":
     build_outline_brand()

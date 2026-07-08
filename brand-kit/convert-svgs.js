@@ -60,14 +60,21 @@ async function convert() {
     console.error('Erro ao gerar favicon.png:', err);
   }
 
-  // Converter a logo Outline temporária para exibição no chat
+  // Converter a logo Outline oficial e salvar no brand-kit e no brain
   try {
-    const outlineSvg = 'public/brand-kit/1. Web-SVG/esol-logo-outline-temp.svg';
-    const destOutlinePng = 'C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/esol-logo-outline.png';
+    const outlineSvg = 'public/brand-kit/1. Web-SVG/esol-logo-outline.svg';
+    const destOutlinePngBrain = 'C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/esol-logo-outline.png';
+    const destOutlinePngKit = 'public/brand-kit/2. Imagens-PNG/esol-logo-outline.png';
+    
     await sharp(outlineSvg, { density: 300 })
       .png()
-      .toFile(destOutlinePng);
-    console.log('Sucesso: esol-logo-outline.png gerado no brain.');
+      .toFile(destOutlinePngBrain);
+      
+    await sharp(outlineSvg, { density: 300 })
+      .png()
+      .toFile(destOutlinePngKit);
+      
+    console.log('Sucesso: esol-logo-outline.png gerado no brain e no brand-kit.');
   } catch (err) {
     console.error('Erro ao gerar esol-logo-outline.png:', err);
   }
