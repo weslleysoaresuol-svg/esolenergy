@@ -258,7 +258,7 @@ function InvitePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-navy via-navy-deep to-navy flex items-center justify-center p-6">
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-8">
-        <div className="flex justify-center mb-6"><img src={logo} alt="ESOL" className="h-16 w-auto" /></div>
+        <div className="flex justify-center mb-6"><img src={logo} alt="ESOL" className="h-20 w-auto" /></div>
         <h1 className="text-2xl font-bold text-center text-navy mb-1">Bem-vindo à ESOL Energy</h1>
         <p className="text-sm text-center text-muted-foreground mb-2">
           {roleToAssign === "corretor" 
