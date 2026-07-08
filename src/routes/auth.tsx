@@ -88,7 +88,7 @@ function AuthPage() {
         {/* Cabeçalho */}
         <div className="flex items-center justify-between">
           <Link to="/" className="transition hover:opacity-95">
-            <img src={logo} alt="ESOL Energy" className="h-16 w-auto" />
+            <img src={logo} alt="ESOL Energy" className="h-20 w-auto" />
           </Link>
           <Link to="/" className="inline-flex items-center gap-1 text-[10px] font-black text-slate-400 hover:text-navy transition-all uppercase tracking-wider">
             <ArrowLeft className="w-3 h-3" /> Site
