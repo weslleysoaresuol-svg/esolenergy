@@ -393,7 +393,7 @@ function AppShell() {
 
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 inset-x-0 bg-white text-navy z-40 flex items-center justify-between px-4 h-14 border-b border-slate-200/60 shadow-sm animate-fade-in">
-        <img src={logo} alt="ESOL Energy — Sistema de Gestão" className="h-10 w-auto" />
+        <img src={logo} alt="ESOL Energy — Sistema de Gestão" className="h-10 sm:h-11 w-auto" />
         <div className="flex items-center gap-3">
           {/* Sino mobile */}
           <MobileBellBadge count={naoLidas} onClick={() => navigate({ to: "/app" })} />
