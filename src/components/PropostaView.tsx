@@ -600,7 +600,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
             style={{ scaleX: readingScaleX }}
           />
           <div className="bg-white/95 px-4 py-2 rounded-xl flex items-center justify-center border border-white/20 shadow-sm transition-all duration-300 hover:scale-[1.02]">
-            <img src={logo} alt="ESOL Energy" className="h-10 w-auto object-contain" />
+            <img src={logo} alt="ESOL Energy" className="h-12 w-auto object-contain" />
           </div>
           <div className="text-right hidden md:block">
             <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Estudo Técnico-Comercial</div>
