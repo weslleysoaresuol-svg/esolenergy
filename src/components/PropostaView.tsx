@@ -352,7 +352,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
 
         <header className="bg-white/[0.01] border-b border-white/[0.06] backdrop-blur-md py-6 px-6 md:px-12 relative z-10">
           <div className="max-w-5xl mx-auto flex justify-between items-center">
-            <img src={logoWhite} alt="ESOL Energy" className="h-11 w-auto" />
+            <img src={logoWhite} alt="ESOL Energy" className="h-14 w-auto" />
             <Badge className="bg-sun/10 text-sun border border-sun/20 font-black uppercase tracking-widest text-[9px] px-3 py-1">Ficha de Crédito em Análise</Badge>
           </div>
         </header>
