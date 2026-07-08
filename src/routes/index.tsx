@@ -211,7 +211,7 @@ function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 sm:h-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <a href="#top" className="flex items-center gap-3 min-w-0">
-          <img src={logo} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-10 sm:h-12 w-auto shrink-0" width={137} height={60} />
+          <img src={logo} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto shrink-0" width={137} height={60} />
         </a>
         <div className="hidden xl:flex items-center gap-8 text-sm font-medium text-navy/75 absolute left-1/2 -translate-x-1/2">
           <a href="#simulador" className="hover:text-sun-deep transition-colors">Simulador</a>
