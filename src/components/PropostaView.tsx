@@ -439,7 +439,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
         
         <header className="bg-white/[0.01] border-b border-white/[0.06] backdrop-blur-md py-8 px-6 md:px-12 relative z-10">
           <div className="max-w-5xl mx-auto flex justify-between items-center">
-            <img src={logoWhite} alt="ESOL Energy" className="h-11 w-auto" />
+            <img src={logoWhite} alt="ESOL Energy" className="h-14 w-auto" />
             <div className="text-right text-xs">
               <span className="text-white/40 text-[9px] uppercase tracking-widest font-black">Cotação Solar</span>
               <div className="font-mono font-black text-sun tracking-wider">#{String(p.id || "").slice(0, 8).toUpperCase()}</div>
