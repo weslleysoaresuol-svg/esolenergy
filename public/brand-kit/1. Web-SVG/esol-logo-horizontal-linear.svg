@@ -37,5 +37,5 @@
         <path d="M 38 12 H 25 C 25 10, 23 9, 19 9 C 14 9, 12 12, 12 30 C 12 48, 14 51, 19 51 C 23 51, 24 50, 24 43 V 36 H 18 V 26 H 38 V 56 C 32 59, 27 60, 19 60 C 7 60, 0 54, 0 30 C 0 6, 7 0, 19 0 C 28 0, 35 4, 38 12 Z" fill="#555555" transform="translate(388, 0)" />
         <path d="M 0 0 L 15 28 V 60 H 27 V 28 L 42 0 H 27 L 21 13 L 15 0 Z" fill="#555555" transform="translate(432, 0)" />
       </g>
-      <text x="315" y="115" text-anchor="middle" class="brand-slogan">Deixe o sol trabalhar por você.</text>
+      
     </svg>

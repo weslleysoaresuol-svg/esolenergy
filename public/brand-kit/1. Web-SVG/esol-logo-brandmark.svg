@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
-  <defs>
-    <mask id="slash-mask">
-      <rect x="-50" y="-50" width="100" height="100" fill="white" />
-      <line x1="-30" y1="30" x2="30" y2="-30" stroke="black" stroke-width="7" stroke-linecap="round" />
-    </mask>
-  </defs>
-  <g transform="translate(50, 50) skewX(-12)">
-    <circle cx="0" cy="0" r="30" fill="none" stroke="#FFB300" stroke-width="16" mask="url(#slash-mask)" />
-  </g>
-</svg>
+      <defs>
+        <mask id="slash-mask-brand">
+          <rect x="-50" y="-50" width="100" height="100" fill="white" />
+          <line x1="-30" y1="30" x2="30" y2="-30" stroke="black" stroke-width="7" stroke-linecap="round" />
+        </mask>
+      </defs>
+      <g transform="translate(50, 50) skewX(-12)">
+        <circle cx="0" cy="0" r="30" fill="none" stroke="#FFB300" stroke-width="16" mask="url(#slash-mask-brand)" />
+      </g>
+    </svg>

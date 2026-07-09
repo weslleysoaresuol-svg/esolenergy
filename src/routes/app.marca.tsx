@@ -53,43 +53,71 @@ const BRAND_COLORS = [
 
 const BRAND_ASSETS = [
   {
-    title: "Logo Horizontal Oficial",
-    desc: "Ideal para cabeçalhos, navbars, cabeçalhos de documentos e barras estreitas.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal.svg",
+    title: "Logo Horizontal Linear (Slogan)",
+    desc: "Assinatura horizontal primária. Ideal para cabeçalhos amplos, banners e assinaturas digitais.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-slogan.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal.png",
     bgDark: false
   },
   {
-    title: "Logo Horizontal Negativa",
-    desc: "Otimizada para cabeçalhos escuros, propostas de alta costura e fundos marinhos.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-negative.svg",
+    title: "Logo Horizontal Linear (Negativa)",
+    desc: "Otimizada para cabeçalhos escuros, hero banners marinhos e rodapés.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-slogan-negative.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal-negative.png",
     bgDark: true
   },
   {
-    title: "Logo Vertical / Stacked",
-    desc: "Indicada para capas de propostas, banners centrais, folders e fardamento.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-stacked.svg",
+    title: "Logo Horizontal Linear (Sem Slogan)",
+    desc: "Nome ENERGY na frente de ESOL no mesmo tamanho. Recomendada para cordões de crachá, canetas, crachás e áreas ultra-estreitas.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal.png",
+    bgDark: false
+  },
+  {
+    title: "Logo Horizontal Linear (Sem Slogan - Negativa)",
+    desc: "Versão linear sem slogan para fundos escuros e cordões de crachá marinhos.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-negative.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal-negative.png",
+    bgDark: true
+  },
+  {
+    title: "Logo Centrada/Stacked (Com Slogan)",
+    desc: "Padrão oficial vertical. Indicada para capas de propostas, panfletos, pastas e fardamento.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-slogan.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
     bgDark: false
   },
   {
-    title: "Logo Vertical Negativa",
+    title: "Logo Centrada/Stacked (Negativa)",
     desc: "Versão vertical otimizada para aberturas escuras e fundos contrastantes.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-stacked-negative.svg",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-slogan-negative.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-negative.png",
+    bgDark: true
+  },
+  {
+    title: "Logo Centrada/Stacked (Sem Slogan)",
+    desc: "Versão vertical simplificada para cartões de visita, tags de preço e folders corporativos.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-no-slogan.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
+    bgDark: false
+  },
+  {
+    title: "Logo Centrada/Stacked (Sem Slogan - Negativa)",
+    desc: "Versão vertical simplificada para fundos escuros de alta costura.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-no-slogan-negative.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-negative.png",
     bgDark: true
   },
   {
     title: "Brandmark (Ícone do Sol)",
-    desc: "Apenas o símbolo solar. Usado para favicons, loader, fotos de perfil e badges.",
+    desc: "O glifo solar isolado com corte de 45°. Favicon, loading spinners, avatares de rede social e marca d'água.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-brandmark.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-brandmark.png",
     bgDark: false
   },
   {
-    title: "Brandmark Monocromático",
-    desc: "Símbolo em branco sutil. Indicado para marcas d'água e assinaturas discretas.",
+    title: "Brandmark Monocromático (Branco)",
+    desc: "Símbolo em branco puro para marcas d'água discretas, camisetas pretas e aplicativos em dark mode.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-brandmark-white.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-brandmark-white.png",
     bgDark: true

@@ -12,14 +12,14 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
             font-style: italic;
-            fill: #555555;
+            fill: #E5E7EB;
             font-size: 26px;
             letter-spacing: 12px;
           }
           .brand-slogan {
             font-family: 'Outfit', sans-serif;
             font-weight: 400;
-            fill: #555555;
+            fill: #E5E7EB;
             font-size: 16px;
             letter-spacing: 0.5px;
           }
@@ -28,15 +28,15 @@
       <!-- ESOL LOGO (Vector shapes, skewed -12deg) -->
       <g transform="translate(112, 12) skewX(-12)">
         <!-- E -->
-        <path d="M 0 0 H 40 V 14 H 15 V 23 H 35 V 35 H 15 V 46 H 40 V 60 H 0 Z" fill="#00246B" />
+        <path d="M 0 0 H 40 V 14 H 15 V 23 H 35 V 35 H 15 V 46 H 40 V 60 H 0 Z" fill="#FFFFFF" />
         <!-- S -->
-        <path d="M 37 14 H 24 C 24 10, 22 9, 18 9 C 14 9, 12 11, 12 14 C 12 20, 37 19, 37 38 C 37 52, 26 60, 18 60 C 8 60, 2 54, 1 43 H 14 C 14 47, 16 48, 18 48 C 22 48, 24 46, 24 43 C 24 37, 1 37, 1 20 C 1 7, 11 0, 19 0 C 27 0, 35 5, 37 14 Z" fill="#00246B" transform="translate(44, 0)" />
+        <path d="M 37 14 H 24 C 24 10, 22 9, 18 9 C 14 9, 12 11, 12 14 C 12 20, 37 19, 37 38 C 37 52, 26 60, 18 60 C 8 60, 2 54, 1 43 H 14 C 14 47, 16 48, 18 48 C 22 48, 24 46, 24 43 C 24 37, 1 37, 1 20 C 1 7, 11 0, 19 0 C 27 0, 35 5, 37 14 Z" fill="#FFFFFF" transform="translate(44, 0)" />
         <!-- O -->
         <circle cx="120" cy="30" r="22" fill="none" stroke="#FFB300" stroke-width="14" mask="url(#slash-mask)" />
         <!-- L -->
-        <path d="M 0 0 H 15 V 46 H 40 V 60 H 0 Z" fill="#00246B" transform="translate(152, 0)" />
+        <path d="M 0 0 H 15 V 46 H 40 V 60 H 0 Z" fill="#FFFFFF" transform="translate(152, 0)" />
       </g>
       <!-- ENERGY -->
       <text x="231" y="125" text-anchor="middle" class="brand-subtitle">ENERGY</text>
-      <text x="225" y="152" text-anchor="middle" class="brand-slogan">Deixe o sol trabalhar por você.</text>
+      
     </svg>

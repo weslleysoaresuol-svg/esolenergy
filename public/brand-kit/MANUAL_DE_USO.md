@@ -180,21 +180,23 @@ public/brand-kit/
   ├── MANUAL_DE_USO.md              ← este documento (fonte de verdade)
   ├── MANUAL_DE_MARCA.pdf           ← versão apresentável para clientes/gráficas
   ├── 1. Web-SVG/                   ← vetor escalável (web, app, gráfica offset)
-  │   ├── esol-logo-horizontal.svg
-  │   ├── esol-logo-horizontal-negative.svg
-  │   ├── esol-logo-stacked.svg
-  │   ├── esol-logo-stacked-negative.svg
-  │   ├── esol-logo-brandmark.svg
-  │   ├── esol-logo-brandmark-white.svg
-  │   └── esol-logo-outline.svg
+  │   ├── esol-logo-vertical-slogan.svg             ← vertical centrada com slogan (oficial)
+  │   ├── esol-logo-vertical-slogan-negative.svg    ← vertical centrada negativa com slogan
+  │   ├── esol-logo-vertical-no-slogan.svg          ← vertical centrada simplificada sem slogan
+  │   ├── esol-logo-vertical-no-slogan-negative.svg ← vertical centrada simplificada negativa sem slogan
+  │   ├── esol-logo-horizontal-linear.svg           ← horizontal linear (ENERGY do mesmo tamanho de ESOL)
+  │   ├── esol-logo-horizontal-linear-negative.svg  ← horizontal linear negativa
+  │   ├── esol-logo-horizontal-linear-slogan.svg    ← horizontal linear com slogan abaixo
+  │   ├── esol-logo-horizontal-linear-slogan-negative.svg ← horizontal linear com slogan negativa
+  │   ├── esol-logo-brandmark.svg                   ← símbolo solar dourado isolado
+  │   └── esol-logo-brandmark-white.svg             ← símbolo solar branco isolado
   └── 2. Imagens-PNG/               ← raster transparente (Canva, PowerPoint, redes)
       ├── esol-logo-horizontal.png
       ├── esol-logo-horizontal-negative.png
       ├── esol-logo-stacked.png
       ├── esol-logo-stacked-negative.png
       ├── esol-logo-brandmark.png
-      ├── esol-logo-brandmark-white.png
-      └── esol-logo-outline.png
+      └── esol-logo-brandmark-white.png
 ```
 
 ---
