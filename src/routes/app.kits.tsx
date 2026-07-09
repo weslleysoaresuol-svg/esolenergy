@@ -49,6 +49,17 @@ const EMPTY_KIT = {
   ativo: true,
   fornecedor: "Aldo Solar",
   url_fornecedor: "",
+  categoria: "kit",
+};
+
+const CATEGORIAS_EQUIPAMENTO: Record<string, { label: string; icon: string }> = {
+  todas: { label: "Todos", icon: "📦" },
+  kit: { label: "Kits Completos", icon: "⚡" },
+  modulo: { label: "Módulos / Painéis", icon: "☀️" },
+  inversor: { label: "Inversores", icon: "📟" },
+  bateria: { label: "Baterias / Storage", icon: "🔋" },
+  estrutura: { label: "Estruturas", icon: "🛠️" },
+  acessorio: { label: "Acessórios / Outros", icon: "🔌" }
 };
 
 function AdminKits() {
@@ -57,6 +68,7 @@ function AdminKits() {
   const [showTechDetails, setShowTechDetails] = useState(false);
   const [filterFaixa, setFilterFaixa] = useState("todas");
   const [filterAtivo, setFilterAtivo] = useState("todos");
+  const [filterCategoria, setFilterCategoria] = useState("todas");
   const [q, setQ] = useState("");
   const [editando, setEditando] = useState<any | null>(null);
   const [saving, setSaving] = useState(false);
@@ -100,8 +112,9 @@ function AdminKits() {
   const filtered = kits.filter((k) => {
     const matchFaixa = filterFaixa === "todas" || k.faixa === filterFaixa;
     const matchAtivo = filterAtivo === "todos" || (filterAtivo === "ativo" ? k.ativo : !k.ativo);
+    const matchCategoria = filterCategoria === "todas" || k.categoria === filterCategoria;
     const matchQ = !q || k.nome.toLowerCase().includes(q.toLowerCase()) || k.fabricante_modulos?.toLowerCase().includes(q.toLowerCase()) || k.inversor?.toLowerCase().includes(q.toLowerCase());
-    return matchFaixa && matchAtivo && matchQ;
+    return matchFaixa && matchAtivo && matchCategoria && matchQ;
   });
 
   const save = async () => {
@@ -129,6 +142,7 @@ function AdminKits() {
         fornecedor: editando.fornecedor || null,
         url_fornecedor: editando.url_fornecedor || null,
         componentes: editando.componentes || null,
+        categoria: editando.categoria || "kit"
       };
 
       if (editando.id) {
@@ -171,41 +185,70 @@ function AdminKits() {
     <div className="space-y-6 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-navy flex items-center gap-2"><Sun className="text-sun-deep" />Kits Fotovoltaicos</h1>
-          <p className="text-muted-foreground">Cadastre, importe planilhas de fornecedores ou integre APIs em tempo real.</p>
+          <h1 className="text-3xl font-bold text-navy flex items-center gap-2"><Sun className="text-sun-deep" />Equipamentos & Kits</h1>
+          <p className="text-muted-foreground">Gerencie geradores completos e componentes avulsos integrados em tempo real via API ou planilhas.</p>
         </div>
         {canEditKits && (
           <div className="flex gap-2">
             <Link to="/app/parametros" search={{ tab: "kits" }}>
               <Button variant="outline" className="border-navy/20 hover:bg-navy/5 text-navy font-semibold">
-                <Upload className="w-4 h-4 mr-1" />Importar Kits (Parâmetros)
+                <Upload className="w-4 h-4 mr-1" />Importar Equipamentos
               </Button>
             </Link>
             <Button onClick={() => setEditando({ ...EMPTY_KIT })} className="bg-sun hover:bg-sun-deep text-navy font-semibold">
-              <Plus className="w-4 h-4 mr-1" />Novo kit manual
+              <Plus className="w-4 h-4 mr-1" />Novo item manual
             </Button>
           </div>
         )}
       </div>
 
       <div className="space-y-6">
-        {/* KPIs por faixa */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-          {Object.entries(FAIXAS).map(([k, v]) => {
-            const count = kits.filter((kit) => kit.faixa === k && kit.ativo).length;
+        {/* Categorias - Pílulas de Filtro Rápido */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-wrap">
+          {Object.entries(CATEGORIAS_EQUIPAMENTO).map(([catId, cat]) => {
+            const isSelected = filterCategoria === catId;
+            const count = kits.filter(k => (catId === "todas" || k.categoria === catId) && k.ativo).length;
             return (
               <button
-                key={k}
-                onClick={() => setFilterFaixa(filterFaixa === k ? "todas" : k)}
-                className={`p-3 rounded-xl text-center border-2 transition ${filterFaixa === k ? "border-navy bg-navy/5" : "border-transparent bg-white shadow-sm hover:border-navy/20"}`}
+                key={catId}
+                onClick={() => setFilterCategoria(catId)}
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold border transition shadow-sm cursor-pointer ${
+                  isSelected 
+                    ? "bg-[#2E44B8] border-[#2E44B8] text-white" 
+                    : "bg-white border-slate-200 text-slate-700 hover:border-[#2E44B8]/30"
+                }`}
               >
-                <div className="text-xl">{v.emoji}</div>
-                <div className="text-lg font-extrabold text-navy">{count}</div>
-                <div className="text-[9px] text-muted-foreground leading-tight mt-0.5">{v.label}</div>
+                <span>{cat.icon}</span>
+                <span>{cat.label}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                  isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+                }`}>
+                  {count}
+                </span>
               </button>
             );
           })}
         </div>
+
+        {/* KPIs por faixa de consumo (para kits de potência) */}
+        {filterCategoria === "todas" || filterCategoria === "kit" ? (
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+            {Object.entries(FAIXAS).map(([k, v]) => {
+              const count = kits.filter((kit) => kit.faixa === k && kit.ativo && (filterCategoria === "todas" || kit.categoria === filterCategoria)).length;
+              return (
+                <button
+                  key={k}
+                  onClick={() => setFilterFaixa(filterFaixa === k ? "todas" : k)}
+                  className={`p-3 rounded-xl text-center border-2 transition cursor-pointer ${filterFaixa === k ? "border-navy bg-navy/5" : "border-transparent bg-white shadow-sm hover:border-navy/20"}`}
+                >
+                  <div className="text-xl">{v.emoji}</div>
+                  <div className="text-lg font-extrabold text-navy">{count}</div>
+                  <div className="text-[9px] text-muted-foreground leading-tight mt-0.5">{v.label}</div>
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
 
         {/* Barra de filtros */}
         <Card className="p-4 border-0 shadow-sm flex flex-wrap gap-3">
@@ -575,54 +618,91 @@ function AdminKits() {
                 </div>
               </div>
 
-              {/* Grid Técnico */}
+              {/* Grid Técnico Dinâmico */}
               <div className="grid grid-cols-2 gap-3 text-xs border-t pt-3">
-                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                  <span className="text-[9px] text-slate-400 font-bold block uppercase">Placas Fotovoltaicas</span>
-                  <strong className="text-navy font-bold text-[11px] block mt-0.5">{selectedKitDetails.quantidade_modulos}x {selectedKitDetails.fabricante_modulos}</strong>
-                  <span className="text-[10px] text-slate-500">{selectedKitDetails.potencia_modulo_w}W · {selectedKitDetails.tecnologia_modulo}</span>
-                </div>
-                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                  <span className="text-[9px] text-slate-400 font-bold block uppercase">Inversor</span>
-                  <strong className="text-navy font-bold text-[11px] block mt-0.5 leading-snug line-clamp-1">{selectedKitDetails.inversor}</strong>
-                  <span className="text-[10px] text-slate-500 block mt-0.5">{selectedKitDetails.tipo_inversor}</span>
-                </div>
+                {selectedKitDetails.categoria === "kit" || !selectedKitDetails.categoria ? (
+                  <>
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <span className="text-[9px] text-slate-400 font-bold block uppercase">Placas Fotovoltaicas</span>
+                      <strong className="text-navy font-bold text-[11px] block mt-0.5">{selectedKitDetails.quantidade_modulos}x {selectedKitDetails.fabricante_modulos}</strong>
+                      <span className="text-[10px] text-slate-500">{selectedKitDetails.potencia_modulo_w}W · {selectedKitDetails.tecnologia_modulo}</span>
+                    </div>
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <span className="text-[9px] text-slate-400 font-bold block uppercase">Inversor</span>
+                      <strong className="text-navy font-bold text-[11px] block mt-0.5 leading-snug line-clamp-1">{selectedKitDetails.inversor}</strong>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">{selectedKitDetails.tipo_inversor}</span>
+                    </div>
+                  </>
+                ) : selectedKitDetails.categoria === "modulo" ? (
+                  <>
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 col-span-2">
+                      <span className="text-[9px] text-slate-400 font-bold block uppercase">Especificações do Módulo</span>
+                      <strong className="text-navy font-bold text-[12px] block mt-0.5">{selectedKitDetails.fabricante_modulos} {selectedKitDetails.potencia_modulo_w}W</strong>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">{selectedKitDetails.tecnologia_modulo} · Eficiência: {selectedKitDetails.eficiencia_modulo}%</span>
+                    </div>
+                  </>
+                ) : selectedKitDetails.categoria === "inversor" ? (
+                  <>
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 col-span-2">
+                      <span className="text-[9px] text-slate-400 font-bold block uppercase">Especificações do Inversor</span>
+                      <strong className="text-navy font-bold text-[12px] block mt-0.5">{selectedKitDetails.inversor}</strong>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">{selectedKitDetails.tipo_inversor} · Eficiência: {selectedKitDetails.eficiencia_modulo}%</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 col-span-2">
+                      <span className="text-[9px] text-slate-400 font-bold block uppercase">Informações do Item</span>
+                      <strong className="text-navy font-bold text-[12px] block mt-0.5">{selectedKitDetails.nome}</strong>
+                      {selectedKitDetails.fabricante_modulos && (
+                        <span className="text-[10px] text-slate-500 block mt-0.5">Fabricante: {selectedKitDetails.fabricante_modulos}</span>
+                      )}
+                    </div>
+                  </>
+                )}
+                
                 <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                   <span className="text-[9px] text-slate-400 font-bold block uppercase">Distribuidor B2B</span>
-                  <strong className="text-emerald-700 font-bold text-[11px] block mt-0.5">{selectedKitDetails.fornecedor || "Aldo Solar"}</strong>
-                  <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 rounded px-1 py-0.2 mt-1 inline-block font-extrabold uppercase">
+                  <strong className="text-[#2E44B8] font-bold text-[11px] block mt-0.5">{selectedKitDetails.fornecedor || "Aldo Solar"}</strong>
+                  <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 rounded px-1.5 py-0.2 mt-1 inline-block font-extrabold uppercase">
                     {selectedKitDetails.url_fornecedor ? "API Conectado" : "Importado CSV"}
                   </span>
                 </div>
                 <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                  <span className="text-[9px] text-slate-400 font-bold block uppercase">Garantias oficiais</span>
-                  <strong className="text-navy font-bold text-[11px] block mt-0.5">Placas: {selectedKitDetails.garantia_modulos_anos} anos</strong>
-                  <span className="text-[10px] text-slate-500">Inversor: {selectedKitDetails.garantia_inversor_anos} anos</span>
+                  <span className="text-[9px] text-slate-400 font-bold block uppercase">Garantia Técnica</span>
+                  <strong className="text-navy font-bold text-[11px] block mt-0.5">
+                    {selectedKitDetails.categoria === "modulo" ? `${selectedKitDetails.garantia_modulos_anos} anos` : 
+                     selectedKitDetails.categoria === "inversor" ? `${selectedKitDetails.garantia_inversor_anos} anos` :
+                     `${selectedKitDetails.garantia_modulos_anos || selectedKitDetails.garantia_inversor_anos || 10} anos`}
+                  </strong>
+                  <span className="text-[10px] text-slate-500">Garantia de Fábrica</span>
                 </div>
               </div>
 
-              {/* Componentes inclusos */}
-              <div className="space-y-2 border-t pt-3.5">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Componentes inclusos de fábrica</span>
-                <div className="max-h-40 overflow-y-auto space-y-2 pr-1">
-                  {obterComponentesKit(selectedKitDetails).map((comp: string, idx: number) => {
-                    let icon = "⚡";
-                    if (idx === 0) icon = "☀️"; // placas
-                    if (idx === 1) icon = "📟"; // inversor
-                    if (idx === 2) icon = "🛠️"; // estrutura
-                    if (idx === 3) icon = "🔌"; // cabos
-                    if (idx === 4) icon = "🔗"; // mc4
-                    if (idx === 5) icon = "🛡️"; // string box
+              {/* Componentes inclusos (apenas para kits) */}
+              {(selectedKitDetails.categoria === "kit" || !selectedKitDetails.categoria) && (
+                <div className="space-y-2 border-t pt-3.5">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Componentes inclusos de fábrica</span>
+                  <div className="max-h-40 overflow-y-auto space-y-2 pr-1">
+                    {obterComponentesKit(selectedKitDetails).map((comp: string, idx: number) => {
+                      let icon = "⚡";
+                      if (idx === 0) icon = "☀️"; // placas
+                      if (idx === 1) icon = "📟"; // inversor
+                      if (idx === 2) icon = "🛠️"; // estrutura
+                      if (idx === 3) icon = "🔌"; // cabos
+                      if (idx === 4) icon = "🔗"; // mc4
+                      if (idx === 5) icon = "🛡️"; // string box
 
-                    return (
-                      <div key={idx} className="flex gap-2 items-start bg-slate-50/50 p-2 rounded-lg border border-slate-100 text-xs text-slate-700 leading-snug">
-                        <span className="shrink-0 text-xs mt-0.5">{icon}</span>
-                        <span className="font-semibold text-[11px]">{comp}</span>
-                      </div>
-                    );
-                  })}
+                      return (
+                        <div key={idx} className="flex gap-2 items-start bg-slate-50/50 p-2 rounded-lg border border-slate-100 text-xs text-slate-700 leading-snug">
+                          <span className="shrink-0 text-xs mt-0.5">{icon}</span>
+                          <span className="font-semibold text-[11px]">{comp}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Botões administrativos */}
               {canEditKits && (
@@ -647,12 +727,25 @@ function AdminKits() {
             <Card className="w-full max-w-2xl mx-4 p-6 border-0 shadow-2xl">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xl font-bold text-navy flex items-center gap-2">
-                  <Sun className="text-sun-deep" />{editando.id ? "Editar kit" : "Novo kit fotovoltaico"}
+                  <Sun className="text-sun-deep" />{editando.id ? "Editar Item do Catálogo" : "Novo Item B2B"}
                 </h2>
                 <button onClick={() => setEditando(null)} className="text-muted-foreground hover:text-navy"><X className="w-5 h-5" /></button>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
+                {/* Categoria */}
+                <div className="md:col-span-2">
+                  <Label>Categoria do Item</Label>
+                  <Select value={editando.categoria || "kit"} onValueChange={(v) => setEditando((p: any) => ({ ...p, categoria: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(CATEGORIAS_EQUIPAMENTO).filter(([k]) => k !== "todas").map(([k, v]) => (
+                        <SelectItem key={k} value={k}>{v.icon} {v.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {/* Faixa */}
                 <div className="md:col-span-2">
                   <Label>Faixa de mercado</Label>

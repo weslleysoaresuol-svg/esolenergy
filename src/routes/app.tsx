@@ -240,7 +240,7 @@ function AppShell() {
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
     { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
     { to: "/app/financeiro", icon: Landmark, label: "Financeiro" },
-    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
+    { to: "/app/kits", icon: Sun, label: "Equipamentos & Kits" },
     { to: "/app/corretores", icon: Briefcase, label: "Parceiros & Convites" },
     { to: "/app/equipe", icon: UserCog, label: "Equipe & Acessos" },
     { to: "/app/marca", icon: BookOpen, label: "Manual de Marca" },
@@ -256,7 +256,7 @@ function AppShell() {
     { to: "/app/propostas", icon: FileSpreadsheet, label: "Propostas" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
     { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
-    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
+    { to: "/app/kits", icon: Sun, label: "Equipamentos & Kits" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
 
@@ -285,7 +285,7 @@ function AppShell() {
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
     { to: "/app/financiamentos", icon: Landmark, label: "Financiamentos" },
-    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
+    { to: "/app/kits", icon: Sun, label: "Equipamentos & Kits" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
 
@@ -293,7 +293,7 @@ function AppShell() {
     { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
     { to: "/app/clientes", icon: Users, label: "Clientes & Leads" },
     { to: "/app/pedidos", icon: ShoppingCart, label: "Pedidos" },
-    { to: "/app/kits", icon: Sun, label: "Kits Solares" },
+    { to: "/app/kits", icon: Sun, label: "Equipamentos & Kits" },
     { to: "/app/perfil", icon: UserCircle, label: "Meu Perfil" },
   ];
 

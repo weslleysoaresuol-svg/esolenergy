@@ -21,6 +21,7 @@ import {
   sincronizarKitsDistribuidoraServerFn,
   obterConfigsDistribuidorasServerFn
 } from "@/lib/distributors.functions";
+import { classificarCategoriaPorNome } from "@/lib/distributor-api";
 import {
   Dialog,
   DialogContent,
@@ -1597,6 +1598,8 @@ function ImportadorKitsSolar() {
         
         const faixa = determineFaixa(potencia_kwp, customFaixa);
 
+        const cat = classificarCategoriaPorNome(nome);
+
         return {
           faixa,
           nome,
@@ -1612,7 +1615,8 @@ function ImportadorKitsSolar() {
           garantia_inversor_anos: 10,
           ativo: true,
           destaque: false,
-          fornecedor: "Importação CSV"
+          fornecedor: "Importação CSV",
+          categoria: cat
         };
       }).filter(k => k.preco > 0 && k.potencia_kwp > 0);
 
