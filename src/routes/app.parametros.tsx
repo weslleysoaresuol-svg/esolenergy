@@ -16,6 +16,19 @@ import {
   BRL, type TipoInstalacao, type TipoTelhado, TELHADO_LABEL, PARAMETROS_DEFAULT 
 } from "@/lib/proposta-calc";
 import { CONCESSIONARIAS, getConcessionariasPorUF } from "@/lib/concessionarias";
+import {
+  salvarConfigDistribuidoraServerFn,
+  sincronizarKitsDistribuidoraServerFn,
+  obterConfigsDistribuidorasServerFn
+} from "@/lib/distributors.functions";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/app/parametros")({
   head: () => ({ meta: [{ title: "Parâmetros & Motor — ESOL Energy" }] }),
@@ -1418,6 +1431,86 @@ function ImportadorKitsSolar() {
     localStorage.setItem("esol_api_conexoes", JSON.stringify(updated));
   };
 
+  // Configurações das distribuidoras vindas do banco
+  const [configsDistribuidoras, setConfigsDistribuidoras] = useState<any[]>([]);
+  const [isLoadingConfigs, setIsLoadingConfigs] = useState(true);
+
+  // Estados do modal de configuração
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [selectedDistributorForConfig, setSelectedDistributorForConfig] = useState<any | null>(null);
+  const [clientIdInput, setClientIdInput] = useState("");
+  const [clientSecretInput, setClientSecretInput] = useState("");
+  const [ambienteInput, setAmbienteInput] = useState<"sandbox" | "production">("sandbox");
+  const [isSavingConfig, setIsSavingConfig] = useState(false);
+
+  // Carrega configurações ao montar o componente
+  const carregarConfigs = async () => {
+    setIsLoadingConfigs(true);
+    try {
+      const data = await obterConfigsDistribuidorasServerFn();
+      setConfigsDistribuidoras(data || []);
+      
+      // Atualiza o estado de conexões com base nas credenciais salvas
+      const updatedConexoes = { ...apiConexoes };
+      (data || []).forEach((c: any) => {
+        if (c.client_id) {
+          updatedConexoes[c.id] = "conectado";
+        } else {
+          updatedConexoes[c.id] = "pendente";
+        }
+      });
+      setApiConexoes(updatedConexoes);
+      localStorage.setItem("esol_api_conexoes", JSON.stringify(updatedConexoes));
+    } catch (err) {
+      console.error("Erro ao carregar configs de distribuidoras:", err);
+    } finally {
+      setIsLoadingConfigs(false);
+    }
+  };
+
+  useEffect(() => {
+    carregarConfigs();
+  }, []);
+
+  const abrirModalConfig = (dist: any) => {
+    const activeConfig = configsDistribuidoras.find(c => c.id === dist.id);
+    setSelectedDistributorForConfig(dist);
+    setClientIdInput(activeConfig?.client_id || "");
+    setClientSecretInput(""); // Não exibe a chave gravada por segurança
+    setAmbienteInput((activeConfig?.ambiente || "sandbox") as "sandbox" | "production");
+    setIsConfigModalOpen(true);
+  };
+
+  const salvarConfiguracao = async () => {
+    if (!selectedDistributorForConfig) return;
+    setIsSavingConfig(true);
+    const toastId = toast.loading(`Validando conexão com ${selectedDistributorForConfig.nome}...`);
+
+    try {
+      const res = await salvarConfigDistribuidoraServerFn({
+        data: {
+          distribuidoraId: selectedDistributorForConfig.id,
+          clientId: clientIdInput || null,
+          clientSecret: clientSecretInput || null,
+          ambiente: ambienteInput
+        }
+      });
+
+      if (!res.success) {
+        toast.error(res.message, { id: toastId });
+        return;
+      }
+
+      toast.success("Credenciais validadas e salvas com sucesso!", { id: toastId });
+      setIsConfigModalOpen(false);
+      await carregarConfigs();
+    } catch (err: any) {
+      toast.error(`Erro ao salvar: ${err.message}`, { id: toastId });
+    } finally {
+      setIsSavingConfig(false);
+    }
+  };
+
   // Handler de upload CSV
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -1550,38 +1643,25 @@ function ImportadorKitsSolar() {
     }
   };
 
-  // Sincronização via API
+  // Sincronização via API real do servidor
   const sincronizarDistribuidora = async (distribuidora: typeof DISTRIBUIDORAS_API[0]) => {
     setSyncingDistribuidora(distribuidora.id);
-    
-    // Toast de inicialização
-    const toastId = toast.loading(`Conectando à API da ${distribuidora.nome}...`);
+    const toastId = toast.loading(`Sincronizando catálogo da ${distribuidora.nome} via API...`);
     
     try {
-      // Simulação realista do hand-shake e busca de catálogo de kits
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const res = await sincronizarKitsDistribuidoraServerFn({
+        data: { distribuidoraId: distribuidora.id }
+      });
       
-      const kitsGerados = gerarKitsPorFornecedor(distribuidora.nome);
-      
-      // Salva no banco de dados
-      const { error } = await supabase.from("kits_produtos").insert(kitsGerados);
-      
-      if (error) {
-        console.warn("Falha de gravação no banco, utilizando localStorage cache...", error);
-        const localKits = JSON.parse(localStorage.getItem("esol_kits_custom") || "[]");
-        
-        // Evita duplicatas por código
-        const existingCodes = new Set(localKits.map((k: any) => k.codigo));
-        const novosKits = kitsGerados.filter((k: any) => !existingCodes.has(k.codigo));
-        
-        localStorage.setItem("esol_kits_custom", JSON.stringify([...localKits, ...novosKits]));
+      if (!res.success) {
+        throw new Error(res.message);
       }
       
       updateApiStatus(distribuidora.id, "conectado");
-      toast.success(`${kitsGerados.length} kits fotovoltaicos da ${distribuidora.nome} sincronizados e integrados!`, { id: toastId });
+      toast.success(`${res.count} kits fotovoltaicos da ${distribuidora.nome} sincronizados com sucesso!`, { id: toastId });
     } catch (err: any) {
       updateApiStatus(distribuidora.id, "offline");
-      toast.error(`Falha ao conectar à API da ${distribuidora.nome}: ${err.message}`, { id: toastId });
+      toast.error(`Falha ao sincronizar: ${err.message}`, { id: toastId });
     } finally {
       setSyncingDistribuidora(null);
     }
@@ -1637,8 +1717,10 @@ function ImportadorKitsSolar() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {DISTRIBUIDORAS_API.map((dist) => {
-              const status = apiConexoes[dist.id] || "pendente";
               const isSyncing = syncingDistribuidora === dist.id;
+              const activeConfig = configsDistribuidoras.find(c => c.id === dist.id);
+              const isConfigured = !!activeConfig?.client_id;
+              const isProd = activeConfig?.ambiente === "production";
 
               return (
                 <Card 
@@ -1651,9 +1733,15 @@ function ImportadorKitsSolar() {
                         <span className="text-[10px] uppercase font-black tracking-wider text-slate-400">Distribuidor Solar B2B</span>
                         <h4 className="text-lg font-black text-navy">{dist.nome}</h4>
                       </div>
-                      <span className={`text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border shadow-sm ${status === "conectado" ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-amber-50 border-amber-200 text-amber-600"}`}>
-                        ● {status === "conectado" ? "API Conectada" : "Pronto para Conexão"}
-                      </span>
+                      {isConfigured ? (
+                        <span className="text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border shadow-sm bg-emerald-50 border-emerald-200 text-emerald-700">
+                          ● API Configurada ({isProd ? "Produção" : "Sandbox"})
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border shadow-sm bg-amber-50 border-amber-200 text-amber-600">
+                          ● Pronto para Conexão
+                        </span>
+                      )}
                     </div>
 
                     <p className="text-xs text-slate-600 leading-relaxed font-semibold italic">"{dist.slogan}"</p>
@@ -1687,12 +1775,19 @@ function ImportadorKitsSolar() {
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 p-4 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">Integração WebService v2.6</span>
+                  <div className="bg-slate-50 p-4 border-t border-slate-100 flex flex-wrap gap-2 items-center justify-between">
+                    <Button
+                      variant="outline"
+                      onClick={() => abrirModalConfig(dist)}
+                      className="border-slate-200 text-slate-700 font-extrabold text-xs h-9 px-3 rounded-xl hover:bg-slate-100 flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <Settings className="w-3.5 h-3.5 text-slate-500" />
+                      Configurar API
+                    </Button>
                     <Button
                       onClick={() => sincronizarDistribuidora(dist)}
                       disabled={isSyncing}
-                      className="bg-navy hover:bg-navy-deep text-white font-extrabold text-xs h-9 px-4 rounded-xl flex items-center gap-1.5 border-0 shadow-sm transition-all"
+                      className="bg-navy hover:bg-navy-deep text-white font-extrabold text-xs h-9 px-4 rounded-xl flex items-center gap-1.5 border-0 shadow-sm transition-all cursor-pointer"
                     >
                       {isSyncing ? (
                         <>
@@ -1702,7 +1797,7 @@ function ImportadorKitsSolar() {
                       ) : (
                         <>
                           <RefreshCw className="w-3.5 h-3.5" />
-                          {status === "conectado" ? "Sincronizar API novamente" : "Sincronizar Catálogo via API"}
+                          {isConfigured ? "Sincronizar" : "Sincronizar (Fallback)"}
                         </>
                       )}
                     </Button>
@@ -1828,6 +1923,87 @@ function ImportadorKitsSolar() {
           </Card>
         </div>
       )}
+
+      {/* MODAL DE CONFIGURAÇÃO DE CREDENCIAIS DA API DA DISTRIBUIDORA */}
+      <Dialog open={isConfigModalOpen} onOpenChange={setIsConfigModalOpen}>
+        <DialogContent className="max-w-md bg-white rounded-3xl p-6 border border-slate-100 shadow-2xl overflow-hidden animate-in fade-in duration-200">
+          <DialogHeader className="space-y-1.5">
+            <DialogTitle className="text-xl font-black text-navy flex items-center gap-2">
+              <Globe className="w-5 h-5 text-[#2E44B8]" />
+              Configurar API: {selectedDistributorForConfig?.nome}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500 font-medium">
+              Insira as credenciais comerciais de integração webservice B2B fornecidas pela distribuidora.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4 text-xs">
+            <div className="space-y-1.5">
+              <Label className="font-bold text-slate-700">Ambiente de Conexão</Label>
+              <select
+                value={ambienteInput}
+                onChange={(e) => setAmbienteInput(e.target.value as any)}
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-semibold text-xs outline-none shadow-sm focus:border-navy"
+              >
+                <option value="sandbox">Sandbox / Homologação (Ambiente de Testes)</option>
+                <option value="production">Produção / Vendas (Ambiente Real)</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="font-bold text-slate-700">Client ID / Usuário da API</Label>
+              <Input
+                type="text"
+                placeholder="Ex: aldo_integrador_123 ou w_user"
+                value={clientIdInput}
+                onChange={(e) => setClientIdInput(e.target.value)}
+                className="rounded-xl border-slate-200 h-10 px-3.5 text-xs shadow-sm font-semibold focus-visible:ring-navy"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="font-bold text-slate-700">Client Secret / Token / API Key</Label>
+              <Input
+                type="password"
+                placeholder={configsDistribuidoras.some(c => c.id === selectedDistributorForConfig?.id && c.client_id) ? "•••••••••••••••• (Preencha para atualizar)" : "Insira a chave ou senha da API"}
+                value={clientSecretInput}
+                onChange={(e) => setClientSecretInput(e.target.value)}
+                className="rounded-xl border-slate-200 h-10 px-3.5 text-xs shadow-sm font-semibold focus-visible:ring-navy"
+              />
+            </div>
+            
+            <div className="bg-slate-50 border border-slate-100 p-3.5 rounded-2xl text-[10px] text-slate-500 leading-relaxed font-semibold">
+              ⚠️ <strong>Dica de Produção:</strong> Certifique-se de que sua conta comercial possui a funcionalidade de WebService / API habilitada junto à distribuidora solar.
+            </div>
+          </div>
+
+          <DialogFooter className="flex gap-2 justify-end border-t pt-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsConfigModalOpen(false)}
+              className="rounded-xl font-bold text-xs h-9 px-4 cursor-pointer"
+            >
+              Cancelar
+            </Button>
+            <Button
+              size="sm"
+              onClick={salvarConfiguracao}
+              disabled={isSavingConfig}
+              className="bg-[#2E44B8] hover:bg-[#1F3095] text-white font-extrabold text-xs h-9 px-5 rounded-xl border-0 shadow-sm flex items-center gap-1.5 cursor-pointer"
+            >
+              {isSavingConfig ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                  Salvando...
+                </>
+              ) : (
+                "Testar & Salvar"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
