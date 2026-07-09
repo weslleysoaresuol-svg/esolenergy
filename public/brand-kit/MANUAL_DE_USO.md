@@ -31,11 +31,10 @@ Cores extraídas diretamente do vetor oficial. **Use estes valores exatos** — 
 
 | Cor | HEX | RGB | CMYK | Pantone (referência) | Uso |
 |---|---|---|---|---|---|
-| **Navy Royal** | `#052761` | `5, 39, 97` | `100, 90, 20, 15` | PMS 281 C | Wordmark ESOL, textos institucionais, fundos escuros |
-| **Solar Gold** | `#FDBD08` | `253, 189, 8` | `0, 28, 100, 0` | PMS 123 C | Glifo solar, destaques, CTAs |
-| **Gold Highlight** | `#FBCE4A` | `251, 206, 74` | `1, 18, 78, 0` | PMS 122 C | Sombreamento interno do glifo (não usar isolado) |
-| **Slate Gray** | `#5B5D5F` | `91, 93, 95` | `0, 0, 0, 75` | PMS Cool Gray 10 C | Wordmark ENERGY, tagline, textos secundários |
-| **White** | `#FFFFFF` | `255, 255, 255` | `0, 0, 0, 0` | — | Versão negativa da marca |
+| **Navy Royal** | `#00246B` | `0, 36, 107` | `100, 85, 14, 3` | PMS 287 C | Wordmark ESOL, textos institucionais, fundos escuros |
+| **Solar Gold** | `#FFB300` | `255, 179, 0` | `0, 32, 100, 0` | PMS 123 C | Glifo solar, destaques, CTAs |
+| **Slate Gray** | `#555555` | `85, 85, 85` | `0, 0, 0, 80` | PMS Cool Gray 10 C | Wordmark ENERGY, tagline, textos secundários |
+| **Silver Gray** | `#E5E7EB` | `229, 231, 235` | `10, 6, 6, 0` | PMS Cool Gray 1 C | Versão negativa da marca sobre fundos escuros |
 | **Paper** | `#FDFBF6` | `253, 251, 246` | `0, 1, 3, 1` | — | Fundo claro premium (evita branco puro cansativo) |
 
 **Regra de ouro:** o **Solar Gold nunca muda de cor**. Ele é a assinatura visual do sol e não pode ser substituído por laranja, amarelo neon ou dourado metálico.
@@ -163,7 +162,7 @@ Absolutamente proibido:
 
 1. **Distorcer** — nunca esticar, comprimir ou rotacionar a logo.
 2. **Redigitar o wordmark** — não é uma fonte, é lettering. Nunca refaça em Arial, Montserrat, etc.
-3. **Trocar a cor do sol** — permanece `#FDBD08`. Exceção única: o brandmark-white monocromático autorizado.
+3. **Trocar a cor do sol** — permanece `#FFB300`. Exceção única: o brandmark-white monocromático autorizado.
 4. **Sombras, contornos, gradientes** que não sejam os oficiais deste kit.
 5. **Aplicar a versão colorida sobre fundos escuros** — sempre usar a versão negativa.
 6. **Cortar, mascarar ou "estilizar"** a logo com fotos, texturas ou molduras.

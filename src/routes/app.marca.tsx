@@ -126,11 +126,18 @@ function BrandManualPage() {
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a 
-              href="/brand-kit/MANUAL_DE_USO.md" 
+              href="/brand-kit/MANUAL_DE_MARCA.pdf" 
               download 
               className="inline-flex items-center gap-2 bg-[#FFB300] hover:bg-[#E5A100] text-[#001046] font-bold px-4 py-2.5 rounded-xl text-xs transition duration-200 shadow-md"
             >
-              <Download className="w-4 h-4" /> Download Manual Completo (.md)
+              <Download className="w-4 h-4" /> Download Manual (PDF)
+            </a>
+            <a 
+              href="/brand-kit/MANUAL_DE_USO.md" 
+              download 
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition duration-200"
+            >
+              <FileText className="w-4 h-4" /> Manual Técnico (.md)
             </a>
           </div>
         </div>

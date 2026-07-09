@@ -18,14 +18,14 @@ export const Route = createFileRoute("/auth")({
         const fs = await import("fs");
         const path = await import("path");
         
-        const sourceLogo = "C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/media__1783188730454.png";
+        const sourceLogo = "C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/media__1783563050269.png";
         const destLogo = path.join(process.cwd(), "src", "assets", "esol-logo.png");
         if (fs.existsSync(sourceLogo)) {
           fs.copyFileSync(sourceLogo, destLogo);
           console.log("⚡ [ESOL SSR] Logo copiada com sucesso!");
         }
 
-        const sourceFav = "C:/Users/wesll/.gemini/antigravity-ide/brain/31fb6ffb-176c-4451-80ba-b3b29c2ddcff/media__1783190599008.png";
+        const sourceFav = "C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/media__1783563050269.png";
         const destFav = path.join(process.cwd(), "public", "favicon.png");
         if (fs.existsSync(sourceFav)) {
           fs.copyFileSync(sourceFav, destFav);
