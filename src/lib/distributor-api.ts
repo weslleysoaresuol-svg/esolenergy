@@ -28,6 +28,7 @@ export interface DistributorKit {
   url_fornecedor: string;
   componentes?: string; // Itens inclusos (cabos, conectores, estruturas)
   categoria: "kit" | "modulo" | "inversor" | "estrutura" | "bateria" | "acessorio";
+  disponibilidade: "disponivel" | "indisponivel" | "sob_consulta";
 }
 
 export interface DistributorCredentials {
@@ -158,7 +159,8 @@ export class AldoSolarAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://www.aldo.com.br/gerador/jinko-growatt-3kwp",
           componentes: "6x Módulos Jinko 550W, 1x Inversor Growatt 3KW, 50m Cabo Solar 6mm², 4x Conectores MC4, Estrutura para Telhado Cerâmico.",
-          categoria: "kit"
+          categoria: "kit",
+          disponibilidade: "disponivel"
         },
         {
           codigo: "KIT-ALDO-CAN-660",
@@ -183,7 +185,8 @@ export class AldoSolarAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://www.aldo.com.br/gerador/canadian-growatt-6kwp",
           componentes: "12x Módulos Canadian 550W, 1x Inversor Growatt 6KW, 100m Cabo Solar 6mm², 8x Conectores MC4, String Box CC/CA, Estrutura Metálica.",
-          categoria: "kit"
+          categoria: "kit",
+          disponibilidade: "sob_consulta"
         },
         {
           codigo: "ALDO-MOD-JIN-550W",
@@ -208,7 +211,8 @@ export class AldoSolarAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://www.aldo.com.br/produto/modulo-jinko-550w",
           componentes: "1x Módulo fotovoltaico Jinko Solar 550W.",
-          categoria: "modulo"
+          categoria: "modulo",
+          disponibilidade: "indisponivel"
         },
         {
           codigo: "ALDO-INV-GRO-5000",
@@ -233,7 +237,8 @@ export class AldoSolarAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://www.aldo.com.br/produto/inversor-growatt-5kw",
           componentes: "1x Inversor Growatt 5KW, suporte de parede, manual de instrução.",
-          categoria: "inversor"
+          categoria: "inversor",
+          disponibilidade: "disponivel"
         }
       ];
     }
@@ -286,7 +291,8 @@ export class AldoSolarAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: k.link_produto || "https://www.aldo.com.br",
           componentes: k.itens_inclusos || "Especificações técnicas padrão do fabricante.",
-          categoria: cat
+          categoria: cat,
+          disponibilidade: k.disponibilidade || (k.quantidade_estoque !== undefined ? (Number(k.quantidade_estoque) > 0 ? "disponivel" : "indisponivel") : "disponivel")
         };
       });
     } catch (e: any) {
@@ -358,7 +364,8 @@ export class SouEnergyAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://parceiro.souenergy.com.br/gerador/risen-deye-4kwp",
           componentes: "8x Módulos Risen 550W, 1x Inversor Deye 4KW, 50m Cabo CC 6mm², Conectores MC4, String Box Integrada, Fixação para Fibrocimento.",
-          categoria: "kit"
+          categoria: "kit",
+          disponibilidade: "disponivel"
         },
         {
           codigo: "KIT-SOU-JIN-990",
@@ -383,7 +390,8 @@ export class SouEnergyAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://parceiro.souenergy.com.br/gerador/jinko-deye-8kwp",
           componentes: "18x Módulos Jinko 550W, 1x Inversor Deye 8KW, 100m Cabo CC 6mm², Conectores MC4, Fixadores de Alumínio para Telhado Colonial.",
-          categoria: "kit"
+          categoria: "kit",
+          disponibilidade: "disponivel"
         },
         {
           codigo: "SOU-BAT-LIT-10K",
@@ -408,7 +416,8 @@ export class SouEnergyAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://parceiro.souenergy.com.br/produto/bateria-litio-10kwh",
           componentes: "1x Módulo Bateria de Lítio 10kWh, cabos de comunicação RS485/CAN, suportes de montagem.",
-          categoria: "bateria"
+          categoria: "bateria",
+          disponibilidade: "sob_consulta"
         }
       ];
     }
@@ -459,7 +468,8 @@ export class SouEnergyAdapter implements DistributorAdapter {
           fornecedor: this.name,
           url_fornecedor: "https://parceiro.souenergy.com.br",
           componentes: g.componentes_detalhados || "Especificações de distribuição integrador B2B.",
-          categoria: cat
+          categoria: cat,
+          disponibilidade: g.disponibilidade || (g.estoque_disponivel !== undefined ? (Number(g.estoque_disponivel) > 0 ? "disponivel" : "indisponivel") : "disponivel")
         };
       });
     } catch (e: any) {
@@ -504,7 +514,8 @@ export class DistributorAdapterFactory {
           fornecedor: id.toUpperCase(),
           url_fornecedor: `https://www.${id}.com.br`,
           componentes: "Kit padrão solar com cabeamentos, suportes de telhado e proteções elétricas inclusas.",
-          categoria: "kit"
+          categoria: "kit",
+          disponibilidade: "disponivel"
         }
       ]
     };

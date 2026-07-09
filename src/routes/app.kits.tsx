@@ -50,6 +50,7 @@ const EMPTY_KIT = {
   fornecedor: "Aldo Solar",
   url_fornecedor: "",
   categoria: "kit",
+  disponibilidade: "disponivel",
 };
 
 const CATEGORIAS_EQUIPAMENTO: Record<string, { label: string; icon: string }> = {
@@ -142,7 +143,8 @@ function AdminKits() {
         fornecedor: editando.fornecedor || null,
         url_fornecedor: editando.url_fornecedor || null,
         componentes: editando.componentes || null,
-        categoria: editando.categoria || "kit"
+        categoria: editando.categoria || "kit",
+        disponibilidade: editando.disponibilidade || "disponivel"
       };
 
       if (editando.id) {
@@ -347,9 +349,24 @@ function AdminKits() {
                             </Badge>
                           )}
                         </div>
-                        <Badge className="absolute bottom-3 right-3 bg-navy/95 text-white text-[10px] font-black px-2 py-0.5 shadow-sm rounded-full">
+                         <Badge className="absolute bottom-3 right-3 bg-navy/95 text-white text-[10px] font-black px-2 py-0.5 shadow-sm rounded-full">
                           {Number(kit.potencia_kwp).toFixed(2)} kWp
                         </Badge>
+                        <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
+                          {kit.disponibilidade === "indisponivel" ? (
+                            <Badge className="bg-rose-500 hover:bg-rose-600 text-white text-[9px] font-extrabold px-2 py-0.5 shadow-sm rounded-full">
+                              🔴 Indisponível
+                            </Badge>
+                          ) : kit.disponibilidade === "sob_consulta" ? (
+                            <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-[9px] font-extrabold px-2 py-0.5 shadow-sm rounded-full">
+                              🟡 Sob Consulta
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-extrabold px-2 py-0.5 shadow-sm rounded-full">
+                              🟢 Em Estoque
+                            </Badge>
+                          )}
+                        </div>
                       </div>
 
                       {/* Card Content */}
@@ -474,19 +491,30 @@ function AdminKits() {
                             </td>
                             <td className="p-3 font-bold text-navy">{BRL(Number(kit.preco))}</td>
                             <td className="p-3">
-                              {canEditKits ? (
-                                <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"} className="cursor-pointer">
-                                  {kit.ativo
-                                    ? <ToggleRight className="w-6 h-6 text-emerald-500" />
-                                    : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
-                                </button>
-                              ) : (
-                                <div>
-                                  {kit.ativo
-                                    ? <Badge className="bg-emerald-50 text-emerald-700 text-[10px] border-emerald-200">Ativo</Badge>
-                                    : <Badge className="bg-slate-50 text-slate-700 text-[10px] border-slate-200">Inativo</Badge>}
+                              <div className="space-y-1">
+                                {canEditKits ? (
+                                  <button onClick={() => toggleAtivo(kit)} title={kit.ativo ? "Desativar" : "Ativar"} className="cursor-pointer block">
+                                    {kit.ativo
+                                      ? <ToggleRight className="w-6 h-6 text-emerald-500" />
+                                      : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
+                                  </button>
+                                ) : (
+                                  <div>
+                                    {kit.ativo
+                                      ? <Badge className="bg-emerald-50 text-emerald-700 text-[10px] border-emerald-200">Ativo</Badge>
+                                      : <Badge className="bg-slate-50 text-slate-700 text-[10px] border-slate-200">Inativo</Badge>}
+                                  </div>
+                                )}
+                                <div className="text-[10px] font-bold mt-1">
+                                  {kit.disponibilidade === "indisponivel" ? (
+                                    <span className="text-rose-600">🔴 Indisp.</span>
+                                  ) : kit.disponibilidade === "sob_consulta" ? (
+                                    <span className="text-amber-600">🟡 Consulta</span>
+                                  ) : (
+                                    <span className="text-emerald-600">🟢 Estoque</span>
+                                  )}
                                 </div>
-                              )}
+                              </div>
                             </td>
                             <td className="p-3">
                               <div className="flex items-center gap-1">
@@ -615,6 +643,29 @@ function AdminKits() {
                       Comprar B2B 🛒
                     </a>
                   )}
+                </div>
+              </div>
+
+              {/* Disponibilidade / Estoque do Item */}
+              <div className={`p-3 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold ${
+                selectedKitDetails.disponibilidade === "indisponivel"
+                  ? "bg-rose-50 border-rose-100 text-rose-800"
+                  : selectedKitDetails.disponibilidade === "sob_consulta"
+                    ? "bg-amber-50 border-amber-100 text-amber-800"
+                    : "bg-emerald-50 border-emerald-100 text-emerald-800"
+              }`}>
+                <span className="text-base">
+                  {selectedKitDetails.disponibilidade === "indisponivel" ? "❌" : selectedKitDetails.disponibilidade === "sob_consulta" ? "📞" : "✅"}
+                </span>
+                <div className="flex-1">
+                  <span className="text-[9px] text-slate-400 block font-bold uppercase tracking-wider">Disponibilidade no Fornecedor</span>
+                  <strong className="font-extrabold text-[11px] block mt-0.5">
+                    {selectedKitDetails.disponibilidade === "indisponivel"
+                      ? "Indisponível (Sem Estoque)"
+                      : selectedKitDetails.disponibilidade === "sob_consulta"
+                        ? "Sob Consulta / Confirmar"
+                        : "Pronta Entrega / Em Estoque"}
+                  </strong>
                 </div>
               </div>
 
@@ -784,8 +835,8 @@ function AdminKits() {
 
                 {/* Preço e Fornecedor */}
                 <div>
-                  <Label>Preço do kit (R$)</Label>
-                  <Input type="number" step="100" value={editando.preco} onChange={F("preco")} placeholder="23500" />
+                  <Label>Preço de Tabela B2B (R$)</Label>
+                  <Input type="number" step="1" value={editando.preco} onChange={F("preco")} placeholder="23500" />
                 </div>
                 <div>
                   <Label>Fornecedor</Label>
@@ -794,6 +845,18 @@ function AdminKits() {
                     <SelectContent>
                       <SelectItem value="Aldo Solar">Aldo Solar</SelectItem>
                       <SelectItem value="Sou Energy">Sou Energy</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <Label>Disponibilidade (Estoque)</Label>
+                  <Select value={editando.disponibilidade || "disponivel"} onValueChange={(v: any) => setEditando((p: any) => ({ ...p, disponibilidade: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="disponivel">🟢 Pronta Entrega / Em Estoque</SelectItem>
+                      <SelectItem value="sob_consulta">🟡 Sob Consulta (Confirmar Estoque)</SelectItem>
+                      <SelectItem value="indisponivel">🔴 Indisponível (Sem Estoque)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

@@ -133,6 +133,7 @@ export const sincronizarKitsDistribuidoraServerFn = createServerFn({ method: "PO
       url_fornecedor: k.url_fornecedor,
       componentes: k.componentes || "",
       categoria: k.categoria,
+      disponibilidade: k.disponibilidade || "disponivel",
       updated_at: new Date().toISOString()
     }));
 

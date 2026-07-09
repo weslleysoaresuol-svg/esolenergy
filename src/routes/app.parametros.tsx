@@ -1616,7 +1616,8 @@ function ImportadorKitsSolar() {
           ativo: true,
           destaque: false,
           fornecedor: "Importação CSV",
-          categoria: cat
+          categoria: cat,
+          disponibilidade: "disponivel"
         };
       }).filter(k => k.preco > 0 && k.potencia_kwp > 0);
 
