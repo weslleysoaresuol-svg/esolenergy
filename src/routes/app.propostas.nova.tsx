@@ -542,7 +542,7 @@ function NovaProposta() {
         kit_nome: selectedKit ? selectedKit.nome : null,
         kit_inversor: selectedKit ? selectedKit.inversor : null,
         kit_fabricante_modulos: selectedKit ? selectedKit.fabricante_modulos : null,
-        kit_imagem_url: selectedKit ? (selectedKit.imagem_kit_url || selectedKit.imagem_componentes_url) : null,
+        kit_imagem_url: selectedKit ? (selectedKit.imagem_url || selectedKit.imagem_kit_url || selectedKit.imagem_componentes_url) : null,
         kit_tecnologia_modulo: selectedKit ? selectedKit.tecnologia_modulo : null,
         kit_garantia_modulos_anos: selectedKit ? Number(selectedKit.garantia_modulos_anos) : null,
         kit_garantia_inversor_anos: selectedKit ? Number(selectedKit.garantia_inversor_anos) : null,
@@ -996,8 +996,8 @@ function NovaProposta() {
                       <div className="text-[10px] text-muted-foreground mt-0.5">Potência: <strong>{kit.potencia_kwp} kWp</strong> · {kit.quantidade_modulos}x painéis</div>
                       <div className="text-xs font-extrabold text-emerald-700 mt-1">{BRL(getPrecoVendaKit(kit))}</div>
                     </div>
-                    {kit.imagem_kit_url && (
-                      <img src={kit.imagem_kit_url} className="size-10 rounded object-cover border" alt="Kit" />
+                    {(kit.imagem_url || kit.imagem_kit_url) && (
+                      <img src={kit.imagem_url || kit.imagem_kit_url} className="size-10 rounded object-cover border" alt="Kit" />
                     )}
                   </label>
                 );
@@ -1407,8 +1407,8 @@ function NovaProposta() {
                     {kit.faixa && <div className="text-[10px] text-ink/40 font-bold uppercase mt-1">Faixa: {kit.faixa.replace("_", " ")}</div>}
                     <div className="text-sm font-bold text-navy mt-2">{BRL(getPrecoVendaKit(kit))}</div>
                   </div>
-                  {kit.imagem_kit_url && (
-                    <img src={kit.imagem_kit_url} className="size-14 rounded-lg object-cover border" alt="Componentes do kit" />
+                  {(kit.imagem_url || kit.imagem_kit_url) && (
+                    <img src={kit.imagem_url || kit.imagem_kit_url} className="size-14 rounded-lg object-cover border" alt="Componentes do kit" />
                   )}
                 </label>
               );
