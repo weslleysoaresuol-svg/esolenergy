@@ -29,14 +29,14 @@ export const Route = createFileRoute("/")({
         const fs = await import("fs");
         const path = await import("path");
         
-        const sourceLogo = "C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/media__1783563050269.png";
+        const sourceLogo = path.join(process.cwd(), "public", "brand-kit", "2. Imagens-PNG", "esol-logo-horizontal.png");
         const destLogo = path.join(process.cwd(), "src", "assets", "esol-logo.png");
         if (fs.existsSync(sourceLogo)) {
           fs.copyFileSync(sourceLogo, destLogo);
           console.log("⚡ [ESOL SSR Index] Logo copiada com sucesso!");
         }
 
-        const sourceFav = "C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/media__1783563050269.png";
+        const sourceFav = path.join(process.cwd(), "public", "brand-kit", "2. Imagens-PNG", "esol-logo-brandmark.png");
         const destFav = path.join(process.cwd(), "public", "favicon.png");
         if (fs.existsSync(sourceFav)) {
           fs.copyFileSync(sourceFav, destFav);
