@@ -140,9 +140,10 @@ export const sincronizarKitsDistribuidoraServerFn = createServerFn({ method: "PO
       updated_at: new Date().toISOString()
     }));
 
-    const { error } = await supabaseAdmin.from("kits_produtos").upsert(listToUpsert, {
+    const { error } = await supabaseAdmin.from("kits_produtos").upsert(listToUpsert as any, {
       onConflict: "codigo"
     });
+
 
     if (error) {
       throw new Error(`Erro ao salvar kits no banco: ${error.message}`);
