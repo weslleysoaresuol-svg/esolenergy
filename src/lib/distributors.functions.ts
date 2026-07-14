@@ -100,10 +100,7 @@ export const sincronizarKitsDistribuidoraServerFn = createServerFn({ method: "PO
       configAdicional: dbConfig?.config_adicional || {}
     };
 
-      clientSecret: dbConfig?.client_secret || null,
-      ambiente: (dbConfig?.ambiente || "sandbox") as "sandbox" | "production",
-      configAdicional: dbConfig?.config_adicional || {}
-    };
+
 
     // 2. Busca kits do adapter correspondente
     const adapter = DistributorAdapterFactory.create(data.distribuidoraId);
