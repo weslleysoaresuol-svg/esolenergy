@@ -359,31 +359,35 @@ function AdminEquipe() {
       ? crypto.randomUUID() 
       : Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 10)).join("-");
     
-    let dbError = null;
+    let dbError: any = null;
+    const emailNorm = novoEmail.trim().toLowerCase();
 
-    // Tenta gravar na tabela convites
-    const { error } = await (supabase.from("convites" as any).insert({
-      email: novoEmail.trim().toLowerCase(),
-      token,
-      status: "pendente",
-      role_to_assign: novoCargo,
-    } as any) as any);
-    
-    dbError = error;
+    // Estratégia 1: Grava na partner_invites (tabela garantida no banco de produção)
+    // O cargo é codificado na coluna 'note' e decodificado pela RPC validate_invite / consume_invite
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const { error: piError } = await supabase.from("partner_invites").insert({
+        token,
+        note: `Equipe: ${emailNorm} | Cargo: ${novoCargo}`,
+        created_by: userData.user!.id,
+      } as any);
+      dbError = piError;
+    } catch (err: any) {
+      dbError = err;
+    }
 
-    // Fallback caso a tabela convites não exista
-    if (error && (error.message.includes("schema cache") || error.message.includes("does not exist") || error.code === "P0002" || error.code === "42P01")) {
+    // Estratégia 2 (fallback): Se partner_invites falhou, tenta na tabela convites
+    if (dbError) {
       try {
-        const { data: userData } = await supabase.auth.getUser();
-        // Não passamos 'role_to_assign' no insert para evitar erro de schema cache se a coluna física não existir em produção!
-        const { error: fallbackError } = await supabase.from("partner_invites").insert({
+        const { error: cvError } = await (supabase.from("convites" as any).insert({
+          email: emailNorm,
           token,
-          note: `Equipe: ${novoEmail.trim().toLowerCase()} | Cargo: ${novoCargo}`,
-          created_by: userData.user!.id,
-        } as any);
-        dbError = fallbackError;
+          status: "pendente",
+          role_to_assign: novoCargo,
+        } as any) as any);
+        dbError = cvError;
       } catch (err: any) {
-        dbError = err;
+        // Mantém o erro original se o fallback também falhou
       }
     }
 
@@ -395,7 +399,7 @@ function AdminEquipe() {
       const link = `${window.location.origin}/convite/${token}`;
       setUltimoConvite({
         link,
-        email: novoEmail.trim().toLowerCase(),
+        email: emailNorm,
         cargo: novoCargo
       });
       toast.success("Convite de equipe gerado com sucesso!");
