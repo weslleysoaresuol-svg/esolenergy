@@ -68,8 +68,8 @@ function PerfilPage() {
     e.preventDefault();
     if (!user) return;
 
-    // Apenas a chave Pix é obrigatória (opcional para administradores)
-    if (role !== "admin" && (!form.pix_tipo || !form.pix_chave || !form.pix_chave.trim())) {
+    // Apenas a chave Pix é obrigatória (obrigatória apenas para consultores parceiros/corretores)
+    if (role === "corretor" && (!form.pix_tipo || !form.pix_chave || !form.pix_chave.trim())) {
       toast.error("A chave Pix (Tipo e Chave) é obrigatória para o recebimento de comissões.");
       return;
     }
@@ -174,15 +174,15 @@ function PerfilPage() {
               Você é <strong>administrador</strong>. Acesso total ao sistema.
             </div>
           )}
-          {role !== "admin" && !profile?.contrato_assinado && (
+          {role === "corretor" && !profile?.contrato_assinado && (
             <div className="bg-sun/10 border border-sun/40 p-3 rounded text-sm text-navy">
               Após salvar, você será direcionado para a <strong>assinatura do contrato de parceria</strong>.
             </div>
           )}
         </Card>
 
-        {/* Card: Dados para Recebimento de Comissões (Apenas para não-administradores) */}
-        {role !== "admin" && (
+        {/* Card: Dados para Recebimento de Comissões (Apenas para consultores parceiros/corretores) */}
+        {role === "corretor" && (
           <Card className="p-6 border-0 shadow-md space-y-5">
             <div>
               <h2 className="font-bold text-navy text-base flex items-center gap-2">
