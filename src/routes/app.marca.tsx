@@ -52,77 +52,229 @@ const BRAND_COLORS = [
 ];
 
 const BRAND_ASSETS = [
+  // ─── GRUPO 1: VERTICAL / STACKED ─────────────────────────────────────────
   {
-    title: "Logo Horizontal Linear (Slogan)",
-    desc: "Assinatura horizontal primária. Ideal para cabeçalhos amplos, banners e assinaturas digitais.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-slogan.svg",
-    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal.png",
-    bgDark: false
-  },
-  {
-    title: "Logo Horizontal Linear (Negativa)",
-    desc: "Otimizada para cabeçalhos escuros, hero banners marinhos e rodapés.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-slogan-negative.svg",
-    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal-negative.png",
-    bgDark: true
-  },
-  {
-    title: "Logo Horizontal Linear (Sem Slogan)",
-    desc: "Nome ENERGY na frente de ESOL no mesmo tamanho. Recomendada para cordões de crachá, canetas, crachás e áreas ultra-estreitas.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear.svg",
-    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal.png",
-    bgDark: false
-  },
-  {
-    title: "Logo Horizontal Linear (Sem Slogan - Negativa)",
-    desc: "Versão linear sem slogan para fundos escuros e cordões de crachá marinhos.",
-    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-negative.svg",
-    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal-negative.png",
-    bgDark: true
-  },
-  {
-    title: "Logo Centrada/Stacked (Com Slogan)",
-    desc: "Padrão oficial vertical. Indicada para capas de propostas, panfletos, pastas e fardamento.",
+    group: "Vertical / Stacked",
+    title: "Logo Oficial com Slogan",
+    badge: "Principal",
+    badgeColor: "bg-[#00246B] text-white",
+    uses: "Capa de proposta, folder, apresentação, papel timbrado, painel de feiras.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-slogan.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
     bgDark: false
   },
   {
-    title: "Logo Centrada/Stacked (Negativa)",
-    desc: "Versão vertical otimizada para aberturas escuras e fundos contrastantes.",
+    group: "Vertical / Stacked",
+    title: "Logo Oficial com Slogan — Negativa",
+    badge: "Dark Theme",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Fundos marinhos, hero escuro, rodapé de site, camisa escura.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-slogan-negative.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-negative.png",
     bgDark: true
   },
   {
-    title: "Logo Centrada/Stacked (Sem Slogan)",
-    desc: "Versão vertical simplificada para cartões de visita, tags de preço e folders corporativos.",
+    group: "Vertical / Stacked",
+    title: "Logo Vertical Sem Slogan",
+    badge: "Compacta",
+    badgeColor: "bg-slate-100 text-slate-700",
+    uses: "Cartão de visita, tag de preço, avatar social, caneca, camiseta.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-no-slogan.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
     bgDark: false
   },
   {
-    title: "Logo Centrada/Stacked (Sem Slogan - Negativa)",
-    desc: "Versão vertical simplificada para fundos escuros de alta costura.",
+    group: "Vertical / Stacked",
+    title: "Logo Vertical Sem Slogan — Negativa",
+    badge: "Dark Theme",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Crachá escuro, fundo azul, capa de contrato em fundo navy.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-vertical-no-slogan-negative.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-negative.png",
     bgDark: true
   },
+
+  // ─── GRUPO 2: HORIZONTAL LINEAR ──────────────────────────────────────────
   {
-    title: "Brandmark (Ícone do Sol)",
-    desc: "O glifo solar isolado com corte de 45°. Favicon, loading spinners, avatares de rede social e marca d'água.",
+    group: "Horizontal Linear",
+    title: "Horizontal Linear (ESOL | ENERGY)",
+    badge: "Cordão / Banner",
+    badgeColor: "bg-[#FFB300] text-[#001046]",
+    uses: "Cordão de crachá, fita de embalagem, caneta, banner estreito, testeira.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal.png",
+    bgDark: false
+  },
+  {
+    group: "Horizontal Linear",
+    title: "Horizontal Linear — Negativa",
+    badge: "Dark Theme",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Cordão de crachá escuro, banner navy, cabeçalho de site.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-negative.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal-negative.png",
+    bgDark: true
+  },
+  {
+    group: "Horizontal Linear",
+    title: "Horizontal Linear com Slogan",
+    badge: "Assinatura Digital",
+    badgeColor: "bg-blue-50 text-blue-700",
+    uses: "Assinatura de e-mail, papel timbrado lateral, cabeçalho de proposta horizontal.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-slogan.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal.png",
+    bgDark: false
+  },
+  {
+    group: "Horizontal Linear",
+    title: "Horizontal Linear com Slogan — Negativa",
+    badge: "Dark Theme",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Cabeçalho escuro, e-mail corpo dark, rodapé premium.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-linear-slogan-negative.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal-negative.png",
+    bgDark: true
+  },
+
+  // ─── GRUPO 3: BRANDMARK ───────────────────────────────────────────────────
+  {
+    group: "Brandmark (Ícone Solar)",
+    title: "Brandmark Solar — Dourado",
+    badge: "App Icon",
+    badgeColor: "bg-[#FFB300] text-[#001046]",
+    uses: "Favicon, app icon, loader, avatar de rede social, marca d'água.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-brandmark.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-brandmark.png",
     bgDark: false
   },
   {
-    title: "Brandmark Monocromático (Branco)",
-    desc: "Símbolo em branco puro para marcas d'água discretas, camisetas pretas e aplicativos em dark mode.",
+    group: "Brandmark (Ícone Solar)",
+    title: "Brandmark Solar — Dourado em Navy",
+    badge: "Favicon Dark",
+    badgeColor: "bg-[#00246B] text-white",
+    uses: "Favicon dark, ícone de app dark mode, selo de qualidade.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-brandmark-dark.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-brandmark.png",
+    bgDark: true
+  },
+  {
+    group: "Brandmark (Ícone Solar)",
+    title: "Brandmark Solar — Branco",
+    badge: "Marca d'água",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Foto de instalação, apresentação com foto de fundo, camiseta escura.",
     svgPath: "/brand-kit/1. Web-SVG/esol-logo-brandmark-white.svg",
     pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-brandmark-white.png",
     bgDark: true
-  }
+  },
+  {
+    group: "Brandmark (Ícone Solar)",
+    title: "Brandmark Branco em Fundo Navy",
+    badge: "Favicon Oficial",
+    badgeColor: "bg-[#00246B] text-white",
+    uses: "Favicon principal do site, ícone de PWA, avatar WhatsApp Business.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-brandmark-white-dark.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-brandmark-white.png",
+    bgDark: true
+  },
+
+  // ─── GRUPO 4: MONOCROMÁTICO ───────────────────────────────────────────────
+  {
+    group: "Monocromático",
+    title: "Monocromático Navy",
+    badge: "Bordado / Relevo",
+    badgeColor: "bg-[#00246B] text-white",
+    uses: "Bordado de uniforme, relevo em capa de pasta, carimbo corporativo.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-monochrome-navy.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
+    bgDark: false
+  },
+  {
+    group: "Monocromático",
+    title: "Monocromático Dourado",
+    badge: "Impressão Premium",
+    badgeColor: "bg-[#FFB300] text-[#001046]",
+    uses: "Hot stamping dourado, lacre de envelopes, certificados premium.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-monochrome-gold.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
+    bgDark: false
+  },
+  {
+    group: "Monocromático",
+    title: "Monocromático Branco",
+    badge: "Fundo Colorido",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Fundo solar (foto), campanha, banner colorido, pop-up promocional.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-monochrome-white.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-negative.png",
+    bgDark: true
+  },
+  {
+    group: "Monocromático",
+    title: "Monocromático Escuro",
+    badge: "Documentos",
+    badgeColor: "bg-slate-100 text-slate-700",
+    uses: "Nota fiscal, contrato, proposta monocromática, cabeçalho de e-mail básico.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-monochrome-black.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
+    bgDark: false
+  },
+  {
+    group: "Monocromático",
+    title: "Escala de Cinza",
+    badge: "Impressão P&B",
+    badgeColor: "bg-slate-200 text-slate-600",
+    uses: "Impressora preto-e-branco, xerox, fax, documentos internos sem cor.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-grayscale.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
+    bgDark: false
+  },
+
+  // ─── GRUPO 5: WORDMARK COMPACTO ──────────────────────────────────────────
+  {
+    group: "Wordmark Compacto",
+    title: "Wordmark ESOL (Sem ENERGY)",
+    badge: "Ultra-Compacto",
+    badgeColor: "bg-slate-100 text-slate-700",
+    uses: "Crachá minúsculo, ícone de app com texto, assinatura ultra-reduzida, pulseira.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-wordmark-only.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked.png",
+    bgDark: false
+  },
+  {
+    group: "Wordmark Compacto",
+    title: "Wordmark ESOL — Negativa",
+    badge: "Dark Theme",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Crachá dark, ícone de app dark mode.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-wordmark-only-negative.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-negative.png",
+    bgDark: true
+  },
+
+  // ─── GRUPO 6: HORIZONTAL MONOCROMÁTICO ───────────────────────────────────
+  {
+    group: "Horizontal Monocromático",
+    title: "Horizontal Monocromático Navy",
+    badge: "Bordado Cordão",
+    badgeColor: "bg-[#00246B] text-white",
+    uses: "Bordado em cordão de crachá navy, lanyard personalizado, caneta bordada.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-monochrome-navy.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal.png",
+    bgDark: false
+  },
+  {
+    group: "Horizontal Monocromático",
+    title: "Horizontal Monocromático Branco",
+    badge: "Cordão Claro",
+    badgeColor: "bg-white/20 text-white",
+    uses: "Cordão de crachá escuro com bordado branco, lanyard navy.",
+    svgPath: "/brand-kit/1. Web-SVG/esol-logo-horizontal-monochrome-white.svg",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-horizontal-negative.png",
+    bgDark: true
+  },
 ];
+
 
 function BrandManualPage() {
   const [activeTab, setActiveTab] = useState<"ativos" | "cores" | "tipografia" | "tom">("ativos");
@@ -199,63 +351,83 @@ function BrandManualPage() {
         
         {/* TAB 1: LOGO ASSETS DOWNLOAD GRID */}
         {activeTab === "ativos" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div>
               <h2 className="text-xl font-bold text-navy">Biblioteca de Logotipos</h2>
               <p className="text-slate-500 text-xs mt-1">
-                Vetores nítidos (SVG) para desenvolvimento web e imagens transparentes (PNG) em alta resolução para Canva e apresentações.
+                20 variações profissionais. Vetores nítidos (SVG) e imagens PNG em alta resolução.
+                Cada variação tem uma aplicação específica — leia o campo <strong>"Uso"</strong> antes de baixar.
               </p>
             </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {BRAND_ASSETS.map((asset, idx) => (
-                <div 
-                  key={idx} 
-                  className="group flex flex-col border border-slate-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-200 transition-all duration-300"
-                >
-                  {/* PREVIEW CONTAINER */}
-                  <div className={`h-40 flex items-center justify-center p-6 relative ${asset.bgDark ? "bg-[#001046] pattern-dark" : "bg-slate-50 pattern-light"}`}>
-                    {/* Floating contrast badge */}
-                    <span className={`absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${asset.bgDark ? "bg-white/10 text-white" : "bg-slate-200/60 text-slate-600"}`}>
-                      {asset.bgDark ? "Tema Escuro" : "Tema Claro"}
-                    </span>
-                    <img 
-                      src={asset.svgPath} 
-                      alt={asset.title} 
-                      className="max-w-full max-h-full object-contain transform group-hover:scale-[1.03] transition-transform duration-300"
-                    />
+
+            {/* Group by `group` field */}
+            {(() => {
+              const groups = [...new Set(BRAND_ASSETS.map(a => a.group))];
+              return groups.map(groupName => (
+                <div key={groupName} className="space-y-3">
+                  {/* Group header */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-0.5 w-4 bg-[#00246B] rounded-full" />
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.18em] text-[#00246B]">{groupName}</h3>
+                    <div className="flex-1 h-px bg-slate-100" />
                   </div>
-                  
-                  {/* BODY INFO */}
-                  <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-sm">{asset.title}</h3>
-                      <p className="text-slate-500 text-[11px] leading-relaxed mt-1">{asset.desc}</p>
-                    </div>
-                    
-                    {/* ACTIONS */}
-                    <div className="flex gap-2">
-                      <a 
-                        href={asset.svgPath} 
-                        download
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-[11px] transition"
+
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {BRAND_ASSETS.filter(a => a.group === groupName).map((asset, idx) => (
+                      <div
+                        key={idx}
+                        className="group flex flex-col border border-slate-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-slate-200 transition-all duration-300"
                       >
-                        <Download className="w-3.5 h-3.5" /> Vetor SVG
-                      </a>
-                      <a 
-                        href={asset.pngPath} 
-                        download
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#00246B]/5 hover:bg-[#00246B]/10 text-[#00246B] font-bold py-2 rounded-xl text-[11px] transition"
-                      >
-                        <Download className="w-3.5 h-3.5" /> Imagem PNG
-                      </a>
-                    </div>
+                        {/* PREVIEW CONTAINER */}
+                        <div className={`h-36 flex items-center justify-center p-5 relative ${asset.bgDark ? "bg-[#001046]" : "bg-slate-50"}`}>
+                          {/* Application badge */}
+                          <span className={`absolute top-2.5 right-2.5 text-[9px] font-extrabold px-2 py-0.5 rounded-full ${asset.badgeColor}`}>
+                            {asset.badge}
+                          </span>
+                          <img
+                            src={asset.svgPath}
+                            alt={asset.title}
+                            className="max-w-full max-h-full object-contain transform group-hover:scale-[1.04] transition-transform duration-300"
+                          />
+                        </div>
+
+                        {/* BODY INFO */}
+                        <div className="p-4 flex-1 flex flex-col justify-between space-y-3 bg-white">
+                          <div>
+                            <h4 className="font-bold text-slate-800 text-sm leading-snug">{asset.title}</h4>
+                            <div className="flex items-start gap-1 mt-1.5">
+                              <span className="text-[10px] font-semibold text-[#FFB300] mt-0.5 shrink-0">USO:</span>
+                              <p className="text-slate-500 text-[10px] leading-relaxed">{asset.uses}</p>
+                            </div>
+                          </div>
+
+                          {/* DOWNLOAD ACTIONS */}
+                          <div className="flex gap-2">
+                            <a
+                              href={asset.svgPath}
+                              download
+                              className="flex-1 inline-flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-[10px] transition"
+                            >
+                              <Download className="w-3 h-3" /> Vetor SVG
+                            </a>
+                            <a
+                              href={asset.pngPath}
+                              download
+                              className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#00246B]/5 hover:bg-[#00246B]/10 text-[#00246B] font-bold py-2 rounded-xl text-[10px] transition"
+                            >
+                              <Download className="w-3 h-3" /> Imagem PNG
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              ));
+            })()}
           </div>
         )}
+
 
         {/* TAB 2: OFFICIAL COLOR PALETTE */}
         {activeTab === "cores" && (
