@@ -245,7 +245,6 @@ function AdminCorretores() {
           token,
           note: `Parceiro: ${novoEmail.trim().toLowerCase()} | Cargo: corretor`,
           created_by: userData.user!.id,
-          role_to_assign: "corretor",
         } as any);
         dbError = fallbackError;
       } catch (err: any) {
