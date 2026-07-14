@@ -380,7 +380,8 @@ function AdminEquipe() {
           token,
           note: `Equipe: ${novoEmail.trim().toLowerCase()} | Cargo: ${novoCargo}`,
           created_by: userData.user!.id,
-        });
+          role_to_assign: novoCargo,
+        } as any);
         dbError = fallbackError;
       } catch (err: any) {
         dbError = err;
