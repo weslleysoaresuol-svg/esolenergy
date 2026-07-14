@@ -86,18 +86,21 @@ export const sincronizarKitsDistribuidoraServerFn = createServerFn({ method: "PO
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // 1. Carrega as credenciais da distribuidora salvas no banco
-    const { data: dbConfig } = await supabaseAdmin
+    const { data: dbConfigRaw } = await supabaseAdmin
       .from("distribuidoras_config" as any)
       .select("*")
       .eq("id", data.distribuidoraId)
       .maybeSingle();
 
+    const dbConfig = dbConfigRaw as any;
     const creds: DistributorCredentials = {
       clientId: dbConfig?.client_id || null,
       clientSecret: dbConfig?.client_secret || null,
       ambiente: (dbConfig?.ambiente || "sandbox") as "sandbox" | "production",
       configAdicional: dbConfig?.config_adicional || {}
     };
+
+
 
     // 2. Busca kits do adapter correspondente
     const adapter = DistributorAdapterFactory.create(data.distribuidoraId);
@@ -137,9 +140,10 @@ export const sincronizarKitsDistribuidoraServerFn = createServerFn({ method: "PO
       updated_at: new Date().toISOString()
     }));
 
-    const { error } = await supabaseAdmin.from("kits_produtos").upsert(listToUpsert, {
+    const { error } = await supabaseAdmin.from("kits_produtos").upsert(listToUpsert as any, {
       onConflict: "codigo"
     });
+
 
     if (error) {
       throw new Error(`Erro ao salvar kits no banco: ${error.message}`);
