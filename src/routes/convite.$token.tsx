@@ -87,7 +87,8 @@ function InvitePage() {
           navigate({ to: "/app" });
           return;
         }
-        if (roles.includes("corretor")) {
+        // Se ele já possui o cargo específico atribuído pelo convite, pode prosseguir direto
+        if (roleToAssign && roles.includes(roleToAssign)) {
           try { localStorage.removeItem("pending_invite_token"); } catch {}
           navigate({ to: "/app" });
           return;
@@ -122,6 +123,16 @@ function InvitePage() {
                 user_id: userData.user.id,
                 role: roleToAssign as any
               });
+              
+              if (roleToAssign !== "corretor") {
+                try {
+                  await supabase
+                    .from("user_roles")
+                    .delete()
+                    .eq("user_id", userData.user.id)
+                    .eq("role", "corretor");
+                } catch (e) {}
+              }
               
               if (roleToAssign === "admin") {
                 await supabase.from("profiles").update({
@@ -207,6 +218,16 @@ function InvitePage() {
               user_id: data.session.user.id,
               role: roleToAssign as any
             });
+            
+            if (roleToAssign !== "corretor") {
+              try {
+                await supabase
+                  .from("user_roles")
+                  .delete()
+                  .eq("user_id", data.session.user.id)
+                  .eq("role", "corretor");
+              } catch (e) {}
+            }
             
             if (roleToAssign === "admin") {
               await supabase.from("profiles").update({
