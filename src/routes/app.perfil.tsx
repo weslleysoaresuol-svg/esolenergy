@@ -18,6 +18,11 @@ export const Route = createFileRoute("/app/perfil")({
 function PerfilPage() {
   const { user, profile, refresh, role } = useCurrentUser();
   const navigate = useNavigate();
+  const emailLogado = user?.email?.toLowerCase() || "";
+  const ehEmailCorporativo = emailLogado.endsWith("@esolenergy.com") || 
+                             emailLogado.endsWith("@esolenergy.com.br") || 
+                             emailLogado === "marcos.nubank777@gmail.com";
+  const ehCorretor = role === "corretor" && !ehEmailCorporativo;
   const [form, setForm] = useState<any>({});
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -69,7 +74,7 @@ function PerfilPage() {
     if (!user) return;
 
     // Apenas a chave Pix é obrigatória (obrigatória apenas para consultores parceiros/corretores)
-    if (role === "corretor" && (!form.pix_tipo || !form.pix_chave || !form.pix_chave.trim())) {
+    if (ehCorretor && (!form.pix_tipo || !form.pix_chave || !form.pix_chave.trim())) {
       toast.error("A chave Pix (Tipo e Chave) é obrigatória para o recebimento de comissões.");
       return;
     }
@@ -99,7 +104,7 @@ function PerfilPage() {
     toast.success("Perfil atualizado com sucesso!");
     await refresh();
     // Parceiro vai para o contrato, se ainda não assinou
-    if (role === "corretor" && !profile?.contrato_assinado) navigate({ to: "/app/contrato" });
+    if (ehCorretor && !profile?.contrato_assinado) navigate({ to: "/app/contrato" });
     else navigate({ to: "/app" });
   };
 
@@ -174,7 +179,7 @@ function PerfilPage() {
               Você é <strong>administrador</strong>. Acesso total ao sistema.
             </div>
           )}
-          {role === "corretor" && !profile?.contrato_assinado && (
+          {ehCorretor && !profile?.contrato_assinado && (
             <div className="bg-sun/10 border border-sun/40 p-3 rounded text-sm text-navy">
               Após salvar, você será direcionado para a <strong>assinatura do contrato de parceria</strong>.
             </div>
@@ -182,7 +187,7 @@ function PerfilPage() {
         </Card>
 
         {/* Card: Dados para Recebimento de Comissões (Apenas para consultores parceiros/corretores) */}
-        {role === "corretor" && (
+        {ehCorretor && (
           <Card className="p-6 border-0 shadow-md space-y-5">
             <div>
               <h2 className="font-bold text-navy text-base flex items-center gap-2">
