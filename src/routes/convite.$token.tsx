@@ -261,9 +261,11 @@ function InvitePage() {
         <div className="flex justify-center mb-6"><img src={logo} alt="ESOL" className="h-20 w-auto" /></div>
         <h1 className="text-2xl font-bold text-center text-navy mb-1">Bem-vindo à ESOL Energy</h1>
         <p className="text-sm text-center text-muted-foreground mb-2">
-          {roleToAssign === "corretor" 
-            ? "Você foi convidado para ser um consultor parceiro." 
-            : "Você foi convidado para fazer parte da equipe interna."}
+          {roleToAssign === "admin"
+            ? "Você foi convidado para ser um administrador (sócio/empresário)."
+            : roleToAssign === "corretor" 
+              ? "Você foi convidado para ser um consultor parceiro." 
+              : "Você foi convidado para fazer parte da equipe interna."}
         </p>
         <p className="text-xs text-center text-muted-foreground mb-6 inline-flex items-center justify-center gap-1 w-full">
           <Clock className="w-3 h-3" /> Link válido por mais {hoursLeft}h
@@ -273,11 +275,17 @@ function InvitePage() {
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Próximos passos</div>
           <ol className="space-y-2 text-sm">
             <li className="flex gap-3"><UserPlus className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>1.</strong> Criar sua conta (Google ou email)</span></li>
-            <li className="flex gap-3"><CheckCircle2 className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>2.</strong> Completar seu perfil de acesso</span></li>
-            {roleToAssign === "corretor" && (
-              <li className="flex gap-3"><FileSignature className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span>
-                <strong>3.</strong> Ler e assinar o contrato de parceria
-              </span></li>
+            {roleToAssign === "admin" ? (
+              <li className="flex gap-3"><CheckCircle2 className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>2.</strong> Acessar o painel da empresa diretamente</span></li>
+            ) : (
+              <>
+                <li className="flex gap-3"><CheckCircle2 className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span><strong>2.</strong> Completar seu perfil de acesso</span></li>
+                {roleToAssign === "corretor" && (
+                  <li className="flex gap-3"><FileSignature className="w-4 h-4 mt-0.5 text-sun-deep flex-shrink-0" /><span>
+                    <strong>3.</strong> Ler e assinar o contrato de parceria
+                  </span></li>
+                )}
+              </>
             )}
           </ol>
         </div>

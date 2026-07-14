@@ -367,9 +367,11 @@ function NovaProposta() {
   const getPrecoVendaKit = (kit: any) => {
     if (!params) return Number(kit.preco);
     const p = params as any;
-    const comissao_pct = profile?.comissao_percent !== null && profile?.comissao_percent !== undefined
-      ? Number(profile.comissao_percent) / 100
-      : (p.custo_comissao_pct ?? p.comissao_padrao_pct ?? 0.08);
+    const comissao_pct = role === "admin"
+      ? 0
+      : profile?.comissao_percent !== null && profile?.comissao_percent !== undefined
+        ? Number(profile.comissao_percent) / 100
+        : (p.custo_comissao_pct ?? p.comissao_padrao_pct ?? 0.08);
     const impostos_compra_pct = p.custo_impostos_compra_pct ?? p.custo_impostos_pct ?? 0.03;
     const instalacao_pct = p.custo_instalacao_pct ?? 0.15;
     const frete_pct = p.custo_frete_pct ?? 0.05;
@@ -1492,7 +1494,7 @@ function NovaProposta() {
                       <CostRow label="Instalação" value={calculo.custo_instalacao} />
                       <CostRow label="Frete" value={calculo.custo_frete} />
                       <CostRow label="Impostos Compra" value={calculo.custo_impostos_compra} />
-                      <CostRow label="Comissão" value={calculo.custo_comissao} />
+                      {(role as string) !== "admin" && <CostRow label="Comissão" value={calculo.custo_comissao} />}
                       <CostRow label="Custos Totais Diretos" value={calculo.custos_totais} bold />
                     </div>
                   </div>
@@ -1530,15 +1532,15 @@ function NovaProposta() {
               <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Payback real ajustado</span><span className="font-semibold text-[#2E44B8]">{(calculo.payback_ajustado_meses / 12).toFixed(1)} anos ({calculo.payback_ajustado_meses} meses)</span></div>
               <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">TIR Anual / VPL</span><span className="font-semibold text-emerald-600">{calculo.tir_anual_pct}% a.a. / {BRL(calculo.vpl_brl)}</span></div>
               <div className="flex justify-between text-base border-b pb-2 pt-1"><span className="font-bold text-navy">Investimento da Venda</span><span className="font-black text-navy">{BRL(calculo.preco_total)}</span></div>
-              
-              {/* Espelho exclusivo do Parceiro com comissão */}
-              <div className="bg-sun/15 border border-sun/50 rounded-xl p-3 flex justify-between items-center text-navy-deep">
-                <div>
-                  <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
-                  <span className="text-[10px] text-navy/70">Taxa individual: {profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? `${profile.comissao_percent}%` : `${((calculo.custo_comissao / calculo.preco_total) * 100).toFixed(0)}%`}</span>
+              {(role as string) !== "admin" && (
+                <div className="bg-sun/15 border border-sun/50 rounded-xl p-3 flex justify-between items-center text-navy-deep">
+                  <div>
+                    <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
+                    <span className="text-[10px] text-navy/70">Taxa individual: {profile?.comissao_percent !== null && profile?.comissao_percent !== undefined ? `${profile.comissao_percent}%` : `${((calculo.custo_comissao / calculo.preco_total) * 100).toFixed(0)}%`}</span>
+                  </div>
+                  <strong className="text-lg font-black text-navy">{BRL(calculo.custo_comissao)}</strong>
                 </div>
-                <strong className="text-lg font-black text-navy">{BRL(calculo.custo_comissao)}</strong>
-              </div>
+              )}
             </div>
           )}
 

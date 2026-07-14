@@ -224,11 +224,12 @@ function PropostaDetail() {
                         <CostRow label={`Instalação (${proposta.tipo_telhado || "cerâmico"})`} value={calculoOnFly?.custo_instalacao} />
                         <CostRow label="Frete ao CD" value={calculoOnFly?.custo_frete} />
                         <CostRow label="Impostos de Compra" value={calculoOnFly?.custo_impostos_compra} />
-                        <CostRow
-                          label={!proposta.parceiro_id ? "Comissão (Proposta Direta)" : `Comissão Parceiro (${parceiro?.comissao_percent || 8}%)`}
-                          value={proposta.parceiro_id ? calculoOnFly?.custo_comissao : 0}
-                          isZero={!proposta.parceiro_id}
-                        />
+                        {proposta.parceiro_id && (
+                          <CostRow
+                            label={`Comissão Parceiro (${parceiro?.comissao_percent || 8}%)`}
+                            value={calculoOnFly?.custo_comissao}
+                          />
+                        )}
                         <CostRow label="Total Custos Diretos" value={(calculoOnFly?.custo_equipamentos || 0) + (calculoOnFly?.custo_instalacao || 0) + (calculoOnFly?.custo_frete || 0) + (calculoOnFly?.custo_impostos_compra || 0) + (proposta.parceiro_id ? (calculoOnFly?.custo_comissao || 0) : 0)} bold />
                       </div>
                     </div>
@@ -300,13 +301,15 @@ function PropostaDetail() {
                     <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Área necessária</span><span className="font-semibold">{proposta.area_necessaria_m2} m²</span></div>
                     <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Investimento da Venda</span><span className="font-black text-navy">{BRL(proposta.preco_total)}</span></div>
                     
-                    <div className="bg-sun/15 border border-sun/50 rounded-xl p-4 flex justify-between items-center text-navy-deep">
-                      <div>
-                        <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
-                        <span className="text-[10px] text-navy/70">Taxa individual: {parceiro?.comissao_percent !== null && parceiro?.comissao_percent !== undefined ? `${parceiro.comissao_percent}%` : proposta.preco_total > 0 ? `${(((calculoOnFly?.custo_comissao || 0) / proposta.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
+                    {proposta.parceiro_id && (
+                      <div className="bg-sun/15 border border-sun/50 rounded-xl p-4 flex justify-between items-center text-navy-deep">
+                        <div>
+                          <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
+                          <span className="text-[10px] text-navy/70">Taxa individual: {parceiro?.comissao_percent !== null && parceiro?.comissao_percent !== undefined ? `${parceiro.comissao_percent}%` : proposta.preco_total > 0 ? `${(((calculoOnFly?.custo_comissao || 0) / proposta.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
+                        </div>
+                        <strong className="text-lg font-black text-navy">{BRL(calculoOnFly?.custo_comissao || (proposta.preco_total * 0.05))}</strong>
                       </div>
-                      <strong className="text-lg font-black text-navy">{BRL(calculoOnFly?.custo_comissao || (proposta.preco_total * 0.05))}</strong>
-                    </div>
+                    )}
                   </div>
                 </div>
               )}

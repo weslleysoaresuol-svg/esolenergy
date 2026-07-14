@@ -101,7 +101,7 @@ function PropostasList() {
               <CostRow label="Instalação / Integração" value={calc.custo_instalacao} />
               <CostRow label="Frete" value={calc.custo_frete} />
               <CostRow label="Impostos de Compra" value={calc.custo_impostos_compra} />
-              <CostRow label="Comissão do Parceiro" value={calc.custo_comissao} />
+              {p.parceiro_id && <CostRow label="Comissão do Parceiro" value={calc.custo_comissao} />}
               <CostRow label="Total Custos Diretos" value={p.preco_total - (calc.margem_bruta || 0)} bold />
             </div>
           </div>
@@ -138,13 +138,15 @@ function PropostasList() {
           {p.area_necessaria_m2 && <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Área necessária</span><span className="font-semibold">{p.area_necessaria_m2} m²</span></div>}
           <div className="flex justify-between border-b pb-2"><span className="text-muted-foreground">Investimento da Venda</span><span className="font-black text-navy">{BRL(p.preco_total)}</span></div>
           
-          <div className="bg-sun/15 border border-sun/50 rounded-xl p-4 flex justify-between items-center text-navy-deep">
-            <div>
-              <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
-              <span className="text-[10px] text-navy/70">Taxa individual: {p.parceiro?.comissao_percent !== null && p.parceiro?.comissao_percent !== undefined ? `${p.parceiro.comissao_percent}%` : p.preco_total > 0 ? `${(((calc.custo_comissao || 0) / p.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
+          {p.parceiro_id && (
+            <div className="bg-sun/15 border border-sun/50 rounded-xl p-4 flex justify-between items-center text-navy-deep">
+              <div>
+                <strong className="block text-xs font-bold uppercase tracking-wider">Sua Comissão Estimada</strong>
+                <span className="text-[10px] text-navy/70">Taxa individual: {p.parceiro?.comissao_percent !== null && p.parceiro?.comissao_percent !== undefined ? `${p.parceiro.comissao_percent}%` : p.preco_total > 0 ? `${(((calc.custo_comissao || 0) / p.preco_total) * 100).toFixed(0)}%` : "5%"}</span>
+              </div>
+              <strong className="text-lg font-black text-navy">{BRL(calc.custo_comissao || (p.preco_total * 0.05))}</strong>
             </div>
-            <strong className="text-lg font-black text-navy">{BRL(calc.custo_comissao || (p.preco_total * 0.05))}</strong>
-          </div>
+          )}
         </div>
       </div>
     );

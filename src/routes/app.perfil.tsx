@@ -170,19 +170,8 @@ function PerfilPage() {
           <div><Label>Bio profissional</Label><Textarea value={form.bio || ""} onChange={(e) => set("bio", e.target.value)} rows={3} /></div>
 
           {role === "admin" && (
-            <div className="bg-amber-50 border border-amber-200 p-3 rounded text-sm text-amber-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div>
-                Você é <strong>administrador</strong>. Acesso total ao sistema.
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="text-xs shrink-0 bg-white border border-amber-300 text-amber-900 hover:bg-amber-100"
-                onClick={() => navigate({ to: "/app/contrato" })}
-              >
-                📝 {profile?.contrato_assinado ? "Visualizar Termo Assinado" : "Assinar Termo de Uso/Confidencialidade"}
-              </Button>
+            <div className="bg-amber-50 border border-amber-200 p-3 rounded text-sm text-amber-900">
+              Você é <strong>administrador</strong>. Acesso total ao sistema.
             </div>
           )}
           {role !== "admin" && !profile?.contrato_assinado && (
@@ -192,98 +181,100 @@ function PerfilPage() {
           )}
         </Card>
 
-        {/* Card: Dados para Recebimento de Comissões */}
-        <Card className="p-6 border-0 shadow-md space-y-5">
-          <div>
-            <h2 className="font-bold text-navy text-base flex items-center gap-2">
-              <Banknote className="w-4 h-4 text-emerald-600" /> Dados para Recebimento de Comissões
-            </h2>
-            <p className="text-xs text-muted-foreground mt-1">
-              Informe conta bancária ou Pix para receber suas comissões de vendas.
-            </p>
-          </div>
-
-          {/* Banner de aviso obrigatório */}
-          <div className="flex gap-3 bg-amber-50 border border-amber-300 rounded-xl p-4">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="text-sm text-amber-900 leading-relaxed">
-              <strong>Atenção:</strong> Os dados de pagamento <strong>devem estar cadastrados em seu CPF</strong>.
-              Chaves Pix ou contas bancárias de terceiros (cônjuge, empresa, familiar) não serão aceitas para
-              pagamento de comissões, conforme política da ESOL Energy.
-            </div>
-          </div>
-
-          {/* Seção Pix */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <QrCode className="w-4 h-4 text-navy" />
-              <h3 className="font-semibold text-navy text-sm">Chave Pix {role !== "admin" && "*"}</h3>
-              {temPix && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">✓ Cadastrado</span>}
-            </div>
-            <div className="grid sm:grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs">Tipo da chave Pix {role !== "admin" && "*"}</Label>
-                <Select value={form.pix_tipo || ""} onValueChange={(v) => set("pix_tipo", v)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Selecione o tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cpf">🪪 CPF (recomendado)</SelectItem>
-                    <SelectItem value="celular">📱 Celular</SelectItem>
-                    <SelectItem value="email">📧 E-mail</SelectItem>
-                    <SelectItem value="aleatoria">🔑 Chave Aleatória (EVP)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs">Chave Pix {role !== "admin" && "*"}</Label>
-                <Input
-                  className="mt-1"
-                  placeholder={
-                    form.pix_tipo === "cpf" ? "000.000.000-00"
-                    : form.pix_tipo === "celular" ? "(11) 99999-9999"
-                    : form.pix_tipo === "email" ? "seu@email.com"
-                    : form.pix_tipo === "aleatoria" ? "xxxxxxxx-xxxx-xxxx-xxxx"
-                    : "Selecione o tipo primeiro"
-                  }
-                  value={form.pix_chave || ""}
-                  onChange={(e) => set("pix_chave", e.target.value)}
-                />
-              </div>
-            </div>
-            {form.pix_tipo === "cpf" && form.cpf_cnpj && form.pix_chave && (
-              <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                Lembre-se que a chave Pix deve estar vinculada ao CPF cadastrado: {form.cpf_cnpj}
+        {/* Card: Dados para Recebimento de Comissões (Apenas para não-administradores) */}
+        {role !== "admin" && (
+          <Card className="p-6 border-0 shadow-md space-y-5">
+            <div>
+              <h2 className="font-bold text-navy text-base flex items-center gap-2">
+                <Banknote className="w-4 h-4 text-emerald-600" /> Dados para Recebimento de Comissões
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Informe conta bancária ou Pix para receber suas comissões de vendas.
               </p>
-            )}
-          </div>
+            </div>
 
-          <div className="border-t pt-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <Banknote className="w-4 h-4 text-navy" />
-              <h3 className="font-semibold text-navy text-sm">Conta Bancária (Opcional - alternativo ao Pix)</h3>
-              {temBanco && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">✓ Cadastrado</span>}
-            </div>
-            <div className="grid sm:grid-cols-3 gap-3">
-              <div className="sm:col-span-3">
-                <Label className="text-xs">Banco</Label>
-                <Input className="mt-1" placeholder="Ex: Nubank, Itaú, Bradesco, C6 Bank..." value={form.banco_nome || ""} onChange={(e) => set("banco_nome", e.target.value)} />
-              </div>
-              <div>
-                <Label className="text-xs">Agência</Label>
-                <Input className="mt-1" placeholder="0000" value={form.banco_agencia || ""} onChange={(e) => set("banco_agencia", e.target.value)} />
-              </div>
-              <div className="sm:col-span-2">
-                <Label className="text-xs">Conta / Dígito</Label>
-                <Input className="mt-1" placeholder="00000-0" value={form.banco_conta || ""} onChange={(e) => set("banco_conta", e.target.value)} />
+            {/* Banner de aviso obrigatório */}
+            <div className="flex gap-3 bg-amber-50 border border-amber-300 rounded-xl p-4">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="text-sm text-amber-900 leading-relaxed">
+                <strong>Atenção:</strong> Os dados de pagamento <strong>devem estar cadastrados em seu CPF</strong>.
+                Chaves Pix ou contas bancárias de terceiros (cônjuge, empresa, familiar) não serão aceitas para
+                pagamento de comissões, conforme política da ESOL Energy.
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              A conta deve estar no seu CPF. TED para conta de terceiros não será processada.
-            </p>
-          </div>
-        </Card>
+
+            {/* Seção Pix */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <QrCode className="w-4 h-4 text-navy" />
+                <h3 className="font-semibold text-navy text-sm">Chave Pix *</h3>
+                {temPix && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">✓ Cadastrado</span>}
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs">Tipo da chave Pix *</Label>
+                  <Select value={form.pix_tipo || ""} onValueChange={(v) => set("pix_tipo", v)}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cpf">🪪 CPF (recomendado)</SelectItem>
+                      <SelectItem value="celular">📱 Celular</SelectItem>
+                      <SelectItem value="email">📧 E-mail</SelectItem>
+                      <SelectItem value="aleatoria">🔑 Chave Aleatória (EVP)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-xs">Chave Pix *</Label>
+                  <Input
+                    className="mt-1"
+                    placeholder={
+                      form.pix_tipo === "cpf" ? "000.000.000-00"
+                      : form.pix_tipo === "celular" ? "(11) 99999-9999"
+                      : form.pix_tipo === "email" ? "seu@email.com"
+                      : form.pix_tipo === "aleatoria" ? "xxxxxxxx-xxxx-xxxx-xxxx"
+                      : "Selecione o tipo primeiro"
+                    }
+                    value={form.pix_chave || ""}
+                    onChange={(e) => set("pix_chave", e.target.value)}
+                  />
+                </div>
+              </div>
+              {form.pix_tipo === "cpf" && form.cpf_cnpj && form.pix_chave && (
+                <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  Lembre-se que a chave Pix deve estar vinculada ao CPF cadastrado: {form.cpf_cnpj}
+                </p>
+              )}
+            </div>
+
+            <div className="border-t pt-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Banknote className="w-4 h-4 text-navy" />
+                <h3 className="font-semibold text-navy text-sm">Conta Bancária (Opcional - alternativo ao Pix)</h3>
+                {temBanco && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">✓ Cadastrado</span>}
+              </div>
+              <div className="grid sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-3">
+                  <Label className="text-xs">Banco</Label>
+                  <Input className="mt-1" placeholder="Ex: Nubank, Itaú, Bradesco, C6 Bank..." value={form.banco_nome || ""} onChange={(e) => set("banco_nome", e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Agência</Label>
+                  <Input className="mt-1" placeholder="0000" value={form.banco_agencia || ""} onChange={(e) => set("banco_agencia", e.target.value)} />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label className="text-xs">Conta / Dígito</Label>
+                  <Input className="mt-1" placeholder="00000-0" value={form.banco_conta || ""} onChange={(e) => set("banco_conta", e.target.value)} />
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                A conta deve estar no seu CPF. TED para conta de terceiros não será processada.
+              </p>
+            </div>
+          </Card>
+        )}
 
         <Button type="submit" disabled={saving} className="bg-navy hover:bg-navy-deep w-full sm:w-auto">
           {saving ? "Salvando…" : "Salvar perfil"}
