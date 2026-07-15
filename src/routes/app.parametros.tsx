@@ -16,7 +16,7 @@ import {
   BRL, type TipoInstalacao, type TipoTelhado, TELHADO_LABEL, PARAMETROS_DEFAULT 
 } from "@/lib/proposta-calc";
 import { converterConsumoParaFatura, converterFaturaParaConsumo, obterTarifaAplicavel } from "@/lib/conversor-fatura";
-import { CONCESSIONARIAS, getConcessionariasPorUF } from "@/lib/concessionarias";
+import { CONCESSIONARIAS, getConcessionariasPorUF, sugerirConcessionariaPorCidadeEEstado } from "@/lib/concessionarias";
 import {
   salvarConfigDistribuidoraServerFn,
   sincronizarKitsDistribuidoraServerFn,
@@ -148,6 +148,23 @@ function Parametros() {
   const [testeFatura, setTesteFatura] = useState<string>("550");
   const [testeConcessionariaId, setTesteConcessionariaId] = useState<string>("");
   const [testeConexao, setTesteConexao] = useState<"monofasico" | "bifasico" | "trifasico">("bifasico");
+  const [testeCidade, setTesteCidade] = useState<string>("");
+
+  const handleTesteCidadeChange = (novaCidade: string) => {
+    setTesteCidade(novaCidade);
+    const sugerida = sugerirConcessionariaPorCidadeEEstado(novaCidade, testeEstado);
+    if (sugerida) {
+      handleTesteConcessionariaChange(sugerida);
+    }
+  };
+
+  const handleTesteEstadoChange = (novoEstado: string) => {
+    setTesteEstado(novoEstado);
+    const sugerida = sugerirConcessionariaPorCidadeEEstado(testeCidade, novoEstado);
+    if (sugerida) {
+      handleTesteConcessionariaChange(sugerida);
+    }
+  };
 
   // Métodos bidirecionais de teste
   const handleTesteConsumoChange = (val: number) => {
@@ -1099,13 +1116,27 @@ function Parametros() {
               </div>
 
               <div>
-                <Label className="text-xs font-bold text-slate-700">Região de HSP (UF)</Label>
+                <Label className="text-xs font-bold text-slate-700">Cidade de Teste (Sugere Concessionária)</Label>
                 <Input 
                   type="text"
-                  value={testeEstado}
-                  readOnly
-                  className="h-9 text-xs bg-slate-50 font-bold text-navy"
+                  placeholder="Ex: Campinas, Belo Horizonte, Santos"
+                  value={testeCidade}
+                  onChange={(e) => handleTesteCidadeChange(e.target.value)}
+                  className="h-9 text-xs"
                 />
+              </div>
+
+              <div>
+                <Label className="text-xs font-bold text-slate-700">Estado de Teste (UF)</Label>
+                <select
+                  value={testeEstado}
+                  onChange={(e) => handleTesteEstadoChange(e.target.value)}
+                  className="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none text-slate-800"
+                >
+                  {LISTA_UFS.map((uf) => (
+                    <option key={uf} value={uf}>{uf}</option>
+                  ))}
+                </select>
               </div>
 
               <div>

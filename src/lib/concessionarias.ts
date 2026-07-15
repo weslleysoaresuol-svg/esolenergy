@@ -333,3 +333,70 @@ export const LISTA_UFS = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
   "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
 ];
+
+/**
+ * Sugere de forma inteligente a concessionária de energia dominante
+ * com base na cidade e no estado informados.
+ */
+export function sugerirConcessionariaPorCidadeEEstado(cidade: string, estado: string): string {
+  if (!estado) return "";
+  const uf = estado.toUpperCase().trim();
+  const cit = (cidade || "").toLowerCase().trim();
+
+  // Tratamento específico de SP (múltiplas concessionárias no catálogo)
+  if (uf === "SP") {
+    if (
+      cit.includes("santos") || 
+      cit.includes("guarujá") || 
+      cit.includes("guaruja") || 
+      cit.includes("são josé dos campos") || 
+      cit.includes("sao jose dos campos") || 
+      cit.includes("taubaté") || 
+      cit.includes("taubate") || 
+      cit.includes("jacareí") || 
+      cit.includes("jacarei") ||
+      cit.includes("mogi") ||
+      cit.includes("suzano") ||
+      cit.includes("poá") ||
+      cit.includes("poa")
+    ) {
+      return "edp_sp";
+    }
+    if (
+      cit.includes("limeira") || 
+      cit.includes("rio claro") || 
+      cit.includes("peruíbe") || 
+      cit.includes("peruibe") || 
+      cit.includes("registro") || 
+      cit.includes("itapeva") || 
+      cit.includes("andradina") || 
+      cit.includes("fernandópolis") || 
+      cit.includes("fernandopolis")
+    ) {
+      return "elektro";
+    }
+    return "cpfl_paulista"; // fallback dominante para SP
+  }
+
+  // Tratamento específico do RS (duas concessionárias no catálogo)
+  if (uf === "RS") {
+    if (
+      cit.includes("porto alegre") || 
+      cit.includes("pelotas") || 
+      cit.includes("rio grande") || 
+      cit.includes("bagé") || 
+      cit.includes("bage") || 
+      cit.includes("viamão") || 
+      cit.includes("viamao") || 
+      cit.includes("gravataí") || 
+      cit.includes("gravatai")
+    ) {
+      return "ceee_equatorial";
+    }
+    return "rge_cpfl";
+  }
+
+  // Para outros estados, busca a concessionária cujo UF bata com o estado
+  const encontrou = CONCESSIONARIAS.find(c => c.uf === uf);
+  return encontrou ? encontrou.id : "";
+}

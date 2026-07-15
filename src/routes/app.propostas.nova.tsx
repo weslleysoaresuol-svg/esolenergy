@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CONCESSIONARIAS } from "@/lib/concessionarias";
+import { CONCESSIONARIAS, sugerirConcessionariaPorCidadeEEstado } from "@/lib/concessionarias";
 import { converterConsumoParaFatura, converterFaturaParaConsumo, obterTarifaAplicavel } from "@/lib/conversor-fatura";
 import { calcularProposta, type Parametros, type TipoInstalacao, BRL, NUM, regiaoFromEstado } from "@/lib/proposta-calc";
 import { KITS_FALLBACK, FINANCEIRAS_FALLBACK } from "@/lib/kits-fallback";
@@ -170,10 +170,18 @@ function NovaProposta() {
         const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
         const data = await res.json();
         if (!data.erro) {
-          setCidade(data.localidade || "");
-          setEstado(data.uf || "");
+          const cit = data.localidade || "";
+          const uf = data.uf || "";
+          setCidade(cit);
+          setEstado(uf);
           setEndereco(data.logradouro ? `${data.logradouro}${data.bairro ? ` - ${data.bairro}` : ""}` : "");
           toast.success("CEP localizado!");
+
+          // Auto-sugere a concessionária com base na cidade e UF
+          const sugerida = sugerirConcessionariaPorCidadeEEstado(cit, uf);
+          if (sugerida) {
+            handleConcessionariaChange(sugerida);
+          }
         }
       } catch (err) {
         console.error("Erro ao buscar CEP:", err);
@@ -478,24 +486,67 @@ function NovaProposta() {
       if (c) {
         if (c.cep) setCep(c.cep);
         if (c.endereco) setEndereco(c.endereco);
-        if (c.valor_fatura) {
-          setValorFatura(String(c.valor_fatura));
-          if (!c.consumo_kwh) {
-            setConsumo(Math.round(Number(c.valor_fatura) / tarifa) || 500);
-          }
-        }
-        if (c.consumo_kwh) {
-          setConsumo(Number(c.consumo_kwh));
-          if (!c.valor_fatura) {
-            setValorFatura(String(Math.round(Number(c.consumo_kwh) * tarifa) || 0));
-          }
-        }
         if (c.estado) setEstado(c.estado);
         if (c.cidade) setCidade(c.cidade);
         if (!titulo) setTitulo(`Proposta solar - ${c.nome}`);
+
+        // Resolve a concessionária (ou salva no banco, ou sugerida pela cidade/estado)
+        let resolvedConcessionariaId = (c as any).concessionaria || "";
+        if (!resolvedConcessionariaId && c.cidade && c.estado) {
+          resolvedConcessionariaId = sugerirConcessionariaPorCidadeEEstado(c.cidade, c.estado);
+        }
+        
+        if (resolvedConcessionariaId) {
+          setConcessionariaId(resolvedConcessionariaId);
+          // Obtém a tarifa aplicável para o tipo de instalação
+          const novaTarifa = obterTarifaAplicavel({
+            concessionariaId: resolvedConcessionariaId,
+            tipoInstalacao: tipo,
+            tipoConexao: tipoConexao,
+            tarifaReferenciaDefault: tarifa
+          });
+          setTarifa(novaTarifa);
+
+          // Efetua a conversão usando as regras reais da concessionária resolvida
+          if (c.valor_fatura) {
+            setValorFatura(String(c.valor_fatura));
+            const consumoCalc = converterFaturaParaConsumo(Number(c.valor_fatura), {
+              concessionariaId: resolvedConcessionariaId,
+              tipoInstalacao: tipo,
+              tipoConexao: tipoConexao,
+              tarifaReferenciaDefault: novaTarifa,
+              cosipEstimada: params?.cosip_estimada_brl ?? 22
+            });
+            setConsumo(consumoCalc);
+          } else if (c.consumo_kwh) {
+            setConsumo(Number(c.consumo_kwh));
+            const faturaCalc = converterConsumoParaFatura(Number(c.consumo_kwh), {
+              concessionariaId: resolvedConcessionariaId,
+              tipoInstalacao: tipo,
+              tipoConexao: tipoConexao,
+              tarifaReferenciaDefault: novaTarifa,
+              cosipEstimada: params?.cosip_estimada_brl ?? 22
+            });
+            setValorFatura(String(faturaCalc));
+          }
+        } else {
+          // Fallback sem concessionária
+          if (c.valor_fatura) {
+            setValorFatura(String(c.valor_fatura));
+            if (!c.consumo_kwh) {
+              setConsumo(Math.round(Number(c.valor_fatura) / tarifa) || 500);
+            }
+          }
+          if (c.consumo_kwh) {
+            setConsumo(Number(c.consumo_kwh));
+            if (!c.valor_fatura) {
+              setValorFatura(String(Math.round(Number(c.consumo_kwh) * tarifa) || 0));
+            }
+          }
+        }
       }
     }
-  }, [selecionados, clientes, tarifa]);
+  }, [selecionados, clientes, params, tipo, tipoConexao]);
 
   const kitRecomendadoId = useMemo(() => {
     if (params && kits.length > 0) {
@@ -1524,7 +1575,13 @@ function NovaProposta() {
                   estado={estado}
                   onChange={(cit, uf) => {
                     setCidade(cit);
-                    if (uf) setEstado(uf);
+                    if (uf) {
+                      setEstado(uf);
+                      const sugerida = sugerirConcessionariaPorCidadeEEstado(cit, uf);
+                      if (sugerida) {
+                        handleConcessionariaChange(sugerida);
+                      }
+                    }
                   }}
                 />
               </div>
