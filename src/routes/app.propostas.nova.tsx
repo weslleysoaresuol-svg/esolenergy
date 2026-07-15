@@ -9,10 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { calcularProposta, type Parametros, type TipoInstalacao, BRL, NUM, regiaoFromEstado } from "@/lib/proposta-calc";
 import { KITS_FALLBACK, FINANCEIRAS_FALLBACK } from "@/lib/kits-fallback";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, Sun, Zap, Wallet } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sun, Zap, Wallet, Search } from "lucide-react";
 import { CidadeEstadoInput } from "@/components/CidadeEstadoInput";
 
 export const Route = createFileRoute("/app/propostas/nova")({ 
