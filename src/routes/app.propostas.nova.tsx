@@ -98,6 +98,62 @@ function NovaProposta() {
   const [overrides, setOverrides] = useState<Partial<ReturnType<typeof calcularProposta>>>({});
   const [saving, setSaving] = useState(false);
 
+  // Estados para pesquisa e criação rápida de clientes
+  const [pesquisaCliente, setPesquisaCliente] = useState("");
+  const [modalNovoClienteOpen, setModalNovoClienteOpen] = useState(false);
+  const [novoClienteNome, setNovoClienteNome] = useState("");
+  const [novoClienteEmail, setNovoClienteEmail] = useState("");
+  const [novoClienteTelefone, setNovoClienteTelefone] = useState("");
+  const [novoClienteCidade, setNovoClienteCidade] = useState("");
+  const [novoClienteEstado, setNovoClienteEstado] = useState("SP");
+  const [cadastrandoCliente, setCadastrandoCliente] = useState(false);
+
+  const handleCadastrarRapidoCliente = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!novoClienteNome.trim() || !novoClienteTelefone.trim()) {
+      toast.error("Nome e Telefone são obrigatórios!");
+      return;
+    }
+    setCadastrandoCliente(true);
+    try {
+      const { data, error } = await supabase
+        .from("clientes")
+        .insert({
+          nome: novoClienteNome,
+          telefone: novoClienteTelefone,
+          email: novoClienteEmail || null,
+          cidade: novoClienteCidade || null,
+          estado: novoClienteEstado || null,
+          corretor_id: user?.id,
+          status: "novo"
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      toast.success("Cliente cadastrado com sucesso!");
+      
+      // Adiciona à lista de clientes
+      setClientes((prev) => [data, ...prev]);
+      // Seleciona automaticamente
+      setSelecionados((prev) => [...prev, data.id]);
+      
+      // Limpa os campos e fecha
+      setNovoClienteNome("");
+      setNovoClienteEmail("");
+      setNovoClienteTelefone("");
+      setNovoClienteCidade("");
+      setNovoClienteEstado("SP");
+      setModalNovoClienteOpen(false);
+    } catch (err: any) {
+      console.error("Erro ao cadastrar cliente rápido:", err);
+      toast.error(err.message || "Erro ao cadastrar cliente");
+    } finally {
+      setCadastrandoCliente(false);
+    }
+  };
+
   // Novos estados para enriquecimento cadastral
   const [cep, setCep] = useState("");
   const [endereco, setEndereco] = useState("");
@@ -347,7 +403,19 @@ function NovaProposta() {
   }, [kits, kitRecomendadoId]);
 
   const sortedClientes = useMemo(() => {
-    return [...clientes].sort((a, b) => {
+    const filtered = clientes.filter((c) => {
+      const search = pesquisaCliente.toLowerCase().trim();
+      if (!search) return true;
+      return (
+        (c.nome || "").toLowerCase().includes(search) ||
+        (c.telefone || "").toLowerCase().includes(search) ||
+        (c.email || "").toLowerCase().includes(search) ||
+        (c.cidade || "").toLowerCase().includes(search) ||
+        (c.estado || "").toLowerCase().includes(search)
+      );
+    });
+
+    return [...filtered].sort((a, b) => {
       // 1. Clientes selecionados primeiro
       const aSel = selecionados.includes(a.id) ? 1 : 0;
       const bSel = selecionados.includes(b.id) ? 1 : 0;
@@ -362,7 +430,7 @@ function NovaProposta() {
 
       return 0;
     });
-  }, [clientes, selecionados, clienteIdPreSel]);
+  }, [clientes, selecionados, clienteIdPreSel, pesquisaCliente]);
 
   const getPrecoVendaKit = (kit: any) => {
     if (!params) return Number(kit.preco);
@@ -1226,24 +1294,57 @@ function NovaProposta() {
 
       {step === 1 && (
         <Card className="p-6 border-0 shadow-md space-y-4">
-          <h2 className="font-semibold text-lg text-navy">Selecione os clientes</h2>
-          <p className="text-sm text-muted-foreground">A mesma proposta pode ser enviada para um ou mais clientes.</p>
+          <div className="flex justify-between items-center flex-wrap gap-2">
+            <div>
+              <h2 className="font-semibold text-lg text-navy">Selecione os clientes</h2>
+              <p className="text-sm text-muted-foreground">A mesma proposta pode ser enviada para um ou mais clientes.</p>
+            </div>
+            {clientes.length > 0 && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setModalNovoClienteOpen(true)}
+                className="border-dashed border-navy text-navy hover:bg-slate-50 shrink-0 font-semibold"
+              >
+                + Novo Cliente
+              </Button>
+            )}
+          </div>
+
           {clientes.length === 0 ? (
             <div className="text-center py-8 space-y-3">
               <p className="text-muted-foreground">Você ainda não tem clientes cadastrados.</p>
-              <Link to="/app/novo"><Button className="bg-sun text-navy">Cadastrar cliente</Button></Link>
+              <Button type="button" onClick={() => setModalNovoClienteOpen(true)} className="bg-sun text-navy font-semibold">Cadastrar cliente</Button>
             </div>
           ) : (
-            <div className="max-h-96 overflow-y-auto divide-y border rounded-lg">
-              {sortedClientes.map((c) => (
-                <label key={c.id} className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer">
-                  <Checkbox checked={selecionados.includes(c.id)} onCheckedChange={(v) => setSelecionados((s) => v ? [...s, c.id] : s.filter((id) => id !== c.id))} />
-                  <div className="flex-1">
-                    <div className="font-semibold text-navy">{c.nome}</div>
-                    <div className="text-xs text-muted-foreground">{c.telefone} · {c.cidade || "—"}/{c.estado || "—"} {c.consumo_kwh ? `· ${c.consumo_kwh} kWh/mês` : ""}</div>
+            <div className="space-y-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Pesquisar cliente por nome, telefone, e-mail..."
+                  value={pesquisaCliente}
+                  onChange={(e) => setPesquisaCliente(e.target.value)}
+                  className="pl-9 bg-white"
+                />
+              </div>
+
+              <div className="max-h-96 overflow-y-auto divide-y border rounded-lg">
+                {sortedClientes.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground text-sm">
+                    Nenhum cliente encontrado para "{pesquisaCliente}".
                   </div>
-                </label>
-              ))}
+                ) : (
+                  sortedClientes.map((c) => (
+                    <label key={c.id} className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer">
+                      <Checkbox checked={selecionados.includes(c.id)} onCheckedChange={(v) => setSelecionados((s) => v ? [...s, c.id] : s.filter((id) => id !== c.id))} />
+                      <div className="flex-1">
+                        <div className="font-semibold text-navy">{c.nome}</div>
+                        <div className="text-xs text-muted-foreground">{c.telefone} · {c.cidade || "—"}/{c.estado || "—"} {c.consumo_kwh ? `· ${c.consumo_kwh} kWh/mês` : ""}</div>
+                      </div>
+                    </label>
+                  ))
+                )}
+              </div>
             </div>
           )}
           <div className="flex justify-end gap-2">
@@ -1560,6 +1661,77 @@ function NovaProposta() {
       )}
         </div>
       )}
+
+      {/* Modal: Cadastro Rápido de Cliente */}
+      <Dialog open={modalNovoClienteOpen} onOpenChange={setModalNovoClienteOpen}>
+        <DialogContent className="max-w-md bg-white rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-navy">Novo Cliente</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCadastrarRapidoCliente} className="space-y-4 pt-2">
+            <div className="space-y-1">
+              <Label className="text-xs">Nome Completo *</Label>
+              <Input
+                required
+                value={novoClienteNome}
+                onChange={(e) => setNovoClienteNome(e.target.value)}
+                placeholder="Ex: João da Silva"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs">Telefone / WhatsApp *</Label>
+              <Input
+                required
+                value={novoClienteTelefone}
+                onChange={(e) => setNovoClienteTelefone(e.target.value)}
+                placeholder="Ex: (11) 99999-9999"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs">E-mail (Opcional)</Label>
+              <Input
+                type="email"
+                value={novoClienteEmail}
+                onChange={(e) => setNovoClienteEmail(e.target.value)}
+                placeholder="Ex: joao@email.com"
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-2 space-y-1">
+                <Label className="text-xs">Cidade (Opcional)</Label>
+                <Input
+                  value={novoClienteCidade}
+                  onChange={(e) => setNovoClienteCidade(e.target.value)}
+                  placeholder="Ex: Goiânia"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Estado (UF)</Label>
+                <Select value={novoClienteEstado} onValueChange={setNovoClienteEstado}>
+                  <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {UFS.map((uf) => (
+                      <SelectItem key={uf} value={uf}>{uf}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setModalNovoClienteOpen(false)} disabled={cadastrandoCliente}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="bg-navy text-white hover:bg-navy-deep font-semibold" disabled={cadastrandoCliente}>
+                {cadastrandoCliente ? "Cadastrando..." : "Confirmar"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
