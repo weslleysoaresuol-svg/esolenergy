@@ -15,6 +15,7 @@ import {
   calcularProposta, calcularCustoInstalacao, calcularCustoFrete,
   BRL, type TipoInstalacao, type TipoTelhado, TELHADO_LABEL, PARAMETROS_DEFAULT 
 } from "@/lib/proposta-calc";
+import { converterConsumoParaFatura, converterFaturaParaConsumo, obterTarifaAplicavel } from "@/lib/conversor-fatura";
 import { CONCESSIONARIAS, getConcessionariasPorUF } from "@/lib/concessionarias";
 import {
   salvarConfigDistribuidoraServerFn,
@@ -143,6 +144,110 @@ function Parametros() {
   const [testeTelhado, setTesteTelhado] = useState<TipoTelhado>("ceramico");
   const [testeKitCusto, setTesteKitCusto] = useState<number>(9500);
   const [testeEhAdmin, setTesteEhAdmin] = useState<boolean>(true);
+
+  const [testeFatura, setTesteFatura] = useState<string>("550");
+  const [testeConcessionariaId, setTesteConcessionariaId] = useState<string>("");
+  const [testeConexao, setTesteConexao] = useState<"monofasico" | "bifasico" | "trifasico">("bifasico");
+
+  // Métodos bidirecionais de teste
+  const handleTesteConsumoChange = (val: number) => {
+    setTesteConsumo(val);
+    const faturaCalc = converterConsumoParaFatura(val, {
+      concessionariaId: testeConcessionariaId || undefined,
+      tipoInstalacao: testeTipo,
+      tipoConexao: testeConexao,
+      tarifaReferenciaDefault: testeTarifa,
+      cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+    });
+    setTesteFatura(String(faturaCalc));
+  };
+
+  const handleTesteFaturaChange = (val: string) => {
+    setTesteFatura(val);
+    const num = Number(val);
+    if (!isNaN(num) && num > 0) {
+      const consumoCalc = converterFaturaParaConsumo(num, {
+        concessionariaId: testeConcessionariaId || undefined,
+        tipoInstalacao: testeTipo,
+        tipoConexao: testeConexao,
+        tarifaReferenciaDefault: testeTarifa,
+        cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+      });
+      setTesteConsumo(consumoCalc);
+    }
+  };
+
+  const handleTesteConcessionariaChange = (id: string) => {
+    setTesteConcessionariaId(id);
+    const novaTarifa = obterTarifaAplicavel({
+      concessionariaId: id || undefined,
+      tipoInstalacao: testeTipo,
+      tipoConexao: testeConexao,
+      tarifaReferenciaDefault: 0.95
+    });
+    setTesteTarifa(novaTarifa);
+
+    const conc = CONCESSIONARIAS.find(c => c.id === id);
+    if (conc?.uf) {
+      setTesteEstado(conc.uf);
+    }
+
+    if (testeFatura) {
+      const numFatura = Number(testeFatura);
+      if (!isNaN(numFatura) && numFatura > 0) {
+        const consumoCalc = converterFaturaParaConsumo(numFatura, {
+          concessionariaId: id || undefined,
+          tipoInstalacao: testeTipo,
+          tipoConexao: testeConexao,
+          tarifaReferenciaDefault: novaTarifa,
+          cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+        });
+        setTesteConsumo(consumoCalc);
+      }
+    }
+  };
+
+  const handleTesteTipoChange = (novoTipo: TipoInstalacao) => {
+    setTesteTipo(novoTipo);
+    const novaTarifa = obterTarifaAplicavel({
+      concessionariaId: testeConcessionariaId || undefined,
+      tipoInstalacao: novoTipo,
+      tipoConexao: testeConexao,
+      tarifaReferenciaDefault: 0.95
+    });
+    setTesteTarifa(novaTarifa);
+
+    if (testeFatura) {
+      const numFatura = Number(testeFatura);
+      if (!isNaN(numFatura) && numFatura > 0) {
+        const consumoCalc = converterFaturaParaConsumo(numFatura, {
+          concessionariaId: testeConcessionariaId || undefined,
+          tipoInstalacao: novoTipo,
+          tipoConexao: testeConexao,
+          tarifaReferenciaDefault: novaTarifa,
+          cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+        });
+        setTesteConsumo(consumoCalc);
+      }
+    }
+  };
+
+  const handleTesteConexaoChange = (novaConexao: "monofasico" | "bifasico" | "trifasico") => {
+    setTesteConexao(novaConexao);
+    if (testeFatura) {
+      const numFatura = Number(testeFatura);
+      if (!isNaN(numFatura) && numFatura > 0) {
+        const consumoCalc = converterFaturaParaConsumo(numFatura, {
+          concessionariaId: testeConcessionariaId || undefined,
+          tipoInstalacao: testeTipo,
+          tipoConexao: novaConexao,
+          tarifaReferenciaDefault: testeTarifa,
+          cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+        });
+        setTesteConsumo(consumoCalc);
+      }
+    }
+  };
 
   // Estado das concessionárias
   const [filtroUF, setFiltroUF] = useState<string>("SP");
@@ -651,6 +756,94 @@ function Parametros() {
                 </div>
               </div>
             </Card>
+
+            {/* Calculadora de Faturas */}
+            <Card className="p-5 border-0 shadow-md bg-white space-y-4 lg:col-span-2">
+              <div>
+                <h3 className="font-bold text-navy text-sm flex items-center gap-2">
+                  <Calculator className="w-4 h-4 text-sun-deep" /> Calculadora de Faturas (Regulamentação ANEEL e COSIP)
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">Parâmetros usados para conversão bidirecional de Consumo (kWh) &lt;-&gt; Fatura (R$) e deduções da Economia Honesta.</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-5">
+                <div className="space-y-3">
+                  {[
+                    ["cosip_estimada_brl", "💡 Iluminação Pública (COSIP) estimada (R$/mês)", "22"],
+                    ["percentual_fio_b", "⚡ Encargo Fio B (Lei 14.300) vigência 2026 (ex: 0.60 = 60%)", "0.60"],
+                    ["tarifa_kwh_default", "🔌 Tarifa Nacional de Referência / Fallback (R$/kWh)", "0.88"],
+                  ].map(([k, label, placeholder]) => (
+                    <div key={k} className="flex flex-col gap-1.5">
+                      <Label className="text-xs text-slate-600 font-semibold">{label}</Label>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-slate-400">R$</span>
+                        <Input type="number" step="0.01"
+                          value={geralData ? (geralData[k] ?? placeholder) : placeholder}
+                          onChange={(e) => setGeralData({ ...geralData, [k]: Number(e.target.value) })}
+                          className="h-8 text-xs w-full" placeholder={placeholder}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Preview Interativo da Calculadora de Fatura */}
+                <div className="bg-slate-50 rounded-xl p-4 border text-xs space-y-3">
+                  <div className="font-bold text-slate-600 text-[10px] uppercase mb-1">Simulações de Conversão (com dados desta calculadora):</div>
+                  
+                  <div className="space-y-2 border-b pb-2.5">
+                    <div className="font-bold text-navy text-[11px] mb-1">1. Conversão Direta (Consumo -&gt; Fatura)</div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">200 kWh/mês (Monofásico):</span>
+                      <span className="font-bold text-navy">
+                        {BRL(converterConsumoParaFatura(200, {
+                          tipoInstalacao: "residencial",
+                          tipoConexao: "monofasico",
+                          tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
+                          cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+                        }))}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">500 kWh/mês (Bifásico):</span>
+                      <span className="font-bold text-navy">
+                        {BRL(converterConsumoParaFatura(500, {
+                          tipoInstalacao: "residencial",
+                          tipoConexao: "bifasico",
+                          tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
+                          cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+                        }))}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="font-bold text-[#2E44B8] text-[11px] mb-1">2. Conversão Reversa (Fatura -&gt; Consumo)</div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Fatura de R$ 350 (Bifásico):</span>
+                      <span className="font-bold text-[#2E44B8]">
+                        {converterFaturaParaConsumo(350, {
+                          tipoInstalacao: "residencial",
+                          tipoConexao: "bifasico",
+                          tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
+                          cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+                        })} kWh/mês
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Fatura de R$ 800 (Trifásico):</span>
+                      <span className="font-bold text-[#2E44B8]">
+                        {converterFaturaParaConsumo(800, {
+                          tipoInstalacao: "residencial",
+                          tipoConexao: "trifasico",
+                          tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
+                          cosipEstimada: geralData?.cosip_estimada_brl ?? 22
+                        })} kWh/mês
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
 
           <div className="flex justify-end sticky bottom-4 z-10 pt-2">
@@ -848,20 +1041,44 @@ function Parametros() {
 
             <div className="space-y-3">
               <div>
+                <Label className="text-xs font-bold text-slate-700">Valor da Fatura de Teste (R$)</Label>
+                <Input 
+                  type="number"
+                  value={testeFatura}
+                  onChange={(e) => handleTesteFaturaChange(e.target.value)}
+                  className="h-9 text-xs"
+                />
+              </div>
+
+              <div>
                 <Label className="text-xs font-bold text-slate-700">Consumo Mensal de Teste (kWh)</Label>
                 <Input 
                   type="number"
                   value={testeConsumo}
-                  onChange={(e) => setTesteConsumo(Math.max(50, Number(e.target.value)))}
+                  onChange={(e) => handleTesteConsumoChange(Math.max(50, Number(e.target.value)))}
                   className="h-9 text-xs"
                 />
+              </div>
+
+              <div>
+                <Label className="text-xs font-bold text-slate-700">Concessionária de Teste</Label>
+                <select
+                  value={testeConcessionariaId}
+                  onChange={(e) => handleTesteConcessionariaChange(e.target.value)}
+                  className="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none text-slate-800"
+                >
+                  <option value="">Nenhuma / Outra (Tarifa manual)</option>
+                  {CONCESSIONARIAS.map((c) => (
+                    <option key={c.id} value={c.id}>{c.nome} ({c.uf})</option>
+                  ))}
+                </select>
               </div>
 
               <div>
                 <Label className="text-xs font-bold text-slate-700">Tarifa de Energia (R$/kWh)</Label>
                 <Input 
                   type="number"
-                  step="0.01"
+                  step="0.001"
                   value={testeTarifa}
                   onChange={(e) => setTesteTarifa(Math.max(0.1, Number(e.target.value)))}
                   className="h-9 text-xs"
@@ -869,25 +1086,33 @@ function Parametros() {
               </div>
 
               <div>
-                <Label className="text-xs font-bold text-slate-700">Estado / Região de HSP</Label>
+                <Label className="text-xs font-bold text-slate-700">Padrão de Ligação</Label>
                 <select
-                  value={testeEstado}
-                  onChange={(e) => setTesteEstado(e.target.value)}
+                  value={testeConexao}
+                  onChange={(e) => handleTesteConexaoChange(e.target.value as any)}
                   className="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none text-slate-800"
                 >
-                  <option value="SP">São Paulo (Sudeste)</option>
-                  <option value="CE">Ceará (Nordeste)</option>
-                  <option value="PA">Pará (Norte)</option>
-                  <option value="MT">Mato Grosso (Centro-Oeste)</option>
-                  <option value="RS">Rio Grande do Sul (Sul)</option>
+                  <option value="monofasico">Monofásico</option>
+                  <option value="bifasico">Bifásico</option>
+                  <option value="trifasico">Trifásico</option>
                 </select>
+              </div>
+
+              <div>
+                <Label className="text-xs font-bold text-slate-700">Região de HSP (UF)</Label>
+                <Input 
+                  type="text"
+                  value={testeEstado}
+                  readOnly
+                  className="h-9 text-xs bg-slate-50 font-bold text-navy"
+                />
               </div>
 
               <div>
                 <Label className="text-xs font-bold text-slate-700">Categoria de Instalação</Label>
                 <select
                   value={testeTipo}
-                  onChange={(e) => setTesteTipo(e.target.value as TipoInstalacao)}
+                  onChange={(e) => handleTesteTipoChange(e.target.value as TipoInstalacao)}
                   className="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none text-slate-800"
                 >
                   <option value="residencial">Residencial</option>
@@ -905,7 +1130,9 @@ function Parametros() {
                 tarifa_kwh: testeTarifa,
                 estado: testeEstado,
                 tipo: testeTipo,
-              }, geralData);
+                ligacao: testeConexao === "trifasico" ? "tri" : testeConexao === "bifasico" ? "bi" : "mono",
+                concessionaria_id: testeConcessionariaId || undefined
+              } as any, geralData);
               return (
                 <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 text-xs font-semibold text-navy space-y-2.5 pt-3.5">
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">📐 Dimensionamento:</div>
@@ -976,7 +1203,9 @@ function Parametros() {
                 tarifa_kwh: testeTarifa,
                 estado: testeEstado,
                 tipo: testeTipo,
-              }, geralData);
+                ligacao: testeConexao === "trifasico" ? "tri" : testeConexao === "bifasico" ? "bi" : "mono",
+                concessionaria_id: testeConcessionariaId || undefined
+              } as any, geralData);
 
               return (
                 <>

@@ -17,6 +17,7 @@
 //   P       = C_fixos / (1 - p_var - lucro_alvo_pct)
 
 import { getDistanciaCD } from "./concessionarias";
+import { obterCustoDisponibilidadeKwh } from "./conversor-fatura";
 
 // ─── Tipos e Enumerações ──────────────────────────────────────────────────────
 
@@ -541,10 +542,11 @@ export function calcularProposta(input: CalculoInput, p: Parametros): CalculoRes
   // ── ECONOMIA AJUSTADA (HONESTA) ───────────────────────────────────────────
   const ehTrifasico = input.ligacao === "tri";
   const ehBifasico  = input.ligacao === "bi";
-  const taxa_minima_kwh = ehTrifasico ? 100 : ehBifasico ? 50 : 30;
+  const conexaoText = ehTrifasico ? "trifasico" : ehBifasico ? "bifasico" : "monofasico";
+  const taxa_minima_kwh = obterCustoDisponibilidadeKwh(conexaoText, (input as any).concessionaria_id);
 
   const custo_disponibilidade_mensal = ehTrifasico
-    ? (p.custo_disponibilidade_tri_brl ?? +(100 * tarifa).toFixed(2))
+    ? (p.custo_disponibilidade_tri_brl ?? +(taxa_minima_kwh * tarifa).toFixed(2))
     : (p.custo_disponibilidade_mono_brl ?? +(taxa_minima_kwh * tarifa).toFixed(2));
 
   const cosip_mensal = p.cosip_estimada_brl ?? 22;
