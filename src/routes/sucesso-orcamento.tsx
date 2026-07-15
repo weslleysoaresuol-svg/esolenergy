@@ -219,8 +219,8 @@ function SucessoOrcamento() {
         error = e;
       }
 
-      // Se a tabela nÃ£o existe no banco de dados remoto
-      if (error && (error.code === "42P01" || error.message?.includes("does not exist"))) {
+      // Se a tabela não existe no banco de dados remoto ou cache de schema
+      if (error && (error.code === "42P01" || error.message?.includes("does not exist") || error.message?.includes("schema cache"))) {
         console.warn("Tabela agendamentos ausente no banco remoto. Registrando localmente...");
         const novoAg = {
           id: Math.random().toString(36).substring(2, 9),
