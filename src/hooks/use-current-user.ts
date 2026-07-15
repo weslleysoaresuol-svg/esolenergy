@@ -47,17 +47,24 @@ export function useCurrentUser(): CurrentUser {
                       ? "corretor"
                       : null;
 
-      let profileData = p ?? null;
-      if (isMarcos || resolved === "admin") {
-        profileData = {
-          ...(profileData || {}),
-          id: u.user.id,
-          nome: profileData?.nome || u.user.user_metadata?.full_name || (isMarcos ? "Marcos Barbosa da Silva" : u.user.email?.split("@")[0]),
-          email: u.user.email || null,
-          ativo: true,
-          onboarding_completo: true,
-          contrato_assinado: true
-        } as any;
+      // Auto-cura: se resolveu como 'corretor', verifica se o usuário tem convite de admin
+      // (caso do onboarding incompleto que deixou role errada). RPC corrige o DB automaticamente.
+      if (resolved === "corretor" && !isMarcos) {
+        try {
+          const { data: fixResult } = await supabase.rpc("check_and_fix_admin_role" as any);
+          if (fixResult && (fixResult as any).fixed === true) {
+            resolved = "admin";
+            profileData = {
+              ...(profileData || {}),
+              id: u.user.id,
+              ativo: true,
+              onboarding_completo: true,
+              contrato_assinado: true,
+            } as any;
+          }
+        } catch {
+          // Silencia erros: a RPC pode não existir em ambientes antigos
+        }
       }
 
       setRole(resolved);
