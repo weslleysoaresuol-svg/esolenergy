@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CONCESSIONARIAS } from "@/lib/concessionarias";
+import { converterConsumoParaFatura, converterFaturaParaConsumo, obterTarifaAplicavel } from "@/lib/conversor-fatura";
 import { calcularProposta, type Parametros, type TipoInstalacao, BRL, NUM, regiaoFromEstado } from "@/lib/proposta-calc";
 import { KITS_FALLBACK, FINANCEIRAS_FALLBACK } from "@/lib/kits-fallback";
 import { toast } from "sonner";
@@ -179,9 +181,17 @@ function NovaProposta() {
     }
   };
 
+  const [concessionariaId, setConcessionariaId] = useState<string>("");
+
   const handleConsumoChange = (val: number) => {
     setConsumo(val);
-    const faturaCalculada = Math.round(val * tarifa) || 0;
+    const faturaCalculada = converterConsumoParaFatura(val, {
+      concessionariaId: concessionariaId || undefined,
+      tipoInstalacao: tipo,
+      tipoConexao: tipoConexao,
+      tarifaReferenciaDefault: tarifa,
+      cosipEstimada: 22
+    });
     setValorFatura(String(faturaCalculada));
   };
 
@@ -189,7 +199,81 @@ function NovaProposta() {
     setValorFatura(val);
     const num = Number(val);
     if (!isNaN(num) && num > 0) {
-      setConsumo(Math.round(num / tarifa) || 0);
+      const consumoCalculado = converterFaturaParaConsumo(num, {
+        concessionariaId: concessionariaId || undefined,
+        tipoInstalacao: tipo,
+        tipoConexao: tipoConexao,
+        tarifaReferenciaDefault: tarifa,
+        cosipEstimada: 22
+      });
+      setConsumo(consumoCalculado);
+    }
+  };
+
+  const handleConcessionariaChange = (id: string) => {
+    setConcessionariaId(id);
+    const novaTarifa = obterTarifaAplicavel({
+      concessionariaId: id || undefined,
+      tipoInstalacao: tipo,
+      tipoConexao: tipoConexao,
+      tarifaReferenciaDefault: 0.95
+    });
+    setTarifa(novaTarifa);
+
+    if (valorFatura) {
+      const numFatura = Number(valorFatura);
+      if (!isNaN(numFatura) && numFatura > 0) {
+        const consumoCalculado = converterFaturaParaConsumo(numFatura, {
+          concessionariaId: id || undefined,
+          tipoInstalacao: tipo,
+          tipoConexao: tipoConexao,
+          tarifaReferenciaDefault: novaTarifa,
+          cosipEstimada: 22
+        });
+        setConsumo(consumoCalculado);
+      }
+    }
+  };
+
+  const handleTipoInstalacaoChange = (novoTipo: TipoInstalacao) => {
+    setTipo(novoTipo);
+    const novaTarifa = obterTarifaAplicavel({
+      concessionariaId: concessionariaId || undefined,
+      tipoInstalacao: novoTipo,
+      tipoConexao: tipoConexao,
+      tarifaReferenciaDefault: 0.95
+    });
+    setTarifa(novaTarifa);
+
+    if (valorFatura) {
+      const numFatura = Number(valorFatura);
+      if (!isNaN(numFatura) && numFatura > 0) {
+        const consumoCalculado = converterFaturaParaConsumo(numFatura, {
+          concessionariaId: concessionariaId || undefined,
+          tipoInstalacao: novoTipo,
+          tipoConexao: tipoConexao,
+          tarifaReferenciaDefault: novaTarifa,
+          cosipEstimada: 22
+        });
+        setConsumo(consumoCalculado);
+      }
+    }
+  };
+
+  const handleTipoConexaoChange = (novaConexao: "monofasico" | "bifasico" | "trifasico") => {
+    setTipoConexao(novaConexao);
+    if (valorFatura) {
+      const numFatura = Number(valorFatura);
+      if (!isNaN(numFatura) && numFatura > 0) {
+        const consumoCalculado = converterFaturaParaConsumo(numFatura, {
+          concessionariaId: concessionariaId || undefined,
+          tipoInstalacao: tipo,
+          tipoConexao: novaConexao,
+          tarifaReferenciaDefault: tarifa,
+          cosipEstimada: 22
+        });
+        setConsumo(consumoCalculado);
+      }
     }
   };
 
@@ -302,6 +386,7 @@ function NovaProposta() {
           if (found.consumo_kwh) setConsumo(Number(found.consumo_kwh));
           if (found.estado) setEstado(found.estado);
           if (found.cidade) setCidade(found.cidade);
+          if (found.concessionaria) setConcessionariaId(found.concessionaria);
           setTitulo(`Proposta solar - ${found.nome}`);
         }
       }
@@ -316,6 +401,46 @@ function NovaProposta() {
       }
     })();
   }, []);
+
+  // Preenche dados do cliente selecionado no formulário se houver apenas 1 selecionado
+  useEffect(() => {
+    if (selecionados.length === 1) {
+      const clienteId = selecionados[0];
+      const found = clientes.find((c) => c.id === clienteId);
+      if (found) {
+        if (found.cidade) setCidade(found.cidade);
+        if (found.estado) setEstado(found.estado);
+        if (found.concessionaria) setConcessionariaId(found.concessionaria);
+        if (found.cep) setCep(found.cep);
+        if (found.endereco) setEndereco(found.endereco);
+        
+        // Puxa o consumo ou o valor da fatura se houver
+        if (found.consumo_kwh) {
+          setConsumo(Number(found.consumo_kwh));
+          const faturaCalc = converterConsumoParaFatura(Number(found.consumo_kwh), {
+            concessionariaId: found.concessionaria || undefined,
+            tipoInstalacao: tipo,
+            tipoConexao: tipoConexao,
+            tarifaReferenciaDefault: tarifa,
+            cosipEstimada: 22
+          });
+          setValorFatura(String(faturaCalc));
+        } else if (found.valor_fatura) {
+          setValorFatura(String(found.valor_fatura));
+          const consumoCalc = converterFaturaParaConsumo(Number(found.valor_fatura), {
+            concessionariaId: found.concessionaria || undefined,
+            tipoInstalacao: tipo,
+            tipoConexao: tipoConexao,
+            tarifaReferenciaDefault: tarifa,
+            cosipEstimada: 22
+          });
+          setConsumo(consumoCalc);
+        }
+        
+        setTitulo(`Proposta solar - ${found.nome}`);
+      }
+    }
+  }, [selecionados, clientes]);
 
   // Quando o consumo ou outros parâmetros do dimensionamento mudam, permitimos nova sugestão automática
   useEffect(() => {
@@ -517,7 +642,8 @@ function NovaProposta() {
           cidade: cidade.trim() || null,
           estado: estado.trim() || null,
           consumo_kwh: consumo ? Number(consumo) : null,
-          valor_fatura: valorFatura ? Number(valorFatura) : null
+          valor_fatura: valorFatura ? Number(valorFatura) : null,
+          concessionaria: concessionariaId || null
         })
         .in("id", selecionados);
 
@@ -1361,7 +1487,7 @@ function NovaProposta() {
             <div><Label>Título da proposta</Label><Input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ex.: Proposta residencial 6kWp" /></div>
             <div>
               <Label>Tipo de instalação</Label>
-              <Select value={tipo} onValueChange={(v) => setTipo(v as TipoInstalacao)}>
+              <Select value={tipo} onValueChange={handleTipoInstalacaoChange}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="residencial">Residencial</SelectItem>
@@ -1430,10 +1556,22 @@ function NovaProposta() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <div><Label>Tarifa de energia (R$/kWh)</Label><Input type="number" step="0.01" value={tarifa} onChange={(e) => setTarifa(Number(e.target.value))} /></div>
+              <div>
+                <Label>Concessionária de energia</Label>
+                <Select value={concessionariaId} onValueChange={handleConcessionariaChange}>
+                  <SelectTrigger className="bg-white"><SelectValue placeholder="Selecione a concessionária" /></SelectTrigger>
+                  <SelectContent className="bg-white max-h-72">
+                    <SelectItem value="nenhuma">Nenhuma / Outra (Tarifa manual)</SelectItem>
+                    {CONCESSIONARIAS.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.nome} ({c.uf})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label>Tarifa de energia (R$/kWh)</Label><Input type="number" step="0.001" value={tarifa} onChange={(e) => setTarifa(Number(e.target.value))} /></div>
               <div>
                 <Label>Padrão de Ligação</Label>
-                <Select value={tipoConexao} onValueChange={(v: any) => setTipoConexao(v)}>
+                <Select value={tipoConexao} onValueChange={handleTipoConexaoChange}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="monofasico">Monofásico (Fase + Neutro)</SelectItem>
