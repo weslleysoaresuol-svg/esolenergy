@@ -178,7 +178,7 @@ function NotificacoesSino({ notificacoes, naoLidas, marcarLida, marcarTodasLidas
 
 function AppShell() {
   const navigate = useNavigate();
-  const { user, role, profile, loading } = useCurrentUser();
+  const { user, role, profile, loading, refresh } = useCurrentUser();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const modoAtivo = useRouterState({ select: (s) => (s.location.search as any)?.modo as string | undefined });
   const notifData = useNotificacoes();
@@ -189,6 +189,30 @@ function AppShell() {
     document.documentElement.classList.remove("dark");
     localStorage.removeItem("esol_panel_theme");
   }, []);
+
+  // Consome convite pendente pós-login social (Google Auth) se houver token salvo
+  useEffect(() => {
+    (async () => {
+      if (user && !loading) {
+        try {
+          const token = localStorage.getItem("pending_invite_token");
+          if (token) {
+            console.log("Detectado convite pendente pós-login. Consumindo token:", token);
+            const { error } = await supabase.rpc("consume_invite", { _token: token });
+            if (error) {
+              console.warn("Falha ao consumir convite via RPC pós-login:", error.message);
+            } else {
+              toast.success("Acesso do convite ativado com sucesso!");
+            }
+            localStorage.removeItem("pending_invite_token");
+            if (refresh) await refresh();
+          }
+        } catch (e) {
+          console.error("Erro ao consumir convite pendente pós-login:", e);
+        }
+      }
+    })();
+  }, [user, loading, refresh]);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
