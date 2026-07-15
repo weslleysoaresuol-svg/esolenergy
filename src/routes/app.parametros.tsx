@@ -16,7 +16,7 @@ import {
   BRL, type TipoInstalacao, type TipoTelhado, TELHADO_LABEL, PARAMETROS_DEFAULT 
 } from "@/lib/proposta-calc";
 import { converterConsumoParaFatura, converterFaturaParaConsumo, obterTarifaAplicavel } from "@/lib/conversor-fatura";
-import { CONCESSIONARIAS, getConcessionariasPorUF, sugerirConcessionariaPorCidadeEEstado } from "@/lib/concessionarias";
+import { CONCESSIONARIAS, getConcessionariasPorUF, sugerirConcessionariaPorCidadeEEstado, LISTA_UFS } from "@/lib/concessionarias";
 import {
   salvarConfigDistribuidoraServerFn,
   sincronizarKitsDistribuidoraServerFn,
