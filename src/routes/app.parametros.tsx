@@ -112,6 +112,7 @@ const SECTIONS_TECNICOS = [
 ];
 
 export const DEFAULT_BANCOS = [
+  { nome: 'EOS Financiamento Solar', taxa_juros_mes: 1.15, taxa_cet_mes: 1.35, prazo_maximo_meses: 120, taxa_aprovacao_media: 86, ativo: true },
   { nome: 'Solfácil', taxa_juros_mes: 1.19, taxa_cet_mes: 1.39, prazo_maximo_meses: 120, taxa_aprovacao_media: 88, ativo: true },
   { nome: 'Banco BV Solar', taxa_juros_mes: 1.29, taxa_cet_mes: 1.48, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
   { nome: 'Santander Solar', taxa_juros_mes: 1.39, taxa_cet_mes: 1.59, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },

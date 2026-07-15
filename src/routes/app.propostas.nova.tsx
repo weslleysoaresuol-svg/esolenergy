@@ -1624,6 +1624,19 @@ function NovaProposta() {
                     ))}
                   </SelectContent>
                 </Select>
+                {concessionariaId && concessionariaId !== "nenhuma" && (() => {
+                  const conc = CONCESSIONARIAS.find(c => c.id === concessionariaId);
+                  if (conc) {
+                    const tVal = tipo === "comercial" ? conc.tarifa_comercial : tipo === "rural" ? conc.tarifa_rural : tipo === "industrial" ? conc.tarifa_industrial : conc.tarifa_residencial;
+                    return (
+                      <div className="text-[10px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Tarifa {tipo.toUpperCase()} da {conc.nome} sugerida: R$ {tVal.toFixed(3)}/kWh
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
               <div><Label>Tarifa de energia (R$/kWh)</Label><Input type="number" step="0.001" value={tarifa} onChange={(e) => setTarifa(Number(e.target.value))} /></div>
               <div>

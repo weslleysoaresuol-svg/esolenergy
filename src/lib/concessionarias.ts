@@ -337,27 +337,30 @@ export const LISTA_UFS = [
 /**
  * Sugere de forma inteligente a concessionária de energia dominante
  * com base na cidade e no estado informados.
+ * Suporta normalização de caracteres acentuados e minúsculas/maiúsculas.
  */
 export function sugerirConcessionariaPorCidadeEEstado(cidade: string, estado: string): string {
   if (!estado) return "";
   const uf = estado.toUpperCase().trim();
-  const cit = (cidade || "").toLowerCase().trim();
+  
+  // Normaliza o nome da cidade removendo acentos e caracteres especiais
+  const cit = (cidade || "")
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/[^a-z0-9\s]/g, "");    // Remove pontuações
 
   // Tratamento específico de SP (múltiplas concessionárias no catálogo)
   if (uf === "SP") {
     if (
       cit.includes("santos") || 
-      cit.includes("guarujá") || 
       cit.includes("guaruja") || 
-      cit.includes("são josé dos campos") || 
       cit.includes("sao jose dos campos") || 
-      cit.includes("taubaté") || 
       cit.includes("taubate") || 
-      cit.includes("jacareí") || 
       cit.includes("jacarei") ||
       cit.includes("mogi") ||
       cit.includes("suzano") ||
-      cit.includes("poá") ||
       cit.includes("poa")
     ) {
       return "edp_sp";
@@ -365,12 +368,10 @@ export function sugerirConcessionariaPorCidadeEEstado(cidade: string, estado: st
     if (
       cit.includes("limeira") || 
       cit.includes("rio claro") || 
-      cit.includes("peruíbe") || 
       cit.includes("peruibe") || 
       cit.includes("registro") || 
       cit.includes("itapeva") || 
       cit.includes("andradina") || 
-      cit.includes("fernandópolis") || 
       cit.includes("fernandopolis")
     ) {
       return "elektro";
@@ -384,11 +385,8 @@ export function sugerirConcessionariaPorCidadeEEstado(cidade: string, estado: st
       cit.includes("porto alegre") || 
       cit.includes("pelotas") || 
       cit.includes("rio grande") || 
-      cit.includes("bagé") || 
       cit.includes("bage") || 
-      cit.includes("viamão") || 
       cit.includes("viamao") || 
-      cit.includes("gravataí") || 
       cit.includes("gravatai")
     ) {
       return "ceee_equatorial";

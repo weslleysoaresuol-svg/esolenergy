@@ -1186,6 +1186,7 @@ export const KITS_FALLBACK: KitSolar[] = [
 ];
 
 export const FINANCEIRAS_FALLBACK = [
+  { id: "fin-eos", nome: "EOS Financiamento Solar", taxa_juros_mes: 1.15, taxa_cet_mes: 1.35, prazo_maximo_meses: 120, taxa_aprovacao_media: 86, ativo: true },
   { id: "fin-solfacil", nome: "Solfácil", taxa_juros_mes: 1.19, taxa_cet_mes: 1.39, prazo_maximo_meses: 120, taxa_aprovacao_media: 88, ativo: true },
   { id: "fin-bv", nome: "Banco BV Solar", taxa_juros_mes: 1.29, taxa_cet_mes: 1.48, prazo_maximo_meses: 84, taxa_aprovacao_media: 80, ativo: true },
   { id: "fin-santander", nome: "Santander Solar", taxa_juros_mes: 1.39, taxa_cet_mes: 1.59, prazo_maximo_meses: 96, taxa_aprovacao_media: 75, ativo: true },
