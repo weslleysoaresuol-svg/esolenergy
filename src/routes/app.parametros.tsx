@@ -149,6 +149,7 @@ function Parametros() {
   const [testeConcessionariaId, setTesteConcessionariaId] = useState<string>("");
   const [testeConexao, setTesteConexao] = useState<"monofasico" | "bifasico" | "trifasico">("bifasico");
   const [testeCidade, setTesteCidade] = useState<string>("");
+  const [calcFaturaConcessionariaId, setCalcFaturaConcessionariaId] = useState<string>("");
 
   const handleTesteCidadeChange = (novaCidade: string) => {
     setTesteCidade(novaCidade);
@@ -801,11 +802,28 @@ function Parametros() {
                       </div>
                     </div>
                   ))}
+
+                  {/* Simulador Interativo Local do Card */}
+                  <div className="border-t pt-3 mt-1 space-y-1.5">
+                    <Label className="text-[11px] font-bold text-slate-700 block">🏢 Visualizar simulações de Concessionária:</Label>
+                    <select
+                      value={calcFaturaConcessionariaId}
+                      onChange={(e) => setCalcFaturaConcessionariaId(e.target.value)}
+                      className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none text-slate-800"
+                    >
+                      <option value="">Nenhuma (Usar Tarifa Geral de Referência)</option>
+                      {CONCESSIONARIAS.map((c) => (
+                        <option key={c.id} value={c.id}>{c.nome} ({c.uf})</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Preview Interativo da Calculadora de Fatura */}
                 <div className="bg-slate-50 rounded-xl p-4 border text-xs space-y-3">
-                  <div className="font-bold text-slate-600 text-[10px] uppercase mb-1">Simulações de Conversão (com dados desta calculadora):</div>
+                  <div className="font-bold text-slate-600 text-[10px] uppercase mb-1">
+                    Simulações de Conversão ({calcFaturaConcessionariaId ? "Concessionária Selecionada" : "Tarifa Geral"}):
+                  </div>
                   
                   <div className="space-y-2 border-b pb-2.5">
                     <div className="font-bold text-navy text-[11px] mb-1">1. Conversão Direta (Consumo -&gt; Fatura)</div>
@@ -813,6 +831,7 @@ function Parametros() {
                       <span className="text-slate-500">200 kWh/mês (Monofásico):</span>
                       <span className="font-bold text-navy">
                         {BRL(converterConsumoParaFatura(200, {
+                          concessionariaId: calcFaturaConcessionariaId || undefined,
                           tipoInstalacao: "residencial",
                           tipoConexao: "monofasico",
                           tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
@@ -824,6 +843,7 @@ function Parametros() {
                       <span className="text-slate-500">500 kWh/mês (Bifásico):</span>
                       <span className="font-bold text-navy">
                         {BRL(converterConsumoParaFatura(500, {
+                          concessionariaId: calcFaturaConcessionariaId || undefined,
                           tipoInstalacao: "residencial",
                           tipoConexao: "bifasico",
                           tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
@@ -839,6 +859,7 @@ function Parametros() {
                       <span className="text-slate-500">Fatura de R$ 350 (Bifásico):</span>
                       <span className="font-bold text-[#2E44B8]">
                         {converterFaturaParaConsumo(350, {
+                          concessionariaId: calcFaturaConcessionariaId || undefined,
                           tipoInstalacao: "residencial",
                           tipoConexao: "bifasico",
                           tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
@@ -850,6 +871,7 @@ function Parametros() {
                       <span className="text-slate-500">Fatura de R$ 800 (Trifásico):</span>
                       <span className="font-bold text-[#2E44B8]">
                         {converterFaturaParaConsumo(800, {
+                          concessionariaId: calcFaturaConcessionariaId || undefined,
                           tipoInstalacao: "residencial",
                           tipoConexao: "trifasico",
                           tarifaReferenciaDefault: geralData?.tarifa_kwh_default ?? 0.88,
