@@ -28,7 +28,8 @@ export function useCurrentUser(): CurrentUser {
           supabase.from("user_roles").select("role").eq("user_id", u.user.id),
           supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
         ]);
-        const isMarcos = u.user.email?.toLowerCase() === "marcos.nubank777@gmail.com";
+        const isMarcos = u.user.email?.toLowerCase() === "marcos.nubank777@gmail.com" || 
+                         u.user.email?.toLowerCase() === "empreendedor.marcossilva@gmail.com";
         const roles = (r ?? []).map((row: any) => row.role as AppRole);
         let resolved: AppRole | null = (roles.includes("admin") || isMarcos)
           ? "admin"

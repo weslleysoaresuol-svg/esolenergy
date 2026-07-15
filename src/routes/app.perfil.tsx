@@ -21,7 +21,8 @@ function PerfilPage() {
   const emailLogado = user?.email?.toLowerCase() || "";
   const ehEmailCorporativo = emailLogado.endsWith("@esolenergy.com") || 
                              emailLogado.endsWith("@esolenergy.com.br") || 
-                             emailLogado === "marcos.nubank777@gmail.com";
+                             emailLogado === "marcos.nubank777@gmail.com" ||
+                             emailLogado === "empreendedor.marcossilva@gmail.com";
   const ehCorretor = role === "corretor" && !ehEmailCorporativo;
   const [form, setForm] = useState<any>({});
   const [saving, setSaving] = useState(false);
