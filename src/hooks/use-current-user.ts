@@ -51,9 +51,9 @@ export function useCurrentUser(): CurrentUser {
 
         let profileData = p ?? null;
 
-        // Auto-cura: se resolveu como 'corretor', verifica se o usuário tem convite de admin
-        // (caso do onboarding incompleto que deixou role errada). RPC corrige o DB automaticamente.
-        if (resolved === "corretor" && !isMarcos) {
+        // Auto-cura: se resolveu como 'corretor' ou é Marcos (admin no frontend), mas a role no banco
+        // de dados remoto ainda não é 'admin', executa a RPC para sincronizar o banco remoto imediatamente.
+        if ((resolved === "corretor" || isMarcos) && !roles.includes("admin")) {
           try {
             const { data: fixResult } = await supabase.rpc("check_and_fix_admin_role" as any);
             if (fixResult && (fixResult as any).fixed === true) {
