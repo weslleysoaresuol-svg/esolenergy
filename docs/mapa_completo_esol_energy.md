@@ -63,8 +63,6 @@ leads estratégicos de grande porte repassados ao comercial interno da Esol. Pag
 
 ### 🔵 CANAL 3 — LICENCIAMENTO (1 Produto)
 
-| # | Categoria | Descrição |
-| :--- | :--- | :--- |
 | 11 | 🏢 **White-Label** | Licenciamento da infraestrutura digital da Esol para integradores regionais que desejam atuar sob marca própria. |
 
 ---
@@ -73,79 +71,51 @@ leads estratégicos de grande porte repassados ao comercial interno da Esol. Pag
 
 ### 4.1 🏠 Sistema Solar Completo & Selo Verde Esol (Categoria #1)
 O cliente final contrata a solução turnkey onde a Esol cuida do dimensionamento, engenharia, fornecimento, logística, instalação e homologação.
+#### 📋 Jornada Completa do Cliente: Do Primeiro Contato à Geração de Energia
 
-```
-JORNADA COMPLETA DO CLIENTE — DO PRIMEIRO CONTATO À GERAÇÃO
+Abaixo está o mapeamento detalhado de etapas para a contratação e entrega de sistemas físicos turnkey:
 
-1. DIMENSIONAMENTO (Motor de Cálculos — Módulo 3)
-   O consultor coleta a conta de luz do cliente e o sistema calcula:
-   • Consumo médio mensal (kWh)
-   • Tarifas da concessionária local (Enel, CPFL, Cemig, etc.)
-   • Irradiação solar da cidade (horas de sol pico/dia)
-   • Quantidade de painéis necessários (kWp)
-   • Potência do inversor
-   • Área de telhado necessária (m²)
-   • Cálculo do Fio B (Lei 14.300/2022)
-   • COSIP do município
-   • Payback (em quantos meses o sistema se paga)
-   • Economia total em 25 anos
-   Resultado: PROPOSTA COMERCIAL em PDF gerada automaticamente
+1. **⚡ Dimensionamento Inteligente (Motor de Cálculos — Módulo 3)**
+   O consultor faz o upload ou insere os dados da fatura de energia do lead. A plataforma calcula em tempo real:
+   *   *Consumo histórico e média mensal* (kWh).
+   *   *Tarifas locais da concessionária* (com incidência de Fio B conforme a Lei 14.300/2022).
+   *   *Irradiação solar local* (banco de dados integrado de 5.500+ municípios).
+   *   *Dimensionamento técnico:* potência recomendada do inversor e quantidade ideal de módulos (kWp).
+   *   *Payback e VPL:* retorno de investimento calculado e projeção de economia total para os próximos 25 anos.
+   *   **Resultado:** Geração automática de uma proposta comercial altamente profissional em formato PDF.
 
-2. ESCOLHA DO KIT (Via Loja Esol)
-   O consultor ou cliente escolhe entre:
-   • Kit Pronto (combo pré-configurado pelo admin)
-   • Kit Personalizado (monta componente por componente)
-   O sistema valida compatibilidade e calcula preço do kit.
+2. **📦 Seleção e Configuração de Kits (Loja Esol — Módulo 7)**
+   *   *Kit Pronto:* Seleção de pacotes homologados e pré-configurados.
+   *   *Kit Personalizado:* O consultor monta componente por componente, e o sistema valida dinamicamente os limites elétricos de MPPT para evitar incompatibilidade entre inversores e painéis.
 
-3. PRECIFICAÇÃO DO SISTEMA (Motor Reverso — Módulo 3)
-   O sistema calcula o preço final do PROJETO COMPLETO:
-   • Custo do kit (da Loja Esol, com margem do produto)
-   • Custo de instalação (mão de obra do instalador)
-   • Custo de engenharia (projeto + ART do engenheiro)
-   • Frete e logística
-   • Impostos (conforme regime tributário vigente da Esol)
-   • Overhead operacional
-   • TDTC (comissão da rede MMN — 15%)
-   • Lucro mínimo configurado pelo administrador
-   → O Motor Reverso GARANTE que o lucro mínimo é sempre respeitado.
+3. **💰 Precificação sob o Motor Reverso (Módulo 3)**
+   O preço final de venda do projeto é calculated dinamicamente de trás para frente, cobrindo com precisão:
+   *   Custo real do kit com distribuidor + frete e logística local.
+   *   Remuneração de instalação e engenharia parceira (taxa de homologação + ART).
+   *   Overhead da Esol, provisões fiscais e a margem de comissão da rede MMN (15% TDTC).
+   *   **Garantia:** O lucro corporativo mínimo da Esol configurado no admin é 100% blindado por esta fórmula de markup reverso.
 
-4. FINANCIAMENTO (se o cliente não pagar à vista)
-   O app conecta com financeiras parceiras:
-   • BV Financeira, Santander, Solfácil, SOL Fácil, etc.
-   • Parcelas que custam MENOS que a conta de luz antiga
-   • O cliente ECONOMIZA desde o mês 1, mesmo financiando
+4. **🏦 Simulação de Financiamento Integrado**
+   O aplicativo conecta-se com parceiros bancários (Solfácil, BV, Santander) para simular parcelas. O objetivo é que o valor mensal da parcela de financiamento seja menor do que a economia imediata gerada na conta de luz, fazendo com que o sistema se pague desde o primeiro dia.
 
-5. CONTRATO (Esol Sign — Módulo 14)
-   • Assinatura eletrônica com KYC/Face Match
-   • Contrato tríplice: Cliente + Esol + Instalador
+5. **✍️ Contrato e Biometria Digital (Esol Sign — Módulo 13)**
+   O cliente assina digitalmente o contrato direto no celular. O motor de assinaturas captura metadados, geolocalização e fotos dos documentos/selfie para processar o KYC (verificação facial contra fraudes).
 
-6. PEDIDO DO KIT (Da Loja Esol → Distribuidor)
-   • Kit comprado do distribuidor (Aldo Solar, BelEnergy, Sou Energy)
-   • Faturamento DIRETO do distribuidor para o cliente (Split Triangular)
-   • Componentes: Painéis + Inversor + Estrutura + Cabos + Proteção
+6. **🚚 Faturamento Triangular e Split de Pagamentos**
+   Para blindagem fiscal, o banco realiza o split do pagamento: o valor de hardware é quitado diretamente ao distribuidor (Aldo Solar, Sou Energy), que fatura o produto em nome do cliente. O valor do serviço e comissões da rede é transferido para a Esol, que liquida os saldos de parceiros e consultores.
 
-7. PROJETO DE ENGENHARIA
-   • Engenheiro parceiro elabora o projeto elétrico e estrutural
-   • Emite a ART (Anotação de Responsabilidade Técnica) no CREA
-   • Projeta a disposição dos painéis no telhado
-   • Calcula o dimensionamento dos cabos e proteções
+7. **📐 Elaboração e Engenharia de Homologação**
+   O engenheiro técnico parceiro assume o projeto na fila operacional do Portal da Engenharia. Ele elabora o diagrama elétrico e estrutural e emite a Anotação de Responsabilidade Técnica (ART) no CREA.
 
-8. INSTALAÇÃO
-   • Instalador credenciado executa a obra (1 a 3 dias)
-   • Checklist fotográfico obrigatório no app (antes/durante/depois)
-   • Laudo de conclusão em PDF com fotos
+8. **🔧 Instalação Física em Campo (Módulo 9)**
+   O instalador parceiro recebe os equipamentos no endereço do cliente e executa a montagem dos trilhos, painéis e inversores. Para receber sua taxa de instalação, ele preenche obrigatoriamente um checklist fotográfico de qualidade pelo app, atestando a qualidade mecânica e elétrica.
 
-9. HOMOLOGAÇÃO (Junto à Concessionária)
-   • A Esol ou o engenheiro envia a documentação para a concessionária
-   • A concessionária troca o relógio por um medidor bidirecional
-   • A partir deste momento, a energia gerada vira CRÉDITOS na conta
-   • Prazo: 30 a 90 dias dependendo da concessionária
+9. **🔌 Ligação e Homologação na Concessionária**
+   A Esol solicita a vistoria de ligação junto à concessionária local (ex: Enel, CPFL). A concessionária faz a vistoria técnica e substitui o relógio medidor por um modelo bidirecional.
 
-10. GERAÇÃO E SELO VERDE! 🎉
-    • O cliente começa a gerar energia e ver créditos na conta
-    • A conta de luz cai para o custo de disponibilidade
-    • O cliente recebe digitalmente e em uma placa física o Selo Verde Esol
-```
+10. **🟢 Geração e Ativação do Selo Verde Esol**
+    O sistema começa a gerar créditos na conta de luz do cliente. A Esol emite eletronicamente o *Selo Verde Esol* para o cliente e ativa a telemetria remota do inversor no aplicativo do consultor para fins de acompanhamento.
+
 
 #### Números reais de referência:
 
@@ -194,23 +164,21 @@ Modelo voltado ao mercado B2B de alta e média tensão (Grupo A - indústrias, c
 ### 4.5 🏗️ Usina Solar para Investimento (Categoria #10 — Indicação B2B)
 Um investidor de grande porte contrata a Esol para desenvolver uma usina solar que gerará créditos para o mercado livre ou para compensação distribuída.
 
-```
-MODELO DE NEGÓCIO DA USINA SOLAR B2B
+#### 🏢 Modelo de Negócio da Usina Solar B2B
 
-O INVESTIDOR:
-  • Adquire ou aluga um terreno.
-  • Investe R$ 500.000 a R$ 5.000.000+ na construção da usina.
-  • A usina gera energia e injeta na rede da concessionária.
-  • Os créditos gerados são distribuídos entre vários consumidores.
+##### **O Investidor:**
+*   Adquire ou realiza o arrendamento de um terreno adequado para a usina.
+*   Aporta o investimento de **R\$ 500.000,00 a R\$ 5.000.000,00+** para a infraestrutura física.
+*   Injeta a energia gerada na rede de média ou baixa tensão da concessionária local.
+*   Obtém o retorno financeiro via venda de créditos estruturados para consumidores.
 
-A ESOL ENERGY:
-  • Coordena ou elabora o projeto de engenharia da usina.
-  • Fornece os kits/equipamentos via distribuidores parceiros.
-  • Cuida da homologação junto à concessionária.
-  • Usa a rede MMN para encontrar os consumidores para os créditos (Cat. #3).
+##### **A Esol Energy:**
+*   Elabora e assina o projeto técnico de engenharia da usina.
+*   Fornece toda a tecnologia e hardware via distribuidores homologados.
+*   Realiza os trâmites regulatórios de homologação junto à concessionária de energia.
+*   Direciona a força de vendas do MMN (Cat. #3) para capturar os clientes finais dos créditos gerados.
+*   **Comissionamento:** A Esol repassa de **2% a 5% da margem líquida** do projeto diretamente ao consultor que indicou o lead B2B.
 
-A Esol recebe comissão de intermediação direta do investidor (2% a 5% da margem líquida).
-```
 
 #### Números reais de referência (Usina de 500 kWp):
 *   **Investimento Total:** R$ 1.650.000 (Equipamentos: R$ 1.200.000 | Terreno: R$ 200.000 | Instalação e Engenharia: R$ 250.000)
@@ -234,32 +202,23 @@ O administrador configura o `lucro_alvo` (lucro mínimo) e o percentual de comis
 ---
 
 ### 5.2 Override Igualitário — Inovação Esol
-Diferente das estruturas tradicionais decrescentes onde os níveis mais profundos pagam percentuais menores, a Esol utiliza **Override Igualitário**: todos os níveis da rede acima do vendedor direto recebem a mesma comissão. Isso motiva a construção de profundidade e a liderança active, sem alterar o custo total da empresa se comparado a um modelo decrescente tradicional.
+Diferente das estruturas comerciais tradicionais (onde as comissões diminuem à medida que a profundidade da rede aumenta), a Esol adota o modelo de **Override Igualitário**. Todos os níveis da linha de patrocínio (N1 ao N7) recebem exatamente a mesma taxa percentual de repasse. Isso remove o incentivo de focar apenas no primeiro nível, promovendo uma base forte e treinamento contínuo de novas equipes, mantendo o custo global de comissionamento da Esol totalmente previsível e limitado por produto.
 
 ---
 
 ### 5.3 Motor 1: Comissão sobre Preço de Venda
-Aplicado a produtos e serviços próprios nos quais a Esol controla a precificação final.
+O Motor 1 é aplicado aos produtos de fabricação e execução direta da Esol, nos quais a empresa detém o controle total sobre a precificação final de venda.
 
-```
-OVERRIDE DE 1% POR NÍVEL (Linha Premium & Hardware)
-  Cat │ Produto                      │ TDTC  │ Direto │ Override (N1=N2=...=N7)
-  ────┼──────────────────────────────┼───────┼────────┼───────────────────────
-  #1  │ 🏠 Sistema Solar Completo    │  15%  │    8%  │  1% × 7 níveis = 7%
-  #5  │ 📊 Monitoramento Remoto      │  25%  │   18%  │  1% × 7 níveis = 7%
+| Categoria | Produto | TDTC (Total Distribuído) | Vendedor Direto (N0) | Override Horizontal (N1 ao N7) |
+| :---: | :--- | :---: | :---: | :---: |
+| **#1** | 🏠 Sistema Solar Turnkey | 15% | 8% | 1% por nível (Total 7%) |
+| **#5** | 📊 Monitoramento Remoto | 25% | 18% | 1% por nível (Total 7%) |
+| **#2** | 🛒 Loja Esol (Kits, Inversores, EV Chargers) | *Paramétrico por SKU* | *Paramétrico por SKU* | 1% por nível (Total 7%) |
+| **#6** | 🔧 Manutenção (O&M) | 10% | 6,5% | 0,5% por nível (Total 3,5%) |
+| **#7** | 🧹 Limpeza de Painéis | 12% | 8,5% | 0,5% por nível (Total 3,5%) |
 
-  #2 — LOJA ESOL (TDTC por SKU configurado pelo administrador):
-      │ Kits Prontos / Personalizados │  *   │    *   │  1% × 7 níveis = 7%
-      │ Baterias / Carregadores EV    │  *   │    *   │  1% × 7 níveis = 7%
-      │ Componentes avulsos / IoT     │  *   │    *   │  1% × 7 níveis = 7%
-      * = Admin define lucro_alvo e TDTC por produto no Cockpit. O override é sempre 1% por nível.
+*Nota: A margem de segurança retida pela Esol sobre o preço final garante a quitação de custos operacionais e tributos.*
 
-OVERRIDE DE 0,5% POR NÍVEL (Linha Serviços)
-  Cat │ Produto                      │ TDTC  │ Direto │ Override (N1=N2=...=N7)
-  ────┼──────────────────────────────┼───────┼────────┼───────────────────────
-  #6  │ 🔧 Manutenção                │  10%  │  6,5%  │  0,5% × 7 níveis = 3,5%
-  #7  │ 🧹 Limpeza Painéis           │  12%  │  8,5%  │  0,5% × 7 níveis = 3,5%
-```
 
 ---
 
@@ -271,27 +230,29 @@ Aplicado a produtos em que a Esol atua como corretora/intermediadora e recebe sp
     *   **Override (N1 a N7):** 3% da receita Esol por nível (21% no total).
     *   **Margem Operacional/Lucro Esol:** 64% da receita recebida da parceira.
 
-```
-EXEMPLOS PRÁTICOS DE RECORRÊNCIA DO MOTOR 2:
+#### 📋 Exemplos Práticos de Recorrência do Motor 2
 
-1. Energia por Assinatura (GD):
-   Fatura do cliente: R$ 600/mês → Comissão parceira para a Esol (5%): R$ 30,00/mês
-   └─ Direto (15%): R$ 4,50/mês
-   └─ Override por nível (3%): R$ 0,90/mês por nível
-   └─ Margem Retida Esol (64%): R$ 19,20/mês
+##### **1. Energia por Assinatura (Geração Distribuída)**
+*   **Fatura Mensal do Cliente:** R\$ 600,00
+*   **Repasse da Usina Parceira para a Esol (5%):** R\$ 30,00/mês
+*   *Direto (15%):* R\$ 4,50/mês para o Consultor N0.
+*   *Override (3%):* R\$ 0,90/mês para cada um dos Líderes do nível N1 ao N7.
+*   *Retido Esol (64%):* R\$ 19,20/mês direcionados para o caixa operacional.
 
-2. Mercado Livre de Energia (MLE):
-   Consumo do cliente: 20 MWh/mês → Comissão parceira para a Esol (R$ 4,00/MWh): R$ 80,00/mês
-   └─ Direto (15%): R$ 12,00/mês
-   └─ Override por nível (3%): R$ 2,40/mês por nível
-   └─ Margem Retida Esol (64%): R$ 51,20/mês
+##### **2. Mercado Livre de Energia (MLE)**
+*   **Consumo da PME:** 20 MWh/mês
+*   **Comissão da Comercializadora para a Esol (R$ 4,00/MWh):** R\$ 80,00/mês
+*   *Direto (15%):* R\$ 12,00/mês para o Consultor N0.
+*   *Override (3%):* R\$ 2,40/mês para cada um dos Líderes do nível N1 ao N7.
+*   *Retido Esol (64%):* R\$ 51,20/mês direcionados para o caixa operacional.
 
-3. Seguros Solares:
-   Mensalidade do seguro: R$ 200/mês → Corretagem parceira para a Esol: R$ 30,00/mês
-   └─ Direto (15%): R$ 4,50/mês
-   └─ Override por nível (3%): R$ 0,90/mês por nível
-   └─ Margem Retida Esol (64%): R$ 19,20/mês
-```
+##### **3. Seguros Solares**
+*   **Mensalidade da Apólice:** R\$ 200,00/mês
+*   **Corretagem repassada para a Esol:** R\$ 30,00/mês
+*   *Direto (15%):* R\$ 4,50/mês para o Consultor N0.
+*   *Override (3%):* R\$ 0,90/mês para cada um dos Líderes do nível N1 ao N7.
+*   *Retido Esol (64%):* R\$ 19,20/mês direcionados para o caixa operacional.
+
 
 ---
 
@@ -324,31 +285,29 @@ Não há distribuição multinível (sem 7 níveis). O consultor recebe uma taxa
 ---
 
 ### Simulação Mensal — Consultor Ativo com Equipe:
-```
-GANHOS PESSOAIS (Vendas diretas do consultor):
-  • 1 sistema solar completo (turnkey)      = R$ 2.400,00
-  • 1 carregador EV de parede               = R$   495,00
-  • 20 clientes ativos de monitoramento     = R$   212,40/mês
-  • 10 clientes recorrentes de assinatura   = R$    45,00/mês
-  • 3 serviços de manutenção                = R$    97,50
-  • 2 serviços de limpeza                   = R$    68,00
-  • 5 seguros solares ativos                = R$    22,50/mês
-  ─────────────────────────────────────────────────────────────
-  TOTAL PESSOAL:                              R$ 3.340,40
+##### **Ganhos Pessoais (Vendas Diretas do Consultor):**
+*   **1x Sistema Solar Completo (Turnkey):** R\$ 2.400,00 (Faturamento único)
+*   **1x Carregador EV de Parede:** R\$ 495,00 (Faturamento único)
+*   **3x Serviços de Manutenção:** R\$ 97,50 (Faturamento único)
+*   **2x Serviços de Limpeza de Placas:** R\$ 68,00 (Faturamento único)
+*   **20x Clientes de Telemetria/Monitoramento:** R\$ 212,40/mês (Renda recorrente)
+*   **10x Clientes de Assinatura de Energia (GD):** R\$ 45,00/mês (Renda recorrente)
+*   **5x Seguros Solares:** R\$ 22,50/mês (Renda recorrente)
+*   **Subtotal de Ganhos Pessoais:** **R\$ 3.060,50** (Único) + **R\$ 279,90/mês** (Recorrente)
 
-OVERRIDE DA EQUIPE (Rede de 5 pessoas nos níveis abaixo):
-  • 5 sistemas solares: 5 × R$ 30.000 × 1%  = R$ 1.500,00
-  • 5 carregadores EV: 5 × R$ 4.500 × 1%    = R$   225,00
-  • Monitoramento: 100 clientes × 1%        = R$    59,00/mês
-  • Assinaturas: 50 clientes × R$ 30 × 3%   = R$    45,00/mês
-  ─────────────────────────────────────────────────────────────
-  TOTAL OVERRIDE:                             R$ 1.829,00
+##### **Override da Equipe (Rede de 5 Pessoas no Downline Direto/Indireto):**
+*   **5x Sistemas Turnkey da Equipe:** R\$ 1.500,00 (Override único)
+*   **5x Carregadores EV da Equipe:** R\$ 225,00 (Override único)
+*   **100x Clientes de Monitoramento da Equipe:** R\$ 59,00/mês (Override recorrente)
+*   **50x Clientes de Assinatura da Equipe:** R\$ 45,00/mês (Override recorrente)
+*   **Subtotal de Override da Equipe:** **R\$ 1.725,00** (Único) + **R\$ 104,00/mês** (Recorrente)
 
-  ═════════════════════════════════════════════════════════════
-  GANHO TOTAL DO MÊS:                         R$ 5.169,40
-  Sendo R$ 383,90 de RENDA PASSIVA recorrente mensal acumulada.
-  ═════════════════════════════════════════════════════════════
-```
+> [!IMPORTANT]
+> **Resumo Geral Financeiro do Consultor:**
+> *   **Ganhos Únicos Acumulados no Mês:** R\$ 4.785,50
+> *   **Renda Passiva Mensal Recorrente Acumulada:** R\$ 383,90/mês
+> *   **Faturamento Líquido Mensal Estimado:** **R\$ 5.169,40**
+
 
 ---
 
@@ -656,287 +615,22 @@ Para evitar fraudes ou edições de saldos de comissão de MMN por administrador
 
 ---
 
-#### 4. Esquema DDL Completo e Fiel (Supabase/PostgreSQL)
+#### 4. Estrutura Física do Banco de Dados (Script DDL)
 
-Abaixo está a estrutura SQL DDL completa para a inicialização e provisionamento do banco de dados do novo ecossistema.
+Para manter este mapa de negócios limpo e legível para seres humanos, todo o script SQL de criação física das tabelas, tipos de dados, chaves estrangeiras, índices e triggers de automação contábil foi consolidado em um arquivo de engenharia de software separado.
 
-```sql
--- Habilita extensões obrigatórias
-CREATE EXTENSION IF NOT EXISTS ltree;
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
--- 1. Tabela de Tenants (Multi-Tenancy)
-CREATE TABLE public.tenants (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome_fantasia text NOT NULL,
-  razao_social text NOT NULL,
-  cnpj text UNIQUE NOT NULL,
-  dominio text UNIQUE, -- Ex: 'marcaA.esolenergy.com.br'
-  config_visual jsonb DEFAULT '{}'::jsonb, -- Configurações de cores, logo, favicon
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
--- 2. Perfis de Usuário (Profiles)
-CREATE TABLE public.profiles (
-  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  nome text NOT NULL,
-  cpf_cnpj text NOT NULL,
-  telefone text,
-  avatar_url text,
-  contrato_assinado boolean DEFAULT false,
-  onboarding_completo boolean DEFAULT false,
-  comissao_percent numeric(5, 2) DEFAULT 8.00, -- Margem individual corretor no Motor 1
-  dados_bancarios jsonb DEFAULT '{}'::jsonb, -- PIX, Banco, Agência, Conta
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
--- 3. Cargos e Roles do Usuário
-CREATE TYPE public.app_role AS ENUM (
-  'admin',
-  'corretor',
-  'instalador',
-  'engenheiro',
-  'financeiro',
-  'pos_vendas'
-);
-
-CREATE TABLE public.user_roles (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
-  role public.app_role NOT NULL,
-  created_at timestamptz DEFAULT now(),
-  UNIQUE (user_id, role)
-);
-
--- 4. Árvore de Hierarquia MMN
-CREATE TABLE public.rede_mmn (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  usuario_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE UNIQUE,
-  patrocinador_id uuid REFERENCES public.profiles(id),
-  path public.ltree NOT NULL, -- Ex: 'top.user1_uuid.user2_uuid'
-  nivel integer NOT NULL,
-  created_at timestamptz DEFAULT now()
-);
-CREATE INDEX idx_rede_mmn_path ON public.rede_mmn USING gist(path);
-
--- 5. CRM: Cadastro de Clientes / Leads
-CREATE TYPE public.cliente_status_tipo AS ENUM (
-  'novo',
-  'contato',
-  'visita_agendada',
-  'proposta_enviada',
-  'negociacao',
-  'contrato_assinado',
-  'instalacao',
-  'concluido',
-  'perdido'
-);
-
-CREATE TABLE public.clientes (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  corretor_id uuid REFERENCES public.profiles(id),
-  nome_completo text NOT NULL,
-  documento text NOT NULL, -- CPF/CNPJ criptografado
-  contato_telefone text NOT NULL,
-  contato_email text,
-  cidade text NOT NULL,
-  estado varchar(2) NOT NULL,
-  status public.cliente_status_tipo DEFAULT 'novo' NOT NULL,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
--- 6. Carteira de Energia (GD e MLE)
-CREATE TYPE public.carteira_status AS ENUM (
-  'novo',
-  'analise_viabilidade',
-  'aguardando_documentos',
-  'proposta_enviada',
-  'contrato_assinado',
-  'protocolado_distribuidora',
-  'homologado',
-  'ativo',
-  'suspenso',
-  'cancelado'
-);
-
-CREATE TYPE public.mercado_tipo AS ENUM ('gd', 'mle');
-
-CREATE TABLE public.carteira_energia (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
-  corretor_id uuid REFERENCES public.profiles(id),
-  tipo_mercado public.mercado_tipo NOT NULL,
-  fornecedor_parceiro_id text NOT NULL, -- 'origo', 'reverde', 'clarke', 'enel'
-  status public.carteira_status DEFAULT 'novo' NOT NULL,
-  fatura_media_mensal numeric(15, 2) NOT NULL,
-  consumo_mensal_kwh numeric(15, 2) NOT NULL,
-  percentual_desconto_contratado numeric(5, 2) NOT NULL,
-  data_assinatura date,
-  data_inicio_fornecimento date,
-  data_fim_fidelidade date,
-  data_protocolo_denuncia date, -- MLE: Prazo de 180 dias de aviso prévio
-  historico_faturas jsonb DEFAULT '[]'::jsonb, -- Array de faturas mensais para auditoria
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
--- 7. Esol Sign - Registro de Assinaturas Criptográficas
-CREATE TYPE public.documento_categoria AS ENUM (
-  'contrato_parceria',
-  'termo_compromisso_equipe',
-  'proposta_solar_turnkey',
-  'adesao_gd',
-  'denuncia_contrato_mle',
-  'distrato_cancelamento'
-);
-
-CREATE TYPE public.kyc_status AS ENUM ('pending', 'approved', 'rejected', 'bypass');
-
-CREATE TABLE public.assinaturas_esol_sign (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  user_id uuid REFERENCES auth.users(id), -- Signatário
-  tipo_documento public.documento_categoria NOT NULL,
-  referencia_id uuid NOT NULL, -- Link genérico (propostas, clientes, carteira)
-  conteudo_hash text NOT NULL, -- SHA-256 do contrato
-  assinatura_url text NOT NULL, -- Assinatura física desenhada
-  selfie_url text, -- Selfie KYC
-  documento_frente_url text,
-  documento_verso_url text,
-  ip_origem text NOT NULL,
-  user_agent text NOT NULL,
-  latitude numeric(10, 8),
-  longitude numeric(11, 8),
-  timestamp_ntp timestamptz DEFAULT now(),
-  facematch_status public.kyc_status DEFAULT 'pending',
-  facematch_score numeric(5, 2),
-  created_at timestamptz DEFAULT now()
-);
-
--- 8. Plano de Contas do Ledger Contábil (Partida Dobrada)
-CREATE TYPE public.ledger_tipo_conta AS ENUM ('ativo', 'passivo', 'patrimonio', 'receita', 'despesa');
-
-CREATE TABLE public.ledger_contas (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  codigo text NOT NULL, -- Ex: '1.1.01.01'
-  nome text NOT NULL,
-  tipo public.ledger_tipo_conta NOT NULL,
-  saldo numeric(15, 2) DEFAULT 0.00 NOT NULL,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now(),
-  UNIQUE (tenant_id, codigo)
-);
-
--- 9. Lançamentos Contábeis do Ledger com Hashing de Encadeamento
-CREATE TABLE public.ledger_lancamentos (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  data_lancamento timestamptz DEFAULT now() NOT NULL,
-  descricao text NOT NULL,
-  conta_debito_id uuid REFERENCES public.ledger_contas(id) NOT NULL,
-  conta_credito_id uuid REFERENCES public.ledger_contas(id) NOT NULL,
-  valor numeric(15, 2) NOT NULL CHECK (valor > 0),
-  origem_tipo text NOT NULL, -- 'faturamento_pedido', 'repasse_mmn', 'cancelamento'
-  origem_id uuid NOT NULL,
-  hash_transacao text NOT NULL UNIQUE, -- SHA-256 encadeado
-  hash_anterior text,
-  created_at timestamptz DEFAULT now()
-);
-
--- 10. Fluxo de Conformidade e Distratos
-CREATE TABLE public.distratos_conformidade (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  carteira_energia_id uuid REFERENCES public.carteira_energia(id) ON DELETE CASCADE,
-  motivo text NOT NULL,
-  descricao text,
-  assinatura_distrato_id uuid REFERENCES public.assinaturas_esol_sign(id),
-  estorno_comissoes_concluido boolean DEFAULT false,
-  status text DEFAULT 'pendente' NOT NULL, -- 'pendente', 'aprovado', 'rejeitado'
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-```
+> [!TIP]
+> **Script DDL Completo e Fiel do Banco de Dados**
+> Você pode abrir, editar e executar o script de banco de dados completo acessando o arquivo de provisionamento: [esol_banco_dados_ddl_completo.sql](file:///d:/Projetos%20Lovable/Esol%20Energy/esolenergy/docs/esol_banco_dados_ddl_completo.sql).
 
 ---
 
-#### 5. Triggers Globais e Automações de Segurança
+#### 5. Resumo das Automações Contábeis & Segurança
 
-##### **Automação 5.1: Recálculo em Partida Dobrada**
-Sempre que um lançamento contábil é inserido, o saldo das contas envolvidas é atualizado de forma sincronizada:
-```sql
-CREATE OR REPLACE FUNCTION public.atualizar_saldos_contas_trigger()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Debita valor da conta débito
-  UPDATE public.ledger_contas 
-  SET saldo = saldo + NEW.valor, updated_at = now()
-  WHERE id = NEW.conta_debito_id;
+Para garantir a confiabilidade matemática das comissões e transações:
+*   **Recálculo de Saldos (Trigger Partida Dobrada):** Toda inserção no livro-razão atualiza automaticamente o balanço geral, debitando da conta de origem e creditando na conta de destino, evitando erros manuais ou saldos flutuantes.
+*   **Chave Criptográfica Encadeada (Trigger Hashing SHA-256):** Cada lançamento contábil carrega o hash criptográfico do lançamento anterior, garantindo imutabilidade de dados históricos do MMN.
 
-  -- Credita valor na conta crédito (deduz se ativo/despesa, incrementa se passivo/receita)
-  UPDATE public.ledger_contas 
-  SET saldo = CASE 
-    WHEN tipo IN ('ativo', 'despesa') THEN saldo - NEW.valor
-    ELSE saldo + NEW.valor
-  END, updated_at = now()
-  WHERE id = NEW.conta_credito_id;
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER trg_atualizar_saldos_ledger
-  AFTER INSERT ON public.ledger_lancamentos
-  FOR EACH ROW
-  EXECUTE FUNCTION public.atualizar_saldos_contas_trigger();
-```
-
-##### **Automação 5.2: Encadeamento de Hash (Integridade Criptográfica)**
-Gera o hash encadeado do lançamento antes de salvar na tabela:
-```sql
-CREATE OR REPLACE FUNCTION public.gerar_hash_lancamento_trigger()
-RETURNS TRIGGER AS $$
-DECLARE
-  v_hash_anterior text;
-BEGIN
-  -- Coleta o hash da última transação do tenant
-  SELECT hash_transacao INTO v_hash_anterior
-  FROM public.ledger_lancamentos
-  WHERE tenant_id = NEW.tenant_id
-  ORDER BY data_lancamento DESC, created_at DESC
-  LIMIT 1;
-
-  NEW.hash_anterior := COALESCE(v_hash_anterior, 'GENESIS_BLOCK');
-  
-  -- Calcula o hash SHA-256 concatenando os dados do lançamento
-  NEW.hash_transacao := encode(digest(
-    NEW.id::text || 
-    NEW.hash_anterior || 
-    NEW.valor::text || 
-    NEW.conta_debito_id::text || 
-    NEW.conta_credito_id::text || 
-    NEW.data_lancamento::text,
-    'sha256'
-  ), 'hex');
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER trg_gerar_hash_lancamento
-  BEFORE INSERT ON public.ledger_lancamentos
-  FOR EACH ROW
-  EXECUTE FUNCTION public.gerar_hash_lancamento_trigger();
-END;
-$$;
-```
 
 
 ---
