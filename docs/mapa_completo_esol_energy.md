@@ -352,6 +352,138 @@ OVERRIDE DA EQUIPE (Rede de 5 pessoas nos níveis abaixo):
 
 ---
 
+### 6.2 PILAR OPERACIONAL & FINANCEIRO: MODELAGEM MATEMÁTICA E DRE DE SUSTENTABILIDADE DO MMN RECORRENTE
+
+Para garantir a viabilidade operacional e a solvência de caixa da Esol Energy em longo prazo, o ecossistema opera sob o princípio da **Sustentabilidade Centesimal Blindada**. A distribuição de comissões na rede MMN do Motor 2 é matematicamente limitada, impedindo que o crescimento geométrico da rede gere passivos superiores à receita bruta recebida.
+
+Abaixo está o detalhamento matemático completo, as fórmulas de fluxo de caixa, as simulações de escala geométrica e a DRE contábil gerencial projetada para o novo sistema.
+
+---
+
+#### 1. Equações de Fluxo de Caixa Unitário (GD e MLE)
+
+A receita da Esol sobre os produtos de utilidade recorrente provém do **Spread de Compensação** (GD) ou da **Taxa de Intermediação por Volume** (MLE).
+
+##### **Equação 1.1: Geração Distribuída (GD) — Faturamento Mensal do Cliente**
+Seja $F_c$ o faturamento total da conta de luz do cliente na concessionária sem impostos adicionais, e $C_{inj}$ a parcela correspondente à energia injetada em créditos pela usina solar parceira ($C_{inj} \approx 0,90 \times F_c$).
+*   O cliente recebe o desconto contratado $D_{pct}$ (ex: $15\% = 0,15$) sobre os créditos injetados.
+*   O valor cobrado do cliente pela usina/geradora ($V_{cob}$) é:
+    $$V_{cob} = C_{inj} \times (1 - D_{pct})$$
+*   A Esol recebe da usina parceira a comissão contratada de repasse $R_{pct}$ (ex: $7\% = 0,07$) sobre os créditos injetados:
+    $$Rec_{bruta} = C_{inj} \times R_{pct}$$
+
+##### **Equação 1.2: Mercado Livre de Energia (MLE) — Faturamento Mensal por Consumo**
+Seja $C_{mwh}$ o consumo mensal da PME em MWh (ex: $25\text{ MWh}$) e $T_{com}$ a tarifa de intermediação fixa repassada pela comercializadora à Esol por MWh ativo (ex: $R_{com} = \text{R\$ } 4,00/\text{MWh}$):
+    $$Rec_{bruta} = C_{mwh} \times T_{com}$$
+
+##### **Equação 1.3: O Split Contábil (Regra de Ouro do Motor 2)**
+Toda receita que entra no caixa da Esol proveniente do Motor 2 ($Rec_{bruta}$) é fracionada em duas partes imutáveis:
+1.  **MMN Pool ($Split_{mmn} = 36\%$):** Destinado à remuneração dos consultores.
+2.  **Esol Retained ($Split_{esol} = 64\%$):** Destinado ao caixa corporativo.
+
+$$\begin{aligned}
+Split_{mmn} &= Rec_{bruta} \times 0,36 \\
+Split_{esol} &= Rec_{bruta} \times 0,64
+\end{aligned}$$
+
+---
+
+#### 2. Distribuição Centesimal das Comissões MMN (7 Níveis)
+
+A comissão de $36\%$ alocada ao MMN é dividida de forma igualitária para evitar o colapso financeiro da rede e incentivar a liderança ativa.
+
+*   **Vendedor Direto (Nível 0):** Recebe $15\%$ da $Rec_{bruta}$.
+*   **Linha de Liderança (Nível 1 ao Nível 7):** Recebe $3\%$ da $Rec_{bruta}$ por nível (totalizando $21\%$).
+
+##### **Tabela Centesimal de Fluxo Financeiro (GD vs. MLE)**
+
+A tabela abaixo simula o faturamento e a distribuição de centavos exatos para um cliente residencial de GD e uma empresa comercial de MLE.
+
+| Parâmetro | Cenário A: GD B2C (Residencial) | Cenário B: MLE B2B (Supermercado) |
+| :--- | :--- | :--- |
+| **Métrica do Cliente** | Conta de Luz: R\$ 600,00/mês | Consumo: 25 MWh/mês (Fatura: ~R\$ 20k) |
+| **Crédito Gerado / Injetado** | R\$ 540,00 em créditos solar | 25 MWh de energia |
+| **Desconto do Cliente** | 15% de economia (Economiza: R\$ 81,00) | 20% de economia (Economiza: R\$ 4.000,00) |
+| **Comissão Bruta Recebida Esol**| 7% do crédito = **R\$ 37,8000** | R\$ 4,00/MWh = **R\$ 100,0000** |
+| **Split MMN Total (36%)** | **R\$ 13,6080** | **R\$ 36,0000** |
+| ├── N0: Consultor Direto (15%) | R\$ 5,6700 | R\$ 15,0000 |
+| ├── N1: Indicador / Líder 1 (3%) | R\$ 1,1340 | R\$ 3,0000 |
+| ├── N2: Líder 2 (3%) | R\$ 1,1340 | R\$ 3,0000 |
+| ├── N3: Líder 3 (3%) | R\$ 1,1340 | R\$ 3,0000 |
+| ├── N4: Líder 4 (3%) | R\$ 1,1340 | R\$ 3,0000 |
+| ├── N5: Líder 5 (3%) | R\$ 1,1340 | R\$ 3,0000 |
+| ├── N6: Líder 6 (3%) | R\$ 1,1340 | R\$ 3,0000 |
+| └── N7: Líder 7 (3%) | R\$ 1,1340 | R\$ 3,0000 |
+| **Split Esol Retido (64%)** | **R\$ 24,1920** | **R\$ 64,0000** |
+| ├── Buffer de Inadimplência (10%)| R\$ 3,7800 | R\$ 10,0000 |
+| └── Lucro Líquido Esol (54%) | R\$ 20,4120 | R\$ 54,0000 |
+
+---
+
+#### 3. Projeção Geométrica de Escala e Custo Limite (Sustentabilidade MMN)
+
+Diferente de sistemas de MMN insustentáveis que utilizam matrizes binárias ou de ciclo fechado, o modelo da Esol possui uma **Barreira de Pagamento Capped** (Limite Teto).
+Como o total pago à rede está travado em $36\%$, o custo total da Esol com comissão por cliente **nunca** excederá $36\%$, independente do tamanho da rede ou do número de níveis abaixo dele. 
+
+##### **Prova Matemática de Limitação:**
+Se um cliente fechar no nível $K$ de uma rede, a Esol pagará comissão para o indicador imediato (nível $K$) e para os 7 níveis acima (nível $K-1$, $K-2$, ..., $K-7$).
+Se a árvore contiver 100 níveis, os níveis superiores a $K-7$ não recebem comissão por aquela transação específica. O custo marginal de comissionamento de qualquer cliente no ecossistema é constante e igual a:
+$$\text{Custo Marginal} = 15\% + (7 \times 3\%) = 36\%$$
+Isso garante o **Índice de Sustentabilidade Criptográfica (ISC) da Esol = 1,00 (Sem Risco de Caixa)**.
+
+##### **Simulação Geométrica de Expansão de Rede (Duplicação por Fator 3):**
+Se cada consultor recrutar 3 novos consultores ativos, e cada um trouxer uma média de **5 clientes ativos de GD** (comissão média Esol: R\$ 37,80/mês):
+
+$$\begin{aligned}
+\text{Consultores por Nível (N)} &= 3^N \\
+\text{Total de Consultores na Rede} &= \sum_{N=0}^{7} 3^N = 3.280 \text{ consultores}
+\end{aligned}$$
+
+*   **Total de Clientes Ativos na Carteira Global:** $3.280 \times 5 = 16.400\text{ clientes}$
+*   **Faturamento Mensal Recebido pela Esol:** $16.400 \times \text{R\$ } 37,80 = \text{R\$ } 619.920,00/\text{mês}$
+*   **Repasse Total pago para a Rede MMN (36%):** $\text{R\$ } 223.171,20/\text{mês}$
+*   **Caixa Retido pela Esol (64%):** $\text{R\$ } 396.748,80/\text{mês}$
+    *   *Buffer de Segurança de Inadimplência (10%):* R\$ 61.992,00/mês
+    *   *Margem Livre de Caixa / Lucro da Esol (54%):* R\$ 334.756,80/mês
+
+---
+
+#### 4. Demonstrativo de Resultados do Exercício Projetado (DRE Gerencial do Novo Ecossistema)
+
+Abaixo está o DRE gerencial projetado para a Fase 2, considerando uma rede estável de 1.000 consultores ativos trazendo 5 clientes de GD e 1 cliente de MLE cada um.
+
+```
+DEMONSTRATIVO DE RESULTADOS DO EXERCÍCIO (DRE GERENCIAL ANUAL PROJETADO)
+Base: 5.000 clientes GD ativos (comissão R$ 37,80) + 1.000 clientes MLE ativos (comissão R$ 100,00)
+
+  RECEITA OPERACIONAL BRUTA (ROB) ───────────────────────► R$ 3.468.000,00
+  ├── Receita GD Assinatura (5.000 x R$ 37,80 x 12)        R$ 2.268.000,00
+  └── Receita MLE Varejista (1.000 x R$ 100,00 x 12)       R$ 1.200.000,00
+
+  (-) Deduções e Impostos Fiscais (Simples Nacional 6%) ─► R$  (208.080,00)
+  ────────────────────────────────────────────────────────────────────────
+  RECEITA OPERACIONAL LÍQUIDA (ROL) ─────────────────────► R$ 3.259.920,00
+
+  (-) CUSTO DOS SERVIÇOS PRESTADOS (CSP) ────────────────► R$ (1.248.480,00)
+  ├── Repasse MMN N0 (15% da Receita Bruta)                 R$  (520.200,00)
+  └── Repasse MMN N1-N7 (21% da Receita Bruta)              R$  (728.280,00)
+  ────────────────────────────────────────────────────────────────────────
+  LUCRO BRUTO ───────────────────────────────────────────► R$ 2.011.440,00 (61,7% da ROL)
+
+  (-) DESPESAS OPERACIONAIS (SG&A e Infraestrutura) ─────► R$  (144.000,00)
+  ├── Servidores (Supabase Team + Cloudflare Workers)      R$   (36.000,00)
+  ├── APIs de KYC e Bureau de Crédito                      R$   (48.000,00)
+  └── Suporte ao Cliente, Marketing e Administrativo       R$   (60.000,00)
+
+  (-) PROVISÕES / BUFFER DE INADIMPLÊNCIA (10% ROB) ─────► R$  (346.800,00)
+  ────────────────────────────────────────────────────────────────────────
+  LUCRO LÍQUIDO ANUAL DA ESOL ENERGY ────────────────────► R$ 1.520.640,00 (46,6% da ROL)
+```
+
+Este DRE prova a sustentabilidade estrutural do negócio: mesmo pagando comissão de 7 níveis na rede e provisionando 10% para inadimplência, a Esol Energy mantém um Lucro Líquido anual de **R\$ 1.520.640,00** (cerca de R\$ 126.720,00 mensais) na Fase 2 de crescimento, garantindo solidez para investir no desenvolvimento contínuo da tecnologia.
+
+---
+
 ## 7. COMPARATIVO COMPETITIVO (Esol vs. iGreen)
 
 | Métrica | iGreen | Esol Energy | Vantagem Esol |
