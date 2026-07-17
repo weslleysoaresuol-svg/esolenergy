@@ -603,57 +603,341 @@ Este DRE prova a sustentabilidade estrutural do negócio: mesmo pagando comissã
 
 ---
 
-### 10.2 Modelagem de Dados Resiliente (Supabase/PostgreSQL)
+### 10.2 PILAR OPERACIONAL & TÉCNICO: ARQUITETURA DO BANCO DE DADOS CORE E MULTI-TENANCY
+
+Para o novo sistema da Esol Energy, a estrutura de dados foi desenhada sob os pilares da **Alta Escalabilidade de Rede**, **Isolamento de Tenants (White-Label)** e **Imutabilidade Contábil**.
+
+```mermaid
+erDiagram
+    tenants ||--o{ profiles : "possui"
+    tenants ||--o{ clientes : "isolado por tenant"
+    profiles ||--o{ rede_mmn : "alocado na hierarquia"
+    profiles ||--o{ clientes : "gerencia leads"
+    clientes ||--o{ carteira_energia : "contrata utilidade"
+    carteira_energia ||--o{ assinaturas_esol_sign : "requer assinatura"
+    carteira_energia ||--o{ ledger_lancamentos : "gera lancamento"
+    ledger_contas ||--o{ ledger_lancamentos : "classifica debitos e creditos"
+    distratos_conformidade ||--o{ carteira_energia : "cancela contrato"
+```
+
+---
+
+#### 1. Arquitetura de Isolamento White-Label (Multi-Tenancy)
+O sistema compartilha o mesmo banco de dados PostgreSQL físico, mas garante o isolamento lógico estrito por meio de **Row Level Security (RLS)**.
+*   A tabela `tenants` registra cada integrador licenciado (cores, logo, domínio).
+*   Toda tabela operacional (clientes, carteiras, ledger) possui uma coluna `tenant_id`.
+*   As políticas de RLS filtram automaticamente as linhas usando o parâmetro de contexto do Supabase:
+    ```sql
+    CREATE POLICY "Isolamento por Tenant" ON public.clientes
+      FOR ALL USING (tenant_id = auth.jwt()->'user_metadata'->>'tenant_id'::uuid);
+    ```
+
+---
+
+#### 2. Hierarquia de Rede MMN com `ltree`
+Para processar árvores de indicação com milhões de consultores sem degradar a performance do banco de dados, o PostgreSQL utiliza a extensão nativa `ltree`.
+*   O campo `path` armazena o caminho de indicação de forma indexada por árvore de sufixo (ex: `top.lider1_id.lider2_id.consultor_id`).
+*   **Busca de Downline Completo (Todos os níveis abaixo):**
+    ```sql
+    SELECT usuario_id FROM public.rede_mmn WHERE path <@ 'top.lider1_id';
+    ```
+*   **Busca de Uplines (Os 7 níveis acima para pagamento de comissão):**
+    ```sql
+    SELECT usuario_id FROM public.rede_mmn WHERE path @> 'top.lider1_id.lider2_id.consultor_id' AND nivel >= (consultor_nivel - 7);
+    ```
+
+---
+
+#### 3. Integridade Criptográfica do Ledger (Blockchain-like Ledger)
+Para evitar fraudes ou edições de saldos de comissão de MMN por administradores mal-intencionados, cada linha na tabela `ledger_lancamentos` possui um campo `hash_transacao`.
+*   O hash do lançamento $N$ é gerado concatenando o ID, o valor, as contas de débito/crédito, a data e o hash do lançamento anterior ($N-1$):
+    $$\text{Hash}_N = \text{SHA256}(ID_N \ || \ \text{Hash}_{N-1} \ || \ \text{Valor}_N \ || \ \text{ContaDeb}_N \ || \ \text{ContaCred}_N \ || \ \text{Timestamp}_N)$$
+*   Caso qualquer saldo histórico seja modificado manualmente via banco, a corrente de hashes é quebrada, acionando alertas vermelhos no painel do administrador.
+
+---
+
+#### 4. Esquema DDL Completo e Fiel (Supabase/PostgreSQL)
+
+Abaixo está a estrutura SQL DDL completa para a inicialização e provisionamento do banco de dados do novo ecossistema.
 
 ```sql
--- Extensão para processamento da árvore MMN
+-- Habilita extensões obrigatórias
 CREATE EXTENSION IF NOT EXISTS ltree;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- Cadastro de Clientes final da Esol
-CREATE TABLE clientes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nome_completo TEXT NOT NULL,
-    documento TEXT UNIQUE NOT NULL, -- CPF/CNPJ (pgcrypto)
-    contato_telefone TEXT NOT NULL,
-    concessionaria_local TEXT NOT NULL,
-    consumo_medio_kwh DECIMAL(12, 4) NOT NULL,
-    status_energia VARCHAR(50) DEFAULT 'Lead_GD', -- 'GD_Lead', 'GD_Ativo', 'MLE_Lead', 'MLE_Ativo'
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+-- 1. Tabela de Tenants (Multi-Tenancy)
+CREATE TABLE public.tenants (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome_fantasia text NOT NULL,
+  razao_social text NOT NULL,
+  cnpj text UNIQUE NOT NULL,
+  dominio text UNIQUE, -- Ex: 'marcaA.esolenergy.com.br'
+  config_visual jsonb DEFAULT '{}'::jsonb, -- Configurações de cores, logo, favicon
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
 );
 
--- Tabela de Abstração de Parceiros Fornecedores de Energia
-CREATE TABLE parceiros_energia (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nome_parceiro VARCHAR(100) NOT NULL, -- Ex: 'Órigo', 'Clarke', 'Enel Varejo'
-    tipo_mercado VARCHAR(50) NOT NULL, -- 'GD' ou 'MLE'
-    endpoint_api_cadastro TEXT,
-    comissao_recorrente_tipo VARCHAR(50) NOT NULL, -- 'Porcentagem' ou 'MWh'
-    comissao_recorrente_valor DECIMAL(12, 4) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+-- 2. Perfis de Usuário (Profiles)
+CREATE TABLE public.profiles (
+  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  nome text NOT NULL,
+  cpf_cnpj text NOT NULL,
+  telefone text,
+  avatar_url text,
+  contrato_assinado boolean DEFAULT false,
+  onboarding_completo boolean DEFAULT false,
+  comissao_percent numeric(5, 2) DEFAULT 8.00, -- Margem individual corretor no Motor 1
+  dados_bancarios jsonb DEFAULT '{}'::jsonb, -- PIX, Banco, Agência, Conta
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
 );
 
--- Tabela de Relação Contratual e Portabilidade
-CREATE TABLE contratos_energia (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    cliente_id UUID REFERENCES clientes(id),
-    parceiro_id UUID REFERENCES parceiros_energia(id),
-    status_contrato VARCHAR(50) DEFAULT 'Pendente', -- 'Pendente', 'Em_Migracao', 'Ativo', 'Cancelado'
-    data_inicio DATE,
-    data_fim_fidelidade DATE,
-    data_protocolo_denuncia DATE, -- Prazo de 180 dias de concessionária
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+-- 3. Cargos e Roles do Usuário
+CREATE TYPE public.app_role AS ENUM (
+  'admin',
+  'corretor',
+  'instalador',
+  'engenheiro',
+  'financeiro',
+  'pos_vendas'
 );
 
--- Tabela de Hierarquia MMN
-CREATE TABLE rede_mmn (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    usuario_id UUID NOT NULL,
-    patrocinador_id UUID,
-    path ltree NOT NULL, -- Ex: 'top.lider1.consultor2'
-    nivel INTEGER NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+CREATE TABLE public.user_roles (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
+  role public.app_role NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  UNIQUE (user_id, role)
+);
+
+-- 4. Árvore de Hierarquia MMN
+CREATE TABLE public.rede_mmn (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  usuario_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE UNIQUE,
+  patrocinador_id uuid REFERENCES public.profiles(id),
+  path public.ltree NOT NULL, -- Ex: 'top.user1_uuid.user2_uuid'
+  nivel integer NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+CREATE INDEX idx_rede_mmn_path ON public.rede_mmn USING gist(path);
+
+-- 5. CRM: Cadastro de Clientes / Leads
+CREATE TYPE public.cliente_status_tipo AS ENUM (
+  'novo',
+  'contato',
+  'visita_agendada',
+  'proposta_enviada',
+  'negociacao',
+  'contrato_assinado',
+  'instalacao',
+  'concluido',
+  'perdido'
+);
+
+CREATE TABLE public.clientes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  corretor_id uuid REFERENCES public.profiles(id),
+  nome_completo text NOT NULL,
+  documento text NOT NULL, -- CPF/CNPJ criptografado
+  contato_telefone text NOT NULL,
+  contato_email text,
+  cidade text NOT NULL,
+  estado varchar(2) NOT NULL,
+  status public.cliente_status_tipo DEFAULT 'novo' NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- 6. Carteira de Energia (GD e MLE)
+CREATE TYPE public.carteira_status AS ENUM (
+  'novo',
+  'analise_viabilidade',
+  'aguardando_documentos',
+  'proposta_enviada',
+  'contrato_assinado',
+  'protocolado_distribuidora',
+  'homologado',
+  'ativo',
+  'suspenso',
+  'cancelado'
+);
+
+CREATE TYPE public.mercado_tipo AS ENUM ('gd', 'mle');
+
+CREATE TABLE public.carteira_energia (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
+  corretor_id uuid REFERENCES public.profiles(id),
+  tipo_mercado public.mercado_tipo NOT NULL,
+  fornecedor_parceiro_id text NOT NULL, -- 'origo', 'reverde', 'clarke', 'enel'
+  status public.carteira_status DEFAULT 'novo' NOT NULL,
+  fatura_media_mensal numeric(15, 2) NOT NULL,
+  consumo_mensal_kwh numeric(15, 2) NOT NULL,
+  percentual_desconto_contratado numeric(5, 2) NOT NULL,
+  data_assinatura date,
+  data_inicio_fornecimento date,
+  data_fim_fidelidade date,
+  data_protocolo_denuncia date, -- MLE: Prazo de 180 dias de aviso prévio
+  historico_faturas jsonb DEFAULT '[]'::jsonb, -- Array de faturas mensais para auditoria
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- 7. Esol Sign - Registro de Assinaturas Criptográficas
+CREATE TYPE public.documento_categoria AS ENUM (
+  'contrato_parceria',
+  'termo_compromisso_equipe',
+  'proposta_solar_turnkey',
+  'adesao_gd',
+  'denuncia_contrato_mle',
+  'distrato_cancelamento'
+);
+
+CREATE TYPE public.kyc_status AS ENUM ('pending', 'approved', 'rejected', 'bypass');
+
+CREATE TABLE public.assinaturas_esol_sign (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id), -- Signatário
+  tipo_documento public.documento_categoria NOT NULL,
+  referencia_id uuid NOT NULL, -- Link genérico (propostas, clientes, carteira)
+  conteudo_hash text NOT NULL, -- SHA-256 do contrato
+  assinatura_url text NOT NULL, -- Assinatura física desenhada
+  selfie_url text, -- Selfie KYC
+  documento_frente_url text,
+  documento_verso_url text,
+  ip_origem text NOT NULL,
+  user_agent text NOT NULL,
+  latitude numeric(10, 8),
+  longitude numeric(11, 8),
+  timestamp_ntp timestamptz DEFAULT now(),
+  facematch_status public.kyc_status DEFAULT 'pending',
+  facematch_score numeric(5, 2),
+  created_at timestamptz DEFAULT now()
+);
+
+-- 8. Plano de Contas do Ledger Contábil (Partida Dobrada)
+CREATE TYPE public.ledger_tipo_conta AS ENUM ('ativo', 'passivo', 'patrimonio', 'receita', 'despesa');
+
+CREATE TABLE public.ledger_contas (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  codigo text NOT NULL, -- Ex: '1.1.01.01'
+  nome text NOT NULL,
+  tipo public.ledger_tipo_conta NOT NULL,
+  saldo numeric(15, 2) DEFAULT 0.00 NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  UNIQUE (tenant_id, codigo)
+);
+
+-- 9. Lançamentos Contábeis do Ledger com Hashing de Encadeamento
+CREATE TABLE public.ledger_lancamentos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  data_lancamento timestamptz DEFAULT now() NOT NULL,
+  descricao text NOT NULL,
+  conta_debito_id uuid REFERENCES public.ledger_contas(id) NOT NULL,
+  conta_credito_id uuid REFERENCES public.ledger_contas(id) NOT NULL,
+  valor numeric(15, 2) NOT NULL CHECK (valor > 0),
+  origem_tipo text NOT NULL, -- 'faturamento_pedido', 'repasse_mmn', 'cancelamento'
+  origem_id uuid NOT NULL,
+  hash_transacao text NOT NULL UNIQUE, -- SHA-256 encadeado
+  hash_anterior text,
+  created_at timestamptz DEFAULT now()
+);
+
+-- 10. Fluxo de Conformidade e Distratos
+CREATE TABLE public.distratos_conformidade (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  carteira_energia_id uuid REFERENCES public.carteira_energia(id) ON DELETE CASCADE,
+  motivo text NOT NULL,
+  descricao text,
+  assinatura_distrato_id uuid REFERENCES public.assinaturas_esol_sign(id),
+  estorno_comissoes_concluido boolean DEFAULT false,
+  status text DEFAULT 'pendente' NOT NULL, -- 'pendente', 'aprovado', 'rejeitado'
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
 );
 ```
+
+---
+
+#### 5. Triggers Globais e Automações de Segurança
+
+##### **Automação 5.1: Recálculo em Partida Dobrada**
+Sempre que um lançamento contábil é inserido, o saldo das contas envolvidas é atualizado de forma sincronizada:
+```sql
+CREATE OR REPLACE FUNCTION public.atualizar_saldos_contas_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Debita valor da conta débito
+  UPDATE public.ledger_contas 
+  SET saldo = saldo + NEW.valor, updated_at = now()
+  WHERE id = NEW.conta_debito_id;
+
+  -- Credita valor na conta crédito (deduz se ativo/despesa, incrementa se passivo/receita)
+  UPDATE public.ledger_contas 
+  SET saldo = CASE 
+    WHEN tipo IN ('ativo', 'despesa') THEN saldo - NEW.valor
+    ELSE saldo + NEW.valor
+  END, updated_at = now()
+  WHERE id = NEW.conta_credito_id;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trg_atualizar_saldos_ledger
+  AFTER INSERT ON public.ledger_lancamentos
+  FOR EACH ROW
+  EXECUTE FUNCTION public.atualizar_saldos_contas_trigger();
+```
+
+##### **Automação 5.2: Encadeamento de Hash (Integridade Criptográfica)**
+Gera o hash encadeado do lançamento antes de salvar na tabela:
+```sql
+CREATE OR REPLACE FUNCTION public.gerar_hash_lancamento_trigger()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_hash_anterior text;
+BEGIN
+  -- Coleta o hash da última transação do tenant
+  SELECT hash_transacao INTO v_hash_anterior
+  FROM public.ledger_lancamentos
+  WHERE tenant_id = NEW.tenant_id
+  ORDER BY data_lancamento DESC, created_at DESC
+  LIMIT 1;
+
+  NEW.hash_anterior := COALESCE(v_hash_anterior, 'GENESIS_BLOCK');
+  
+  -- Calcula o hash SHA-256 concatenando os dados do lançamento
+  NEW.hash_transacao := encode(digest(
+    NEW.id::text || 
+    NEW.hash_anterior || 
+    NEW.valor::text || 
+    NEW.conta_debito_id::text || 
+    NEW.conta_credito_id::text || 
+    NEW.data_lancamento::text,
+    'sha256'
+  ), 'hex');
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trg_gerar_hash_lancamento
+  BEFORE INSERT ON public.ledger_lancamentos
+  FOR EACH ROW
+  EXECUTE FUNCTION public.gerar_hash_lancamento_trigger();
+END;
+$$;
+```
+
 
 ---
 
