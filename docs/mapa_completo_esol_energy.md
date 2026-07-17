@@ -990,3 +990,261 @@ Para atingir a fluidez de interface do Claude Opus, todas as animações operam 
     ```
     Isso cria um efeito de carregamento em cascata elegante, garantindo a percepção de performance para o consultor.
 
+---
+
+## 14. PILAR 4: MOTOR DE ASSINATURA AUTOMATIZADA (ESOL SIGN) & LEDGER CRIPTOGRÁFICO CONTÁBIL
+
+Para garantir a validade jurídica de contratos a custo zero, a conformidade tributária e a consistência financeira absoluta de comissões, o ecossistema da Esol Energy opera sob duas camadas fundamentais de auditoria: o **Esol Sign** e o **Double-Entry Ledger Criptográfico**.
+
+---
+
+### 14.1 Esol Sign: Arquitetura Jurídica e KYC a Custo Zero
+
+O **Esol Sign** é o subsistema encarregado de validar a identidade digital das partes e firmar os contratos (parceria MMN, propostas de GD e distratos) sem depender de gateways pagos de assinatura (ex: DocuSign, Clicksign), amparado legalmente pela **Medida Provisória nº 2.200-2/2001** e pela **Lei nº 14.063/2020** (Assinatura Eletrônica Avançada).
+
+```
+FLUXO DE SEGURANÇA E EVIDÊNCIAS DO ESOL SIGN:
+  [Fatura + Dados do Lead]
+             │
+             ▼
+  [SignaturePad (Desenho)] ──► Captura coordenadas do traçado
+             │
+             ▼
+  [Selfie + CNH/RG Upload] ──► Upload no Cloudflare R2 privado (Sem OCR pago)
+             │
+             ▼
+  [Face Match local (JS)]  ──► Valida correspondência no browser (WebGL/WASM)
+             │
+             ▼
+  [Carimbo de Tempo NTP]   ──► Obtém hora oficial no a.st1.ntp.br
+             │
+             ▼
+  [Metadata JSON Builder]  ──► Agrega IP, Lat/Long, User Agent e NTP
+             │
+             ▼
+  [Assinatura SHA-256]     ──► Criptografa Bloco com chave privada da Esol
+```
+
+#### 1. Estrutura de Metadados de Evidência (JSON do Contrato)
+Toda assinatura gera um manifesto de metadados compactado em JSON que é selado criptograficamente com a chave privada RSA da Esol Energy:
+
+```json
+{
+  "documento": {
+    "referencia_id": "c30fa58b-bc11-4a1e-8461-9c869fb7a213",
+    "tipo": "contrato_parceria",
+    "sha256_original": "8f3c83a1b023de21a117b119d44e5d6291a132de984bb3e18a9ef31d044e132a"
+  },
+  "signatario": {
+    "usuario_id": "84e2098b-209f-431c-99d8-99bb5f3a6a12",
+    "nome": "João da Silva",
+    "cpf": "123.456.789-00",
+    "ip": "200.143.12.89",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X)...",
+    "geolocalizacao": {
+      "latitude": -23.55052,
+      "longitude": -46.633308,
+      "precisao_metros": 15
+    }
+  },
+  "seguranca": {
+    "timestamp_oficial_ntp": "2026-07-17T22:15:00-03:00",
+    "ntp_servidor": "a.st1.ntp.br",
+    "facematch_score": 93.42,
+    "facematch_status": "approved"
+  },
+  "assinatura_digital_esol": "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQ..."
+}
+```
+
+#### 2. Armazenamento Resiliente e de Baixo Custo
+*   As fotos de documentos e selfies são gravadas no **Cloudflare R2** em um bucket privado.
+*   **Segurança da Informação (LGPD):** A aplicação frontend não acessa arquivos de imagem diretamente por URLs públicas. O backend (Edge Functions) gera chaves de acesso temporárias assinadas (*Signed URLs*) válidas por apenas 10 minutos, garantindo que nenhum documento sensível fique exposto publicamente na internet.
+
+---
+
+### 14.2 Ledger Contábil Imutável (SHA-256 Hash Chain)
+
+Toda transação financeira (comissões recebidas, repasses da rede e estornos) é inserida sob o modelo de **Partida Dobrada**. O saldo de uma conta só é alterado se houver um lançamento simétrico de débito e crédito correspondente:
+
+$$\sum \text{Débitos} = \sum \text{Créditos}$$
+
+Para garantir a integridade absoluta dos dados contra modificações diretas no banco de dados, cada linha de lançamento é encadeada criptograficamente com a anterior por meio de uma função hash SHA-256 (semelhante ao princípio da blockchain):
+
+```
+CADEIA DE BLOCOS DO LEDGER CONTÁBIL:
+
+  REGISTRO N-1
+  ┌────────────────────────────────────┐
+  │ Lançamento ID: #1023               │
+  │ Conta Débito: Banco Esol           │
+  │ Conta Crédito: Receita GD          │
+  │ Valor: R$ 37,80                    │
+  │ HASH ANTERIOR: 8a42...9fef         │
+  │ HASH CORRENTE: 2c3d...a4e1         │◄────┐
+  └────────────────────────────────────┘     │
+                                             │
+  REGISTRO N                                 │
+  ┌────────────────────────────────────┐     │
+  │ Lançamento ID: #1024               │     │
+  │ Conta Débito: Despesa MMN          │     │
+  │ Conta Crédito: Comissões a Pagar   │     │
+  │ Valor: R$ 13,60                    │     │
+  │ HASH ANTERIOR: 2c3d...a4e1 ────────┼─────┘
+  │ HASH CORRENTE: f7e8...bc42         │
+  └────────────────────────────────────┘
+```
+
+#### Trigger PostgreSQL de Encadeamento de Blocos
+A trigger abaixo é executada antes de cada inserção de linha na tabela `public.ledger_lancamentos`, calculando o hash acorrentado com base no hash do registro imediatamente anterior:
+
+```sql
+CREATE OR REPLACE FUNCTION public.calcular_hash_lancamento_ledger()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_hash_anterior text;
+BEGIN
+  -- 1. Recupera o hash do último registro inserido no ledger
+  SELECT hash_corrente INTO v_hash_anterior
+  FROM public.ledger_lancamentos
+  ORDER BY created_at DESC, id DESC
+  LIMIT 1;
+
+  -- Se for o primeiro registro do banco, inicia o hash raiz (Genesis Block)
+  IF v_hash_anterior IS NULL THEN
+    v_hash_anterior := '0000000000000000000000000000000000000000000000000000000000000000';
+  END IF;
+
+  -- 2. Define o hash anterior na nova linha
+  NEW.hash_anterior := v_hash_anterior;
+
+  -- 3. Calcula o hash corrente combinando todos os dados da transação + hash anterior
+  NEW.hash_corrente := encode(
+    digest(
+      coalesce(v_hash_anterior, '') || '|' ||
+      NEW.conta_debito_id::text || '|' ||
+      NEW.conta_credito_id::text || '|' ||
+      NEW.valor::text || '|' ||
+      to_char(NEW.created_at, 'YYYY-MM-DD HH24:MI:SS.US'),
+      'sha256'
+    ),
+    'hex'
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trg_ledger_blockchain_chain
+  BEFORE INSERT ON public.ledger_lancamentos
+  FOR EACH ROW
+  EXECUTE FUNCTION public.calcular_hash_lancamento_ledger();
+```
+
+---
+
+### 14.3 Splits Fiscais, Bitributação e Planejamento Tributário
+
+A legislação tributária brasileira pune severamente a intermediação financeira clássica se for executada sem planejamento, devido ao risco de bitributação. A Esol resolve este desafio na raiz do faturamento.
+
+#### 1. Split Triangular de Hardware e Serviços (Turnkey Solar)
+Ao invés de a Esol comprar os equipamentos do distribuidor (Aldo Solar, Sou Energy) e revendê-los ao cliente (gerando incidência dupla de ICMS/IPI), o sistema executa o faturamento triangulado:
+
+$$\begin{aligned}
+P_{\text{total}} &= C_{\text{hardware}} \text{ (Faturado pelo Distribuidor diretamente ao Cliente Final)} \\
+&+ C_{\text{serviço}} \text{ (Faturado pela Esol via NFS-e)} \\
+&+ C_{\text{homologação}} \text{ (Faturado pelo Engenheiro Credenciado)}
+\end{aligned}$$
+
+*   **Resultado Prático:** Redução da carga tributária efetiva sobre o faturamento global do projeto de **18.5%** para apenas **6.0%** (Simples Nacional aplicado exclusivamente sobre a nota fiscal de intermediação de serviços).
+
+#### 2. Comparativo de Alíquotas de Enquadramento Tributário (2026)
+A tabela a seguir demonstra a projeção tributária efetiva para a Esol baseada no volume de faturamento de serviços anual:
+
+| Volume de Faturamento Anual (Serviços) | Regime Recomendado | Alíquota Efetiva de Imposto | Regra de Alerta do Sistema |
+| :--- | :--- | :---: | :--- |
+| Até R$ 81.000,00 | **MEI (Microempreendedor)** | R$ 80,00/mês fixo | Alerta quando faturamento médio exceder R$ 6.750/mês |
+| R$ 81.000,01 a R$ 4.800.000,00 | **Simples Nacional (Anexo III)**| 6% a 15.5% progressivo | Aciona simulação de migração a partir de R$ 380.000/mês |
+| Acima de R$ 4.800.000,00 | **Lucro Presumido** | 13.33% a 16.33% | Configuração automática de tributos federais integrados |
+
+---
+
+### 14.4 Fluxo de Reversão Contábil (Cancelamento & Distratos)
+
+Conforme exige o Código de Defesa do Consumidor (CDC Art. 49), o cliente possui o direito de arrependimento nos primeiros 7 dias após a contratação. 
+
+Se um cliente solicita a rescisão, o ecossistema aciona uma série de triggers em cascata para restaurar a consistência contábil de forma automatizada:
+
+```
+FLUXO DE TRIGGER DE REVERSÃO DE DISTRATO:
+  [Aprovação do Distrato]
+             │
+             ▼
+  [Abre Transação no Banco]
+             │
+             ▼
+  [Ledger: Cria Lançamento de Estorno]
+  ├── Inverte Conta de Débito/Crédito do pedido original
+  └── Insere na corrente com novo Hash SHA-256
+             │
+             ▼
+  [MMN Engine: Executa Estornos]
+  ├── Recupera a árvore de indicação (N0 a N7)
+  ├── Subtrai comissão do saldo disponível
+  └── Permite saldo negativo temporário caso saque já tenha ocorrido
+             │
+             ▼
+  [Bling/Omie API] ──► Solicita cancelamento da NFS-e junto à prefeitura
+             │
+             ▼
+  [Esol Sign Engine] ──► Assina eletronicamente o Termo de Distrato
+```
+
+#### Trigger de Estorno do Saldo MMN dos Consultores
+A trigger abaixo atua diretamente na carteira financeira dos consultores que receberam comissão pelo contrato cancelado:
+
+```sql
+CREATE OR REPLACE FUNCTION public.processar_estorno_mmn_cancelamento()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_lancamento record;
+BEGIN
+  -- 1. Varre e localiza os lançamentos de comissão do Motor 1/2 relacionados à carteira cancelada
+  FOR v_lancamento IN 
+    SELECT usuario_id, valor_comissao, nivel_origem 
+    FROM public.historico_comissoes_mmn
+    WHERE referencia_id = NEW.carteira_energia_id AND status = 'pago'
+  LOOP
+    -- 2. Atualiza a tabela de profiles debitando o valor da comissão correspondente
+    UPDATE public.profiles
+    SET saldo_disponivel = saldo_disponivel - v_lancamento.valor_comissao
+    WHERE id = v_lancamento.usuario_id;
+
+    -- 3. Registra a reversão no histórico de comissões para auditoria do consultor
+    INSERT INTO public.historico_comissoes_mmn (
+      usuario_id,
+      referencia_id,
+      valor_comissao,
+      nivel_origem,
+      status,
+      observacoes
+    ) VALUES (
+      v_lancamento.usuario_id,
+      NEW.carteira_energia_id,
+      -v_lancamento.valor_comissao,
+      v_lancamento.nivel_origem,
+      'estornado',
+      'Estorno automático decorrente do cancelamento/distrato do contrato.'
+    );
+  END LOOP;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trg_estorno_cancelamento_mmn
+  AFTER INSERT ON public.distratos_conformidade
+  FOR EACH ROW
+  WHEN (NEW.status = 'concluido')
+  EXECUTE FUNCTION public.processar_estorno_mmn_cancelamento();
+```
