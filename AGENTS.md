@@ -22,3 +22,9 @@
 > [!IMPORTANT]
 > A menos que o usuário solicite explicitamente uma criação simples (ex: "crie um design simples"), o comportamento padrão para qualquer criação visual, layout ou página é atuar com o máximo nível de capricho, entregando designs deslumbrantes, sensacionais, de altíssima beleza e padrão internacional de sofisticação.
 <!-- MAESTRO_DEFAULT:END -->
+
+<!-- EXHAUSTIVE_DEPTH:BEGIN -->
+> [!IMPORTANT]
+> A menos que o usuário solicite explicitamente o contrário, trabalhe sempre com o máximo de complexidade, inteligência, profundidade técnica e estratificação de dados possível. Forneça o máximo de informações estruturadas e evite resumos ou encurtamentos de documentos/planos.
+<!-- EXHAUSTIVE_DEPTH:END -->
+
