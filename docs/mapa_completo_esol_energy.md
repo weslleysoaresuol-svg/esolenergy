@@ -671,3 +671,96 @@ Para garantir a confiabilidade matemática das comissões e transações:
 > [!IMPORTANT]
 > Este é o **Mapa de Construção v10 (Definitivo)** — o "o quê" e o "com quê".
 > O próximo passo direto na conversa é iniciar o planejamento detalhado das tarefas e do cronograma na implementação da arquitetura no backend.
+
+---
+
+## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
+
+Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e proporcione uma usabilidade superior para a força de vendas, a interface do aplicativo foi projetada com base nos princípios do **Design Sensorial Tátil** e **Glassmorphism Moderno**.
+
+---
+
+### 13.1 O Fluxo de Navegação do Aplicativo
+
+O consultor navega de forma fluida entre as áreas comerciais, operacionais e financeiras de sua conta de parceiro:
+
+```mermaid
+flowchart TD
+    %% Estilos de Nodes
+    classDef main fill:#001046,stroke:#FFC107,stroke-width:2px,color:#fff;
+    classDef page fill:#0f172a,stroke:#38bdf8,stroke-width:1px,color:#fff;
+    classDef action fill:#065f46,stroke:#34d399,stroke-width:1.5px,color:#fff;
+
+    Onboard[🚀 Onboarding & KYC]:::main --> Auth[🔐 Auth / Painel Principal]:::main
+    
+    Auth --> Dash[📊 Dashboard Cockpit]:::page
+    Auth --> CRM[⚡ CRM Solar & Simulador]:::page
+    Auth --> MMN[👥 Árvore de Equipe MMN]:::page
+    Auth --> Fin[💸 Carteira & Ledger]:::page
+    Auth --> Loja[🛒 Loja & Kit Builder]:::page
+
+    Dash --> OS[🔧 Minhas Instalações / O&M]:::page
+    CRM --> Calc[📐 Dimensionamento PDF]:::action
+    MMN --> Downline[🧬 Genealogia Horizontal]:::action
+    Fin --> Saque[💳 Solicitação de PIX]:::action
+    Loja --> Reverso[Markup Reverso / Checkout]:::action
+```
+
+---
+
+### 13.2 Especificação do Design System (Visual Tokens)
+
+Para estabelecer uma linguagem visual premium, o sistema de estilos utiliza tokens de cor, tipografia e efeitos baseados em Tailwind CSS e CSS Vanilla Customizado:
+
+#### 1. Paleta de Cores Curada (Modo Escuro Premium)
+*   **Background Principal (Deep Space):** `#090d16` (HSL: `220°, 40%, 6%`) — Um azul escuro profundo que elimina a luz azul agressiva.
+*   **Superfícies de Componentes (Navy Blue Glass):** `#111827` com transparência de 80% (RGBA: `17, 24, 39, 0.8`) combinada com desfoque de fundo (`backdrop-blur-md`).
+*   **Cor Primária / Destaque (Glow Emerald):** `#10b981` (HSL: `160°, 84%, 39%`) — Representa energia verde, sustentabilidade e liquidez financeira.
+*   **Cor Secundária / Destaques de Luxo (Sunlight Gold):** `#fbbf24` (HSL: `43°, 96%, 56%`) — Representa o sol, riqueza e conquista de níveis no MMN.
+*   **Bordas Táteis:** Linhas finas de `1px` em RGBA transparente (`255, 255, 255, 0.08`) para delimitar componentes sem criar ruído visual.
+
+#### 2. Tipografia Moderna e Escalonada
+*   **Títulos e Headings:** Fonte **Outfit** (Google Fonts) — Uma tipografia sem serifa geométrica com cantos levemente arredondados, que confere um tom amigável e tecnológico.
+*   **Corpo de Texto e Dados:** Fonte **Inter** — Excelente para tabelas, relatórios financeiros e dados de geração técnica por sua altíssima legibilidade em telas pequenas.
+
+#### 3. Efeitos de Vidro e Profundidade (Brutalismo Tátil)
+*   **Backdrop Blur:** Aplicado em modais, barras de navegação flutuantes e cards de estatísticas.
+*   **Sombras Néon:** Efeito de brilho de luz (*Box Shadow Glow*) verde e dourado em botões ativos e indicadores de comissão acumulada.
+
+---
+
+### 13.3 Mapeamento de Telas do Aplicativo
+
+#### Tela 1: Dashboard Cockpit (O Painel do Líder)
+*   **Widget de Ganhos Recorrentes:** Mostra o saldo acumulado de royalties de energia (Motor 2) em tempo real, com um gráfico de linha interativo demonstrando o crescimento mensal dos ganhos.
+*   **Widget de Telemetria Integrada:** Exibe a energia gerada (kWh) e o CO₂ evitado por todos os sistemas físicos turnkey que o consultor vendeu diretamente.
+*   **Barra de Progresso do Próximo Nível:** Um indicador visual dourado exibindo quantos pontos de MMN faltam para o consultor subir de cargo (ex: Consultor $\rightarrow$ Supervisor $\rightarrow$ Diretor).
+
+#### Tela 2: CRM Solar, Simulador & Proposta Comercial
+*   **Área de Upload da Fatura (Drag and Drop):** Área de arrastar e soltar arquivos PDF de contas de luz com indicador de carregamento em rotação gradual.
+*   **Controle Deslizante de Margens (Slider):** Componente interativo que permite ao consultor ajustar o preço do projeto solar turnkey alterando sua margem (de 4% a 12%), recalculando na tela o valor final sob as regras do *Motor Reverso* com feedback instantâneo.
+*   **Ações Rápidas:** Botões flutuantes para compartilhar a proposta via WhatsApp em formato de link curto ou baixar em PDF de alta qualidade.
+
+#### Tela 3: Genealogia Dinâmica MMN
+*   **Visualizador de Árvore Interativo:** Uma árvore hierárquica expansível de 7 níveis de profundidade. O líder clica em um nó de membro da equipe para abrir detalhes de vendas mensais daquele consultor e pontuação acumulada.
+*   **Filtros Rápidos:** Alternância de exibição entre consultores ativos (em verde) e inativos (em vermelho).
+
+#### Tela 4: Extrato Contábil & Ledger Financeiro
+*   **Saldos Fracionados:** Exibição do saldo disponível com precisão centesimal (4 casas decimais) e histórico cronológico de repasses.
+*   **Widget "Blockchain Auditor":** Ao clicar em qualquer lançamento de comissão, o aplicativo exibe o hash SHA-256 da transação e o hash do bloco anterior, atestando a integridade absoluta da auditoria de caixa.
+
+#### Tela 5: Loja E-Commerce & Montagem Inteligente de Kits
+*   **Grid de SKUs:** Exibição de painéis, inversores, carregadores de carros elétricos e baterias residenciais BYD em formato de cartões de vidro com efeito de escala suave ao passar o mouse.
+*   **Engine de Compatibilidade:** Se o cliente selecionar um inversor de 5kW e tentar adicionar painéis que ultrapassam a corrente máxima de MPPT, a interface aciona um modal vermelho suave com a mensagem técnica explicando a incompatibilidade e sugerindo opções compatíveis.
+
+---
+
+### 13.4 Micro-interações e Animações Premium (GSAP & Framer Motion)
+
+Para atingir o padrão visual do Claude Opus de alta sofisticação, todas as interações do aplicativo utilizam animações interpoladas:
+
+*   **Entrada de Rotas (Page Transitions):** Transição de esmaecimento suave combinada com deslocamento vertical (`y: [20, 0]`, `opacity: [0, 1]`) via Framer Motion, impedindo saltos abruptos de tela.
+*   **Efeito Hover Tilt 3D:** Cards de relatórios e faturamentos inclinam suavemente em direção ao cursor do mouse, simulando profundidade tridimensional física (Efeito Paralaxe).
+*   **Feedback de Cadastro Concluído:** Ao fechar um contrato ou concluir um KYC de assinatura, uma chuva de confetes verdes e dourados em física 2D é renderizada suavemente, celebrando a conquista financeira.
+*   **Skeleton Loading Pulse:** Estados de carregamento de gráficos e tabelas contêm animações de pulso gradiente em tons cinza-azulados para reduzir a percepção de tempo de espera (UX de Alta Resiliência).
+
