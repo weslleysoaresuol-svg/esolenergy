@@ -637,130 +637,356 @@ Para garantir a confiabilidade matemática das comissões e transações:
 
 ## 11. ESCALABILIDADE PROGRESSIVA (Gestão de Custos)
 
-*   **FASE 1 (0 $\rightarrow$ 5.000 usuários):** Cloudflare Free + Supabase Free + WhatsApp Redirect + Resend Free (Custo total: **R$ 0,00/mês**).
-*   **FASE 2 (5.000 $\rightarrow$ 50.000 usuários):** Cloudflare Free + Supabase Pro ($25/mês) + Bling ERP ($30/mês) (Custo total: **~R$ 280,00/mês**).
-*   **FASE 3 (50.000 $\rightarrow$ 500.000 usuários):** Cloudflare Pro + Supabase Team ($619/mês) + Omie ERP Enterprise (Custo total: **~R$ 4.000,00/mês**).
+*   **FASE 1 (0 $\rightarrow$ 5.0## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
+
+Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e proporcione uma usabilidade superior para a força de vendas, a interface do aplicativo foi projetada com base nos princípios do **Design Sensorial Tátil**, **Glassmorphism Moderno** e **Brutalismo Limpo**.
 
 ---
 
-## 12. RESUMO EXECUTIVO (Métricas de Excelência)
+### 13.1 Arquitetura de Estados, Tipagem e Roteamento (TypeScript & React)
 
+O gerenciamento de estados globais da interface é dividido em contextos específicos para isolar a reatividade de cálculos, dados de rede e perfil de usuário.
+
+```mermaid
+graph TD
+    %% Fluxo de Estados
+    App[React App] --> AuthProvider[AuthContext]
+    App --> SimProvider[SimuladorContext]
+    App --> MMNProvider[MMNTreeContext]
+    
+    AuthProvider -->|Consome| UserState[Dados de Perfil / Tenant]
+    SimProvider -->|Consome| CalcState[Fio B / Payback / Margem]
+    MMNProvider -->|Consome| TreeState[Nós ltree / Downlines]
+```
+
+#### 1. Interfaces TypeScript (DTOs de Interface)
+Abaixo estão as estruturas de dados usadas para tipar os estados operacionais no frontend:
+
+```typescript
+// Perfil do Consultor e Inquilino (Tenant)
+export interface ITenantConfig {
+  id: string;
+  nomeFantasia: string;
+  dominio: string;
+  theme: {
+    primaryColor: string; // Ex: '#10b981'
+    secondaryColor: string; // Ex: '#fbbf24'
+    darkBg: string; // Ex: '#090d16'
+    logoUrl: string;
+  };
+}
+
+export interface IConsultorProfile {
+  id: string;
+  nome: string;
+  cpfCnpj: string;
+  comissaoPercent: number; // Margem no Motor 1
+  mmnNivel: number;
+  mmnPath: string; // Formato ltree
+  saldoDisponivel: number;
+}
+
+// Simulador e Entrada de Dimensionamento
+export interface ISimulacaoInput {
+  consumoKwh: number;
+  concessionaria: string;
+  estado: string;
+  uf: string;
+  lucroAlvoPercent: number; // Slider do Consultor
+  kitIdSelecionado?: string;
+}
+
+export interface ISimulacaoResult {
+  potenciaKwp: number;
+  quantidadeModulos: number;
+  custoDistribuidor: number;
+  custoInstalacao: number;
+  custoEngenharia: number;
+  fioBValor: number;
+  precoFinalSugerido: number;
+  comissaoConsultor: number;
+  paybackAnos: number;
+  vplEconomia25Anos: number;
+}
+```
+
+---
+
+### 13.2 Especificação Visual das Telas e Wireframe Grid (Visual Layout)
+
+Abaixo estão os leiautes de grade estrutural das principais telas do consultor. Cada bloco representa uma área tátil de interação com efeito de vidro (`backdrop-blur-md`):
+
+#### 📺 Layout 1: Dashboard Cockpit (O Painel do Líder)
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                   ESOL ENERGY — ARQUITETURA CORE v10                   │
+│  [ESOL ENERGY] DOMÍNIO WHITE-LABEL              [🔔]  [⚙️]  [👤 PERFIL] │
 ├────────────────────────────────────────────────────────────────────────┤
-│                                                                        │
-│  PRODUTOS MMN:        8 categorias (turnkey, loja, GD, MLE,            │
-│                       monitoramento, O&M, limpeza, seguros).           │
-│  RECORRÊNCIA ENERGIA: 100% de comissões recorrentes (GD e MLE) via     │
-│                       Motor 2 (sem taxa de adesão).                    │
-│  SELAGEM ECOLÓGICA:   Selo Verde Esol restrito aos projetos turnkey    │
-│                       próprios (Cat #1).                               │
-│  RESILIÊNCIA DE APIs: Camada Abstrata Roteadora de Leads (Supabase DB) │
-│                       independente de fornecedores.                    │
-│  MMN HIERARQUIA:      7 níveis de Override Igualitário.                │
-│  ARQUIVOS DE MÓDULO:  15 módulos funcionais de software.               │
-│  CONFORMIDADE:        CLT (trabalhista) + LGPD + CDC + ANEEL.          │
-│  INFRAESTRUTURA:      Cloudflare Workers + Supabase DB + Bling/Omie.   │
-│                                                                        │
+│  Olá, Weslley!                                                         │
+│  Líder Nível 3 (Supervisor Solar)                                      │
+├────────────────────────────────────────────────────────────────────────┤
+│ ┌──────────────────────────────────┐ ┌────────────────────────────────┐ │
+│ │ 💰 CARTEIRA DE RECORRÊNCIA       │ │ 👥 MINHA EQUIPE MMN            │ │
+│ │ Saldo Recorrente: R$ 383,90/mês   │ │ Consultores Ativos: 3.280      │ │
+│ │ Ganhos Totais: R$ 5.169,40       │ │ Pontos Mensais: 14.500 pts     │ │
+│ │                                  │ │                                │ │
+│ │ [Solicitar Saque PIX (N+1)]      │ │ [Visualizar Árvore MMN]        │ │
+│ └──────────────────────────────────┘ └────────────────────────────────┘ │
+├────────────────────────────────────────────────────────────────────────┤
+│ ┌────────────────────────────────────────────────────────────────────┐ │
+│ │ ⚡ TELEMETRIA E HISTÓRICO DE GERAÇÃO (Usinas Ativas da Carteira)   │ │
+│ │ Geração Total: 16.400 kWh  │ CO₂ Evitado: 4.800 kg                 │ │
+│ │  [Gráfico de Geração Mensal - Linha Glow Verde]                    │ │
+│ └────────────────────────────────────────────────────────────────────┘ │
+├────────────────────────────────────────────────────────────────────────┤
+│ 🚀 ACESSOS RÁPIDOS:                                                    │
+│ [⚡ Novo Simulador]   [🛒 Loja Solar]   [📋 Leads CRM]   [🔧 Vistorias] │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 📺 Layout 2: CRM, Simulador Solar & Slider de Margem
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│  ◄ SIMULADOR SOLAR INTELIGENTE                                         │
+├────────────────────────────────────────────────────────────────────────┤
+│  PASSO 1: DADOS DA FATURA                                              │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │ 📂 Arraste e solte o PDF da conta de energia ou clique para subir │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+│  Consumo Médio (kWh/mês): [ 650 ]     Concessionária: [ CPFL Paulista ]│
+├────────────────────────────────────────────────────────────────────────┤
+│  PASSO 2: CONTROLE DE MARGEM DO CONSULTOR (MOTOR REVERSO)              │
+│  Margem do Consultor (Comissão N0):                                    │
+│  [ 8% ] ─────────────────────●───────────────────── [ 15% ]            │
+│  *Margem Atual Selecionada: 11%                                        │
+├────────────────────────────────────────────────────────────────────────┤
+│  📊 RESULTADOS DA SIMULAÇÃO:                                           │
+│  ┌──────────────────────────────────┐ ┌──────────────────────────────┐ │
+│  │ Potência Sistema: 5.4 kWp        │ │ Investimento: R$ 16.500,00   │ │
+│  │ Placas necessárias: 10 painéis   │ │ Payback estimado: 3.2 anos   │ │
+│  │ Economia Mensal: R$ 450,00       │ │ Sua Comissão N0: R$ 1.815,00 │ │
+│  └──────────────────────────────────┘ └──────────────────────────────┘ │
+├────────────────────────────────────────────────────────────────────────┤
+│  [📥 BAIXAR PROPOSTA COMERCIAL PDF]      [💬 ENVIAR NO WHATSAPP DO LEAD] │
+└────────────────────────────────────────────────────────────────────────...
+```
+
+#### 📺 Layout 3: Checkout Loja Solar & Kit Personalizado
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│  ◄ MONTAGEM INTELIGENTE DE KIT SOLAR                                   │
+├────────────────────────────────────────────────────────────────────────┤
+│  SELECIONE OS COMPONENTES:                                             │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │ ☀️ Painéis Solares: [ 10x Módulos Monocristalinos 550W - R$ 6k ] │  │
+│  │ 🔌 Inversor String: [ 1x Inversor Wi-Fi 5kW - R$ 4k ]            │  │
+│  │ 🔩 Estrutura:       [ 1x Fixador Telhado Fibrocimento - R$ 1.2k ]│  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+├────────────────────────────────────────────────────────────────────────┤
+│  ⚠️ VALIDAÇÃO TÉCNICA DE COMPATIBILIDADE ELÉTRICA:                     │
+│  ✅ Inversor opera dentro da faixa de tensão MPPT do string (180V - 450V)│
+│  ✅ Corrente máxima do painel (13A) é compatível com inversor (15A)     │
+├────────────────────────────────────────────────────────────────────────┤
+│  💰 PREÇO DO CARRINHO (Cálculo Reverso): R$ 11.200,00                  │
+│  [ ➕ ADICIONAR SERVIÇO DE ENGENHARIA & ART ]                          │
+│  [ ➕ ADICIONAR MÃO DE OBRA DE INSTALADOR PARCEIRO ]                   │
+│  ────────────────────────────────────────────────────────────────────  │
+│  [🛒 SEGUIR PARA O CHECKOUT E SPLIT DE PAGAMENTO]                      │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-> [!IMPORTANT]
-> Este é o **Mapa de Construção v10 (Definitivo)** — o "o quê" e o "com quê".
-> O próximo passo direto na conversa é iniciar o planejamento detalhado das tarefas e do cronograma na implementação da arquitetura no backend.
+### 13.3 Componentes Táteis Premium (Implementação Técnica)
 
----
+Para que o time de desenvolvimento frontend implemente as interfaces com alta fidelidade visual, detalhamos os dois componentes mais interativos do aplicativo usando **React**, **Tailwind CSS** e **Framer Motion**:
 
-## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
+#### 1. Glow Glass Card com Efeito Paralaxe Tilt 3D
+Este componente cria um efeito de vidro reflexivo que acompanha tridimensionalmente o movimento do mouse do usuário.
 
-Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e proporcione uma usabilidade superior para a força de vendas, a interface do aplicativo foi projetada com base nos princípios do **Design Sensorial Tátil** e **Glassmorphism Moderno**.
+```tsx
+import React, { useRef, useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
----
+interface IGlowCardProps {
+  children: React.ReactNode;
+  glowColor?: string; // Ex: 'rgba(16, 185, 129, 0.15)'
+}
 
-### 13.1 O Fluxo de Navegação do Aplicativo
+export const GlowGlassCard: React.FC<IGlowCardProps> = ({ 
+  children, 
+  glowColor = 'rgba(16, 185, 129, 0.15)' 
+}) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  // Coordenadas de rotação 3D
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  // Suavização do movimento
+  const springConfig = { damping: 20, stiffness: 150, mass: 0.5 };
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [15, -15]), springConfig);
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-15, 15]), springConfig);
+  
+  // Efeito de reflexo de luz interno (Glare)
+  const glareX = useMotionValue(0);
+  const glareY = useMotionValue(0);
 
-O consultor navega de forma fluida entre as áreas comerciais, operacionais e financeiras de sua conta de parceiro:
-
-```mermaid
-flowchart TD
-    %% Estilos de Nodes
-    classDef main fill:#001046,stroke:#FFC107,stroke-width:2px,color:#fff;
-    classDef page fill:#0f172a,stroke:#38bdf8,stroke-width:1px,color:#fff;
-    classDef action fill:#065f46,stroke:#34d399,stroke-width:1.5px,color:#fff;
-
-    Onboard[🚀 Onboarding & KYC]:::main --> Auth[🔐 Auth / Painel Principal]:::main
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
     
-    Auth --> Dash[📊 Dashboard Cockpit]:::page
-    Auth --> CRM[⚡ CRM Solar & Simulador]:::page
-    Auth --> MMN[👥 Árvore de Equipe MMN]:::page
-    Auth --> Fin[💸 Carteira & Ledger]:::page
-    Auth --> Loja[🛒 Loja & Kit Builder]:::page
+    // Normaliza os valores entre -0.5 e 0.5
+    x.set((mouseX / width) - 0.5);
+    y.set((mouseY / height) - 0.5);
 
-    Dash --> OS[🔧 Minhas Instalações / O&M]:::page
-    CRM --> Calc[📐 Dimensionamento PDF]:::action
-    MMN --> Downline[🧬 Genealogia Horizontal]:::action
-    Fin --> Saque[💳 Solicitação de PIX]:::action
-    Loja --> Reverso[Markup Reverso / Checkout]:::action
+    // Ajusta a posição do reflexo de luz
+    glareX.set((mouseX / width) * 100);
+    glareY.set((mouseY / height) * 100);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: 'preserve-3d',
+      }}
+      className="relative rounded-2xl bg-gray-900/80 border border-white/8 backdrop-blur-md p-6 shadow-2xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_30px_var(--glow-shadow)]"
+      style={{
+        // Variável CSS para sombra dinâmica baseada no tema do Tenant
+        style: { '--glow-shadow': glowColor } as React.CSSProperties,
+      }}
+    >
+      {/* Glare Efeito de Luz */}
+      <motion.div 
+        style={{
+          background: `radial-gradient(circle 120px at ${glareX}% ${glareY}%, rgba(255,255,255,0.06), transparent)`,
+        }}
+        className="absolute inset-0 pointer-events-none"
+      />
+      {children}
+    </motion.div>
+  );
+};
+```
+
+#### 2. Slider de Margem Inteligente (Integração com Motor Reverso)
+Este slider permite alterar dinamicamente a comissão sem ferir a margem mínima da Esol, calculando os valores em tempo real.
+
+```tsx
+import React, { useState } from 'react';
+
+interface ISliderProps {
+  custoFixo: number; // Hardware + ART + Mão de obra
+  lucroAlvoMinimo: number; // Mínimo Esol (ex: 2000.00)
+  impostosPercent: number; // Ex: 6% (0.06)
+  onPrecoCalculado: (precoFinal: number, comissaoConsultor: number) => void;
+}
+
+export const MarginSlider: React.FC<ISliderProps> = ({
+  custoFixo,
+  lucroAlvoMinimo,
+  impostosPercent,
+  onPrecoCalculado
+}) => {
+  const [comissaoPercent, setComissaoPercent] = useState<number>(8); // Inicia em 8%
+  
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const comissao = Number(e.target.value);
+    setComissaoPercent(comissao);
+    
+    // Algoritmo do Motor Reverso da Esol
+    // Preço Final (P) = (CustoFixo + LucroAlvoEsol) / (1 - Impostos - Comissao)
+    const tdtc = comissao / 100; // Converte para decimal
+    const denominador = 1 - impostosPercent - tdtc;
+    
+    const precoFinal = (custoFixo + lucroAlvoMinimo) / denominador;
+    const comissaoConsultor = precoFinal * tdtc;
+    
+    onPrecoCalculado(precoFinal, comissaoConsultor);
+  };
+
+  return (
+    <div className="w-full bg-gray-950 p-6 rounded-xl border border-white/5">
+      <div className="flex justify-between items-center mb-4">
+        <label className="text-gray-300 font-medium">Margem do Consultor (Comissão N0)</label>
+        <span className="text-emerald-400 font-bold text-lg bg-emerald-500/10 px-3 py-1 rounded-md">
+          {comissaoPercent}%
+        </span>
+      </div>
+      
+      <input
+        type="range"
+        min="4"
+        max="15"
+        step="0.5"
+        value={comissaoPercent}
+        onChange={handleSliderChange}
+        className="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-emerald-500 focus:outline-none"
+      />
+      
+      <div className="flex justify-between text-xs text-gray-500 mt-2">
+        <span>Mínimo: 4% (Foco em Volume)</span>
+        <span>Máximo: 15% (Margem Premium)</span>
+      </div>
+    </div>
+  );
+};
 ```
 
 ---
 
-### 13.2 Especificação do Design System (Visual Tokens)
+### 13.4 Fluxo de Onboarding, Assinatura Eletrônica e KYC Seguro
 
-Para estabelecer uma linguagem visual premium, o sistema de estilos utiliza tokens de cor, tipografia e efeitos baseados em Tailwind CSS e CSS Vanilla Customizado:
+A segurança contra fraudes cadastrais e trabalhistas é integrada diretamente no fluxo visual de onboarding do corretor ou cliente final.
 
-#### 1. Paleta de Cores Curada (Modo Escuro Premium)
-*   **Background Principal (Deep Space):** `#090d16` (HSL: `220°, 40%, 6%`) — Um azul escuro profundo que elimina a luz azul agressiva.
-*   **Superfícies de Componentes (Navy Blue Glass):** `#111827` com transparência de 80% (RGBA: `17, 24, 39, 0.8`) combinada com desfoque de fundo (`backdrop-blur-md`).
-*   **Cor Primária / Destaque (Glow Emerald):** `#10b981` (HSL: `160°, 84%, 39%`) — Representa energia verde, sustentabilidade e liquidez financeira.
-*   **Cor Secundária / Destaques de Luxo (Sunlight Gold):** `#fbbf24` (HSL: `43°, 96%, 56%`) — Representa o sol, riqueza e conquista de níveis no MMN.
-*   **Bordas Táteis:** Linhas finas de `1px` em RGBA transparente (`255, 255, 255, 0.08`) para delimitar componentes sem criar ruído visual.
+#### 📱 Etapa 1: Captura de Documentos
+O usuário realiza a captura de fotos do documento de identidade (Frente e Verso).
+*   **Engine de Resiliência:** O aplicativo possui uma máscara guia na câmera. O processamento na Edge (Cloudflare Workers) verifica a qualidade da imagem (luminosidade, cantos recortados) antes de enviar ao bucket privado Cloudflare R2, evitando erros de leitura de OCR.
 
-#### 2. Tipografia Moderna e Escalonada
-*   **Títulos e Headings:** Fonte **Outfit** (Google Fonts) — Uma tipografia sem serifa geométrica com cantos levemente arredondados, que confere um tom amigável e tecnológico.
-*   **Corpo de Texto e Dados:** Fonte **Inter** — Excelente para tabelas, relatórios financeiros e dados de geração técnica por sua altíssima legibilidade em telas pequenas.
+#### 📱 Etapa 2: Selfie KYC (Face Match)
+O aplicativo solicita que o usuário faça movimentos faciais simples (piscar olhos, sorrir).
+*   **Segurança:** Previne ataques de injeção de vídeo ou fotos estáticas (Prova de Vida ativa).
+*   **Validação:** A foto capturada é processada pelo *Face Match Engine* e comparada com a foto do documento de identidade extraída no passo 1. Se o score for superior a 85%, o status de KYC é aprovado automaticamente.
 
-#### 3. Efeitos de Vidro e Profundidade (Brutalismo Tátil)
-*   **Backdrop Blur:** Aplicado em modais, barras de navegação flutuantes e cards de estatísticas.
-*   **Sombras Néon:** Efeito de brilho de luz (*Box Shadow Glow*) verde e dourado em botões ativos e indicadores de comissão acumulada.
-
----
-
-### 13.3 Mapeamento de Telas do Aplicativo
-
-#### Tela 1: Dashboard Cockpit (O Painel do Líder)
-*   **Widget de Ganhos Recorrentes:** Mostra o saldo acumulado de royalties de energia (Motor 2) em tempo real, com um gráfico de linha interativo demonstrando o crescimento mensal dos ganhos.
-*   **Widget de Telemetria Integrada:** Exibe a energia gerada (kWh) e o CO₂ evitado por todos os sistemas físicos turnkey que o consultor vendeu diretamente.
-*   **Barra de Progresso do Próximo Nível:** Um indicador visual dourado exibindo quantos pontos de MMN faltam para o consultor subir de cargo (ex: Consultor $\rightarrow$ Supervisor $\rightarrow$ Diretor).
-
-#### Tela 2: CRM Solar, Simulador & Proposta Comercial
-*   **Área de Upload da Fatura (Drag and Drop):** Área de arrastar e soltar arquivos PDF de contas de luz com indicador de carregamento em rotação gradual.
-*   **Controle Deslizante de Margens (Slider):** Componente interativo que permite ao consultor ajustar o preço do projeto solar turnkey alterando sua margem (de 4% a 12%), recalculando na tela o valor final sob as regras do *Motor Reverso* com feedback instantâneo.
-*   **Ações Rápidas:** Botões flutuantes para compartilhar a proposta via WhatsApp em formato de link curto ou baixar em PDF de alta qualidade.
-
-#### Tela 3: Genealogia Dinâmica MMN
-*   **Visualizador de Árvore Interativo:** Uma árvore hierárquica expansível de 7 níveis de profundidade. O líder clica em um nó de membro da equipe para abrir detalhes de vendas mensais daquele consultor e pontuação acumulada.
-*   **Filtros Rápidos:** Alternância de exibição entre consultores ativos (em verde) e inativos (em vermelho).
-
-#### Tela 4: Extrato Contábil & Ledger Financeiro
-*   **Saldos Fracionados:** Exibição do saldo disponível com precisão centesimal (4 casas decimais) e histórico cronológico de repasses.
-*   **Widget "Blockchain Auditor":** Ao clicar em qualquer lançamento de comissão, o aplicativo exibe o hash SHA-256 da transação e o hash do bloco anterior, atestando a integridade absoluta da auditoria de caixa.
-
-#### Tela 5: Loja E-Commerce & Montagem Inteligente de Kits
-*   **Grid de SKUs:** Exibição de painéis, inversores, carregadores de carros elétricos e baterias residenciais BYD em formato de cartões de vidro com efeito de escala suave ao passar o mouse.
-*   **Engine de Compatibilidade:** Se o cliente selecionar um inversor de 5kW e tentar adicionar painéis que ultrapassam a corrente máxima de MPPT, a interface aciona um modal vermelho suave com a mensagem técnica explicando a incompatibilidade e sugerindo opções compatíveis.
+#### 📱 Etapa 3: Assinatura Eletrônica com Carimbo de Tempo NTP.br
+O usuário desenha sua assinatura digital na tela e confirma o termo.
+*   **Evidências Jurídicas:** O aplicativo coleta e anexa ao documento PDF:
+    *   *Carimbo de Tempo NTP.br:* Hora oficial sincronizada, imutável contra fraudes de relógio local de dispositivo.
+    *   *Geotagging:* Latitude e longitude do momento exato da assinatura.
+    *   *Metadados de Rede:* Endereço IP do dispositivo e User Agent da conexão.
+    *   *Criptografia:* O PDF final do contrato recebe um hash criptográfico SHA-256 e assinatura digital da chave Esol, gravados na tabela `assinaturas_esol_sign`.
 
 ---
 
-### 13.4 Micro-interações e Animações Premium (GSAP & Framer Motion)
+### 13.5 Micro-Animações e GSAP/Framer Motion Timeline Specs
 
-Para atingir o padrão visual do Claude Opus de alta sofisticação, todas as interações do aplicativo utilizam animações interpoladas:
+Para atingir a fluidez de interface do Claude Opus, todas as animações operam sob tempos de transição físicos realistas:
 
-*   **Entrada de Rotas (Page Transitions):** Transição de esmaecimento suave combinada com deslocamento vertical (`y: [20, 0]`, `opacity: [0, 1]`) via Framer Motion, impedindo saltos abruptos de tela.
-*   **Efeito Hover Tilt 3D:** Cards de relatórios e faturamentos inclinam suavemente em direção ao cursor do mouse, simulando profundidade tridimensional física (Efeito Paralaxe).
-*   **Feedback de Cadastro Concluído:** Ao fechar um contrato ou concluir um KYC de assinatura, uma chuva de confetes verdes e dourados em física 2D é renderizada suavemente, celebrando a conquista financeira.
-*   **Skeleton Loading Pulse:** Estados de carregamento de gráficos e tabelas contêm animações de pulso gradiente em tons cinza-azulados para reduzir a percepção de tempo de espera (UX de Alta Resiliência).
+*   **Curvas de Interpolação:** Evitar transições lineares (`linear`). Utilizar curvas do tipo **cubic-bezier** para simular gravidade e fricção:
+    *   *Entrada de Elementos (Ease-Out):* `cubic-bezier(0.215, 0.610, 0.355, 1.000)`
+    *   *Saída de Elementos (Ease-In):* `cubic-bezier(0.550, 0.055, 0.675, 0.190)`
+*   **Parâmetros de Mola (Framer Motion Physics):**
+    *   *Cards e Botões:* `stiffness: 180`, `damping: 15`, `mass: 0.6`
+    *   *Modais e Dropdowns:* `stiffness: 120`, `damping: 20`
+*   **GSAP Timeline para Entrada do Dashboard:**
+    ```javascript
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.from('.dashboard-header', { y: -30, opacity: 0, duration: 0.8 })
+      .from('.status-cards', { scale: 0.95, opacity: 0, stagger: 0.15, duration: 0.6 }, '-=0.4')
+      .from('.telemetry-chart', { y: 40, opacity: 0, duration: 1.0 }, '-=0.5');
+    ```
+    Isso cria um efeito de carregamento em cascata elegante, garantindo a percepção de performance para o consultor.
 
