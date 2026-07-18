@@ -1186,6 +1186,74 @@ Abaixo está a prévia do painel de controle do consultor mostrando a localizaç
 
 ---
 
+### 13.8 Central da Marca (Esol Brand Center)
+
+Para descentralizar a força de vendas MMN e os licenciados White-Label, mantendo a consistência visual em todo o território nacional, a plataforma integra a rota **`/app/brand-kit` (Esol Brand Center)**. Trata-se de um portal de autoatendimento para parceiros, funcionários e administradores visualizarem diretrizes e fazerem download de ativos de marca.
+
+```
+PAINEL DO ESOL BRAND CENTER (`/app/brand-kit`)
+┌────────────────────────────────────────────────────────┐
+│ 📑 CENTRAL DA MARCA ESOL ENERGY                       │
+├────────────────────────────────────────────────────────┤
+│ Visualizador do Manual  │ Gabaritos Físicos  │ Vetores │
+├────────────────────────────────────────────────────────┤
+│ 📦 ARQUIVOS DISPONÍVEIS PARA DOWNLOAD:                │
+│  ├── 🟢 esol-logo-horizontal.svg (Vetor Editável)      │
+│  ├── 🟢 esol-logo-brandmark.svg (Ícone do Sol)          │
+│  ├── 🔵 Gabarito_Camisa_Polo_Esol.pdf (Vetor de Costura)│
+│  ├── 🔵 Gabarito_Cracha_Cordao.ai (Adobe Illustrator)  │
+│  └── 🟡 Selo_Verde_Esol_Oficial.png (Selo Ecológico)    │
+└────────────────────────────────────────────────────────┘
+```
+
+#### 1. Recursos e Download de Ativos
+A interface de downloads é conectada ao bucket público do **Cloudflare R2** para permitir downloads ultrarrápidos e seguros. Os ativos são divididos em três prateleiras de downloads:
+
+*   **Prateleira de Vetores Digitais:** Contém logotipos horizontais, verticais e brandmarks em formato `.svg` (vetor puro) e `.png` em alta definição (fundo transparente) para aplicação em redes sociais e sites parceiros.
+*   **Prateleira de Gabaritos de Merchandising:** Arquivos vetoriais em formatos `.ai` (Adobe Illustrator) e `.pdf` contendo as facas de corte e especificações de cores exatas (Pantone/CMYK) para fabricação local de **Crachás, Cordões, Camisas Polo, Camisas de Campo e Bonés Trucker**.
+*   **Prateleira de Papelaria Corporativa:** Templates prontos em `.docx` para Papel Timbrado e `.pptx` para apresentações comerciais oficiais de vendas (Deck de Vendas Esol).
+
+---
+
+#### 2. Controle de Acessos por Perfil (RBAC no Brand Kit)
+Para proteger segredos comerciais e designs de produtos exclusivos, o portal da marca exibe ou oculta ativos de acordo com o nível de acesso do usuário autenticado no Supabase:
+
+| Tipo de Ativo | Administradores | Funcionários Internos | Parceiros / Integradores |
+| :--- | :---: | :---: | :---: |
+| **Logotipos & Símbolos Digitais** | ✅ Acesso Total | ✅ Download | ✅ Download |
+| **Selo Verde Esol (Selagem Física)** | ✅ Gerencia | ✅ Download | ❌ Bloqueado (Apenas Homologados) |
+| **Gabaritos de Uniforme & Crachá** | ✅ Gerencia | ✅ Download | ❌ Bloqueado (Uso Interno) |
+| **Apresentações e Papelaria Comercial**| ✅ Gerencia | ✅ Download | ✅ Download |
+| **Upload de Novos Ativos de Marca** | ✅ Autorizado | ❌ Bloqueado | ❌ Bloqueado |
+
+---
+
+#### 3. Rota Frontend e Componente (React Router)
+O roteamento no frontend é definido sob uma rota protegida por regras de autenticação de tenant:
+
+```typescript
+// Rota de acesso no React Router para o Brand Center
+import { BrandCenterPage } from './pages/BrandCenter';
+import { Route, Redirect } from 'react-router-dom';
+
+export function BrandKitRoute() {
+  return (
+    <Route
+      path="/app/brand-kit"
+      render={(props) =>
+        isAuthenticated() ? (
+          <BrandCenterPage {...props} />
+        ) : (
+          <Redirect to="/login" />
+        )
+      }
+    />
+  );
+}
+```
+
+---
+
 ## 14. PILAR 4: MOTOR DE ASSINATURA AUTOMATIZADA (ESOL SIGN) & LEDGER CRIPTOGRÁFICO CONTÁBIL
 
 
