@@ -786,7 +786,7 @@ Abaixo estão os leiautes de grade estrutural das principais telas do consultor.
 #### 📺 Layout 1: Dashboard Cockpit (O Painel do Líder)
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│  [ESOL ENERGY] DOMÍNIO WHITE-LABEL              [🔔]  [⚙️]  [👤 PERFIL] │
+│  [ESOL ENERGY] DOMÍNIO WHITE-LABEL     [🌓 CLARO/ESCURO] [🔔] [⚙️] [👤] │
 ├────────────────────────────────────────────────────────────────────────┤
 │  Olá, Weslley!                                                         │
 │  Líder Nível 3 (Supervisor Solar)                                      │
@@ -1176,6 +1176,13 @@ Para evitar que a tela pisque em branco antes de carregar o Modo Escuro em conex
 #### 3. Reutilização de Ativos Gráficos (currentColor SVG)
 Todos os logotipos em vetor e ícones funcionais no aplicativo são codificados utilizando a propriedade CSS `currentColor` ou variáveis de estilo nos atributos de preenchimento (`fill="var(--text-main)"`).
 *   Isso garante que ao alterar o tema, o mesmo arquivo SVG atualize suas cores de contorno e preenchimento de forma instantânea na tela, eliminando o download de variações redundantes de imagem.
+
+---
+
+#### 4. Demonstração Visual do Alternador de Temas (Botão Físico no Header)
+Abaixo está a prévia do painel de controle do consultor mostrando a localização do botão deslizante de alternância rápida de temas (ícones de Sol e Lua) posicionado de forma limpa e visível no cabeçalho superior direito da interface:
+
+![Visualização do Alternador de Tema Dark/Light no Header do Dashboard](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_theme_toggle_dashboard_1784345592574.png)
 
 ---
 
