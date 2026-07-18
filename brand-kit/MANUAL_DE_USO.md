@@ -199,3 +199,51 @@ Para validade jurídica, o rodapé de todas as páginas dos contratos do Esol Si
 ### 4. Aplicação do Selo Verde Esol (Propostas Físicas Turnkey)
 *   O Selo Verde Esol deve ser exibido **exclusivamente na capa ou na folha final de encerramento** das propostas comerciais. É proibida sua exibição em páginas de termos contratuais de distrato.
 *   Deve ser centralizado horizontalmente, com tamanho fixo de **80mm de diâmetro**, mantendo um distanciamento mínimo de `30mm` de qualquer texto ou tabela de preços.
+
+---
+
+## 🏢 11. Diretrizes de Co-Branding e White-Label (Coexistência de Marca)
+
+Sendo o ecossistema Esol licenciável para integradores regionais atuarem com suas próprias marcas (White-Label), a coexistência visual deve seguir regras de harmonia para proteger a autoridade de ambas as marcas:
+
+### 1. Assinatura Tecnológica no Rodapé (Powered by)
+Em todas as plataformas e sites dos parceiros White-Label, a assinatura tecnológica da Esol deve estar visível no rodapé inferior direito com as seguintes regras de dimensionamento:
+*   **Texto Oficial:** `"Tecnologia por ESOL Energy"` ou `"Powered by ESOL Energy"`.
+*   **Dimensões:** O símbolo isolado do sol deve possuir a largura fixa de **16px**, acompanhado pelo texto em fonte *Inter Regular* de **10px** com opacidade de **40%** na cor Slate Gray (`#555555`).
+*   **Link Ativo:** O conjunto deve possuir um hiperlink apontando para o domínio principal da Esol Energy.
+
+### 2. Proporção de Logotipos em Parcerias Co-Branded
+Em materiais promocionais compartilhados, o logotipo da Esol Energy e o do integrador parceiro devem dividir a mesma importância visual:
+*   Ambos os logotipos devem possuir a **mesma altura óptica**.
+*   A distância de respiro entre eles deve ser de no mínimo **X (altura do sol dourado)**, separados por uma barra vertical cinza fina de `1px` com `16px` de altura.
+
+---
+
+## 📸 12. Estilo Fotográfico e Direção de Imagens (Evitando Clichês Artificiais)
+
+Para garantir que a comunicação visual da marca transmita verdade, solidez e fuja de clichês artificiais gerados por IA sem critérios, todas as fotografias institucionais e publicitárias da Esol devem obedecer às diretrizes abaixo:
+
+### 1. Iluminação e Ambientação Realista
+*   **Luz Natural Ativa:** Utilizar fotos tiradas sob luz solar real, com sombras naturais e texturas visíveis. Evitar estúdios excessivamente controlados ou montagens de computação gráfica pesadas.
+*   **Realismo Operacional:** Fotos de instaladores e engenheiros de campo devem mostrá-los com o uniforme real da Esol, utilizando Equipamentos de Proteção Individual (EPIs) corretos (capacete, cinto de segurança de ancoragem, óculos e luvas). Não utilizar fotos com modelos limpos demais ou sem as proteções de engenharia exigidas por lei.
+
+### 2. Retratos de Clientes e Consultores
+*   **Humanização Autêntica:** Capturar a satisfação real dos clientes recebendo o Selo Verde Esol em suas casas ou consultores trabalhando de forma espontânea em seus tablets/celulares no dia a dia. Evitar poses de "banco de imagens" genéricas (como pessoas de terno apontando para painéis solares em estúdios).
+
+---
+
+## 🎨 13. Grafismos de Apoio e Padronização de Ícones (Design System Vectors)
+
+A consistência gráfica digital e física baseia-se no uso correto de formas geométricas e ícones minimalistas de apoio:
+
+### 1. Padronização de Ícones do Sistema
+Todos os ícones da interface devem seguir um estilo visual limpo e consistente para não poluir os painéis de dados:
+*   **Estilo Outline:** Ícones com contornos em vetor puro, sem preenchimento sólido de cor (exceto quando ativos).
+*   **Espessura do Traçado (Stroke Weight):** Sempre fixado em **2px** para garantir legibilidade técnica tanto no celular quanto no monitor desktop.
+*   **Acabamento das Extremidades:** Extremidades e junções obrigatoriamente arredondadas (`stroke-linecap="round"` e `stroke-linejoin="round"`).
+
+### 2. Grafismos de Fundo (Visual Patterns)
+Para fundos de slides de apresentações e áreas neutras do app, a Esol utiliza padrões abstratos de linhas geométricas inspiradas na engenharia física:
+*   **Curvas de Irradiação Solar (Padrão Topográfico):** Linhas curvas fluidas e sutis em Silver Gray com apenas **3% de opacidade** (`rgba(229, 231, 235, 0.03)`), representando as ondas de irradiação de luz solar e relevo topográfico de fazendas solares.
+*   **Grid Isométrico Fino:** Malha ortogonal fina com espaçamento de `24px` em linhas sólidas com opacidade de **2%** para passar a ideia de precisão matemática e desenho técnico de engenharia.
+
