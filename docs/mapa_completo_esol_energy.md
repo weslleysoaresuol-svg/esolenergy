@@ -1207,11 +1207,30 @@ PAINEL DO ESOL BRAND CENTER (`/app/brand-kit`)
 ```
 
 #### 1. Recursos e Download de Ativos
-A interface de downloads é conectada ao bucket público do **Cloudflare R2** para permitir downloads ultrarrápidos e seguros. Os ativos são divididos em três prateleiras de downloads:
+A interface de downloads é conectada ao bucket público do **Cloudflare R2** para permitir downloads ultrarrápidos e seguros. Os ativos são divididos em três prateleiras de downloads, seguindo as diretrizes técnicas do **Manual de Identidade Visual da Esol**:
+
+```text
+GABARITO DE PROPORÇÕES E ESPECIFICAÇÕES DE PRODUTOS FÍSICOS:
+├── 1. Crachá de PVC Rígido 0.76mm (Frente Navy Royal, Verso com Ouvidoria + QR Code)
+├── 2. Cordão Poliéster 20mm (Navy Royal com logotipos negativos repetidos a cada 50mm)
+├── 3. Camisa Polo Piquet (Navy Royal com logo bordado de 60mm e friso dourado de 2mm)
+├── 4. Boné Trucker Estruturado (Aba Navy Royal, fecho snapback, logo relevo 3D silicone)
+└── 5. Agenda/Caderno Couro (Capa Navy Royal com logo baixo relevo, fita cetim dourada)
+```
 
 *   **Prateleira de Vetores Digitais:** Contém logotipos horizontais, verticais e brandmarks em formato `.svg` (vetor puro) e `.png` em alta definição (fundo transparente) para aplicação em redes sociais e sites parceiros.
 *   **Prateleira de Gabaritos de Merchandising:** Arquivos vetoriais em formatos `.ai` (Adobe Illustrator) e `.pdf` contendo as facas de corte e especificações de cores exatas (Pantone/CMYK) para fabricação local de **Crachás, Cordões, Camisas Polo, Camisas de Campo e Bonés Trucker**.
 *   **Prateleira de Papelaria Corporativa:** Templates prontos em `.docx` para Papel Timbrado e `.pptx` para apresentações comerciais oficiais de vendas (Deck de Vendas Esol).
+
+---
+
+#### 2. Diretrizes Técnicas de Coexistência de Marca e Mídias (Integrados no App)
+*   **Co-Branding White-Label:** Todo integrador licenciado deve exibir obrigatoriamente no rodapé inferior direito a assinatura `"Tecnologia por ESOL Energy"` (sol dourado de **16px** + texto *Inter Regular* **10px** com **40% de opacidade** na cor Slate Gray, linkado ao site da Esol).
+*   **Estilo Fotográfico Exigido:** Uso estrito de luz natural ativa (sem retoques artificiais de estúdio). Fotos de campo devem mostrar trabalhadores reais com EPIs corretos sob as normas NR10/NR35. É proibido o uso de montagens conceituais robóticas ou de IA desproporcionais.
+*   **Grafismos de Fundo:** Aplicação sutil de **Curvas de Irradiação Solar (Relevo Topográfico)** com **3% de opacidade** e **Grid Isométrico Fino** com **2% de opacidade** em todas as capas de propostas e telas de transição do dashboard.
+
+---
+
 
 ---
 
