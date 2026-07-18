@@ -1442,4 +1442,194 @@ CREATE TRIGGER trg_estorno_cancelamento_mmn
   FOR EACH ROW
   WHEN (NEW.status = 'concluido')
   EXECUTE FUNCTION public.processar_estorno_mmn_cancelamento();
+
+---
+
+## 15. MÓDULO 15: COCKPIT CONTÁBIL GERENCIAL & LEDGER DE PARTIDA DOBRADA
+
+Para garantir a saúde financeira do ecossistema, conciliação em tempo real e a prestação de contas automatizada para investidores e integradores White-Label, a Esol Energy opera sob um sistema contábil de **Partida Dobrada (Double-Entry Ledger)** integrado diretamente ao banco de dados.
+
+---
+
+### 15.1 Arquitetura Contábil de Partidas Dobradas
+
+Toda transação financeira (venda de kits, pagamentos de royalties de energia, estornos ou adiantamentos) é registrada de forma simétrica. O saldo de uma conta contábil só é incrementado se houver um débito correspondente em outra conta, garantindo a consistência matemática:
+
+$$\sum \text{Débitos} = \sum \text{Créditos}$$
+
+#### 1. Plano de Contas Estruturado (Chart of Accounts)
+O plano de contas da Esol Energy é hierárquico e estruturado de forma a separar ativos, passivos, patrimônio líquido, receitas e despesas:
+
+```text
+Plano de Contas Esol Energy:
+├── 1.0.00.00 - ATIVO
+│   ├── 1.1.00.00 - Ativo Circulante
+│   │   ├── 1.1.01.00 - Caixa e Equivalentes de Caixa
+│   │   │   └── 1.1.01.01 - Banco Itaú Esol (Conta Principal)
+│   │   └── 1.1.02.00 - Valores a Receber (GD / MLE)
+│   │       └── 1.1.02.01 - Faturas a Receber de Geradoras
+├── 2.0.00.00 - PASSIVO
+│   ├── 2.1.00.00 - Passivo Circulante
+│   │   ├── 2.1.01.00 - Comissões MMN a Pagar (Consultores)
+│   │   │   └── 2.1.01.01 - Saldo Disponível para Saque
+│   │   └── 2.1.02.00 - Obrigações Tributárias a Recolher
+│   │       └── 2.1.02.01 - Impostos sobre Serviços (ISS/Simples)
+├── 3.0.00.00 - PATRIMÔNIO LÍQUIDO
+│   └── 3.1.00.00 - Capital Social
+│       └── 3.1.01.01 - Capital Social Integralizado
+├── 4.0.00.00 - RECEITAS
+│   ├── 4.1.00.00 - Receitas Operacionais Brutas
+│   │   ├── 4.1.01.01 - Receita de Serviços Turnkey Solar
+│   │   └── 4.1.01.02 - Comissão Recorrente Mensal (GD)
+└── 5.0.00.00 - DESPESAS
+    ├── 5.1.00.00 - Custos Operacionais
+    │   ├── 5.1.01.01 - Despesas com Repasse de Override MMN
+    │   └── 5.1.02.01 - Tarifas de Gateway e KYC
+```
+
+#### 2. DDL Física das Tabelas Contábeis (Supabase Postgres)
+As tabelas no Supabase são tipadas por enum e protegidas por chaves estrangeiras restritivas:
+
+```sql
+-- Criação do enum de tipo de contas
+CREATE TYPE public.ledger_conta_tipo AS ENUM (
+  'ativo',
+  'passivo',
+  'patrimonio',
+  'receita',
+  'despesa'
+);
+
+-- Tabela de Contas Contábeis
+CREATE TABLE public.ledger_contas (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  codigo text UNIQUE NOT NULL, -- Código estruturado (ex: '1.1.01.01')
+  nome text NOT NULL,
+  tipo public.ledger_conta_tipo NOT NULL,
+  saldo numeric(15, 4) NOT NULL DEFAULT 0.0000, -- Precisão centesimal
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Tabela de Lançamentos do Livro-Razão
+CREATE TABLE public.ledger_lancamentos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  data_lancamento timestamptz NOT NULL DEFAULT now(),
+  descricao text NOT NULL,
+  conta_debito_id uuid REFERENCES public.ledger_contas(id) ON DELETE RESTRICT NOT NULL,
+  conta_credito_id uuid REFERENCES public.ledger_contas(id) ON DELETE RESTRICT NOT NULL,
+  valor numeric(15, 4) NOT NULL CHECK (valor > 0),
+  hash_anterior text, -- Acoplamento da cadeia criptográfica
+  hash_corrente text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Habilita RLS para proteção de dados
+ALTER TABLE public.ledger_contas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ledger_lancamentos ENABLE ROW LEVEL SECURITY;
+```
+
+#### 3. Trigger de Conciliação Automática de Saldos
+Sempre que uma linha de lançamento contábil é inserida, os saldos das respectivas contas de Débito e Crédito são ajustados automaticamente no banco de dados, evitando divergências:
+
+```sql
+CREATE OR REPLACE FUNCTION public.atualizar_saldo_ledger_contas()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- 1. Incrementa o saldo da conta débito
+  UPDATE public.ledger_contas
+  SET saldo = saldo + NEW.valor
+  WHERE id = NEW.conta_debito_id;
+
+  -- 2. Decrementa o saldo da conta crédito (ou incrementa dependendo do tipo da conta)
+  UPDATE public.ledger_contas
+  SET saldo = saldo - NEW.valor
+  WHERE id = NEW.conta_credito_id;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trg_atualizar_saldo_ledger
+  AFTER INSERT ON public.ledger_lancamentos
+  FOR EACH ROW
+  EXECUTE FUNCTION public.atualizar_saldo_ledger_contas();
+```
+
+---
+
+### 15.2 Splits Fiscais de Bitributação e Análise Tributária (MEI, Simples, Lucro Presumido)
+
+O motor fiscal do Módulo 15 automatiza o split contábil dos pagamentos recebidos dos clientes e parceiros para mitigar o risco de bitributação (especialmente em sistemas Turnkey onde há circulação física de hardware de alto custo).
+
+#### 1. O Fluxo de Triangulação de Hardware (Proteção Contábil)
+Para evitar que a Esol pague imposto sobre a venda física de módulos solares (o que inviabilizaria a margem operacional), o faturamento do projeto Turnkey é dividido em três notas fiscais distintas geradas pelo banco de dados:
+
+```
+[PAGAMENTO DO CLIENTE: R$ 30.000,00]
+         │
+         ├──► R$ 20.000,00 ──► Faturamento Direto Distribuidor (Nota de Hardware)
+         │                     (0% de imposto para a Esol Energy)
+         │
+         ├──► R$  8.500,00 ──► NFS-e Esol Energy (Nota de Intermediação/Serviços)
+         │                     (Tributado sob o regime fiscal ativo da Esol)
+         │
+         └──► R$  1.500,00 ──► NFS-e Engenheiro Parceiro (Nota de ART/Homologação)
+                               (Tributado diretamente no CNPJ do profissional)
+```
+
+*   **Eficiência Tributária:** A Esol deixa de faturar R$ 30.000,00 (onde pagaria até 18.5% de tributos de comércio) e fatura apenas R$ 8.500,00 (onde paga 6.0% sob o Anexo III do Simples Nacional).
+
+#### 2. Regras de Transição de Regime Contábil e Alertas Automatizados
+O backend roda uma rotina diária que analisa o faturamento acumulado da Esol nos últimos 12 meses (RBT12) e emite alertas visuais no cockpit contábil para precaver estouros de teto fiscal:
+
+| Regime Fiscal | Teto Anual de Faturamento | Alíquota Tributária | Regra de Alerta do Sistema |
+| :--- | :--- | :---: | :--- |
+| **MEI (Microempreendedor)** | Até R$ 81.000,00 | Taxa fixa mensal (~R$ 80,00) | Alerta preventivo se o faturamento mensal exceder R$ 6.750,00. |
+| **Simples Nacional (Anexo III)** | R$ 81.000,01 a R$ 4.800.000,00 | 6.0% a 15.5% (Progressivo) | Alerta de planejamento tributário quando a média mensal ultrapassar R$ 350.000,00. |
+| **Lucro Presumido** | Acima de R$ 4.800.000,00 | 13.33% a 16.33% (Cumulativo) | Transição automática. O sistema passa a reter IRPJ, CSLL, PIS e COFINS na fonte. |
+
+---
+
+### 15.3 Conciliação de DRE (Demonstração do Resultado do Exercício) em Tempo Real
+
+O Cockpit Contábil compila os dados do Ledger imutável e gera automaticamente o DRE mensal da empresa, fornecendo métricas de liquidez essenciais para a governança:
+
+```
+DEMONSTRAÇÃO DO RESULTADO DO EXERCÍCIO (DRE) — ESOL ENERGY
+(+) Receita Operacional Bruta (Serviços + Recorrência GD)
+(-) Deduções e Impostos (Simples Nacional / Lucro Presumido)
+(=) Receita Líquida
+(-) Custos Operacionais de Plataforma (KYC / Gateway)
+(=) Margem Contribuição Bruta
+(-) Despesa Comercial de Repasse (Override MMN)
+(=) EBITDA (Lucro Operacional antes de Juros/Depreciação)
+```
+
+#### SQL Query Otimizada para Geração de DRE Mensal
+A query abaixo consolida todos os créditos (receitas) e débitos (despesas) de contas de resultado, agrupando por mês e retornando o demonstrativo em milissegundos:
+
+```sql
+SELECT 
+  to_char(l.data_lancamento, 'YYYY-MM') AS mes,
+  -- Receita de Serviços/Royalties (Contas 4.x)
+  coalesce(sum(l.valor) FILTER (WHERE c_deb.codigo LIKE '1.1%' AND c_cred.codigo LIKE '4.1%'), 0) AS receita_bruta,
+  -- Impostos pagos (Contas 5.1.02.xx)
+  coalesce(sum(l.valor) FILTER (WHERE c_deb.codigo LIKE '2.1.02%' AND c_cred.codigo LIKE '1.1%'), 0) AS deducoes_impostos,
+  -- Custos com a Rede MMN (Contas 5.1.01.xx)
+  coalesce(sum(l.valor) FILTER (WHERE c_deb.codigo LIKE '5.1.01%' AND c_cred.codigo LIKE '2.1.01%'), 0) AS repasse_mmn_despesa,
+  -- Lucro Líquido Operacional
+  (
+    coalesce(sum(l.valor) FILTER (WHERE c_deb.codigo LIKE '1.1%' AND c_cred.codigo LIKE '4.1%'), 0) -
+    coalesce(sum(l.valor) FILTER (WHERE c_deb.codigo LIKE '2.1.02%' AND c_cred.codigo LIKE '1.1%'), 0) -
+    coalesce(sum(l.valor) FILTER (WHERE c_deb.codigo LIKE '5.1.01%' AND c_cred.codigo LIKE '2.1.01%'), 0)
+  ) AS lucro_operacional_liquido
+FROM public.ledger_lancamentos l
+JOIN public.ledger_contas c_deb ON l.conta_debito_id = c_deb.id
+JOIN public.ledger_contas c_cred ON l.conta_credito_id = c_cred.id
+WHERE l.data_lancamento >= date_trunc('year', now())
+GROUP BY mes
+ORDER BY mes DESC;
+```
+
 ```
