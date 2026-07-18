@@ -1445,6 +1445,92 @@ CREATE TRIGGER trg_estorno_cancelamento_mmn
 
 ---
 
+### 14.5 Barreira de Retenção Dinâmica e Integração do WhatsApp
+
+Para proteger a integridade e estabilidade financeira da rede de Marketing Multinível (evitando estornos abruptos e surpresas no saldo dos consultores), o sistema implementa uma **Barreira de Retenção Ativa** integrada ao WhatsApp e ao CRM antes da formalização do distrato.
+
+#### 1. Funil de Retenção Conversacional e de Suporte
+O fluxo operacional de cancelamento é estruturado para engajar o consultor (upline) na solução de insatisfações e oferecer incentivos automáticos ao cliente:
+
+```mermaid
+graph TD
+    A[Cliente solicita Cancelamento] --> B{Direito de Arrependimento: 7 Dias?}
+    B -->|Sim| C[Apresenta Oferta de Desconto Temporário no App]
+    B -->|Não| D[Dispara Alerta no WhatsApp do Consultor Upline]
+    C -->|Aceito| E[Mantém Contrato - Ticket Atualizado]
+    C -->|Recusado| D
+    D --> F[Fila de Contato CRM: Prazo de 24h para Ação]
+    F -->|Revertido pelo Consultor| E
+    F -->|Expirado ou Confirmado| G[Gera Distrato Eletrônico via Esol Sign]
+    G --> H[Dispara Trigger de Estorno MMN e Ledger Contábil]
+    G --> I[Solicita Cancelamento da NFS-e na API do ERP]
+```
+
+*   **Prazo de Graça (Grace Period) de 24h:** O caso entra em estado `em_espera` no banco de dados. O estorno das comissões só será executado fisicamente se o prazo de 24 horas expirar sem reversão documentada pelo consultor no CRM.
+
+---
+
+#### 2. Payload de Disparo de Alerta do WhatsApp (Integração API)
+Quando o gatilho é acionado, a Edge Function envia o seguinte payload para a API de mensageria (Z-API / Evolution API) notificando o consultor direto e o líder da rede:
+
+```json
+{
+  "to": "5511999999999",
+  "type": "text",
+  "text": {
+    "body": "⚠️ *ALERTA DE SEGURANÇA COMERCIAL - ESOL ENERGY*\n\nOlá, *WESLLEY*!\n\nSeu cliente indicado *JOÃO DA SILVA* (Contrato GD: #4132) solicitou o cancelamento da assinatura de energia.\n\n🔴 *Risco Financeiro:* Se o cancelamento for concluído, uma comissão recorrente estimada em *R$ 383,90/mês* será estornada do seu saldo acumulado e dos uplines de sua rede.\n\n⏱️ *Janela de Ação:* Você tem *24 horas* para entrar em contato com o cliente e reverter a insatisfação. \n\n📞 *Contato do Cliente:* https://wa.me/5511988888888\n\nAbra o CRM Esol para registrar a negociação: https://painel.esolenergy.com.br/crm/leads/4132"
+  }
+}
+```
+
+---
+
+#### 3. Modelagem de Dados da Barreira de Retenção (Supabase DDL)
+Tabela criada no banco de dados para rastreamento de casos, ofertas oferecidas e o status da negociação de retenção:
+
+```sql
+-- Criação do enum de status de retenção
+CREATE TYPE public.retencao_status AS ENUM (
+  'em_espera',
+  'retido',
+  'expirado_cancelado'
+);
+
+-- Tabela de Casos de Retenção
+CREATE TABLE public.retencao_casos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  carteira_energia_id uuid REFERENCES public.carteira_energia(id) ON DELETE RESTRICT NOT NULL,
+  consultor_id uuid REFERENCES public.profiles(id) NOT NULL,
+  oferta_desconto_aplicada boolean DEFAULT false,
+  percentual_desconto_oferta numeric(5,2) DEFAULT 0.00,
+  mensagem_whatsapp_sent boolean DEFAULT false,
+  status public.retencao_status DEFAULT 'em_espera' NOT NULL,
+  expires_at timestamptz NOT NULL DEFAULT (now() + interval '24 hours'), -- Prazo de 24h
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Habilita RLS
+ALTER TABLE public.retencao_casos ENABLE ROW LEVEL SECURITY;
+
+-- Política de acesso para corretores verem seus próprios casos
+CREATE POLICY "Corretores veem seus casos de retenção"
+  ON public.retencao_casos
+  FOR SELECT
+  TO authenticated
+  USING (consultor_id = auth.uid());
+```
+
+---
+
+#### 4. Conciliação com ERP (Bling / Omie) para Cancelamento Fiscal
+Se o status do caso de retenção mudar para `expirado_cancelado`, o sistema executa o fluxo de cancelamento fiscal de forma automatizada:
+*   **Cancelamento de NFS-e:** A Esol envia uma requisição de cancelamento para o ERP (Bling/Omie) caso a nota tenha sido emitida há menos de 7 dias (limite padrão municipal para cancelamento de NFS-e).
+*   **Nota Fiscal de Estorno / Crédito:** Se o prazo legal de cancelamento de NFS-e municipal tiver expirado, o sistema emite uma nota de devolução de serviços ou registra um lançamento contábil redutor no ledger para compensação de impostos no mês subsequente, blindando a Esol de pagar impostos sobre serviços distratados.
+
+---
+
+
 ## 15. MÓDULO 15: COCKPIT CONTÁBIL GERENCIAL & LEDGER DE PARTIDA DOBRADA
 
 Para garantir a saúde financeira do ecossistema, conciliação em tempo real e a prestação de contas automatizada para investidores e integradores White-Label, a Esol Energy opera sob um sistema contábil de **Partida Dobrada (Double-Entry Ledger)** integrado diretamente ao banco de dados.
