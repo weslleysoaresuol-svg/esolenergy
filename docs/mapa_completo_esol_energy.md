@@ -670,19 +670,17 @@ Para garantir a confiabilidade matemática das comissões e transações:
 
 ## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
 
-Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e estabeleça uma percepção de **extrema solidez e autoridade institucional de nível multinacional**, a interface do aplicativo é projetada sob duas diretrizes estéticas distintas e adaptativas:
+Para garantir que o novo ecossistema da Esol Energy estabeleça uma percepção de **extrema solidez, confiabilidade institucional e sobriedade corporativa de grande empresa multinacional**, a interface do aplicativo segue rigorosamente as diretrizes cromáticas e estruturais do **Manual de Identidade Visual da Esol**:
 
-### 🏆 OPÇÃO A: ESTILO INFRAESTRUTURA & WEALTH MANAGEMENT PREMIUM (Recomendado)
-Inspirado nos painéis de comando de infraestrutura global (como *Tesla Energy*, *Iberdrola* e *Schneider Electric*) e terminais de alta precisão financeira (estilo Bloomberg). Utiliza tons sóbrios de carvão escuro, vidro preto jateado (obsidian glass), contraste estrutural rigoroso (cantos finos de 8px) e destaques minimalistas em bronze dourado e verde floresta institucional. Transmite **solidez absoluta, segurança e estabilidade corporativa**.
+*   **Cor de Fundo Sólida (Sem Gráficos/Estrelas):** Utiliza o **Dark Navy (`#001236`)** em estado 100% sólido. É proibida qualquer textura de espaço, galáxia, gradientes complexos ou nebulosas, eliminando qualquer visual artificial de IA e garantindo seriedade corporativa.
+*   **Identidade Cromática da Marca:** Painéis e botões principais em **Navy Royal (`#00246B`)** e textos de alta legibilidade em **Silver Gray (`#E5E7EB`)** e **Slate Gray (`#555555`)**.
+*   **Destaques de Liquidez e Prestígio:** Rótulos financeiros, saldo recorrente e conquistas MMN destacados no tom oficial **Solar Gold (`#FFB300`)** sem brilhos ou sombras néon artificiais.
+*   **Grid Bento de Relevo Neutro:** Caixas de dados planas e limpas com cantos arredondados de apenas `8px` e bordas finas com relevo cinza suave de `1px`.
 
-![Visualização do Dashboard Corporativo Esol Energy (Modo Multinacional)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_corporate_dashboard_1784342838163.png)
-
-### ⚡ OPÇÃO B: ESTILO NEO-LIGHT TECH ALTERNATIVO (Interface Estilo Start-up)
-Inspirado em painéis SaaS de tecnologia de alta performance (como *Linear* e *Solfácil*). Utiliza tons azulados escuros (*deep space*), vidro jateado com desfoque de fundo (*glassmorphism*) e realces mais vivos em verde-esmeralda e ouro solar. Transmite agilidade, dinamismo e apelo visual moderno.
-
-![Visualização do Dashboard Operacional Esol Energy (Modo Neon/SaaS)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_dashboard_preview_1784342487101.png)
+![Visualização do Dashboard Corporativo Oficial Esol Energy (Cores do Manual de Marca)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_solid_corporate_dashboard_1784343987750.png)
 
 ---
+
 
 
 
