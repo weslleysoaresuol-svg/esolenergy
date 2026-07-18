@@ -1,6 +1,8 @@
 # 🎼 Manual de Identidade Visual, Uso e Aplicação de Marca (ESOL Energy)
 
-Este manual é o guia definitivo de identidade visual e aplicação corporativa da marca **ESOL Energy**. Ele orienta designers, desenvolvedores, agências de marketing e fornecedores físicos sobre o uso correto de cores, tipografia, logotipos e materiais de merchandising, garantindo a solidez e a sofisticação estética de nível internacional exigidas por uma multinacional líder em infraestrutura energética e soluções contábeis de energia.
+Este manual é o guia definitivo de identidade visual e aplicação corporativa da marca **ESOL Energy**. Ele rege a identidade visual do ecossistema digital (aplicativo, dashboard, website) e materiais físicos (impressos, vestuário, engenharia de campo), garantindo a solidez e a sofisticação estética de nível internacional exigidas por uma multinacional líder em infraestrutura energética e soluções contábeis de energia.
+
+A marca opera sob um modelo de **Automação de Design Dinâmico (Design Tokens)**: quando qualquer elemento visual ou cor é atualizado na Central da Marca pelos administradores, todo o ecossistema digital (interfaces, propostas, contratos, distratos e e-mails) atualiza-se de forma 100% automática e em tempo real.
 
 ---
 
@@ -76,20 +78,98 @@ Para garantir a harmonia cromática em todas as mídias, a paleta de cores ofici
 
 ---
 
-## 📱 5. Diretrizes de Uso Digital (Site, App e Corporativo)
+## 📱 5. Gabarito de Dimensões, Tamanhos e Posições (Layout Specs)
 
-*   **Website Institucional B2C:** Deve usar preferencialmente o Tema Claro para transmitir limpeza, clareza nas tarifas de energia e facilidade de contratação.
-*   **Dashboard do Consultor (App):** Deve oferecer a chave de alternância rápida (Theme Switcher). O tema escuro deve usar os efeitos de vidro (*Glassmorphism*) com transparência e bordas sutis.
-*   **Assinaturas de E-mail Corporativo:**
-    *   Logotipo horizontal negativo centralizado sobre fundo azul marinho.
-    *   Texto em cinza prata, alinhamento à esquerda, fonte Inter.
-*   **Apresentações Comerciais (Slides):**
-    *   Primeiro slide (capa) em fundo Deep Space sólido com logotipo centralizado vertical.
-    *   Slides internos com fundo branco e barra superior azul Navy Royal, mantendo alta legibilidade.
+Para assegurar consistência cirúrgica em todas as frentes de uso da marca, os elementos visuais devem obedecer às especificações físicas e de pixel descritas abaixo:
+
+### A. Documentos Digitais, Propostas Comerciais, Contratos e Distratos (PDFs)
+Os geradores automáticos de PDF no backend (usando motores de HTML-to-PDF ou PDFKit) devem aplicar as seguintes margens e tamanhos:
+*   **Área do Cabeçalho (Header):**
+    *   *Logotipo:* Assinatura Horizontal Principal posicionada no topo esquerdo, com largura fixa de **35mm (ou 120 pixels)**. Altura proporcional.
+    *   *Margem Superior:* **20mm** de espaçamento até o topo físico do papel A4.
+*   **Área de Assinaturas (Rodapé do Contrato):**
+    *   *Linhas de Assinatura:* Altura de **15mm** livre para assinatura gráfica e rubrica.
+    *   *Metadados Esol Sign:* Fonte Inter, tamanho **7px**, na cor Slate Gray, posicionada logo abaixo da linha com IP, Lat/Long e NTP Timestamp.
+*   **Margens Gerais da Página:**
+    *   *Esquerda/Direita:* **20mm**.
+    *   *Inferior:* **15mm** (espaço reservado para paginação contínua e dados tributários em fonte 8px).
+
+### B. Cabeçalho de Navegação (Navbar do Dashboard e Web App)
+*   **Dashboard Desktop:**
+    *   *Logotipo:* Assinatura Horizontal Negativa no canto esquerdo, com altura fixa travada em **32 pixels** e largura adaptável.
+    *   *Padding Interno:* **24 pixels** de recuo à esquerda da margem da tela.
+*   **Aplicativo Mobile:**
+    *   *Splash Screen (Carregamento inicial):* Símbolo Isolado (Sol Dourado) centralizado na tela, com largura fixa de **96 pixels**, acompanhado do loader circular no rodapé.
+    *   *Header Interno:* Símbolo Isolado posicionado no centro do cabeçalho superior, com altura fixa de **24 pixels**.
+
+### C. E-mails de Notificação e Comunicados da Esol
+*   *Largura do Container:* Travada em **600 pixels** (para compatibilidade em Outlook e mobile).
+*   *Logotipo:* Assinatura Horizontal Principal centralizada no topo, com largura de **150 pixels**.
+*   *Espaçamento:* Margem interna superior de **32 pixels** e inferior de **24 pixels** antes do início do corpo do e-mail.
+*   *Linha Divisória:* Fina divisória dourada horizontal de `1px` em Solar Gold acima do rodapé.
 
 ---
 
-## 👕 6. Diretrizes de Aplicação Física e Merchandising (De Pompa)
+## 🔄 6. Integração Dinâmica com o Sistema de Tokens (Design Tokens)
+
+O ecossistema digital da Esol Energy não possui cores ou logotipos fixos no código ("hardcoded"). Tudo é alimentado por um **motor dinâmico de tokens** conectado à tabela de configurações do inquilino (Tenant) no Supabase.
+
+### 1. Fluxo de Propagação de Design em Tempo Real:
+```
+  [Portal Administrativo: Central de Marca]
+                     │  (Upload de novo logo / Alteração de cor)
+                     ▼
+             [Supabase Database]
+                     │  (Mapeamento de Design Tokens JSON)
+                     ├─────────────────────────┐
+                     ▼                         ▼
+             [Frontend React]         [Backend PDF Generators]
+             (Injeta CSS Variables)   (Aplica cores e imagens nos templates)
+```
+
+### 2. A Tabela de Configurações no Banco de Dados
+A tabela `public.tenant_brand_configs` rege todas as variáveis de renderização visual:
+
+```sql
+CREATE TABLE public.tenant_brand_configs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL,
+  
+  -- Cores de Identidade (Design Tokens)
+  primary_color text NOT NULL DEFAULT '#00246B',   -- Navy Royal
+  accent_color text NOT NULL DEFAULT '#fbbf24',    -- Solar Gold
+  background_color text NOT NULL DEFAULT '#090d16',-- Deep Space (Escuro)
+  light_background text NOT NULL DEFAULT '#FFFFFF',-- Tema Claro
+  
+  -- URLs de Arquivos no Storage
+  logo_horizontal_url text NOT NULL,
+  logo_negative_url text NOT NULL,
+  logo_brandmark_url text NOT NULL,
+  
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+### 3. Aplicação do CSS Dinâmico no Frontend (DOM Root Injection)
+No carregamento do app, a Edge Function ou Context do React lê os tokens de cor do banco e os injeta diretamente no escopo global do documento HTML, atualizando todas as interfaces, botões e cards sem necessidade de recompilação do código:
+
+```typescript
+export function applyBrandTokens(config: ITenantConfig) {
+  const root = document.documentElement;
+  
+  // Atualiza as cores globais dinamicamente
+  root.style.setProperty('--primary-color', config.theme.primaryColor);
+  root.style.setProperty('--accent-gold', config.theme.secondaryColor);
+  root.style.setProperty('--background-dark', config.theme.darkBg);
+  
+  // Atualiza a URL dos logotipos do CSS
+  root.style.setProperty('--logo-horizontal', `url(${config.theme.logoUrl})`);
+}
+```
+
+---
+
+## 👕 7. Diretrizes de Aplicação Física e Merchandising (De Pompa)
 
 A qualidade dos materiais físicos reflete a autoridade de uma corporação multinacional. Todo material de merchandising deve seguir rigorosamente as regras de fabricação e aplicação abaixo:
 
@@ -124,7 +204,7 @@ A qualidade dos materiais físicos reflete a autoridade de uma corporação mult
 
 ---
 
-## 🛡️ 7. Zona de Exclusão e Regras de Segurança
+## 🛡️ 8. Zona de Exclusão e Regras de Segurança
 
 Para manter a dignidade visual, o logotipo deve respirar. A distância mínima de qualquer elemento gráfico, texto ou margem de papel deve ser equivalente a **1/3 da altura do símbolo do sol (X)**:
 
@@ -138,7 +218,7 @@ Para manter a dignidade visual, o logotipo deve respirar. A distância mínima d
 
 ---
 
-## 🚫 8. Práticas Proibidas (Brand Integrity)
+## 🚫 9. Práticas Proibidas (Brand Integrity)
 
 1.  **Distorcer ou Esticar:** Nunca altere a proporção largura/altura do logotipo.
 2.  **Modificar Cores:** É proibido aplicar degradês coloridos, cores de neon brilhantes ou alterar a tonalidade de dourado do Sol para outras cores que não as tabeladas.
