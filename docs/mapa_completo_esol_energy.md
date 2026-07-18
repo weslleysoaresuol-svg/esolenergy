@@ -670,16 +670,25 @@ Para garantir a confiabilidade matemática das comissões e transações:
 
 ## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
 
-Para garantir que o novo ecossistema da Esol Energy estabeleça uma percepção de **extrema solidez, confiabilidade institucional e sobriedade corporativa de grande empresa multinacional**, a interface do aplicativo segue rigorosamente as diretrizes cromáticas e estruturais do **Manual de Identidade Visual da Esol**:
+Para garantir que o novo ecossistema da Esol Energy estabeleça uma percepção de **extrema solidez, legibilidade operacional sob a luz solar direta e sobriade corporativa de grande empresa multinacional (como Solarz e Solfácil)**, a interface do aplicativo segue o **Tema Claro Premium** baseado nas diretrizes cromáticas do **Manual de Identidade Visual da Esol**:
 
-*   **Cor de Fundo Sólida (Sem Gráficos/Estrelas):** Utiliza o **Dark Navy (`#001236`)** em estado 100% sólido. É proibida qualquer textura de espaço, galáxia, gradientes complexos ou nebulosas, eliminando qualquer visual artificial de IA e garantindo seriedade corporativa.
-*   **Identidade Cromática da Marca:** Painéis e botões principais em **Navy Royal (`#00246B`)** e textos de alta legibilidade em **Silver Gray (`#E5E7EB`)** e **Slate Gray (`#555555`)**.
-*   **Destaques de Liquidez e Prestígio:** Rótulos financeiros, saldo recorrente e conquistas MMN destacados no tom oficial **Solar Gold (`#FFB300`)** sem brilhos ou sombras néon artificiais.
-*   **Grid Bento de Relevo Neutro:** Caixas de dados planas e limpas com cantos arredondados de apenas `8px` e bordas finas com relevo cinza suave de `1px`.
+*   **Fundo Clean & Sólido:** Utiliza o **Branco Puro (`#FFFFFF`)** em estado 100% sólido, eliminando texturas artificiais, nebulosas ou escuros pesados.
+*   **Identidade Cromática:** Títulos, cabeçalhos e botões principais em **Navy Royal (`#00246B`)** e textos de leitura em **Slate Gray (`#555555`)**.
+*   **Cards Bento de Alto Contraste:** Blocos e painéis de dados em **Silver Gray (`#F3F4F6`)** com bordas finas sólidas de `1px` em cinza claro e cantos com arredondamento executivo discreto de `8px`.
+*   **Destaques Solares:** Valores financeiros de royalties recorrentes e conquistas MMN em **Solar Gold (`#FFB300`)**.
 
-![Visualização do Dashboard Corporativo Oficial Esol Energy (Cores do Manual de Marca)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_solid_corporate_dashboard_1784343987750.png)
+Abaixo estão as prévias de interface geradas para os três dispositivos suportados pelo sistema:
+
+````carousel
+![Dashboard Tema Claro - Visualização Celular (Mobile)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_mobile_1784344281204.png)
+<!-- slide -->
+![Dashboard Tema Claro - Visualização Tablet](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_tablet_1784344296824.png)
+<!-- slide -->
+![Dashboard Tema Claro - Visualização Laptop / PC (Desktop)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_desktop_1784344312666.png)
+````
 
 ---
+
 
 
 
