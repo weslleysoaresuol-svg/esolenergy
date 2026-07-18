@@ -637,11 +637,45 @@ Para garantir a confiabilidade matemática das comissões e transações:
 
 ## 11. ESCALABILIDADE PROGRESSIVA (Gestão de Custos)
 
-*   **FASE 1 (0 $\rightarrow$ 5.0## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
+*   **FASE 1 (0 → 5.000 usuários):** Cloudflare Free + Supabase Free + WhatsApp Redirect + Resend Free (Custo total: **R$ 0,00/mês**).
+*   **FASE 2 (5.000 → 50.000 usuários):** Cloudflare Free + Supabase Pro ($25/mês) + Bling ERP ($30/mês) (Custo total: **~R$ 280,00/mês**).
+*   **FASE 3 (50.000 → 500.000 usuários):** Cloudflare Pro + Supabase Team ($619/mês) + Omie ERP Enterprise (Custo total: **~R$ 4.000,00/mês**).
+
+---
+
+## 12. RESUMO EXECUTIVO (Métricas de Excelência)
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                   ESOL ENERGY — ARQUITETURA CORE v10                   │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                        │
+│  PRODUTOS MMN:        8 categorias (turnkey, loja, GD, MLE,            │
+│                       monitoramento, O&M, limpeza, seguros).           │
+│  RECORRÊNCIA ENERGIA: 100% de comissões recorrentes (GD e MLE) via     │
+│                       Motor 2 (sem taxa de adesão).                    │
+│  SELAGEM ECOLÓGICA:   Selo Verde Esol restrito aos projetos turnkey    │
+│                       próprios (Cat #1).                               │
+│  RESILIÊNCIA DE APIs: Camada Abstrata Roteadora de Leads (Supabase DB) │
+│                       independente de fornecedores.                    │
+│  MMN HIERARQUIA:      7 níveis de Override Igualitário.                │
+│  ARQUIVOS DE MÓDULO:  15 módulos funcionais de software.               │
+│  CONFORMIDADE:        CLT (trabalhista) + LGPD + CDC + ANEEL.          │
+│  INFRAESTRUTURA:      Cloudflare Workers + Supabase DB + Bling/Omie.   │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
 
 Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e proporcione uma usabilidade superior para a força de vendas, a interface do aplicativo foi projetada com base nos princípios do **Design Sensorial Tátil**, **Glassmorphism Moderno** e **Brutalismo Limpo**.
 
+![Visualização do Dashboard Operacional da Esol Energy (Modo Escuro Premium)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_dashboard_preview_1784342487101.png)
+
 ---
+
 
 ### 13.1 Arquitetura de Estados, Tipagem e Roteamento (TypeScript & React)
 
