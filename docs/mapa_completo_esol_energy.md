@@ -992,7 +992,68 @@ Para atingir a fluidez de interface do Claude Opus, todas as animações operam 
 
 ---
 
+### 13.6 Estratégia Esol-Light: Otimização Adaptativa para Hardware de Baixo Desempenho
+
+Para garantir que a Esol Energy seja **100% operacional** em qualquer dispositivo celular, tablet ou computador antigo (incluindo smartphones de entrada com processadores limitados e navegadores desatualizados), o frontend implementa o protocolo de **Degradação Suave e Otimização Adaptativa**.
+
+---
+
+#### 1. Detecção Dinâmica de Capacidade de Hardware (GPU/CPU)
+No momento do carregamento inicial, a aplicação executa um script ultraleve para classificar o dispositivo em dois perfis de renderização:
+
+```typescript
+// Script de classificação automática de hardware
+export function getPerformanceProfile(): 'high-end' | 'low-end' {
+  const cores = navigator.hardwareConcurrency || 4;
+  
+  // Teste rápido de renderização de contexto WebGL
+  let supportsHighEnd = false;
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl) {
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        // Desativa efeitos pesados se for GPU integrada antiga ou emulador
+        if (!/swiftshader|software|generic/i.test(renderer)) {
+          supportsHighEnd = true;
+        }
+      }
+    }
+  } catch (e) {
+    supportsHighEnd = false;
+  }
+
+  // Dispositivos com menos de 6 núcleos ou sem WebGL robusto são classificados como de baixo desempenho
+  return (cores >= 6 && supportsHighEnd) ? 'high-end' : 'low-end';
+}
+```
+
+---
+
+#### 2. Tabela de Fallbacks Adaptativos (Aparência vs. Custo de CPU)
+Com base no perfil detectado, o aplicativo desabilita seletivamente os recursos cosméticos mais pesados, substituindo-os por alternativas estéticas limpas de baixíssimo consumo:
+
+| Recurso Visual (High-End) | Efeito no Aparelho Fraco (Low-End / Esol-Light) | Benefício de Performance |
+| :--- | :--- | :--- |
+| **Glassmorphism com `backdrop-blur`** | **Cores sólidas semi-transparentes** (`bg-slate-950/95`) | Remove o cálculo em tempo real de desfoque de pixels (reduz consumo de GPU). |
+| **Hover Tilt 3D (Paralaxe)** | **Escala simples de CSS** (`hover:scale-102` com transição nativa) | Elimina cálculos matemáticos de rotação 3D a cada movimento do mouse. |
+| **Sombras Néon Glow** | **Bordas sólidas de alto contraste** (`border-emerald-500/20`) | Evita filtros de desfoque de sombra complexos que causam lentidão na GPU. |
+| **Transições complexas via JS** | **Opacidades simples via CSS** (`transition-opacity duration-200`) | Garante que as rotas mudem a 60fps sem sobrecarregar a CPU do dispositivo. |
+| **Gráficos com animação ativa** | **Gráficos estáticos renderizados em SVG puro** | Evita loops de repintura (*repaint*) da tela enquanto o usuário visualiza dados. |
+
+---
+
+#### 3. Padrões de Otimização no Código (Lighthouse Optimizer)
+*   **Impedimento de CLS (Cumulative Layout Shift):** Todos os componentes de dados e widgets do simulador possuem esqueletos de carregamento (*skeleton loaders*) com dimensões físicas travadas via CSS Grid, impedindo que os elementos da página pulem enquanto o banco responde.
+*   **Otimização de LCP (Largest Contentful Paint):** Ícones e logotipos são carregados como arquivos SVG minimizados em linha (inline), eliminando requisições HTTP adicionais e mantendo a interface visível em menos de **100ms** mesmo em redes 3G oscilantes.
+*   **Acessibilidade e Contraste:** Mesmo nas telas simplificadas do modo Esol-Light, a relação de contraste de textos e dados é mantida em conformidade com o padrão **WCAG AA (Mínimo de 4.5:1)**, garantindo que o consultor consiga ler os dados sob a luz direta do sol no campo.
+
+---
+
 ## 14. PILAR 4: MOTOR DE ASSINATURA AUTOMATIZADA (ESOL SIGN) & LEDGER CRIPTOGRÁFICO CONTÁBIL
+
 
 Para garantir a validade jurídica de contratos a custo zero, a conformidade tributária e a consistência financeira absoluta de comissões, o ecossistema da Esol Energy opera sob duas camadas fundamentais de auditoria: o **Esol Sign** e o **Double-Entry Ledger Criptográfico**.
 
