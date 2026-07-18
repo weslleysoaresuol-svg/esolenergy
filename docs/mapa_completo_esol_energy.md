@@ -670,24 +670,24 @@ Para garantir a confiabilidade matemática das comissões e transações:
 
 ## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
 
-Para garantir que o novo ecossistema da Esol Energy estabeleça uma percepção de **extrema solidez, legibilidade operacional sob a luz solar direta e sobriade corporativa de grande empresa multinacional (como Solarz e Solfácil)**, a interface do aplicativo segue o **Tema Claro Premium** baseado nas diretrizes cromáticas do **Manual de Identidade Visual da Esol**:
+Para garantir que o novo ecossistema da Esol Energy estabeleça uma percepção de **alta sofisticação visual, tecnologia disruptiva e solidez operacional de nível internacional**, a interface do aplicativo segue o **Modo Escuro Premium (Neo-Glassmorphism)** baseado nas diretrizes cromáticas do **Manual de Identidade Visual da Esol**:
 
-*   **Fundo Clean & Sólido:** Utiliza o **Branco Puro (`#FFFFFF`)** em estado 100% sólido, eliminando texturas artificiais, nebulosas ou escuros pesados.
-*   **Identidade Cromática:** Títulos, cabeçalhos e botões principais em **Navy Royal (`#00246B`)** e textos de leitura em **Slate Gray (`#555555`)**.
-*   **Cards Bento de Alto Contraste:** Blocos e painéis de dados em **Silver Gray (`#F3F4F6`)** com bordas finas sólidas de `1px` em cinza claro e cantos com arredondamento executivo discreto de `8px`.
-*   **Destaques Solares:** Valores financeiros de royalties recorrentes e conquistas MMN em **Solar Gold (`#FFB300`)**.
+*   **Fundo Deep Space:** Utiliza o **Preto Azulado Profundo (`#090d16`)** em estado sólido, fornecendo contraste excepcional de dados e redução de fadiga ocular.
+*   **Cards em Navy Blue Glass:** Painéis de dados translúcidos com desfoque de fundo (`backdrop-blur-md` e `rgba(17, 24, 39, 0.8)`) contornados por bordas finíssimas de `1px` em branco translúcido (`rgba(255, 255, 255, 0.08)`).
+*   **Destaques de Liquidez e Energia:** Valores de royalties recorrentes e status em **Glow Emerald (`#10b981`)** e conquistas MMN em **Solar Gold (`#fbbf24`)**.
 
 Abaixo estão as prévias de interface geradas para os três dispositivos suportados pelo sistema:
 
 ````carousel
-![Dashboard Tema Claro - Visualização Celular (Mobile)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_mobile_1784344281204.png)
+![Dashboard Modo Escuro Premium - Celular (Mobile)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_mobile_1784344631640.png)
 <!-- slide -->
-![Dashboard Tema Claro - Visualização Tablet](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_tablet_1784344296824.png)
+![Dashboard Modo Escuro Premium - Tablet](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_tablet_1784344647121.png)
 <!-- slide -->
-![Dashboard Tema Claro - Visualização Laptop / PC (Desktop)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_desktop_1784344312666.png)
+![Dashboard Modo Escuro Premium - Laptop / PC (Desktop)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_desktop_1784344663325.png)
 ````
 
 ---
+
 
 
 
