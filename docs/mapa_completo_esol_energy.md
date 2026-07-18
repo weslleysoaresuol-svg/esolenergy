@@ -670,11 +670,20 @@ Para garantir a confiabilidade matemática das comissões e transações:
 
 ## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
 
-Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e proporcione uma usabilidade superior para a força de vendas, a interface do aplicativo foi projetada com base nos princípios do **Design Sensorial Tátil**, **Glassmorphism Moderno** e **Brutalismo Limpo**.
+Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e estabeleça uma percepção de **extrema solidez e autoridade institucional de nível multinacional**, a interface do aplicativo é projetada sob duas diretrizes estéticas distintas e adaptativas:
 
-![Visualização do Dashboard Operacional da Esol Energy (Modo Escuro Premium)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_dashboard_preview_1784342487101.png)
+### 🏆 OPÇÃO A: ESTILO INFRAESTRUTURA & WEALTH MANAGEMENT PREMIUM (Recomendado)
+Inspirado nos painéis de comando de infraestrutura global (como *Tesla Energy*, *Iberdrola* e *Schneider Electric*) e terminais de alta precisão financeira (estilo Bloomberg). Utiliza tons sóbrios de carvão escuro, vidro preto jateado (obsidian glass), contraste estrutural rigoroso (cantos finos de 8px) e destaques minimalistas em bronze dourado e verde floresta institucional. Transmite **solidez absoluta, segurança e estabilidade corporativa**.
+
+![Visualização do Dashboard Corporativo Esol Energy (Modo Multinacional)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_corporate_dashboard_1784342838163.png)
+
+### ⚡ OPÇÃO B: ESTILO NEO-LIGHT TECH ALTERNATIVO (Interface Estilo Start-up)
+Inspirado em painéis SaaS de tecnologia de alta performance (como *Linear* e *Solfácil*). Utiliza tons azulados escuros (*deep space*), vidro jateado com desfoque de fundo (*glassmorphism*) e realces mais vivos em verde-esmeralda e ouro solar. Transmite agilidade, dinamismo e apelo visual moderno.
+
+![Visualização do Dashboard Operacional Esol Energy (Modo Neon/SaaS)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_dashboard_preview_1784342487101.png)
 
 ---
+
 
 
 ### 13.1 Arquitetura de Estados, Tipagem e Roteamento (TypeScript & React)
