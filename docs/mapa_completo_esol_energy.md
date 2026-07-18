@@ -1718,4 +1718,110 @@ GROUP BY mes
 ORDER BY mes DESC;
 ```
 
+---
+
+### 15.4 Cockpit de Tesouraria e Central de Controle Financeiro Corporativo
+
+Para dotar a Esol Energy de governança e controle de nível multinacional, o módulo financeiro opera um **Cockpit de Tesouraria Centralizado**. Ele consolida em tempo real a liquidez da empresa, o processamento de splits em gateways de pagamento, as travas de inadimplência da rede e as obrigações acessórias de saques.
+
 ```
+COCKPIT DE TESOURARIA CORPORATIVA (ESOL TREASURY CONTROL)
+  ┌────────────────────────────────────────────────────────┐
+  │ SALDO GLOBAL DISPONÍVEL: R$ 1.250.400,00               │
+  ├────────────────────────────────────────────────────────┤
+  │ [🏦 Itaú Principal] R$ 850k  │ [💳 Gateway Custódia] R$ 400k │
+  ├────────────────────────────────────────────────────────┤
+  │ 📊 SEGMENTAÇÃO DE CAIXA:                               │
+  │  ├── 🟢 Caixa Livre (EBITDA Acumulado): R$ 680.000,00  │
+  │  ├── 🟡 Reservado MMN (Saques Pendentes): R$ 320.000,00 │
+  │  ├── 🔵 Provisão de Impostos (Simples/LP): R$ 150.000,00│
+  │  └── 🔴 Fundo Garantidor de Inadimplência: R$ 100.400,00│
+  └────────────────────────────────────────────────────────┘
+```
+
+#### 1. Arquitetura de Split de Recebíveis em Tempo Real (Gateway API)
+Na captura de qualquer pagamento (via Pix, Boleto ou Cartão de Crédito), a plataforma realiza o split automático das frações contábeis na origem por meio do gateway de pagamento (Asaas, Iugu ou Fitbank), eliminando o trânsito de caixa indevido:
+
+*   **Endpoint de Split de Recebíveis (`POST /v1/payments`):**
+    ```json
+    {
+      "customer": "cus_84f29a01bde8",
+      "billingType": "PIX",
+      "value": 30000.00,
+      "dueDate": "2026-07-18",
+      "description": "Projeto Turnkey Solar Esol #9481",
+      "split": [
+        {
+          "walletId": "wall_distribuidor_sou_energy",
+          "value": 20000.00,
+          "description": "Faturamento Direto de Módulos / Inversor"
+        },
+        {
+          "walletId": "wall_engenheiro_credenciado_art",
+          "value": 15000.00,
+          "description": "Taxa de Homologação e Emissão de ART"
+        },
+        {
+          "walletId": "wall_esol_energy_operacoes",
+          "value": 8500.00,
+          "description": "Margem Esol (Serviços de Intermediação e MMN)"
+        }
+      ]
+    }
+    ```
+
+---
+
+#### 2. Régua de Cobrança e Trava de Inadimplência (MMN Cash Shield)
+Para garantir que a Esol nunca pague comissões sobre receitas não realizadas, o sistema bloqueia pagamentos à rede se o cliente final atrasar o pagamento da fatura de energia (GD ou MLE):
+
+```mermaid
+graph TD
+    A[Fatura de Energia Vence] --> B{Pagamento Identificado in 3 dias?}
+    B -->|Sim| C[Comissão Liberada no Saldo do Consultor]
+    B -->|Não| D[Aviso de Atraso via WhatsApp ao Cliente]
+    D --> E[Trava de Inadimplência: Congela Comissão Upline no MMN]
+    E --> F{Cliente paga fatura com Juros/Multa?}
+    F -->|Sim| G[Processa Lançamento de Reversão de Trava]
+    F -->|Não| H[Fila de Suspensão de Fornecimento / Portabilidade reversa]
+    G --> C
+```
+
+*   **Trigger PostgreSQL de Bloqueio de Saldo por Inadimplência:**
+    ```sql
+    CREATE OR REPLACE FUNCTION public.bloquear_comissao_inadimplencia()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      -- 1. Verifica se a fatura foi para status 'vencida'
+      IF NEW.status = 'vencida' AND OLD.status != 'vencida' THEN
+        -- 2. Altera o status da comissão da carteira para 'bloqueado_inadimplente'
+        UPDATE public.historico_comissoes_mmn
+        SET status = 'bloqueado_inadimplente',
+            observacoes = 'Comissão retida temporariamente devido à inadimplência da fatura do cliente.'
+        WHERE referencia_id = NEW.carteira_energia_id AND status = 'pago';
+        
+        -- 3. Deduz o saldo disponível do consultor correspondente para evitar saques indevidos
+        UPDATE public.profiles p
+        SET saldo_disponivel = saldo_disponivel - hc.valor_comissao
+        FROM public.historico_comissoes_mmn hc
+        WHERE p.id = hc.usuario_id AND hc.referencia_id = NEW.carteira_energia_id;
+      END IF;
+      
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql SECURITY DEFINER;
+    ```
+
+---
+
+#### 3. Regras de Payout MMN e Retenção Tributária na Fonte (Saques)
+Para manter a conformidade da Esol frente à Receita Federal e ao INSS, as solicitações de saques dos consultores são processadas sob duas lógicas de segurança fiscal:
+
+*   **Perfil Consultor Pessoa Física (PF):**
+    *   *Limite de Isenção:* Saques mensais acumulados de até **R$ 1.903,98** são isentos de retenção de IRPF.
+    *   *Acima do Limite:* O sistema retém automaticamente as alíquotas progressivas de **IRRF (7.5% a 27.5%)** e **INSS autônomo (11%)**, emitindo um Recibo de Pagamento a Autônomo (RPA) de forma automatizada no fechamento do mês.
+*   **Perfil Consultor Pessoa Jurídica (PJ):**
+    *   *Exigência de NFS-e:* O saque só é liberado mediante o upload da Nota Fiscal de Serviços eletrônica (NFS-e) emitida pelo CNPJ do consultor contra o CNPJ da Esol Energy.
+    *   *Validação Automatizada:* Uma Edge Function faz o parse XML/PDF da nota fiscal para validar o valor solicitado, CNPJ emissor e código de serviço contábil antes de disparar o lote de transferência PIX via API do banco.
+
+---
