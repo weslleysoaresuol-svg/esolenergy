@@ -670,23 +670,40 @@ Para garantir a confiabilidade matemática das comissões e transações:
 
 ## 13. PILAR 3: A JORNADA DO CONSULTOR E DESIGN SYSTEM UI/UX PREMIUM
 
-Para garantir que o novo ecossistema da Esol Energy estabeleça uma percepção de **alta sofisticação visual, tecnologia disruptiva e solidez operacional de nível internacional**, a interface do aplicativo segue o **Modo Escuro Premium (Neo-Glassmorphism)** baseado nas diretrizes cromáticas do **Manual de Identidade Visual da Esol**:
+Para garantir que o novo ecossistema da Esol Energy cause um impacto visual imediato ("Efeito Wow") e atenda perfeitamente aos usuários mais exigentes sob qualquer condição de luz, a interface do aplicativo suporta nativamente a alternância de temas:
 
-*   **Fundo Deep Space:** Utiliza o **Preto Azulado Profundo (`#090d16`)** em estado sólido, fornecendo contraste excepcional de dados e redução de fadiga ocular.
-*   **Cards em Navy Blue Glass:** Painéis de dados translúcidos com desfoque de fundo (`backdrop-blur-md` e `rgba(17, 24, 39, 0.8)`) contornados por bordas finíssimas de `1px` em branco translúcido (`rgba(255, 255, 255, 0.08)`).
-*   **Destaques de Liquidez e Energia:** Valores de royalties recorrentes e status em **Glow Emerald (`#10b981`)** e conquistas MMN em **Solar Gold (`#fbbf24`)**.
-
-Abaixo estão as prévias de interface geradas para os três dispositivos suportados pelo sistema:
+### 🌌 MODO ESCURO PREMIUM (Padrão de Sofisticação Visual)
+Baseado no conceito de **Neo-Glassmorphism**. Ideal para apresentações executivas, reuniões noturnas e economia de bateria em campo:
+*   *Fundo:* Preto Azulado Profundo (`#090d16`).
+*   *Superfícies:* Cards translúcidos em Navy Blue Glass (`rgba(17, 24, 39, 0.8)`) com bordas finas sólidas (`rgba(255, 255, 255, 0.08)`).
+*   *Destaques:* Glow Emerald (`#10b981`) para energia gerada e Solar Gold (`#fbbf24`) para royalties de multinível.
 
 ````carousel
-![Dashboard Modo Escuro Premium - Celular (Mobile)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_mobile_1784344631640.png)
+![Modo Escuro - Celular (Mobile)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_mobile_1784344631640.png)
 <!-- slide -->
-![Dashboard Modo Escuro Premium - Tablet](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_tablet_1784344647121.png)
+![Modo Escuro - Tablet](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_tablet_1784344647121.png)
 <!-- slide -->
-![Dashboard Modo Escuro Premium - Laptop / PC (Desktop)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_desktop_1784344663325.png)
+![Modo Escuro - Laptop / PC (Desktop)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_premium_dark_desktop_1784344663325.png)
 ````
 
 ---
+
+### ☀️ MODO CLARO PREMIUM (Legibilidade Sob Sol Intenso)
+Inspirado em painéis de comando de concessionárias e corretoras globais (estilo Solarz e Solfácil). Ideal para o trabalho sob luz solar direta no campo:
+*   *Fundo:* Branco Puro (`#FFFFFF`) e divisórias limpas.
+*   *Superfícies:* Cards Bento em Silver Gray (`#F3F4F6`) com bordas em cinza claro e cantos com arredondamento de `8px`.
+*   *Destaques:* Rótulos, títulos e botões primários em Navy Royal (`#00246B`) e comissão em Solar Gold (`#FFB300`).
+
+````carousel
+![Modo Claro - Celular (Mobile)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_mobile_1784344281204.png)
+<!-- slide -->
+![Modo Claro - Tablet](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_tablet_1784344296824.png)
+<!-- slide -->
+![Modo Claro - Laptop / PC (Desktop)](file:///C:/Users/wesll/.gemini/antigravity-ide/brain/76c11ccf-dde5-4bd1-952d-9599bf3a6a69/esol_light_dashboard_desktop_1784344312666.png)
+````
+
+---
+
 
 
 
