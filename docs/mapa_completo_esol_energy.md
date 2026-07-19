@@ -301,18 +301,18 @@ O aplicativo exibe a graduação do consultor de forma visual e motivadora. Cada
 
 | Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
 | :---: | :--- | :---: | :--- | :--- |
-| **1** | **Esol Faísca** | 0 pontos | ✨ **Faísca Elétrica** (Centelha inicial) | *"A primeira faísca gera a grande corrente."* |
-| **2** | **Esol Raio** | 2.500 pontos | ⚡ **Raio Solar** (Conexão e Descarga) | *"A força de um único raio rompe qualquer barreira."* |
-| **3** | **Esol Chama** | 8.000 pontos | 🔥 **Chama Ativa** (Calor e Energia) | *"O calor da nossa chama aquece toda a rede."* |
-| **4** | **Esol Lua** | 20.000 pontos | 🌙 **Crescente Lunar** (Brilho Constante) | *"Brilho constante que guia os passos na escuridão."* |
-| **5** | **Esol Terra** | 50.000 pontos | 🌍 **Planeta Terra** (Base e Solidez) | *"Firmeza e solidez na base do nosso planeta."* |
-| **6** | **Esol Órbita** | 120.000 pontos | 💫 **Anel Orbital** (Alinhamento e Atração)| *"Alinhamento perfeito que gera atração contínua."* |
-| **7** | **Esol Cometa** | 300.000 pontos | ☄️ **Cometa Veloz** (Brilho em Movimento) | *"Velocidade e impacto que marcam época no mercado."* |
-| **8** | **Esol Eclipse** | 800.000 pontos | 🌑 **Eclipse Total** (Alinhamento Supremo) | *"O encontro monumental da terra com a força do sol."* |
-| **9** | **Esol Estrela** | 2.000.000 pontos | ⭐ **Estrela Brilhante** (Luz Própria) | *"Luz própria que gera e mantém sua própria energia."* |
-| **10** | **Esol Sol** | 5.000.000 pontos | ☀️ **Sol Soberano** (Fonte de Vida) | *"A fonte suprema de energia que alimenta a vida."* |
-| **11** | **Esol Constelação**| 12.000.000 pontos| 🌌 **Constelação Ativa** (Conexão Estelar)| *"A união de estrelas brilhando na mesma direção."* |
-| **12** | **Esol Galáxia** | 35.000.000 pontos| 🌀 **Galáxia Quantum** (Infinito em Expansão)| *"Um império de energia infinita em expansão constante."* |
+| **1** | **Faísca** | 0 pontos | ✨ **Faísca Elétrica** (Centelha inicial) | *"A primeira faísca gera a grande corrente."* |
+| **2** | **Chama** | 2.500 pontos | 🔥 **Chama Ativa** (Calor e Energia) | *"O calor da nossa chama aquece toda a rede."* |
+| **3** | **Raio** | 8.000 pontos | ⚡ **Raio Solar** (Conexão e Descarga) | *"A força de um único raio rompe qualquer barreira."* |
+| **4** | **Lua** | 20.000 pontos | 🌙 **Crescente Lunar** (Brilho Constante) | *"Brilho constante que guia os passos na escuridão."* |
+| **5** | **Terra** | 50.000 pontos | 🌍 **Planeta Terra** (Base e Solidez) | *"Firmeza e solidez na base do nosso planeta."* |
+| **6** | **Órbita** | 120.000 pontos | 💫 **Anel Orbital** (Alinhamento e Atração)| *"Alinhamento perfeito que gera atração contínua."* |
+| **7** | **Cometa** | 300.000 pontos | ☄️ **Cometa Veloz** (Brilho em Movimento) | *"Velocidade e impacto que marcam época no mercado."* |
+| **8** | **Eclipse** | 800.000 pontos | 🌑 **Eclipse Total** (Alinhamento Supremo) | *"O encontro monumental da terra com a força do sol."* |
+| **9** | **Estrela** | 2.000.000 pontos | ⭐ **Estrela Brilhante** (Luz Própria) | *"Luz própria que gera e mantém sua própria energia."* |
+| **10** | **Sol** | 5.000.000 pontos | ☀️ **Sol Soberano** (Fonte de Vida) | *"A fonte suprema de energia que alimenta a vida."* |
+| **11** | **Constelação**| 12.000.000 pontos| 🌌 **Constelação Ativa** (Conexão Estelar)| *"A união de estrelas brilhando na mesma direção."* |
+| **12** | **Galáxia** | 35.000.000 pontos| 🌀 **Galáxia Quantum** (Infinito em Expansão)| *"Um império de energia infinita em expansão constante."* |
 
 ---
 
@@ -340,18 +340,20 @@ CREATE TABLE public.campanhas_premios (
 ```
 
 ##### **Exemplo de Configuração de Prêmios da Campanha Vigente:**
-*   **L1 (Esol Faísca) $\rightarrow$** *Kit Acolhimento:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial.
-*   **L2 (Esol Raio) $\rightarrow$** *Brinde Inicial:* Garrafa Térmica Esol Premium + Boné Trucker com logo relevo 3D.
-*   **L3 (Esol Chama) $\rightarrow$** *Kit Elite Campo:* **iPad de 10.2 polegadas** com capa protetora + 3 polos adicionais.
-*   **L4 (Esol Lua) $\rightarrow$** *Smartwatch:* **Relógio Inteligente Smartwatch** de última geração gravado a laser.
-*   **L5 (Esol Terra) $\rightarrow$** *Notebook de Elite:* **Notebook Corporativo de Alta Performance (Dell ou Apple MacBook Air)**.
-*   **L6 (Esol Órbita) $\rightarrow$** *Imersão VIP:* Viagem de 3 dias de liderança com tudo pago para a sede da Esol.
-*   **L7 (Esol Cometa) $\rightarrow$** *Viagem VIP Nacional:* Viagem de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas.
-*   **L8 (Esol Eclipse) $\rightarrow$** *Viagem VIP Internacional:* Viagem com acompanhante para a feira *Intersolar em Munique, Alemanha*.
-*   **L9 (Esol Estrela) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: HB20/Onix/Polo de até R$ 95k quitado em seu nome).
-*   **L10 (Esol Sol) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass/Toyota Corolla Cross de até R$ 200k quitado).
-*   **L11 (Esol Constelação) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Zero Km** (ex: BYD Seal ou Volvo EX30 de até R$ 300k).
-*   **L12 (Esol Galáxia) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Premium de até R$ 600.000,00 quitado** e escriturado em seu nome + Bônus LPL (*capped*).
+*   **L1 (Faísca) $\rightarrow$** *Kit Premium de Boas-Vindas:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica Premium + Boné Trucker Relevo 3D. 
+    *   *Nota: O prêmio é liberado e enviado automaticamente apenas quando o consultor acumular os primeiros **1.000 pontos pessoais** de vendas (equivalente a uma venda residencial pequena), cobrindo com margem o custo de aquisição.*
+*   **L2 (Chama) $\rightarrow$** *Smartphone Executivo:* **Smartphone Corporativo de Elite** de última geração (ex: Samsung Galaxy ou Xiaomi Redmi, valor de mercado de R$ 900,00) para gerenciar clientes e CRM.
+*   **L3 (Raio) $\rightarrow$** *Notebook Corporativo:* **Notebook de Alta Performance Dell ou Lenovo** (valor de mercado de R$ 3.500,00) para estruturar o backoffice de vendas.
+*   **L4 (Lua) $\rightarrow$** *Tablet de Alta Performance:* **iPad de 10.2 polegadas com caneta digital e capa** (para apresentação comercial em campo) + Imersão VIP de 3 dias de Liderança Comercial na sede da Esol Energy com todas as despesas pagas.
+*   **L5 (Terra) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de mercado de R$ 15.000,00 quitada), conectando a conquista ao propósito de energia limpa da empresa.
+*   **L6 (Órbita) $\rightarrow$** *Viagem VIP Nacional:* Viagem VIP de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas com tudo pago.
+*   **L7 (Cometa) $\rightarrow$** *Viagem VIP Internacional:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens aéreas executivas e hotel 5 estrelas).
+*   **L8 (Eclipse) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: Hyundai HB20, Chevrolet Onix ou VW Polo, valor de R$ 95.000,00 quitado e em nome do consultor).
+*   **L9 (Estrela) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
+*   **L10 (Sol) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
+*   **L11 (Constelação) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
+*   **L12 (Galáxia) $\rightarrow$** *Participação Especial:* **Bônus de LPL Semestral Capped** (1% do faturamento líquido da regional) + Troféu Estelar de Metal e Ouro de Reconhecimento Vitalício da Holding.
+
 
 
 
