@@ -350,17 +350,17 @@ CREATE TABLE public.campanhas_premios (
 ##### **Exemplo de Configuração de Prêmios da Campanha Vigente:**
 *   **L1 (Faísca) $\rightarrow$** *Kit Premium de Boas-Vindas & Conexão:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica Premium + Boné Trucker Relevo 3D + **Smartphone de Ótimo Custo-Benefício** (Motorola ou Xiaomi com 5G, de R$ 950,00). 
     *   *Nota: O prêmio completo é liberado e enviado automaticamente apenas quando o consultor acumular os primeiros **2.000 pontos pessoais** de vendas (equivalente a uma venda residencial pequena/média), cobrindo com margem o custo de aquisição.*
-*   **L2 (Chama) $\rightarrow$** *Kit Escritório de Campo:* **Notebook de Alta Performance Lenovo ou Acer** (Ryzen 5/SSD 512GB) + **Mochila Executiva Impermeável para Notebook** com saída USB (valor total de R$ 2.350,00) para estruturar o backoffice móvel.
-*   **L3 (Raio) $\rightarrow$** *Tablet & Imersão VIP:* **iPad de 10.2 polegadas com caneta digital e capa** (para apresentação comercial) + Imersão VIP de 3 dias de Liderança na sede da Esol Energy com todas as despesas pagas.
-*   **L4 (Lua) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de mercado de R$ 15.000,00 quitada), conectando a conquista ao propósito de energia sustentável da holding.
-*   **L5 (Terra) $\rightarrow$** *Viagem VIP Internacional:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens aéreas executivas e hotel 5 estrelas).
-*   **L6 (Órbita) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: Hyundai HB20, Chevrolet Onix ou VW Polo, valor de R$ 95.000,00 quitado e em nome do consultor).
-*   **L7 (Cometa) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
-*   **L8 (Eclipse) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
-*   **L9 (Estrela) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
-*   **L10 (Sol) $\rightarrow$** *Super Mansão:* **Mansão ou Cobertura Duplex de Alto Padrão** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
-*   **L11 (Constelação) $\rightarrow$** *Carro Superesportivo:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, valor de R$ 800.000,00 quitado) + Bônus de LPL Semestral Capped (1% da regional).
-*   **L12 (Galáxia) $\rightarrow$** *Usina Solar Própria & Equity:* **Usina Solar Esol de R$ 1.5 Milhão quitada e arrendada de volta para a Esol**, garantindo R$ 15.000,00/mês de renda passiva vitalícia + Participação Acionária da Holding + Troféu Estelar.
+*   **L2 (Chama) $\rightarrow$** *Kit Conexão Solar:* **Fone de Ouvido Bluetooth JBL/Xiaomi** + **Powerbank Solar Portátil de 20.000mAh** (totalizando R$ 400,00) para manter o consultor sempre ativo e conectado em campo.
+*   **L3 (Raio) $\rightarrow$** *Kit Escritório de Campo:* **Notebook Lenovo ou Acer** (Ryzen 5/SSD 512GB) + **Mochila Executiva Impermeável** com saída USB (valor total de R$ 2.350,00) para estruturar o backoffice móvel.
+*   **L4 (Lua) $\rightarrow$** *Tablet & Imersão VIP:* **iPad de 10.2 polegadas com caneta digital e capa** (para apresentação comercial) + Imersão VIP de 3 dias de Liderança na sede da Esol Energy com todas as despesas pagas (valor total de R$ 6.000,00).
+*   **L5 (Terra) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de mercado de R$ 15.000,00 quitada), conectando a conquista ao propósito de energia limpa da holding.
+*   **L6 (Órbita) $\rightarrow$** *Viagem VIP Internacional:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens aéreas executivas e hotel 5 estrelas, valor total de R$ 25.000,00).
+*   **L7 (Cometa) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: Hyundai HB20, Chevrolet Onix ou VW Polo, valor de R$ 95.000,00 quitado e em seu nome).
+*   **L8 (Eclipse) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
+*   **L9 (Estrela) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
+*   **L10 (Sol) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
+*   **L11 (Constelação) $\rightarrow$** *Super Mansão:* **Mansão ou Cobertura Duplex de Alto Padrão** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
+*   **L12 (Galáxia) $\rightarrow$** *Usina Solar Própria & Equity:* **Usina Solar Esol de R$ 1.5 Milhão quitada e arrendada de volta para a Esol**, garantindo R$ 15.000,00/mês de renda passiva vitalícia + Participação Acionária da Holding (Equity) + Bônus de LPL Semestral Capped (1% da regional).
 
 ---
 
