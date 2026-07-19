@@ -1912,3 +1912,81 @@ Para manter a conformidade da Esol frente à Receita Federal e ao INSS, as solic
     *   *Validação Automatizada:* Uma Edge Function faz o parse XML/PDF da nota fiscal para validar o valor solicitado, CNPJ emissor e código de serviço contábil antes de disparar o lote de transferência PIX via API do banco.
 
 ---
+
+## 16. PILAR 5: DESACOPLAMENTO, FUNIL DE ULTRA-CONVERSÃO E PORTABILIDADE DE MARCA (REBRANDING-READY)
+
+Para atuar com a pompa e robustez de uma grande corporação EnergyTech, o ecossistema é estruturado para garantir tempos de carregamento instantâneos, fluxos de conversão sem atrito e **portabilidade completa de domínios e identidades visuais (Rebranding-Ready)**.
+
+```
+       ROTA DE REBRANDING E RESOLUÇÃO DINÂMICA DE HOST:
+       
+       ┌────────────────────────┐   detecta host
+       │   Acesso do Usuário    ├─────────────────┐
+       │ (ex: novamarca.com.br) │                 │
+       └────────────────────────┘                 ▼
+                                    ┌───────────────────────────┐
+                                    │    Edge Worker Router     │
+                                    │ (public.tenant_config)    │
+                                    └─────────────┬─────────────┘
+                                                  │
+                            ┌─────────────────────┴─────────────────────┐
+                            ▼                                           ▼
+             Aplica Design Tokens Dinâmicos              Carrega Logos e Contratos
+             - primary-color: #00246B                     - logo-header.svg (R2)
+             - secondary-color: #FBBF24                   - termos_e_condicoes.pdf
+```
+
+---
+
+### 16.1 Configuração de DNS e Divisão de Subdomínios (Cloudflare)
+Os domínios registrados no provedor (como **HomeHost** ou outros registradores de domínios) são apontados para os Nameservers da **Cloudflare**. A Cloudflare gerencia o roteamento de borda, distribuindo o tráfego da seguinte forma:
+
+*   **Domínio Principal (`www.seudominio.com.br`):** Aponta para o **Cloudflare Pages**. Trata-se do site institucional leve e estático (SSG - Static Site Generation), focado em SEO, velocidade de carregamento extrema e atração de leads.
+*   **Subdomínio do Aplicativo (`app.seudominio.com.br`):** Aponta para a aplicação **React (Single Page Application - SPA)** conectada ao banco do Supabase, contendo as lógicas pesadas do simulador, MMN e DRE.
+
+---
+
+### 16.2 Funil de Ultra-Conversão e Onboarding Sem Atrito (Seamless Flow)
+Para evitar que o cliente final abandone a simulação de economia de energia na primeira tela, o fluxo é totalmente integrado entre o site institucional e o aplicativo:
+
+1.  **Simulação Rápida (Zero Barreiras):** Na homepage do site `www`, o visitante digita apenas o valor médio da sua conta de luz (ex: R$ 600) e o CEP (para obter a irradiação solar local). O cálculo da estimativa de payback é feito no mesmo instante via javascript leve de borda.
+2.  **Redirecionamento Inteligente:** Ao clicar em *"Garantir Meu Desconto Now"*, o site não solicita a criação de login imediatamente. Em vez disso, ele redireciona o usuário para o subdomínio da plataforma operativa passando os dados coletados na URL de forma segura:
+    ```
+    https://app.esolenergy.com.br/cadastro?consumo=600&cep=01310100&lead_source=landing_page
+    ```
+3.  **Onboarding Pré-Preenchido:** A tela de cadastro da plataforma (`app`) intercepta esses parâmetros da URL, pré-preenche o formulário operacional e exibe a proposta personalizada instantaneamente, reduzindo em mais de 45% a taxa de abandono do funil de vendas (Bounce Rate).
+
+---
+
+### 16.3 Arquitetura Rebranding-Ready (Portabilidade de Marca e Domínios)
+Para permitir que o ecossistema mude de nome, domínio ou lance uma segunda marca White-Label sem necessidade de refatorar o código-fonte, o sistema adota a **Resolução Dinâmica de Host**:
+
+#### 1. Abstração de Variáveis de Nome de Marca (No Hardcoding)
+Nenhum texto visual, título de página ou logotipo da Esol Energy é escrito de forma estática no HTML ou no React. O frontend lê o cabeçalho `Host` da requisição e resolve os tokens de design do banco em tempo real:
+
+```typescript
+// Hook de inicialização do frontend para obter dados do domínio atual
+export function useBrandConfig() {
+  const hostname = window.location.hostname; // ex: novamarca.com.br ou app.novamarca.com.br
+  
+  // Resolve o domínio base removendo subdomínios (app., www., etc.)
+  const baseDomain = hostname.replace(/^(app\.|www\.)/, '');
+  
+  // Busca as configurações dinâmicas vindas da tabela public.tenant_brand_configs
+  const { config, loading } = fetchBrandConfigFromDatabase(baseDomain);
+  
+  return {
+    brandName: config.name,         // ex: "Esol Energy" ou "Nova Marca"
+    logoUrl: config.logoUrl,        // Caminho dinâmico do R2
+    slogan: config.slogan,          // Slogan personalizado da marca ativa
+    colors: config.colors,          // Design tokens de cores
+  };
+}
+```
+
+#### 2. Portabilidade das APIs e Chaves de Integração (Webhooks)
+Os webhooks de envio de WhatsApp, gateway de pagamento (Asaas) e faturamento contábil (ERP Bling/Omie) não são travados no código de back-end. Eles são salvos na tabela `public.tenants` vinculados ao ID do domínio. 
+*   Se o domínio mudar de `esolenergy.com.br` para `novamarca.com.br`, basta atualizar o registro no banco de dados. Os Workers da Cloudflare e as Edge Functions do Supabase passarão a responder dinamicamente sob as chaves da nova marca imediatamente, garantindo a integridade operacional e segurança de transações sem downtime.
+
+
+---
