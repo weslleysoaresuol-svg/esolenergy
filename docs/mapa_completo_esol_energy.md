@@ -362,8 +362,49 @@ CREATE TABLE public.campanhas_premios (
 *   **L11 (Constelação) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
 *   **L12 (Galáxia) $\rightarrow$** *Participação Especial:* **Bônus de LPL Semestral Capped** (1% do faturamento líquido da regional) + Troféu Estelar de Metal e Ouro de Reconhecimento Vitalício da Holding.
 
+---
 
+#### 6. Manual Prático e Visual do Consultor (Esol Career)
 
+Este guia rápido e didático deve ser exibido no aplicativo do consultor (na aba "Carreira") para que ele entenda o funcionamento do plano de pontuação de forma intuitiva:
+
+##### **A. Como você Acumula pontos (Fluxo de Geração)**
+Sempre que você ou alguém da sua rede realiza uma venda, o sistema converte o valor em pontos. Os pontos sobem automaticamente por toda a árvore de rede:
+
+```mermaid
+graph TD
+    Venda[Venda Concluída] -->|Turnkey / Solar| P1[R$ 30k = 500 pontos]
+    Venda -->|Recorrência GD / MLE| P2[Consumo R$ 1k/mês = 40 pontos/mês]
+    Venda -->|Loja / Peças| P3[Carrinho R$ 5k = 50 pontos]
+    Venda -->|Serviços O&M| P4[Limpeza R$ 500 = 10 pontos]
+    P1 & P2 & P3 & P4 -->|Acúmulo Automático| Saldo[Seu Saldo de Qualificação]
+```
+
+##### **B. A Regra do Prazo (Janela Deslizante de 12 meses)**
+*   **Seus pontos não zeram no fim do mês!** Eles acumulam ao longo de 12 meses.
+*   *Como funciona:* Cada ponto ganho tem a validade exata de **365 dias**. Ao completar 1 ano, aquele ponto expira. Isso mantém o saldo de todos atualizado com a produtividade real do último ano, premiando quem se mantém ativo.
+
+##### **C. A Regra do Equilíbrio (Como funciona o VME de 50%)**
+Para conquistar os prêmios maiores (celulares, notebooks, viagens e carros), você deve desenvolver pelo menos **2 ou 3 equipes ativas**. O sistema limita em **50% do total exigido para o nível** o aproveitamento de uma única perna (indicado direto).
+
+Veja o exemplo visual abaixo para a meta do nível **Raio (8.000 pontos)**:
+
+```mermaid
+graph TD
+    Joao["Você (João) <br> Quer bater Raio (8.000 pts)"]
+    Joao -->|Venda Pessoal| VP["Sua Venda Direta: <br> 2.000 pontos <br> (100% Contam)"]
+    Joao -->|Linha Direta 1| EquipeA["Perna do Marcos (Forte) <br> Gerou: 15.000 pontos <br> Limite VME (50%): 4.000 pontos contam"]
+    Joao -->|Linha Direta 2| EquipeB["Perna do Lucas (Menor) <br> Gerou: 1.500 pontos <br> (100% Contam)"]
+    
+    VP & EquipeA & EquipeB --> Sum["Soma Qualificada: <br> 2.000 + 4.000 + 1.500 = 7.500 pts <br> (Faltam 500 pts!)"]
+```
+
+*   **Dica de Liderança:** Se você tem uma equipe muito forte (como a do Marcos), ajude o seu outro indicado (Lucas) a fazer mais vendas ou faça mais vendas diretas para atingir a meta!
+
+##### **D. Como resgatar o prêmio?**
+1.  **Atingiu a meta de qualificação:** O aplicativo exibirá um confete digital e uma notificação de conquista.
+2.  **Validação de Adimplência:** O sistema do backoffice verifica se as vendas que geraram os pontos estão ativas e com a primeira fatura paga.
+3.  **Resgate:** Você clica em "Solicitar Resgate" diretamente no painel e escolhe receber o item físico quitado ou o bônus correspondente.
 
 ---
 
