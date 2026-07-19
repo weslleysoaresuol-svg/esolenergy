@@ -81,7 +81,7 @@ Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmi
 | :---: | :--- | :---: | :---: | :--- |
 | **L1** | **Faísca** | 0 | ✨ | **Kit Premium de Boas-Vindas:** Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica + Boné Trucker 3D. *(Liberado após acumular 1.000 pontos pessoais)*. |
 | **L2** | **Chama** | 2.500 | 🔥 | **Smartphone Executivo:** Smartphone Corporativo no valor de R$ 900,00 para suporte comercial. |
-| **L3** | **Raio** | 8.000 | ⚡ | **Notebook Corporativo:** Notebook Dell ou Lenovo de Alta Performance no valor de R$ 3.500,00. |
+| **L3** | **Raio** | 8.000 | ⚡ | **Notebook Corporativo:** Notebook Lenovo, Acer ou Dell de Alta Performance no valor de R$ 2.500,00. |
 | **L4** | **Lua** | 20.000 | 🌙 | **iPad com Caneta Digital:** Tablet iPad de 10.2" com capa protetora + Viagem de Imersão VIP de 3 dias na sede corporativa. |
 | **L5** | **Terra** | 50.000 | 🌍 | **Scooter Elétrica 0km:** Scooter Elétrica Urbana (Watts/Voltz no valor de R$ 15.000,00 quitada). |
 | **L6** | **Órbita** | 120.000 | 💫 | **Viagem VIP Nacional:** Viagem de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas com tudo pago. |

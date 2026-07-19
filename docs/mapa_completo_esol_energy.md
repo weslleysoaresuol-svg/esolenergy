@@ -351,7 +351,7 @@ CREATE TABLE public.campanhas_premios (
 *   **L1 (Faísca) $\rightarrow$** *Kit Premium de Boas-Vindas:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica Premium + Boné Trucker Relevo 3D. 
     *   *Nota: O prêmio é liberado e enviado automaticamente apenas quando o consultor acumular os primeiros **1.000 pontos pessoais** de vendas (equivalente a uma venda residencial pequena), cobrindo com margem o custo de aquisição.*
 *   **L2 (Chama) $\rightarrow$** *Smartphone Executivo:* **Smartphone Corporativo de Elite** de última geração (ex: Samsung Galaxy ou Xiaomi Redmi, valor de mercado de R$ 900,00) para gerenciar clientes e CRM.
-*   **L3 (Raio) $\rightarrow$** *Notebook Corporativo:* **Notebook de Alta Performance Dell ou Lenovo** (valor de mercado de R$ 3.500,00) para estruturar o backoffice de vendas.
+*   **L3 (Raio) $\rightarrow$** *Notebook Corporativo:* **Notebook de Alta Performance Lenovo, Acer ou Dell** (valor de mercado de R$ 2.500,00) para estruturar o backoffice de vendas.
 *   **L4 (Lua) $\rightarrow$** *Tablet de Alta Performance:* **iPad de 10.2 polegadas com caneta digital e capa** (para apresentação comercial em campo) + Imersão VIP de 3 dias de Liderança Comercial na sede da Esol Energy com todas as despesas pagas.
 *   **L5 (Terra) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de mercado de R$ 15.000,00 quitada), conectando a conquista ao propósito de energia limpa da empresa.
 *   **L6 (Órbita) $\rightarrow$** *Viagem VIP Nacional:* Viagem VIP de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas com tudo pago.
