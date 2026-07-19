@@ -79,12 +79,12 @@ Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmi
 
 | Nível | Selo de Reconhecimento | pontos Mínimos | Insígnia Visual | Prêmio da Campanha Vigente (2026) |
 | :---: | :--- | :---: | :---: | :--- |
-| **L1** | **Faísca** | 0 | ✨ | **Boas-Vindas & Smartphone:** Kit Premium (Polo + Boné + Garrafa + Caderno) + Smartphone 5G de R$ 950,00. *(Liberado após 2.000 pontos pessoais)*. |
-| **L2** | **Chama** | 2.500 | 🔥 | **Kit Escritório de Campo:** Notebook Lenovo/ASUS (Ryzen 3 LPDDR5/SSD 256GB) + Mochila Executiva Impermeável de R$ 1.750,00. |
-| **L3** | **Raio** | 8.000 | ⚡ | **Estação Solar & Mapeamento:** Power Station com bateria de lítio e painel dobrável + Mini Drone com câmera HD de R$ 2.400,00. |
-| **L4** | **Lua** | 20.000 | 🌙 | **Tablet & Imersão VIP:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias na sede da holding. |
-| **L5** | **Terra** | 50.000 | 🌍 | **Scooter Elétrica 0km:** Scooter Elétrica Urbana (Watts/Voltz no valor de R$ 15.000,00 quitada). |
-| **L6** | **Órbita** | 120.000 | 💫 | **Viagem VIP Internacional:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (Tudo Pago). |
+| **L1** | **Faísca** | 0 | ✨ | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium (Polo, Boné, Garrafa, Caderno). *(Liberado com 2.000 pts pessoais)*. |
+| **L2** | **Chama** | 2.500 | 🔥 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS (Ryzen 3 LPDDR5/SSD 256GB) + Mochila Executiva Impermeável de R$ 1.750,00. |
+| **L3** | **Raio** | 8.000 | ⚡ | **Kit Aceleração Comercial:** Landing Page Local + R$ 1.500 de Verba de Tráfego Pago (Ads) + Maleta Showroom de R$ 2.400,00. |
+| **L4** | **Lua** | 20.000 | 🌙 | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias de treinamento na sede. |
+| **L5** | **Terra** | 50.000 | 🌍 | **Hub de Vendas (Escritório Regional):** Verba de R$ 15.000,00 para Montagem e Fachada do Escritório/Showroom local Esol. |
+| **L6** | **Órbita** | 120.000 | 💫 | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (Tudo Pago). |
 | **L7** | **Cometa** | 300.000 | ☄️ | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
 | **L8** | **Eclipse** | 800.000 | 🌑 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
 | **L9** | **Estrela** | 2.000.000 | ⭐ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
