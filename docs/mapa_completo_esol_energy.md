@@ -237,82 +237,98 @@ Aplicado a produtos em que a Esol atua como corretora/intermediadora e recebe sp
 *   **Repasse da Usina Parceira para a Esol (5%):** R\$ 30,00/mês
 *   *Direto (15%):* R\$ 4,50/mês para o Consultor N0.
 *   *Override (3%):* R\$ 0,90/mês para cada um dos Líderes do nível N1 ao N7.
-*   *Retido Esol (64%):* R\$ 19,20/mês direcionados para o caixa operacional.
+*   *Retido Esol (64%):* R\$ 19,20/mês direciona### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
 
-##### **2. Mercado Livre de Energia (MLE)**
-*   **Consumo da PME:** 20 MWh/mês
-*   **Comissão da Comercializadora para a Esol (R$ 4,00/MWh):** R\$ 80,00/mês
-*   *Direto (15%):* R\$ 12,00/mês para o Consultor N0.
-*   *Override (3%):* R\$ 2,40/mês para cada um dos Líderes do nível N1 ao N7.
-*   *Retido Esol (64%):* R\$ 51,20/mês direcionados para o caixa operacional.
-
-##### **3. Seguros Solares**
-*   **Mensalidade da Apólice:** R\$ 200,00/mês
-*   **Corretagem repassada para a Esol:** R\$ 30,00/mês
-*   *Direto (15%):* R\$ 4,50/mês para o Consultor N0.
-*   *Override (3%):* R\$ 0,### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
-
-Para manter a força de vendas do MMN motivada, produtiva e comprometida no longo prazo, o ecossistema incorpora um **Plano de Carreira Corporativo (Esol Career)**. Ao contrário do repasse financeiro mensal das comissões de rede, o Plano de Carreira representa o status e a premiação por volume acumulado de vendas. 
+Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career**. Trata-se de um sistema de gamificação que mapeia **exatamente 7 níveis de conquistas**, correspondentes em simetria aos 7 níveis de ganhos da rede, mas calculados de forma independente.
 
 ---
 
-#### 1. Diferença entre Ganhos de Comissão e Títulos de Carreira
-*   **Comissões e Override de Rede (Ganhos Financeiros):** Pagamentos em dinheiro (PIX) calculados sobre a hierarquia direta em 7 níveis (15% no N0 e 3% ou 1% no N1 ao N7). São liquidados mensalmente com base na adimplência das faturas dos clientes.
-*   **Títulos e Premiações de Carreira (Esol Career):** Patamares honoríficos (Bronze, Ouro, Presidente) alcançados ao acumular **Pontos de Vendas (PTS)** da rede nos últimos 12 meses. O alcance de um nível desbloqueia um **prêmio fixo físico** (Notebooks, Viagens, Carros e Imóveis).
+#### 1. Separação Estrutural de Lógica e Blindagem Trabalhista
+Para manter a conformidade jurídica total do ecossistema e evitar riscos de passivo trabalhista (vínculo CLT), o sistema adota regras estritas de nomenclatura e flexibilidade de prêmios:
+*   **Terminologia Não-Empregatícia (CLT-Safe):** Fica terminantemente proibido o uso de termos corporativos como *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"* ou *"Coordenador"*. Todos os níveis possuem nomes puramente simbólicos inspirados em metais, pedras preciosas e estados energéticos da física solar.
+*   **Desacoplamento de Prêmios (Campanhas de Incentivo Dinâmicas):** O alcance de um nível de carreira no banco de dados concede apenas a **Graduação do Nível** (que é fixa). Os presentes, prêmios ou viagens associados a esse nível **não são fixos no código**; eles são gerenciados por **Campanhas de Incentivo** dinâmicas criadas no painel do administrador, com datas de início e fim. Isso permite que a diretoria da Esol altere os prêmios (ex: de um notebook para um bônus financeiro ou viagem de férias) conforme a conveniência de caixa e estratégias sazonais de marketing.
 
 ---
 
-#### 2. Tabela de Conversão de Pontos (PTS) por Categoria de Preço
-Para garantir a proporcionalidade matemática, os pontos (`PTS`) são gerados de acordo com a **faixa de faturamento** do produto vendido, e não por kWp bruto:
+#### 2. Tabela de Conversão de pontos por Categoria de Preço
+A pontuação é calculada no banco de dados Supabase com base nas faixas de faturamento de cada negócio fechado, utilizando a palavra **pontos** por extenso:
 
 ##### **A. Sistemas Solares Turnkey (Cat #1 e #10)**
-*   Preço de venda até R$ 20.000,00 (Residencial Pequeno): **200 PTS**
-*   Preço de venda de R$ 20.001,00 a R$ 45.000,00 (Residencial Médio): **500 PTS**
-*   Preço de venda de R$ 45.001,00 a R$ 100.000,00 (Residencial Grande): **1.200 PTS**
-*   Preço de venda de R$ 100.001,00 a R$ 500.000,00 (Industrial/Comercial): **4.500 PTS**
-*   Preço de venda acima de R$ 500.001,00 (Usina Solar de Investimento): **15.000 PTS**
+*   Preço de venda até R$ 20.000,00: **200 pontos**
+*   Preço de venda de R$ 20.001,00 a R$ 45.000,00: **500 pontos**
+*   Preço de venda de R$ 45.001,00 a R$ 100.000,00: **1.200 pontos**
+*   Preço de venda de R$ 100.001,00 a R$ 500.000,00: **4.500 pontos**
+*   Preço de venda acima de R$ 500.001,00: **15.000 pontos**
 
 ##### **B. Loja Esol (Kits avulsos, Baterias, EV Chargers) (Cat #2)**
-*   Carrinho de compras até R$ 5.000,00: **50 PTS**
-*   Carrinho de compras de R$ 5.001,00 a R$ 15.000,00: **150 PTS**
-*   Carrinho de compras de R$ 15.001,00 a R$ 50.000,00: **500 PTS**
-*   Carrinho de compras acima de R$ 50.001,00: **1.500 PTS**
+*   Carrinho de compras até R$ 5.000,00: **50 pontos**
+*   Carrinho de compras de R$ 5.001,00 a R$ 15.000,00: **150 pontos**
+*   Carrinho de compras de R$ 15.001,00 a R$ 50.000,00: **500 pontos**
+*   Carrinho de compras acima de R$ 50.001,00: **1.500 pontos**
 
 ##### **C. Energia Assinatura (GD) e Mercado Livre (MLE) (Recorrência Mensal Ativa)**
-*   Mensalidade/Consumo do cliente até R$ 500,00/mês: **10 PTS / mês** ativo
-*   Mensalidade/Consumo do cliente de R$ 501,00 a R$ 2.000,00/mês: **40 PTS / mês** ativo
-*   Mensalidade/Consumo do cliente de R$ 2.001,00 a R$ 10.000,00/mês: **200 PTS / mês** ativo
-*   Mensalidade/Consumo do cliente acima de R$ 10.001,00/mês: **800 PTS / mês** ativo
+*   Mensalidade/Consumo do cliente até R$ 500,00/mês: **10 pontos / mês** ativo
+*   Mensalidade/Consumo do cliente de R$ 501,00 a R$ 2.000,00/mês: **40 pontos / mês** ativo
+*   Mensalidade/Consumo do cliente de R$ 2.001,00 a R$ 10.000,00/mês: **200 pontos / mês** ativo
+*   Mensalidade/Consumo do cliente acima de R$ 10.001,00/mês: **800 pontos / mês** ativo
 
 ##### **D. Serviços de O&M (Manutenção e Limpeza) (Cat #6 e #7)**
-*   Valor do serviço até R$ 500,00: **10 PTS**
-*   Valor do serviço de R$ 501,00 a R$ 2.000,00: **50 PTS**
-*   Valor do serviço acima de R$ 2.001,00: **150 PTS**
+*   Valor do serviço até R$ 500,00: **10 pontos**
+*   Valor do serviço de R$ 501,00 a R$ 2.000,00: **50 pontos**
+*   Valor do serviço acima de R$ 2.001,00: **150 pontos**
 
-*Nota: Os pontos da equipe sobem na árvore de rede, mas a qualificação segue uma **Janela Deslizante de 12 meses**. Os pontos com mais de 365 dias expiram do saldo de qualificação mensalmente, mantendo a rede ativa.*
+*Nota: A qualificação de carreira utiliza uma **Janela Deslizante de 12 meses**. Pontos gerados com mais de 365 dias expiram automaticamente do saldo do consultor, garantindo a atividade constante da rede.*
 
 ---
 
-#### 3. Graduações de Liderança e Premiações de Alta Pompa (Esol Career)
-O alcance de cada patamar de carreira desbloqueia presentes cumulativos e de alto impacto para o consultor:
+#### 3. Os 7 Níveis de Carreira, Insígnias e Bordões do Painel
+O aplicativo exibe a graduação do consultor de forma visual e motivadora. Cada nível possui uma insígnia digital única (figura) e um lema oficial (bordão) que aparecem em destaque no header do seu dashboard:
 
-| Nível | Título | Pontuação Mínima (PTS) | Requisitos de Linhas | Prêmio / Presente Corporativo Quitado |
+| Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
 | :---: | :--- | :---: | :--- | :--- |
-| **L1** | **Consultor Bronze** | 0 PTS | Cadastro ativo | **Kit Acolhimento:** Crachá PVC + Caderno Couro + Caneta + Polo. |
-| **L2** | **Consultor Prata** | 5.000 PTS | 2 Linhas Diretas | **Kit Elite Vendas:** iPad de 10.2" com capa + 3 Polos + Boné 3D. |
-| **L3** | **Consultor Ouro** | 25.000 PTS | 3 Linhas (1 Prata) | **Notebook Premium:** MacBook Air M2 ou Dell Latitude + Imersão 3d. |
-| **L4** | **Diretor Solar** | 120.000 PTS | 4 Linhas (1 Ouro) | **Carro Hatch Premium:** HB20/Onix/Polo 0km + Viagem VIP Nacional. |
-| **L5** | **Embaixador** | 600.000 PTS | 5 Linhas (2 Diretores) | **SUV de Luxo:** Compass/Corolla Cross 0km + Viagem VIP Alemanha. |
-| **L6** | **Presidente** | 2.500.000 PTS | 6 Linhas (3 Embaixadores) | **Imóvel Quitado:** Casa de Praia ou Apto de até R$ 600k + Bônus LPL. |
+| **1** | **Esol Bronze** | 0 pontos | 🟫 **Fóton de Bronze** (Centelha inicial) | *"A primeira faísca gera a grande corrente."* |
+| **2** | **Esol Prata** | 5.000 pontos | ⬜ **Fóton de Prata** (Refletor de luz) | *"Quem se conecta com o sol, irradia energia."* |
+| **3** | **Esol Ouro** | 25.000 pontos | 🟨 **Fóton de Ouro** (Feixe de luz ativo) | *"O ouro solar é a marca de quem constrói o amanhã."* |
+| **4** | **Esol Platina** | 120.000 pontos | 💍 **Cristal de Platina** (Usinagem técnica) | *"Inabalável e resistente como o silício e a platina."* |
+| **5** | **Esol Diamante** | 600.000 pontos | 💎 **Fóton Diamante** (Brilho e pureza) | *"Brilho puro de quem converte luz em prosperidade."* |
+| **6** | **Esol Duplo Diamante**| 2.500.000 pontos | 👑 **Coroa Solar Imperial** (Magnetismo) | *"Liderança que atrai, ilumina e reverbera em toda a rede."* |
+| **7** | **Esol Infinito** | 10.000.000 pontos| 🌌 **Estrela Quantum** (Irradiação total) | *"Energia infinita: a fusão completa com o sol do amanhã."* |
 
-##### **Detalhamento das Premiações Oficiais:**
-*   **L1. Bronze — Kit Acolhimento:** Recebe o crachá institucional de PVC com cordão acetinado Navy Royal, caneta executiva de metal gravada a laser, caderno de couro Navy Royal texturizado e 1 camisa polo oficial com logotipo bordado.
-*   **L2. Prata — Kit Elite de Campo:** Recebe **1x iPad de 10.2 polegadas** com capa protetora reforçada para demonstrações do simulador e coleta de assinaturas do Esol Sign direto na casa do cliente + 3 camisas polo executivas Esol e 1 boné Trucker com logotipo emborrachado em relevo 3D.
-*   **L3. Ouro — Notebook Premium & Imersão VIP:** Recebe **1x Notebook de Alta Performance (Apple MacBook Air M2/M3 ou Dell Latitude)** para estruturar seu backoffice de vendas + Viagem de Imersão VIP de 3 dias para a sede corporativa da Esol Energy com treinamento intensivo de fechamento comercial B2B de grandes usinas.
-*   **L4. Diretor Solar — Carro Premium & Viagem Nacional:** Recebe **1x Carro Zero Km Quitado (Modelo Hatch Premium, ex: Hyundai HB20, Chevrolet Onix ou VW Polo)** no valor de até R$ 95.000,00 quitado e em seu nome + Viagem VIP Nacional com acompanhante para Resort 5 estrelas em Porto de Galinhas ou Fernando de Noronha com tudo pago.
-*   **L5. Embaixador Solar — SUV de Luxo & Viagem Internacional:** Recebe **1x SUV de Luxo Zero Km Quitado (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus)** no valor de até R$ 200.000,00 quitado e em seu nome + Viagem VIP Internacional Anual com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* com passagens e hospedagem de luxo.
-*   **L6. Presidente Esol — Mansão/Apartamento de Veraneio:** Recebe **1x Imóvel Premium Quitado (Apartamento urbano ou casa de praia)** no valor de até R$ 600.000,00 quitado, registrado e escriturado em seu nome + Participação Semestral de Lucros de Liderança (LPL) de 1% do faturamento operacional do seu Tenant regional (*capped* via banco de dados para segurança de caixa da Esol).
 ---
+
+#### 4. Estrutura de Campanhas de Incentivo Dinâmicas (Modelagem de Prêmios)
+Para evitar rigidez contratual, os presentes e viagens são associados a **Campanhas de Incentivo** no banco de dados. Uma campanha ativa é modelada na tabela `public.campanhas_incentivo`:
+
+```sql
+CREATE TABLE public.campanhas_incentivo (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nome VARCHAR(255) NOT NULL,              -- ex: "Campanha Fundadores 2026"
+    data_inicio DATE NOT NULL,
+    data_fim DATE NOT NULL,
+    status VARCHAR(50) DEFAULT 'ativo',      -- 'ativo', 'encerrado'
+    tenant_id UUID REFERENCES public.tenants(id)
+);
+
+CREATE TABLE public.campanhas_premios (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    campanha_id UUID REFERENCES public.campanhas_incentivo(id) ON DELETE CASCADE,
+    nivel_carreira INTEGER NOT NULL,         -- 1 a 7 (Bronze ao Infinito)
+    titulo_premio VARCHAR(255) NOT NULL,     -- ex: "Notebook Dell Latitude"
+    descricao_detalhada TEXT,
+    imagem_url VARCHAR(255)                  -- Caminho da imagem no R2
+);
+```
+
+##### **Exemplo de Configuração de Prêmios da Campanha Vigente:**
+*   **L1 (Esol Bronze) $\rightarrow$** *Kit Acolhimento:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial.
+*   **L2 (Esol Prata) $\rightarrow$** *Kit Elite Campo:* **iPad de 10.2 polegadas** + 3 polos adicionais + Boné Trucker 3D.
+*   **L3 (Esol Ouro) $\rightarrow$** *Notebook de Elite:* **Notebook Corporativo de Alta Performance (Dell ou Apple MacBook Air)** + Imersão VIP de 3 dias de liderança.
+*   **L4 (Esol Platina) $\rightarrow$** *Carro Premium:* **Carro Hatch Zero Km** (ex: HB20/Onix/Polo de até R$ 95k quitado) + Viagem VIP Nacional.
+*   **L5 (Esol Diamante) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass/Toyota Corolla Cross de até R$ 200k) + Viagem VIP Internacional para a feira *Intersolar em Munique*.
+*   **L6 (Esol Duplo Diamante) $\rightarrow$** *Casa/Apartamento:* **Imóvel Premium de até R$ 600.000,00 quitado** e escriturado em seu nome.
+*   **L7 (Esol Infinito) $\rightarrow$** *Participação LPL Capped:* Participação Semestral de 1% do faturamento regional do seu Tenant (*capped* para segurança de fluxo de caixa).
+---
+
 
 ## 6. SIMULAÇÃO FINANCEIRA CONSOLIDADA
 
