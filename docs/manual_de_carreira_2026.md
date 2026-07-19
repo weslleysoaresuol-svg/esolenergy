@@ -80,7 +80,7 @@ Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmi
 | Nível | Selo de Reconhecimento | pontos Mínimos | Insígnia Visual | Prêmio da Campanha Vigente (2026) |
 | :---: | :--- | :---: | :---: | :--- |
 | **L1** | **Faísca** | 0 | ✨ | **Boas-Vindas & Smartphone:** Kit Premium (Polo + Boné + Garrafa + Caderno) + Smartphone 5G de R$ 950,00. *(Liberado após 2.000 pontos pessoais)*. |
-| **L2** | **Chama** | 2.500 | 🔥 | **Kit Escritório de Campo:** Notebook Lenovo/Acer (Ryzen 5/SSD 512GB) + Mochila Executiva Impermeável de R$ 2.350,00. |
+| **L2** | **Chama** | 2.500 | 🔥 | **Kit Escritório de Campo:** Notebook Lenovo/ASUS (Ryzen 3 LPDDR5/SSD 256GB) + Mochila Executiva Impermeável de R$ 1.750,00. |
 | **L3** | **Raio** | 8.000 | ⚡ | **Estação Solar & Mapeamento:** Power Station com bateria de lítio e painel dobrável + Mini Drone com câmera HD de R$ 2.400,00. |
 | **L4** | **Lua** | 20.000 | 🌙 | **Tablet & Imersão VIP:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias na sede da holding. |
 | **L5** | **Terra** | 50.000 | 🌍 | **Scooter Elétrica 0km:** Scooter Elétrica Urbana (Watts/Voltz no valor de R$ 15.000,00 quitada). |
