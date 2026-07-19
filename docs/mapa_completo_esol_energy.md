@@ -358,9 +358,9 @@ CREATE TABLE public.campanhas_premios (
 *   **L7 (Cometa) $\rightarrow$** *Viagem VIP Internacional:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens aéreas executivas e hotel 5 estrelas).
 *   **L8 (Eclipse) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: Hyundai HB20, Chevrolet Onix ou VW Polo, valor de R$ 95.000,00 quitado e em nome do consultor).
 *   **L9 (Estrela) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
-*   **L10 (Sol) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
-*   **L11 (Constelação) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
-*   **L12 (Galáxia) $\rightarrow$** *Participação Especial:* **Bônus de LPL Semestral Capped** (1% do faturamento líquido da regional) + Troféu Estelar de Metal e Ouro de Reconhecimento Vitalício da Holding.
+*   **L10 (Sol) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00 quitado e escriturado em seu nome).
+*   **L11 (Constelação) $\rightarrow$** *Carro Superesportivo de Luxo:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, valor de R$ 800.000,00 quitado e em seu nome).
+*   **L12 (Galáxia) $\rightarrow$** *Super Mansão:* **Mansão ou Cobertura Duplex de Alto Padrão** (valor de R$ 2.0 Milhões quitada e escriturada) + Bônus de LPL Semestral Capped (1% do faturamento líquido da regional) + Troféu Estelar de Metal e Ouro.
 
 ---
 
