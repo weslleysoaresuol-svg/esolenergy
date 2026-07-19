@@ -252,24 +252,24 @@ Não há distribuição multinível (sem 7 níveis). O consultor recebe uma taxa
 
 ---
 
-### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
+### 5.6 Programa de Reconhecimento e Selos (Esol Career)
 
-Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career**. Trata-se de um sistema de gamificação que mapeia **exatamente 12 níveis de conquistas** de forma progressiva. Esta quantidade ampliada de níveis permite passos menores entre as graduações iniciais (gerando sensação rápida de sucesso) e estende a linha de chegada para líderes veteranos, sem interferir na regra de repasse financeiro de 7 níveis de rede.
+Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career** como um sistema de gamificação de selos de qualificação. O programa mapeia **exatamente 12 níveis de selos** de forma progressiva. Esta quantidade ampliada permite passos menores entre os selos iniciais (gerando recompensa rápida de atividade) e estende a meta para parceiros de alto faturamento, sem interferir na regra de repasse financeiro de 7 níveis de rede.
 
 ---
 
 #### 1. Separação Estrutural de Lógica e Blindagem Trabalhista
 Para manter a conformidade jurídica total do ecossistema e evitar riscos de passivo trabalhista (vínculo CLT), o sistema adota duas regras de segurança:
-*   **Terminologia Não-Empregatícia (CLT-Safe):** Fica terminantemente proibido o uso de termos corporativos como *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"* ou *"Coordenador"*. Todos os 12 níveis possuem nomes puramente simbólicos inspirados em metais, pedras preciosas e estados energéticos da física solar.
-*   **Desacoplamento de Prêmios (Campanhas de Incentivo Dinâmicas):** O alcance de um nível de carreira no banco de dados concede apenas a **Graduação do Nível** (que é fixa). Os presentes, prêmios ou viagens associados a esse nível **não são fixos no código**; eles são gerenciados por **Campanhas de Incentivo** dinâmicas criadas no painel do administrador, com datas de início e fim. Isso permite que a diretoria da Esol altere os prêmios (ex: de um notebook para um carro elétrico, viagem ou bônus) conforme a conveniência de caixa e estratégias sazonais.
+*   **Terminologia Não-Empregatícia (CLT-Safe):** Fica terminantemente proibido o uso de termos corporativos como *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"* ou *"Coordenador"*. Todos os 12 níveis de selos possuem nomes puramente simbólicos inspirados em elementos da física solar e espacial.
+*   **Desacoplamento de Prêmios (Campanhas de Incentivo Dinâmicas):** O alcance de um selo no banco de dados concede apenas a **Qualificação do Selo** (que é fixa). Os presentes, prêmios ou viagens associados a esse selo **não são fixos no código**; eles são gerenciados por **Campanhas de Incentivo** dinâmicas criadas no painel do administrador, com datas de início e fim. Isso permite que a diretoria da Esol altere os prêmios conforme a conveniência de caixa e estratégias de mercado.
 
 ---
 
 #### 2. Regra de Equilíbrio de Linhas (Volume Máximo por Equipe - VME)
-Para evitar o "Efeito Carona" (onde um consultor inativo se qualifica apenas por ter indicado um megavendedor), o sistema aplica a regra de **VME de 50%**:
+Para evitar o "Efeito Carona" (onde um consultor inativo se qualifica apenas por ter indicado um consultor megavendedor), o sistema aplica a regra de **VME de 50%**:
 *   **Origem dos pontos:** Os pontos de qualificação acumulados vêm de forma combinada das **Vendas Diretas Pessoais** do consultor e das **Vendas de Rede (MMN)** geradas por seus indicados diretos e indiretos na árvore de patrocínio.
-*   **Limite por Linha (VME de 50%):** Para fins de qualificação em qualquer nível, o consultor só pode aproveitar, no máximo, **50% da pontuação exigida daquele nível específico** vinda de uma única linha de indicação direta (equipe de um indicado direto).
-*   *Exemplo:* Para bater a meta do nível **Raio (8.000 pontos)**, o máximo de pontos aproveitáveis de uma única equipe é de **4.000 pontos**. O saldo restante para bater os 8.000 pontos deve ser complementado pelas vendas pessoais do líder ou por outras equipes de indicados diretos. Isso blinda o caixa da Esol contra pagamentos redundantes de prêmios e estimula a formação de líderes ativos.
+*   **Limite por Linha (VME de 50%):** Para fins de qualificação em qualquer selo, o consultor só pode aproveitar, no máximo, **50% da pontuação exigida daquele selo específico** vinda de uma única linha de indicação direta (equipe de um indicado direto).
+*   *Exemplo:* Para bater a meta do selo **Raio (8.000 pontos)**, o máximo de pontos aproveitáveis de uma única equipe é de **4.000 pontos**. O saldo restante para bater os 8.000 pontos deve ser complementado pelas vendas pessoais do parceiro ou por outras equipes de indicados diretos. Isso blinda o caixa da Esol contra pagamentos redundantes de prêmios e estimula o desenvolvimento equilibrado de equipes.
 
 ---
 
@@ -300,12 +300,12 @@ A pontuação é calculada no banco de dados Supabase com base nas faixas de fat
 *   Valor do serviço de R$ 501,00 a R$ 2.000,00: **50 pontos**
 *   Valor do serviço acima de R$ 2.001,00: **150 pontos**
 
-*Nota: A qualificação de carreira utiliza uma **Janela Deslizante de 12 meses**. Pontos gerados com mais de 365 dias expiram automaticamente do saldo do consultor, garantindo a atividade constante da rede.*
+*Nota: A qualificação do selo utiliza uma **Janela Deslizante de 12 meses**. Pontos gerados com mais de 365 dias expiram automaticamente do saldo do consultor, garantindo a atividade constante da rede.*
 
 ---
 
-#### 4. Os 12 Níveis de Carreira, Insígnias e Bordões do Painel
-O aplicativo exibe a graduação do consultor de forma visual e motivadora. Cada nível possui uma insígnia digital única (figura) e um lema oficial (bordão) que aparecem em destaque no header do seu dashboard, utilizando termos simples e conhecidos do Espaço e da Energia:
+#### 4. Os 12 Selos de Qualificação, Insígnias e Bordões do Painel
+O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Cada nível possui uma insígnia digital única (figura) e um lema oficial (bordão) que aparecem em destaque no header do seu dashboard, utilizando termos simples e conhecidos do Espaço e da Energia:
 
 | Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
 | :---: | :--- | :---: | :--- | :--- |
@@ -340,7 +340,7 @@ CREATE TABLE public.campanhas_incentivo (
 CREATE TABLE public.campanhas_premios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     campanha_id UUID REFERENCES public.campanhas_incentivo(id) ON DELETE CASCADE,
-    nivel_carreira INTEGER NOT NULL,         -- 1 a 12 (Faísca ao Galáxia)
+    nivel_selo INTEGER NOT NULL,             -- 1 a 12 (Faísca ao Galáxia)
     titulo_premio VARCHAR(255) NOT NULL,     -- ex: "Notebook Dell Latitude"
     descricao_detalhada TEXT,
     imagem_url VARCHAR(255)                  -- Caminho da imagem no R2
@@ -364,9 +364,9 @@ CREATE TABLE public.campanhas_premios (
 
 ---
 
-#### 6. Manual Prático e Visual do Consultor (Esol Career)
+#### 6. Manual Prático e Visual do Consultor (Qualificação de Selos)
 
-Este guia rápido e didático deve ser exibido no aplicativo do consultor (na aba "Carreira") para que ele entenda o funcionamento do plano de pontuação de forma intuitiva:
+Este guia rápido e didático deve ser exibido no aplicativo do consultor (na aba "Selos e Prêmios") para que ele entenda o funcionamento do programa de selos de forma intuitiva:
 
 ##### **A. Como você Acumula pontos (Fluxo de Geração)**
 Sempre que você ou alguém da sua rede realiza uma venda, o sistema converte o valor em pontos. Os pontos sobem automaticamente por toda a árvore de rede:
@@ -385,13 +385,13 @@ graph TD
 *   *Como funciona:* Cada ponto ganho tem a validade exata de **365 dias**. Ao completar 1 ano, aquele ponto expira. Isso mantém o saldo de todos atualizado com a produtividade real do último ano, premiando quem se mantém ativo.
 
 ##### **C. A Regra do Equilíbrio (Como funciona o VME de 50%)**
-Para conquistar os prêmios maiores (celulares, notebooks, viagens e carros), você deve desenvolver pelo menos **2 ou 3 equipes ativas**. O sistema limita em **50% do total exigido para o nível** o aproveitamento de uma única perna (indicado direto).
+Para conquistar os prêmios maiores (celulares, notebooks, viagens e carros), você deve desenvolver pelo menos **2 ou 3 equipes ativas**. O sistema limita em **50% do total exigido para o selo** o aproveitamento de uma única perna (indicado direto).
 
-Veja o exemplo visual abaixo para a meta do nível **Raio (8.000 pontos)**:
+Veja o exemplo visual abaixo para a meta do selo **Raio (8.000 pontos)**:
 
 ```mermaid
 graph TD
-    Joao["Você (João) <br> Quer bater Raio (8.000 pts)"]
+    Joao["Você (João) <br> Quer obter Selo Raio (8.000 pts)"]
     Joao -->|Venda Pessoal| VP["Sua Venda Direta: <br> 2.000 pontos <br> (100% Contam)"]
     Joao -->|Linha Direta 1| EquipeA["Perna do Marcos (Forte) <br> Gerou: 15.000 pontos <br> Limite VME (50%): 4.000 pontos contam"]
     Joao -->|Linha Direta 2| EquipeB["Perna do Lucas (Menor) <br> Gerou: 1.500 pontos <br> (100% Contam)"]
@@ -399,7 +399,7 @@ graph TD
     VP & EquipeA & EquipeB --> Sum["Soma Qualificada: <br> 2.000 + 4.000 + 1.500 = 7.500 pts <br> (Faltam 500 pts!)"]
 ```
 
-*   **Dica de Liderança:** Se você tem uma equipe muito forte (como a do Marcos), ajude o seu outro indicado (Lucas) a fazer mais vendas ou faça mais vendas diretas para atingir a meta!
+*   **Dica para Evolução:** Se você tem um parceiro com vendas muito fortes (como o Marcos), ajude o seu outro indicado (Lucas) a fazer mais indicações ou faça mais vendas diretas para atingir a meta!
 
 ##### **D. Como resgatar o prêmio?**
 1.  **Atingiu a meta de qualificação:** O aplicativo exibirá um confete digital e uma notificação de conquista.
