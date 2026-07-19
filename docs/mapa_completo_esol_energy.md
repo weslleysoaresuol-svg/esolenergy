@@ -266,6 +266,58 @@ Não há distribuição multinível (sem 7 níveis). O consultor recebe uma taxa
 
 ---
 
+### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
+
+Para manter a força de vendas do MMN motivada, produtiva e comprometida no longo prazo, o ecossistema incorpora um **Plano de Carreira Corporativo (Esol Career)**. Ao contrário de modelos de pirâmides que prometem bens de luxo impossíveis de pagar, a Esol foca em **ferramentas de trabalho de alta performance, imersão técnica e experiências de liderança internacional**, custeados estritamente pela margem operacional retida pela Esol (64% do Motor 2 e markup do Motor 1).
+
+#### 1. O Motor de Pontuação de Carreira (Pontos de Carreira - PC)
+O avanço de nível baseia-se na produção de energia gerada pela carteira pessoal e da equipe. Cada produto do catálogo converte faturamento em **Pontos de Carreira (PC)** no banco de dados Supabase:
+
+*   🏠 **Sistema Solar Turnkey:** 1 kWp instalado = **100 PC** (ex: sistema residencial de 6kWp gera `600 PC`).
+*   ⚡ **Energia por Assinatura (GD):** 1 cliente ativo adimplente = **10 PC / mês** (enquanto a fatura estiver paga).
+*   🔌 **Mercado Livre de Energia (MLE):** 1 MWh de consumo ativo na carteira = **50 PC / mês**.
+*   🛒 **Loja Esol (Equipamentos):** Cada R$ 100,00 em compras físicas homologadas = **1 PC**.
+*   **Regra de Janela Deslizante (Rolagem de 12 Meses):** Para evitar "líderes inativos" que ganham comissão sem dar suporte à rede, a graduação de nível é calculada com base na pontuação acumulada nos **últimos 12 meses consecutivos**. Os pontos antigos expiram progressivamente, exigindo suporte ativo e renovação contínua da rede.
+
+---
+
+#### 2. Graduações de Liderança (Os 6 Níveis de Carreira)
+Para subir na hierarquia de carreira, o sistema exige uma combinação de pontuação total acumulada e desenvolvimento de novas lideranças diretas (linhas ativas):
+
+| Nível de Carreira | Título Oficial | Pontuação Mínima (PC) | Requisitos de Equipe (Linhas Diretas) |
+| :---: | :--- | :---: | :--- |
+| **L1** | **Consultor Bronze** | 0 PC | Cadastro concluído e conta ativa no app. |
+| **L2** | **Consultor Prata** | 2.500 PC | Mínimo de 2 linhas de consultores diretos ativos. |
+| **L3** | **Consultor Ouro** | 10.000 PC | Mínimo de 3 linhas ativas (sendo pelo menos 1 Prata). |
+| **L4** | **Diretor Solar** | 35.000 PC | Mínimo de 4 linhas ativas (sendo pelo menos 1 Ouro). |
+| **L5** | **Embaixador Solar** | 120.000 PC | Mínimo de 5 linhas ativas (sendo pelo menos 2 Diretores). |
+| **L6** | **Presidente Esol** | 500.000 PC | Mínimo de 6 linhas ativas (sendo pelo menos 3 Embaixadores). |
+
+---
+
+#### 3. Prêmios Corporativos e Reconhecimento Executivo
+Os prêmios são focados em fornecer prestígio social e melhorar o arsenal de vendas do consultor, garantindo atração e retenção de líderes de alto nível no ecossistema:
+
+```
+                  PREMIAÇÕES SUSTENTÁVEIS DE CARREIRA:
+                  
+     🥇 PRESIDENTE:  Viagem Internacional Feira Solar (Munique/EUA) + Bônus LPL
+     🥈 EMBAIXADOR:  Viagem Resort VIP Nacional (Bahia) + MacBook Air Corporativo
+     🥉 DIRETOR:     Imersão Técnica na Sede Esol + Relógio Smartwatch Corporativo
+     🏅 OURO:        Kit Vendas Elite (iPad de Simulação + 3x Polos Esol + Boné 3D)
+     🎗️ BRONZE/PRATA: Kit de Acolhimento Físico (Crachá PVC + Caderno Couro + Caneta)
+```
+
+*   **Bronze / Prata — Kit de Acolhimento Físico:** Envio do *Kit Oficial Esol Premium* para atuar no mercado físico. Contém: crachá de PVC rígido fosco com cordão Navy Royal, caneta esferográfica de metal com gravação a laser, caderno de couro Navy Royal texturizado e 1 camisa polo oficial com logotipo bordado.
+*   **Ouro — Kit de Vendas Elite:** Fornecimento de ferramentas digitais de campo. Contém: **1x iPad de entrada** com capa protetora (para rodar o simulador e colher assinaturas do Esol Sign na frente do cliente), 3x camisas polo executivas Esol e 1x boné Trucker estruturado com relevo 3D.
+*   **Diretor Solar — Imersão Executiva Esol:** Viagem de 3 dias com acompanhante e todas as despesas pagas para a sede administrativa/operacional da Esol Energy. Inclui treinamento exclusivo de fechamento de grandes contas B2B com os fundadores e engenheiros + **1x Relógio Smartwatch** personalizado gravada a laser com a insígnia de Diretor Solar.
+*   **Embaixador Solar — Reconhecimento Nacional & Viagem VIP:** Viagem de 5 dias com acompanhante em Resort 5 estrelas nacional (ex: Tivoli Ecoresort Praia do Forte na Bahia) + **1x MacBook Air** corporativo configurado para apresentações e coordenação de conferências online com a rede nacional.
+*   **Presidente Esol — Viagem Internacional & Participação Semestral (LPL):** 
+    *   **Viagem Internacional Anual:** Passagem e hospedagem de luxo com acompanhante para participar da maior feira de energia solar do mundo: a *Intersolar Europe em Munique (Alemanha)* ou a *RE+ nos Estados Unidos*, conectando o líder com as maiores novidades do setor de transição energética.
+    *   **Liderança de Participação de Lucros (LPL):** Recebimento semestral de um bônus equivalente a **1% do faturamento operacional líquido** gerado por sua região ou sub-rede tenant, limitado (*capped*) a um teto financeiro de segurança no banco de dados para garantir que a premiação nunca comprometa o caixa da Esol.
+
+---
+
 ## 6. SIMULAÇÃO FINANCEIRA CONSOLIDADA
 
 ### O que o Consultor Ganha (Comissão Direta):
