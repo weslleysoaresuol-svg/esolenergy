@@ -250,72 +250,68 @@ Aplicado a produtos em que a Esol atua como corretora/intermediadora e recebe sp
 *   **Mensalidade da Apólice:** R\$ 200,00/mês
 *   **Corretagem repassada para a Esol:** R\$ 30,00/mês
 *   *Direto (15%):* R\$ 4,50/mês para o Consultor N0.
-*   *Override (3%):* R\$ 0,90/mês para cada um dos Líderes do nível N1 ao N7.
-*   *Retido Esol (64%):* R\$ 19,20/mês direcionados para o caixa operacional.
+*   *Override (3%):* R\$ 0,### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
 
-
----
-
-### 5.5 Canal de Indicação Corporativa (Produtos B2B)
-Não há distribuição multinível (sem 7 níveis). O consultor recebe uma taxa de indicação direta calculada sobre a margem da Esol.
-
-| Categoria | Produto | Comissão de Indicação | Sobe 7 níveis? |
-| :--- | :--- | :--- | :--- |
-| **Cat #9** | 💡 Eficiência Energética | 2% a 5% da margem líquida Esol | ❌ Não (apenas direto) |
-| **Cat #10** | 🏗️ Usina Solar de Investimento | 2% a 5% da margem líquida Esol | ❌ Não (apenas direto) |
+Para manter a força de vendas do MMN motivada, produtiva e comprometida no longo prazo, o ecossistema incorpora um **Plano de Carreira Corporativo (Esol Career)**. Ao contrário do repasse financeiro mensal das comissões de rede, o Plano de Carreira representa o status e a premiação por volume acumulado de vendas. 
 
 ---
 
-### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
-
-Para manter a força de vendas do MMN motivada, produtiva e comprometida no longo prazo, o ecossistema incorpora um **Plano de Carreira Corporativo (Esol Career)**. Ao contrário de modelos de pirâmides que prometem bens de luxo impossíveis de pagar, a Esol foca em **ferramentas de trabalho de alta performance, imersão técnica e experiências de liderança internacional**, custeados estritamente pela margem operacional retida pela Esol (64% do Motor 2 e markup do Motor 1).
-
-#### 1. O Motor de Pontuação de Carreira (Pontos de Carreira - PC)
-O avanço de nível baseia-se na produção de energia gerada pela carteira pessoal e da equipe. Cada produto do catálogo converte faturamento em **Pontos de Carreira (PC)** no banco de dados Supabase:
-
-*   🏠 **Sistema Solar Turnkey:** 1 kWp instalado = **100 PC** (ex: sistema residencial de 6kWp gera `600 PC`).
-*   ⚡ **Energia por Assinatura (GD):** 1 cliente ativo adimplente = **10 PC / mês** (enquanto a fatura estiver paga).
-*   🔌 **Mercado Livre de Energia (MLE):** 1 MWh de consumo ativo na carteira = **50 PC / mês**.
-*   🛒 **Loja Esol (Equipamentos):** Cada R$ 100,00 em compras físicas homologadas = **1 PC**.
-*   **Regra de Janela Deslizante (Rolagem de 12 Meses):** Para evitar "líderes inativos" que ganham comissão sem dar suporte à rede, a graduação de nível é calculada com base na pontuação acumulada nos **últimos 12 meses consecutivos**. Os pontos antigos expiram progressivamente, exigindo suporte ativo e renovação contínua da rede.
+#### 1. Diferença entre Ganhos de Comissão e Títulos de Carreira
+*   **Comissões e Override de Rede (Ganhos Financeiros):** Pagamentos em dinheiro (PIX) calculados sobre a hierarquia direta em 7 níveis (15% no N0 e 3% ou 1% no N1 ao N7). São liquidados mensalmente com base na adimplência das faturas dos clientes.
+*   **Títulos e Premiações de Carreira (Esol Career):** Patamares honoríficos (Bronze, Ouro, Presidente) alcançados ao acumular **Pontos de Vendas (PTS)** da rede nos últimos 12 meses. O alcance de um nível desbloqueia um **prêmio fixo físico** (Notebooks, Viagens, Carros e Imóveis).
 
 ---
 
-#### 2. Graduações de Liderança (Os 6 Níveis de Carreira)
-Para subir na hierarquia de carreira, o sistema exige uma combinação de pontuação total acumulada e desenvolvimento de novas lideranças diretas (linhas ativas):
+#### 2. Tabela de Conversão de Pontos (PTS) por Categoria de Preço
+Para garantir a proporcionalidade matemática, os pontos (`PTS`) são gerados de acordo com a **faixa de faturamento** do produto vendido, e não por kWp bruto:
 
-| Nível de Carreira | Título Oficial | Pontuação Mínima (PC) | Requisitos de Equipe (Linhas Diretas) |
-| :---: | :--- | :---: | :--- |
-| **L1** | **Consultor Bronze** | 0 PC | Cadastro concluído e conta ativa no app. |
-| **L2** | **Consultor Prata** | 2.500 PC | Mínimo de 2 linhas de consultores diretos ativos. |
-| **L3** | **Consultor Ouro** | 10.000 PC | Mínimo de 3 linhas ativas (sendo pelo menos 1 Prata). |
-| **L4** | **Diretor Solar** | 35.000 PC | Mínimo de 4 linhas ativas (sendo pelo menos 1 Ouro). |
-| **L5** | **Embaixador Solar** | 120.000 PC | Mínimo de 5 linhas ativas (sendo pelo menos 2 Diretores). |
-| **L6** | **Presidente Esol** | 500.000 PC | Mínimo de 6 linhas ativas (sendo pelo menos 3 Embaixadores). |
+##### **A. Sistemas Solares Turnkey (Cat #1 e #10)**
+*   Preço de venda até R$ 20.000,00 (Residencial Pequeno): **200 PTS**
+*   Preço de venda de R$ 20.001,00 a R$ 45.000,00 (Residencial Médio): **500 PTS**
+*   Preço de venda de R$ 45.001,00 a R$ 100.000,00 (Residencial Grande): **1.200 PTS**
+*   Preço de venda de R$ 100.001,00 a R$ 500.000,00 (Industrial/Comercial): **4.500 PTS**
+*   Preço de venda acima de R$ 500.001,00 (Usina Solar de Investimento): **15.000 PTS**
+
+##### **B. Loja Esol (Kits avulsos, Baterias, EV Chargers) (Cat #2)**
+*   Carrinho de compras até R$ 5.000,00: **50 PTS**
+*   Carrinho de compras de R$ 5.001,00 a R$ 15.000,00: **150 PTS**
+*   Carrinho de compras de R$ 15.001,00 a R$ 50.000,00: **500 PTS**
+*   Carrinho de compras acima de R$ 50.001,00: **1.500 PTS**
+
+##### **C. Energia Assinatura (GD) e Mercado Livre (MLE) (Recorrência Mensal Ativa)**
+*   Mensalidade/Consumo do cliente até R$ 500,00/mês: **10 PTS / mês** ativo
+*   Mensalidade/Consumo do cliente de R$ 501,00 a R$ 2.000,00/mês: **40 PTS / mês** ativo
+*   Mensalidade/Consumo do cliente de R$ 2.001,00 a R$ 10.000,00/mês: **200 PTS / mês** ativo
+*   Mensalidade/Consumo do cliente acima de R$ 10.001,00/mês: **800 PTS / mês** ativo
+
+##### **D. Serviços de O&M (Manutenção e Limpeza) (Cat #6 e #7)**
+*   Valor do serviço até R$ 500,00: **10 PTS**
+*   Valor do serviço de R$ 501,00 a R$ 2.000,00: **50 PTS**
+*   Valor do serviço acima de R$ 2.001,00: **150 PTS**
+
+*Nota: Os pontos da equipe sobem na árvore de rede, mas a qualificação segue uma **Janela Deslizante de 12 meses**. Os pontos com mais de 365 dias expiram do saldo de qualificação mensalmente, mantendo a rede ativa.*
 
 ---
 
-#### 3. Prêmios Corporativos e Reconhecimento Executivo
-Os prêmios são focados em fornecer prestígio social e melhorar o arsenal de vendas do consultor, garantindo atração e retenção de líderes de alto nível no ecossistema:
+#### 3. Graduações de Liderança e Premiações de Alta Pompa (Esol Career)
+O alcance de cada patamar de carreira desbloqueia presentes cumulativos e de alto impacto para o consultor:
 
-```
-                  PREMIAÇÕES SUSTENTÁVEIS DE CARREIRA:
-                  
-     🥇 PRESIDENTE:  Viagem Internacional Feira Solar (Munique/EUA) + Bônus LPL
-     🥈 EMBAIXADOR:  Viagem Resort VIP Nacional (Bahia) + MacBook Air Corporativo
-     🥉 DIRETOR:     Imersão Técnica na Sede Esol + Relógio Smartwatch Corporativo
-     🏅 OURO:        Kit Vendas Elite (iPad de Simulação + 3x Polos Esol + Boné 3D)
-     🎗️ BRONZE/PRATA: Kit de Acolhimento Físico (Crachá PVC + Caderno Couro + Caneta)
-```
+| Nível | Título | Pontuação Mínima (PTS) | Requisitos de Linhas | Prêmio / Presente Corporativo Quitado |
+| :---: | :--- | :---: | :--- | :--- |
+| **L1** | **Consultor Bronze** | 0 PTS | Cadastro ativo | **Kit Acolhimento:** Crachá PVC + Caderno Couro + Caneta + Polo. |
+| **L2** | **Consultor Prata** | 5.000 PTS | 2 Linhas Diretas | **Kit Elite Vendas:** iPad de 10.2" com capa + 3 Polos + Boné 3D. |
+| **L3** | **Consultor Ouro** | 25.000 PTS | 3 Linhas (1 Prata) | **Notebook Premium:** MacBook Air M2 ou Dell Latitude + Imersão 3d. |
+| **L4** | **Diretor Solar** | 120.000 PTS | 4 Linhas (1 Ouro) | **Carro Hatch Premium:** HB20/Onix/Polo 0km + Viagem VIP Nacional. |
+| **L5** | **Embaixador** | 600.000 PTS | 5 Linhas (2 Diretores) | **SUV de Luxo:** Compass/Corolla Cross 0km + Viagem VIP Alemanha. |
+| **L6** | **Presidente** | 2.500.000 PTS | 6 Linhas (3 Embaixadores) | **Imóvel Quitado:** Casa de Praia ou Apto de até R$ 600k + Bônus LPL. |
 
-*   **Bronze / Prata — Kit de Acolhimento Físico:** Envio do *Kit Oficial Esol Premium* para atuar no mercado físico. Contém: crachá de PVC rígido fosco com cordão Navy Royal, caneta esferográfica de metal com gravação a laser, caderno de couro Navy Royal texturizado e 1 camisa polo oficial com logotipo bordado.
-*   **Ouro — Kit de Vendas Elite:** Fornecimento de ferramentas digitais de campo. Contém: **1x iPad de entrada** com capa protetora (para rodar o simulador e colher assinaturas do Esol Sign na frente do cliente), 3x camisas polo executivas Esol e 1x boné Trucker estruturado com relevo 3D.
-*   **Diretor Solar — Imersão Executiva Esol:** Viagem de 3 dias com acompanhante e todas as despesas pagas para a sede administrativa/operacional da Esol Energy. Inclui treinamento exclusivo de fechamento de grandes contas B2B com os fundadores e engenheiros + **1x Relógio Smartwatch** personalizado gravada a laser com a insígnia de Diretor Solar.
-*   **Embaixador Solar — Reconhecimento Nacional & Viagem VIP:** Viagem de 5 dias com acompanhante em Resort 5 estrelas nacional (ex: Tivoli Ecoresort Praia do Forte na Bahia) + **1x MacBook Air** corporativo configurado para apresentações e coordenação de conferências online com a rede nacional.
-*   **Presidente Esol — Viagem Internacional & Participação Semestral (LPL):** 
-    *   **Viagem Internacional Anual:** Passagem e hospedagem de luxo com acompanhante para participar da maior feira de energia solar do mundo: a *Intersolar Europe em Munique (Alemanha)* ou a *RE+ nos Estados Unidos*, conectando o líder com as maiores novidades do setor de transição energética.
-    *   **Liderança de Participação de Lucros (LPL):** Recebimento semestral de um bônus equivalente a **1% do faturamento operacional líquido** gerado por sua região ou sub-rede tenant, limitado (*capped*) a um teto financeiro de segurança no banco de dados para garantir que a premiação nunca comprometa o caixa da Esol.
-
+##### **Detalhamento das Premiações Oficiais:**
+*   **L1. Bronze — Kit Acolhimento:** Recebe o crachá institucional de PVC com cordão acetinado Navy Royal, caneta executiva de metal gravada a laser, caderno de couro Navy Royal texturizado e 1 camisa polo oficial com logotipo bordado.
+*   **L2. Prata — Kit Elite de Campo:** Recebe **1x iPad de 10.2 polegadas** com capa protetora reforçada para demonstrações do simulador e coleta de assinaturas do Esol Sign direto na casa do cliente + 3 camisas polo executivas Esol e 1 boné Trucker com logotipo emborrachado em relevo 3D.
+*   **L3. Ouro — Notebook Premium & Imersão VIP:** Recebe **1x Notebook de Alta Performance (Apple MacBook Air M2/M3 ou Dell Latitude)** para estruturar seu backoffice de vendas + Viagem de Imersão VIP de 3 dias para a sede corporativa da Esol Energy com treinamento intensivo de fechamento comercial B2B de grandes usinas.
+*   **L4. Diretor Solar — Carro Premium & Viagem Nacional:** Recebe **1x Carro Zero Km Quitado (Modelo Hatch Premium, ex: Hyundai HB20, Chevrolet Onix ou VW Polo)** no valor de até R$ 95.000,00 quitado e em seu nome + Viagem VIP Nacional com acompanhante para Resort 5 estrelas em Porto de Galinhas ou Fernando de Noronha com tudo pago.
+*   **L5. Embaixador Solar — SUV de Luxo & Viagem Internacional:** Recebe **1x SUV de Luxo Zero Km Quitado (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus)** no valor de até R$ 200.000,00 quitado e em seu nome + Viagem VIP Internacional Anual com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* com passagens e hospedagem de luxo.
+*   **L6. Presidente Esol — Mansão/Apartamento de Veraneio:** Recebe **1x Imóvel Premium Quitado (Apartamento urbano ou casa de praia)** no valor de até R$ 600.000,00 quitado, registrado e escriturado em seu nome + Participação Semestral de Lucros de Liderança (LPL) de 1% do faturamento operacional do seu Tenant regional (*capped* via banco de dados para segurança de caixa da Esol).
 ---
 
 ## 6. SIMULAÇÃO FINANCEIRA CONSOLIDADA
