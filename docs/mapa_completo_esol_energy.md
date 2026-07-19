@@ -265,7 +265,15 @@ Para manter a conformidade jurídica total do ecossistema e evitar riscos de pas
 
 ---
 
-#### 2. Tabela de Conversão de pontos por Categoria de Preço
+#### 2. Regra de Equilíbrio de Linhas (Volume Máximo por Equipe - VME)
+Para evitar o "Efeito Carona" (onde um consultor inativo se qualifica apenas por ter indicado um megavendedor), o sistema aplica a regra de **VME de 50%**:
+*   **Origem dos pontos:** Os pontos de qualificação acumulados vêm de forma combinada das **Vendas Diretas Pessoais** do consultor e das **Vendas de Rede (MMN)** geradas por seus indicados diretos e indiretos na árvore de patrocínio.
+*   **Limite por Linha (VME de 50%):** Para fins de qualificação em qualquer nível, o consultor só pode aproveitar, no máximo, **50% da pontuação exigida daquele nível específico** vinda de uma única linha de indicação direta (equipe de um indicado direto).
+*   *Exemplo:* Para bater a meta do nível **Raio (8.000 pontos)**, o máximo de pontos aproveitáveis de uma única equipe é de **4.000 pontos**. O saldo restante para bater os 8.000 pontos deve ser complementado pelas vendas pessoais do líder ou por outras equipes de indicados diretos. Isso blinda o caixa da Esol contra pagamentos redundantes de prêmios e estimula a formação de líderes ativos.
+
+---
+
+#### 3. Tabela de Conversão de pontos por Categoria de Preço
 A pontuação é calculada no banco de dados Supabase com base nas faixas de faturamento de cada negócio fechado, utilizando a palavra **pontos** por extenso:
 
 ##### **A. Sistemas Solares Turnkey (Cat #1 e #10)**
@@ -296,7 +304,7 @@ A pontuação é calculada no banco de dados Supabase com base nas faixas de fat
 
 ---
 
-#### 3. Os 12 Níveis de Carreira, Insígnias e Bordões do Painel
+#### 4. Os 12 Níveis de Carreira, Insígnias e Bordões do Painel
 O aplicativo exibe a graduação do consultor de forma visual e motivadora. Cada nível possui uma insígnia digital única (figura) e um lema oficial (bordão) que aparecem em destaque no header do seu dashboard, utilizando termos simples e conhecidos do Espaço e da Energia:
 
 | Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
@@ -316,7 +324,7 @@ O aplicativo exibe a graduação do consultor de forma visual e motivadora. Cada
 
 ---
 
-#### 4. Estrutura de Campanhas de Incentivo Dinâmicas (Modelagem de Prêmios)
+#### 5. Estrutura de Campanhas de Incentivo Dinâmicas (Modelagem de Prêmios)
 Para evitar rigidez contratual, os presentes e viagens são associados a **Campanhas de Incentivo** no banco de dados. Uma campanha ativa é modelada na tabela `public.campanhas_incentivo`:
 
 ```sql
