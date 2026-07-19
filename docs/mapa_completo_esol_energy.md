@@ -350,8 +350,8 @@ CREATE TABLE public.campanhas_premios (
 ##### **Exemplo de Configuração de Prêmios da Campanha Vigente:**
 *   **L1 (Faísca) $\rightarrow$** *Kit Premium de Boas-Vindas:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica Premium + Boné Trucker Relevo 3D. 
     *   *Nota: O prêmio é liberado e enviado automaticamente apenas quando o consultor acumular os primeiros **1.000 pontos pessoais** de vendas (equivalente a uma venda residencial pequena), cobrindo com margem o custo de aquisição.*
-*   **L2 (Chama) $\rightarrow$** *Smartphone Premium:* **Smartphone de Alta Categoria** de última geração (ex: Samsung Galaxy A55 ou Xiaomi POCO, valor de mercado de R$ 1.500,00) para gerenciar clientes, CRM e mídias sociais.
-*   **L3 (Raio) $\rightarrow$** *Notebook Corporativo:* **Notebook de Alta Performance Lenovo ou Acer com 16GB de RAM e 512GB SSD** (valor de mercado de R$ 3.000,00) para estruturar o backoffice de vendas.
+*   **L2 (Chama) $\rightarrow$** *Smartphone de Alta Performance:* **Smartphone de Excelente Custo-Benefício** (marcas selecionadas: Motorola ou Xiaomi, com mínimo de 128GB/256GB de memória e 5G, valor de mercado de R$ 950,00) para suporte completo de vendas e CRM.
+*   **L3 (Raio) $\rightarrow$** *Kit Escritório de Campo:* **Notebook de Alta Performance Lenovo ou Acer** (Ryzen 5/Core i5, 8GB/16GB RAM, 512GB SSD) + **Mochila Executiva Impermeável para Notebook** com saída USB (valor total do kit de R$ 2.350,00) para estruturar o backoffice móvel.
 *   **L4 (Lua) $\rightarrow$** *Tablet de Alta Performance:* **iPad de 10.2 polegadas com caneta digital e capa** (para apresentação comercial em campo) + Imersão VIP de 3 dias de Liderança Comercial na sede da Esol Energy com todas as despesas pagas.
 *   **L5 (Terra) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de mercado de R$ 15.000,00 quitada), conectando a conquista ao propósito de energia limpa da empresa.
 *   **L6 (Órbita) $\rightarrow$** *Viagem VIP Nacional:* Viagem VIP de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas com tudo pago.

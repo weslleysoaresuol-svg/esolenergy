@@ -80,8 +80,8 @@ Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmi
 | Nível | Selo de Reconhecimento | pontos Mínimos | Insígnia Visual | Prêmio da Campanha Vigente (2026) |
 | :---: | :--- | :---: | :---: | :--- |
 | **L1** | **Faísca** | 0 | ✨ | **Kit Premium de Boas-Vindas:** Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica + Boné Trucker 3D. *(Liberado após acumular 1.000 pontos pessoais)*. |
-| **L2** | **Chama** | 2.500 | 🔥 | **Smartphone Premium:** Smartphone de Alta Categoria (Samsung Galaxy A55 ou Xiaomi POCO) no valor de R$ 1.500,00. |
-| **L3** | **Raio** | 8.000 | ⚡ | **Notebook Corporativo:** Notebook Lenovo ou Acer (Ryzen/Core i5, 16GB RAM, 512GB SSD) no valor de R$ 3.000,00. |
+| **L2** | **Chama** | 2.500 | 🔥 | **Smartphone Executivo:** Smartphone de Ótimo Custo-Benefício (Motorola ou Xiaomi) com 5G no valor de R$ 950,00. |
+| **L3** | **Raio** | 8.000 | ⚡ | **Kit Escritório de Campo:** Notebook Lenovo/Acer (Ryzen 5/SSD 512GB) + Mochila Executiva Impermeável de R$ 2.350,00. |
 | **L4** | **Lua** | 20.000 | 🌙 | **iPad com Caneta Digital:** Tablet iPad de 10.2" com capa protetora + Viagem de Imersão VIP de 3 dias na sede corporativa. |
 | **L5** | **Terra** | 50.000 | 🌍 | **Scooter Elétrica 0km:** Scooter Elétrica Urbana (Watts/Voltz no valor de R$ 15.000,00 quitada). |
 | **L6** | **Órbita** | 120.000 | 💫 | **Viagem VIP Nacional:** Viagem de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas com tudo pago. |
