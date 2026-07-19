@@ -217,36 +217,51 @@ O Motor 1 é aplicado aos produtos de fabricação e execução direta da Esol, 
 | **#6** | 🔧 Manutenção (O&M) | 10% | 6,5% | 0,5% por nível (Total 3,5%) |
 | **#7** | 🧹 Limpeza de Painéis | 12% | 8,5% | 0,5% por nível (Total 3,5%) |
 
-*Nota: A margem de segurança retida pela Esol sobre o preço final garante a quitação de custos operacionais e tributos.*
-
-
----
-
-### 5.4 Motor 2: Comissão sobre Receita da Esol (Recorrência Pura)
-Aplicado a produtos em que a Esol atua como corretora/intermediadora e recebe spread ou comissão da distribuidora parceira.
-*   **Base de Cálculo:** Comissão líquida recebida pela Esol.
-*   **Distribuição da Receita (TDTC = 36% da receita da Esol):**
-    *   **Vendedor Direto:** 15% da receita Esol.
-    *   **Override (N1 a N7):** 3% da receita Esol por nível (21% no total).
-    *   **Margem Operacional/Lucro Esol:** 64% da receita recebida da parceira.
-
-#### 📋 Exemplos Práticos de Recorrência do Motor 2
+*Nota: A margem de segurança retida pela Esol sobre o preço final #### 📋 Exemplos Práticos de Recorrência do Motor 2
 
 ##### **1. Energia por Assinatura (Geração Distribuída)**
 *   **Fatura Mensal do Cliente:** R\$ 600,00
 *   **Repasse da Usina Parceira para a Esol (5%):** R\$ 30,00/mês
 *   *Direto (15%):* R\$ 4,50/mês para o Consultor N0.
 *   *Override (3%):* R\$ 0,90/mês para cada um dos Líderes do nível N1 ao N7.
-*   *Retido Esol (64%):* R\$ 19,20/mês direciona### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
+*   *Retido Esol (64%):* R\$ 19,20/mês direcionados para o caixa operacional.
 
-Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career**. Trata-se de um sistema de gamificação que mapeia **exatamente 7 níveis de conquistas**, correspondentes em simetria aos 7 níveis de ganhos da rede, mas calculados de forma independente.
+##### **2. Mercado Livre de Energia (MLE)**
+*   **Consumo da PME:** 20 MWh/mês
+*   **Comissão da Comercializadora para a Esol (R$ 4,00/MWh):** R\$ 80,00/mês
+*   *Direto (15%):* R\$ 12,00/mês para o Consultor N0.
+*   *Override (3%):* R\$ 2,40/mês para cada um dos Líderes do nível N1 ao N7.
+*   *Retido Esol (64%):* R\$ 51,20/mês direcionados para o caixa operacional.
+
+##### **3. Seguros Solares**
+*   **Mensalidade da Apólice:** R\$ 200,00/mês
+*   **Corretagem repassada para a Esol:** R\$ 30,00/mês
+*   *Direto (15%):* R\$ 4,50/mês para o Consultor N0.
+*   *Override (3%):* R\$ 0,90/mês para cada um dos Líderes do nível N1 ao N7.
+*   *Retido Esol (64%):* R\$ 19,20/mês direcionados para o caixa operacional.
+
+---
+
+### 5.5 Canal de Indicação Corporativa (Produtos B2B)
+Não há distribuição multinível (sem 7 níveis). O consultor recebe uma taxa de indicação direta calculada sobre a margem da Esol.
+
+| Categoria | Produto | Comissão de Indicação | Sobe 7 níveis? |
+| :--- | :--- | :--- | :--- |
+| **Cat #9** | 💡 Eficiência Energética | 2% a 5% da margem líquida Esol | ❌ Não (apenas direto) |
+| **Cat #10** | 🏗️ Usina Solar de Investimento | 2% a 5% da margem líquida Esol | ❌ Não (apenas direto) |
+
+---
+
+### 5.6 Plano de Carreira e Gamificação Sustentável (Esol Career)
+
+Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career**. Trata-se de um sistema de gamificação que mapeia **exatamente 12 níveis de conquistas** de forma progressiva. Esta quantidade ampliada de níveis permite passos menores entre as graduações iniciais (gerando sensação rápida de sucesso) e estende a linha de chegada para líderes veteranos, sem interferir na regra de repasse financeiro de 7 níveis de rede.
 
 ---
 
 #### 1. Separação Estrutural de Lógica e Blindagem Trabalhista
-Para manter a conformidade jurídica total do ecossistema e evitar riscos de passivo trabalhista (vínculo CLT), o sistema adota regras estritas de nomenclatura e flexibilidade de prêmios:
-*   **Terminologia Não-Empregatícia (CLT-Safe):** Fica terminantemente proibido o uso de termos corporativos como *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"* ou *"Coordenador"*. Todos os níveis possuem nomes puramente simbólicos inspirados em metais, pedras preciosas e estados energéticos da física solar.
-*   **Desacoplamento de Prêmios (Campanhas de Incentivo Dinâmicas):** O alcance de um nível de carreira no banco de dados concede apenas a **Graduação do Nível** (que é fixa). Os presentes, prêmios ou viagens associados a esse nível **não são fixos no código**; eles são gerenciados por **Campanhas de Incentivo** dinâmicas criadas no painel do administrador, com datas de início e fim. Isso permite que a diretoria da Esol altere os prêmios (ex: de um notebook para um bônus financeiro ou viagem de férias) conforme a conveniência de caixa e estratégias sazonais de marketing.
+Para manter a conformidade jurídica total do ecossistema e evitar riscos de passivo trabalhista (vínculo CLT), o sistema adota duas regras de segurança:
+*   **Terminologia Não-Empregatícia (CLT-Safe):** Fica terminantemente proibido o uso de termos corporativos como *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"* ou *"Coordenador"*. Todos os 12 níveis possuem nomes puramente simbólicos inspirados em metais, pedras preciosas e estados energéticos da física solar.
+*   **Desacoplamento de Prêmios (Campanhas de Incentivo Dinâmicas):** O alcance de um nível de carreira no banco de dados concede apenas a **Graduação do Nível** (que é fixa). Os presentes, prêmios ou viagens associados a esse nível **não são fixos no código**; eles são gerenciados por **Campanhas de Incentivo** dinâmicas criadas no painel do administrador, com datas de início e fim. Isso permite que a diretoria da Esol altere os prêmios (ex: de um notebook para um carro elétrico, viagem ou bônus) conforme a conveniência de caixa e estratégias sazonais.
 
 ---
 
@@ -281,18 +296,23 @@ A pontuação é calculada no banco de dados Supabase com base nas faixas de fat
 
 ---
 
-#### 3. Os 7 Níveis de Carreira, Insígnias e Bordões do Painel
+#### 3. Os 12 Níveis de Carreira, Insígnias e Bordões do Painel
 O aplicativo exibe a graduação do consultor de forma visual e motivadora. Cada nível possui uma insígnia digital única (figura) e um lema oficial (bordão) que aparecem em destaque no header do seu dashboard:
 
 | Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
 | :---: | :--- | :---: | :--- | :--- |
-| **1** | **Esol Bronze** | 0 pontos | 🟫 **Fóton de Bronze** (Centelha inicial) | *"A primeira faísca gera a grande corrente."* |
-| **2** | **Esol Prata** | 5.000 pontos | ⬜ **Fóton de Prata** (Refletor de luz) | *"Quem se conecta com o sol, irradia energia."* |
-| **3** | **Esol Ouro** | 25.000 pontos | 🟨 **Fóton de Ouro** (Feixe de luz ativo) | *"O ouro solar é a marca de quem constrói o amanhã."* |
-| **4** | **Esol Platina** | 120.000 pontos | 💍 **Cristal de Platina** (Usinagem técnica) | *"Inabalável e resistente como o silício e a platina."* |
-| **5** | **Esol Diamante** | 600.000 pontos | 💎 **Fóton Diamante** (Brilho e pureza) | *"Brilho puro de quem converte luz em prosperidade."* |
-| **6** | **Esol Duplo Diamante**| 2.500.000 pontos | 👑 **Coroa Solar Imperial** (Magnetismo) | *"Liderança que atrai, ilumina e reverbera em toda a rede."* |
-| **7** | **Esol Infinito** | 10.000.000 pontos| 🌌 **Estrela Quantum** (Irradiação total) | *"Energia infinita: a fusão completa com o sol do amanhã."* |
+| **1** | **Esol Bronze** | 0 pontos | 🟫 **Fóton de Bronze** | *"A primeira faísca gera a grande corrente."* |
+| **2** | **Esol Cobre** | 2.500 pontos | 🟧 **Fóton de Cobre** | *"A condutividade ideal para expandir seus horizontes."* |
+| **3** | **Esol Prata** | 8.000 pontos | ⬜ **Fóton de Prata** | *"Quem se conecta com o sol, irradia energia."* |
+| **4** | **Esol Quartz** | 20.000 pontos | 🔮 **Cristal de Quartz** | *"Firme e preciso como a oscilação do silício."* |
+| **5** | **Esol Ouro** | 50.000 pontos | 🟨 **Fóton de Ouro** | *"O ouro solar é a marca de quem constrói o amanhã."* |
+| **6** | **Esol Platina** | 120.000 pontos | 💍 **Cristal de Platina** | *"Inabalável e resistente como o silício e a platina."* |
+| **7** | **Esol Esmeralda** | 300.000 pontos | 💚 **Cristal Esmeralda** | *"A energia limpa gera um futuro próspero e verde."* |
+| **8** | **Esol Safira** | 800.000 pontos | 💙 **Cristal Safira** | *"Safira: a solidez azul da nossa holding de energia."* |
+| **9** | **Esol Rubi** | 2.000.000 pontos | ❤️ **Cristal Rubi** | *"Rubi: a paixão e a força da liderança ativa em campo."* |
+| **10** | **Esol Diamante** | 5.000.000 pontos | 💎 **Fóton Diamante** | *"Brilho puro de quem converte luz em prosperidade."* |
+| **11** | **Esol Duplo Diamante**| 12.000.000 pontos| 👑 **Coroa Solar Imperial** | *"Liderança que atrai, ilumina e reverbera em toda a rede."* |
+| **12** | **Esol Quantum** | 35.000.000 pontos| 🌌 **Estrela Quantum** | *"Energia infinita: a fusão completa com o sol do amanhã."* |
 
 ---
 
@@ -312,7 +332,7 @@ CREATE TABLE public.campanhas_incentivo (
 CREATE TABLE public.campanhas_premios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     campanha_id UUID REFERENCES public.campanhas_incentivo(id) ON DELETE CASCADE,
-    nivel_carreira INTEGER NOT NULL,         -- 1 a 7 (Bronze ao Infinito)
+    nivel_carreira INTEGER NOT NULL,         -- 1 a 12 (Bronze ao Quantum)
     titulo_premio VARCHAR(255) NOT NULL,     -- ex: "Notebook Dell Latitude"
     descricao_detalhada TEXT,
     imagem_url VARCHAR(255)                  -- Caminho da imagem no R2
@@ -321,13 +341,19 @@ CREATE TABLE public.campanhas_premios (
 
 ##### **Exemplo de Configuração de Prêmios da Campanha Vigente:**
 *   **L1 (Esol Bronze) $\rightarrow$** *Kit Acolhimento:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial.
-*   **L2 (Esol Prata) $\rightarrow$** *Kit Elite Campo:* **iPad de 10.2 polegadas** + 3 polos adicionais + Boné Trucker 3D.
-*   **L3 (Esol Ouro) $\rightarrow$** *Notebook de Elite:* **Notebook Corporativo de Alta Performance (Dell ou Apple MacBook Air)** + Imersão VIP de 3 dias de liderança.
-*   **L4 (Esol Platina) $\rightarrow$** *Carro Premium:* **Carro Hatch Zero Km** (ex: HB20/Onix/Polo de até R$ 95k quitado) + Viagem VIP Nacional.
-*   **L5 (Esol Diamante) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass/Toyota Corolla Cross de até R$ 200k) + Viagem VIP Internacional para a feira *Intersolar em Munique*.
-*   **L6 (Esol Duplo Diamante) $\rightarrow$** *Casa/Apartamento:* **Imóvel Premium de até R$ 600.000,00 quitado** e escriturado em seu nome.
-*   **L7 (Esol Infinito) $\rightarrow$** *Participação LPL Capped:* Participação Semestral de 1% do faturamento regional do seu Tenant (*capped* para segurança de fluxo de caixa).
+*   **L2 (Esol Cobre) $\rightarrow$** *Brinde Inicial:* Garrafa Térmica Esol Premium + Boné Trucker com logo relevo 3D.
+*   **L3 (Esol Prata) $\rightarrow$** *Kit Elite Campo:* **iPad de 10.2 polegadas** com capa protetora + 3 polos adicionais.
+*   **L4 (Esol Quartz) $\rightarrow$** *Smartwatch:* **Relógio Inteligente Smartwatch** de última geração gravado a laser.
+*   **L5 (Esol Ouro) $\rightarrow$** *Notebook de Elite:* **Notebook Corporativo de Alta Performance (Dell ou Apple MacBook Air)**.
+*   **L6 (Esol Platina) $\rightarrow$** *Imersão VIP:* Viagem de 3 dias de liderança com tudo pago para a sede da Esol.
+*   **L7 (Esol Esmeralda) $\rightarrow$** *Viagem VIP Nacional:* Viagem de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas.
+*   **L8 (Esol Safira) $\rightarrow$** *Viagem VIP Internacional:* Viagem com acompanhante para a feira *Intersolar em Munique, Alemanha*.
+*   **L9 (Esol Rubi) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: HB20/Onix/Polo de até R$ 95k quitado em seu nome).
+*   **L10 (Esol Diamante) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass/Toyota Corolla Cross de até R$ 200k quitado).
+*   **L11 (Esol Duplo Diamante) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Zero Km** (ex: BYD Seal ou Volvo EX30 de até R$ 300k).
+*   **L12 (Esol Quantum) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Premium de até R$ 600.000,00 quitado** e escriturado em seu nome + Bônus LPL (*capped*).
 ---
+
 
 
 ## 6. SIMULAÇÃO FINANCEIRA CONSOLIDADA
