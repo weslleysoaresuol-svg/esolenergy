@@ -301,18 +301,18 @@ O aplicativo exibe a graduação do consultor de forma visual e motivadora. Cada
 
 | Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
 | :---: | :--- | :---: | :--- | :--- |
-| **1** | **Esol Bronze** | 0 pontos | 🟫 **Fóton de Bronze** | *"A primeira faísca gera a grande corrente."* |
-| **2** | **Esol Cobre** | 2.500 pontos | 🟧 **Fóton de Cobre** | *"A condutividade ideal para expandir seus horizontes."* |
-| **3** | **Esol Prata** | 8.000 pontos | ⬜ **Fóton de Prata** | *"Quem se conecta com o sol, irradia energia."* |
-| **4** | **Esol Quartz** | 20.000 pontos | 🔮 **Cristal de Quartz** | *"Firme e preciso como a oscilação do silício."* |
-| **5** | **Esol Ouro** | 50.000 pontos | 🟨 **Fóton de Ouro** | *"O ouro solar é a marca de quem constrói o amanhã."* |
-| **6** | **Esol Platina** | 120.000 pontos | 💍 **Cristal de Platina** | *"Inabalável e resistente como o silício e a platina."* |
-| **7** | **Esol Esmeralda** | 300.000 pontos | 💚 **Cristal Esmeralda** | *"A energia limpa gera um futuro próspero e verde."* |
-| **8** | **Esol Safira** | 800.000 pontos | 💙 **Cristal Safira** | *"Safira: a solidez azul da nossa holding de energia."* |
-| **9** | **Esol Rubi** | 2.000.000 pontos | ❤️ **Cristal Rubi** | *"Rubi: a paixão e a força da liderança ativa em campo."* |
-| **10** | **Esol Diamante** | 5.000.000 pontos | 💎 **Fóton Diamante** | *"Brilho puro de quem converte luz em prosperidade."* |
-| **11** | **Esol Duplo Diamante**| 12.000.000 pontos| 👑 **Coroa Solar Imperial** | *"Liderança que atrai, ilumina e reverbera em toda a rede."* |
-| **12** | **Esol Quantum** | 35.000.000 pontos| 🌌 **Estrela Quantum** | *"Energia infinita: a fusão completa com o sol do amanhã."* |
+| **1** | **Esol Glint** | 0 pontos | ✨ **Centelha Estelar** (Primeira Luz) | *"A primeira faísca gera a grande corrente."* |
+| **2** | **Esol Ray** | 2.500 pontos | ⚡ **Raio Solar** (Canal de Luz) | *"A força de um único raio rompe qualquer barreira."* |
+| **3** | **Esol Beam** | 8.000 pontos | 🔆 **Feixe Concentrado** (Energia Direcionada)| *"Energia direcionada é o segredo da expansão."* |
+| **4** | **Esol Corona** | 20.000 pontos | ☀️ **Atmosfera Solar** (Magnetismo e Halo) | *"Atmosfera ativa que atrai e expande oportunidades."* |
+| **5** | **Esol Aurora** | 50.000 pontos | 🌌 **Ondas de Luz** (Alinhamento Celeste) | *"Alinhamento perfeito que ilumina o horizonte."* |
+| **6** | **Esol Zenith** | 120.000 pontos | 👑 **Sol no Zênite** (Ponto Mais Alto) | *"O sol no seu ponto mais alto não projeta sombras."* |
+| **7** | **Esol Helios** | 300.000 pontos | 🔱 **Tridente Solar** (Autoridade Suprema) | *"A autoridade absoluta que conduz o poder do sol."* |
+| **8** | **Esol Stellar** | 800.000 pontos | 💫 **Órbita Estelar** (Escala e Expansão) | *"Brilhar em escala estelar é guiar toda a rede."* |
+| **9** | **Esol Nova** | 2.000.000 pontos | 💥 **Nova Cósmica** (Multiplicação Explosiva) | *"A explosão de crescimento que renova o mercado."* |
+| **10** | **Esol Supernova** | 5.000.000 pontos | 🌀 **Supernova Ativa** (Impacto e Energia) | *"Impacto massivo que reverbera em todo o território."* |
+| **11** | **Esol Nebula** | 12.000.000 pontos| ☁️ **Nebulosa Imperial** (Berço de Astros) | *"O berço onde nascem os grandes astros do amanhã."* |
+| **12** | **Esol Galaxy** | 35.000.000 pontos| 🌀 **Galáxia Quantum** (Energia Infinita) | *"Energia infinita: a fusão completa com o sol do amanhã."* |
 
 ---
 
@@ -332,7 +332,7 @@ CREATE TABLE public.campanhas_incentivo (
 CREATE TABLE public.campanhas_premios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     campanha_id UUID REFERENCES public.campanhas_incentivo(id) ON DELETE CASCADE,
-    nivel_carreira INTEGER NOT NULL,         -- 1 a 12 (Bronze ao Quantum)
+    nivel_carreira INTEGER NOT NULL,         -- 1 a 12 (Glint ao Galaxy)
     titulo_premio VARCHAR(255) NOT NULL,     -- ex: "Notebook Dell Latitude"
     descricao_detalhada TEXT,
     imagem_url VARCHAR(255)                  -- Caminho da imagem no R2
@@ -340,18 +340,19 @@ CREATE TABLE public.campanhas_premios (
 ```
 
 ##### **Exemplo de Configuração de Prêmios da Campanha Vigente:**
-*   **L1 (Esol Bronze) $\rightarrow$** *Kit Acolhimento:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial.
-*   **L2 (Esol Cobre) $\rightarrow$** *Brinde Inicial:* Garrafa Térmica Esol Premium + Boné Trucker com logo relevo 3D.
-*   **L3 (Esol Prata) $\rightarrow$** *Kit Elite Campo:* **iPad de 10.2 polegadas** com capa protetora + 3 polos adicionais.
-*   **L4 (Esol Quartz) $\rightarrow$** *Smartwatch:* **Relógio Inteligente Smartwatch** de última geração gravado a laser.
-*   **L5 (Esol Ouro) $\rightarrow$** *Notebook de Elite:* **Notebook Corporativo de Alta Performance (Dell ou Apple MacBook Air)**.
-*   **L6 (Esol Platina) $\rightarrow$** *Imersão VIP:* Viagem de 3 dias de liderança com tudo pago para a sede da Esol.
-*   **L7 (Esol Esmeralda) $\rightarrow$** *Viagem VIP Nacional:* Viagem de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas.
-*   **L8 (Esol Safira) $\rightarrow$** *Viagem VIP Internacional:* Viagem com acompanhante para a feira *Intersolar em Munique, Alemanha*.
-*   **L9 (Esol Rubi) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: HB20/Onix/Polo de até R$ 95k quitado em seu nome).
-*   **L10 (Esol Diamante) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass/Toyota Corolla Cross de até R$ 200k quitado).
-*   **L11 (Esol Duplo Diamante) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Zero Km** (ex: BYD Seal ou Volvo EX30 de até R$ 300k).
-*   **L12 (Esol Quantum) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Premium de até R$ 600.000,00 quitado** e escriturado em seu nome + Bônus LPL (*capped*).
+*   **L1 (Esol Glint) $\rightarrow$** *Kit Acolhimento:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial.
+*   **L2 (Esol Ray) $\rightarrow$** *Brinde Inicial:* Garrafa Térmica Esol Premium + Boné Trucker com logo relevo 3D.
+*   **L3 (Esol Beam) $\rightarrow$** *Kit Elite Campo:* **iPad de 10.2 polegadas** com capa protetora + 3 polos adicionais.
+*   **L4 (Esol Corona) $\rightarrow$** *Smartwatch:* **Relógio Inteligente Smartwatch** de última geração gravado a laser.
+*   **L5 (Esol Aurora) $\rightarrow$** *Notebook de Elite:* **Notebook Corporativo de Alta Performance (Dell ou Apple MacBook Air)**.
+*   **L6 (Esol Zenith) $\rightarrow$** *Imersão VIP:* Viagem de 3 dias de liderança com tudo pago para a sede da Esol.
+*   **L7 (Esol Helios) $\rightarrow$** *Viagem VIP Nacional:* Viagem de 5 dias com acompanhante para Resort 5 estrelas em Porto de Galinhas.
+*   **L8 (Esol Stellar) $\rightarrow$** *Viagem VIP Internacional:* Viagem com acompanhante para a feira *Intersolar em Munique, Alemanha*.
+*   **L9 (Esol Nova) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: HB20/Onix/Polo de até R$ 95k quitado em seu nome).
+*   **L10 (Esol Supernova) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass/Toyota Corolla Cross de até R$ 200k quitado).
+*   **L11 (Esol Nebula) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Zero Km** (ex: BYD Seal ou Volvo EX30 de até R$ 300k).
+*   **L12 (Esol Galaxy) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Premium de até R$ 600.000,00 quitado** e escriturado em seu nome + Bônus LPL (*capped*).
+
 ---
 
 
