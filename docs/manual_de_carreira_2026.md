@@ -79,27 +79,27 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 
 | Nível | Selo de Reconhecimento | pontos Mínimos | Insígnia Visual | Prêmio da Campanha Vigente (2026) |
 | :---: | :--- | :---: | :---: | :--- |
-| **L1** | **Semente** | 0 | 🌱 | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium. *(Liberado com 2.000 pts pessoais)*. |
-| **L2** | **Raiz** | 2.500 | 🌳 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS + Mochila Executiva de R$ 1.750,00. |
-| **L3** | **Rocha** | 5.000 | 🪨 | **Apresentação Móvel de Impacto:** Kit Apresentador (Projetor Smart Samsung The Freestyle + Soundbar JBL) de R$ 2.400,00. |
-| **L4** | **Gota** | 10.000 | 💧 | **Aceleração Comercial:** Auxílio de Custo Comercial de R$ 5.000,00 para ativação de mercado. |
-| **L5** | **Nascente** | 15.000 | 🌊 | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias na sede de R$ 6.000,00. |
-| **L6** | **Rio** | 25.000 | 🏞️ | **Scooter Elétrica Premium:** Scooter 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
-| **L7** | **Brisa** | 40.000 | 🍃 | **Férias Premium Nacionais:** Viagem de 5 dias para Fernando de Noronha/Porto de Galinhas com tudo pago + R$ 5.000,00 de Bônus. |
-| **L8** | **Vento** | 60.000 | 💨 | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique* (Tudo Pago). |
-| **L9** | **Ciclone** | 100.000 | 🌀 | **Hub de Vendas Regional:** Verba de R$ 35.000,00 para montagem e fachada do Escritório/Showroom local Esol. |
-| **L10** | **Faísca** | 150.000 | ✨ | **Missão Internacional de Negócios:** Viagem de 10 dias para a China (fábricas BYD/Longi) c/ acompanhante + R$ 10.000,00. |
-| **L11** | **Chama** | 250.000 | 🔥 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
-| **L12** | **Fogueira** | 400.000 | 🪵 | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
-| **L13** | **Lua** | 600.000 | 🌙 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
-| **L14** | **Terra** | 900.000 | 🌍 | **Sedan Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
-| **L15** | **Sol** | 1.500.000 | ☀️ | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 300.000,00 em Dinheiro. |
-| **L16** | **Meteoro** | 2.500.000 | ☄️ | **Sede Comercial Regional:** Escritório/Sala Comercial Premium quitada de R$ 500.000,00 + Relógio Rolex de R$ 100.000,00. |
-| **L17** | **Cometa** | 4.000.000 | 🌠 | **Apartamento Frente Mar:** Cobertura de Alto Padrão Frente Mar quitada e escriturada no valor de R$ 1.2 Milhão. |
-| **L18** | **Supernova** | 6.000.000 | 💥 | **Superesportivo & Estilo de Vida:** Porsche Taycan, Audi e-tron ou BMW iX quitado (R$ 800.000,00) + R$ 600.000,00 em Dinheiro. |
-| **L19** | **Triunfo** | 10.000.000| 🏆 | **Super Mansão de Luxo:** Mansão de Altíssimo Luxo em Condomínio Fechado quitada e escriturada de R$ 2.0 Milhões. |
-| **L20** | **Plenitude** | 20.000.000| 💎 | **Usina de 1MW & Renda Vitalícia:** Usina Solar 1MWp (R$ 3.5M) + Contrato de Arrendamento de R$ 35.000,00/mês. |
-| **L21** | **Legado** | 35.000.000| 👑 | **Usina de 2MW, Renda & Governança:** Usina de 2MWp (R$ 7.0M) + Aluguel de R$ 70.000,00/mês + Equity + Troféu + Conselho. |
+| **L1** | **Semente** | 0 | 🌱 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L2** | **Raiz** | 2.500 | 🌳 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L3** | **Rocha** | 5.000 | 🪨 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L4** | **Gota** | 10.000 | 💧 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L5** | **Nascente** | 15.000 | 🌊 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L6** | **Rio** | 25.000 | 🏞️ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L7** | **Brisa** | 40.000 | 🍃 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L8** | **Vento** | 60.000 | 💨 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L9** | **Ciclone** | 100.000 | 🌀 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L10** | **Faísca** | 150.000 | ✨ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L11** | **Chama** | 250.000 | 🔥 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L12** | **Fogueira** | 400.000 | 🪵 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L13** | **Lua** | 600.000 | 🌙 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L14** | **Terra** | 900.000 | 🌍 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L15** | **Sol** | 1.500.000 | ☀️ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L16** | **Meteoro** | 2.500.000 | ☄️ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L17** | **Cometa** | 4.000.000 | 🌠 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L18** | **Supernova** | 6.000.000 | 💥 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L19** | **Triunfo** | 10.000.000| 🏆 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L20** | **Plenitude** | 20.000.000| 💎 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L21** | **Legado** | 35.000.000| 👑 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
 
 ---
 
