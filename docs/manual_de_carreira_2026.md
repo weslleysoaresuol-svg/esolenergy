@@ -81,9 +81,9 @@ Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmi
 | :---: | :--- | :---: | :---: | :--- |
 | **L1** | **Faísca** | 0 | ✨ | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium (Polo, Boné, Garrafa, Caderno). *(Liberado com 2.000 pts pessoais)*. |
 | **L2** | **Chama** | 2.500 | 🔥 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS (Ryzen 3 LPDDR5/SSD 256GB) + Mochila Executiva Impermeável de R$ 1.750,00. |
-| **L3** | **Raio** | 8.000 | ⚡ | **Kit Aceleração Comercial:** Landing Page Local + R$ 1.500 de Verba de Tráfego Pago (Ads) + Maleta Showroom de R$ 2.400,00. |
+| **L3** | **Raio** | 8.000 | ⚡ | **Estação Solar & Mapeamento:** Power Station + Mini Drone de R$ 2.400,00 + Suporte opcional sob consulta para montagem de escritório com Smart TV 4K. |
 | **L4** | **Lua** | 20.000 | 🌙 | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias de treinamento na sede. |
-| **L5** | **Terra** | 50.000 | 🌍 | **Scooter Elétrica & Suporte de Escritório:** Scooter Elétrica 0km de R$ 17.000,00 (frete incluso) + Suporte financeiro opcional para montagem de escritório (sob consulta de disponibilidade e projeto). |
+| **L5** | **Terra** | 50.000 | 🌍 | **Scooter Elétrica Premium:** Scooter Elétrica 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
 | **L6** | **Órbita** | 120.000 | 💫 | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (Tudo Pago). |
 | **L7** | **Cometa** | 300.000 | ☄️ | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
 | **L8** | **Eclipse** | 800.000 | 🌑 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
