@@ -341,8 +341,8 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 *Foco: Mobilidade Urbana Verde, Tecnologia Portátil, Férias de Alta Categoria e Benchmark Global (Energia e Dinâmica Atmosférica).*
 *   **L5 (Vortex) $\rightarrow$** *Apresentação Digital & Imersão:* **iPad de 10.2 polegadas com caneta digital e capa** + Imersão VIP de 3 dias de Treinamento Comercial com tudo pago na sede da Esol (valor de R$ 6.000,00).
 *   **L6 (Plasma) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de R$ 17.000,00 quitada e entregue em seu nome).
-*   **L7 (Raio) $\rightarrow$** *Inteligência de Mercado Global:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens executivas, hotel 5 estrelas e ingressos da feira, valor de R$ 25.000,00).
-*   **L8 (Aurora) $\rightarrow$** *Férias Premium & Reconhecimento:* Viagem de 5 dias com acompanhante para Fernando de Noronha ou Porto de Galinhas com tudo pago (R$ 15.000,00) + R$ 5.000,00 de Bônus em Dinheiro (Total de R$ 20.000,00).
+*   **L7 (Raio) $\rightarrow$** *Férias Premium Nacionais:* Viagem de 5 dias com acompanhante para Fernando de Noronha ou Porto de Galinhas com tudo pago (R$ 15.000,00) + R$ 5.000,00 de Bônus em Dinheiro (Total de R$ 20.000,00).
+*   **L8 (Aurora) $\rightarrow$** *Inteligência de Mercado Global:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens executivas, hotel 5 estrelas e ingressos da feira, valor de R$ 25.000,00).
 
 ---
 
@@ -358,16 +358,16 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 #### **4️⃣ GRUPO: FORÇA INTERESTELAR (L13 a L16)**
 *Foco: Carros e SUVs de Luxo, Geração Off-Grid Residencial (Showroom Vivo) e Primeiro Imóvel Quitado (Astros do Sistema Solar).*
 *   **L13 (Lua) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
-*   **L14 (Terra) $\rightarrow$** *Showroom Residencial Off-Grid:* **Sistema de Energia Solar Residencial Premium com Armazenamento** (inversor SolarEdge com Bateria BYD/Tesla de armazenamento backup off-grid, no valor de R$ 100.000,00 instalado na sua casa) + **R$ 180.000,00 de Bônus em Dinheiro** (Total de R$ 280.000,00) para criar um showroom vivo de alta tecnologia.
-*   **L15 (Sol) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
-*   **L16 (Polaris) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
+*   **L14 (Terra) $\rightarrow$** *Sedan Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
+*   **L15 (Sol) $\rightarrow$** *Showroom Residencial Off-Grid:* **Sistema de Energia Solar Residencial Premium com Armazenamento** (inversor SolarEdge com Bateria BYD/Tesla de armazenamento backup off-grid, no valor de R$ 100.000,00 instalado na sua casa) + **R$ 300.000,00 de Bônus em Dinheiro** (Total de R$ 400.000,00) para criar um showroom vivo de alta tecnologia.
+*   **L16 (Polaris) $\rightarrow$** *Primeiro Imóvel Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
 
 ---
 
 #### **5️⃣ GRUPO: CONSELHO DO COSMOS (L17 a L21)**
 *Foco: Geração de Renda Passiva Vitalícia (Usinas Arrendadas), Superesportivos, Mansões, Equity e Governança Executiva da Holding (Universo e Espaço Profundo).*
-*   **L17 (Constelação) $\rightarrow$** *Cobertura Premium:* **Apartamento de Alto Padrão Frente Mar** (valor de R$ 1.2 Milhão quitado e escriturado) em seu nome.
-*   **L18 (Nebulosa) $\rightarrow$** *Carro Superesportivo:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, valor de R$ 800.000,00 quitado) + Bônus de LPL Semestral Capped (1% da regional).
+*   **L17 (Constelação) $\rightarrow$** *Carro Superesportivo:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, valor de R$ 800.000,00 quitado) + Bônus de LPL Semestral Capped (1% da regional).
+*   **L18 (Nebulosa) $\rightarrow$** *Cobertura Premium:* **Apartamento de Alto Padrão Frente Mar** (valor de R$ 1.2 Milhão quitado e escriturado) em seu nome.
 *   **L19 (Supernova) $\rightarrow$** *Super Mansão:* **Mansão ou Cobertura Duplex de Alto Padrão** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
 *   **L20 (Galáxia) $\rightarrow$** *Usina de 1MW & Renda Vitalícia:* **Usina Solar Esol de 1MWp** (avaliada em R$ 3.500.000,00 turnkey, instalada e registrada em seu nome) + **Contrato de Arrendamento Garantido (Rent-Back)** da própria usina com aluguel garantido de **R$ 35.000,00 por mês** pago pela holding.
 *   **L21 (Universo) $\rightarrow$** *Usina de 2MW, Governança & Equity:* **Usina Solar Esol de 2MWp** (avaliada em R$ 7.000.000,00 turnkey, instalada e registrada em seu nome) + **Arrendamento Garantido (Rent-Back)** de **R$ 70.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
