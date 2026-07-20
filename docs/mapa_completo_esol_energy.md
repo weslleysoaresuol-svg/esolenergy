@@ -348,7 +348,7 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 
 #### **3️⃣ GRUPO: ÓRBITA DE LIDERANÇA (L9 a L12)**
 *Foco: Implantação de Escritórios Físicos Regionais, Benchmark Técnico Mundial, Primeiro Carro e Viagens pelo Planeta (Saindo da Terra).*
-*   **L9 (Prisma) $\rightarrow$** *Hub de Vendas Regional:* **Verba de R$ 35.000,00 para Montagem e Fachada do Escritório/Showroom de Representação Esol** na cidade do parceiro.
+*   **L9 (Atmosfera) $\rightarrow$** *Hub de Vendas Regional:* **Verba de R$ 35.000,00 para Montagem e Fachada do Escritório/Showroom de Representação Esol** na cidade do parceiro.
 *   **L10 (Zênite) $\rightarrow$** *Missão de Negócios Internacional:* Viagem de 10 dias para a China (visita a fábricas de painéis solares BYD/Longi) com acompanhante (R$ 40.000,00) + R$ 10.000,00 em Dinheiro para despesas (Total de R$ 50.000,00).
 *   **L11 (Orbital) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: Hyundai HB20, Chevrolet Onix ou VW Polo, valor de R$ 95.000,00 quitado e em seu nome).
 *   **L12 (Helios) $\rightarrow$** *Férias ao Redor do Mundo:* Viagem de Volta ao Mundo (crédito de R$ 70.000,00 para roteiro livre) + R$ 30.000,00 de Bônus em Dinheiro (Total de R$ 100.000,00).
@@ -358,9 +358,9 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 #### **4️⃣ GRUPO: FORÇA INTERESTELAR (L13 a L16)**
 *Foco: Carros e SUVs de Luxo, Geração Off-Grid Residencial (Showroom Vivo) e Primeiro Imóvel Quitado (Astros do Sistema Solar).*
 *   **L13 (Lua) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
-*   **L14 (Planeta) $\rightarrow$** *Showroom Residencial Off-Grid:* **Sistema de Energia Solar Residencial Premium com Armazenamento** (inversor SolarEdge com Bateria BYD/Tesla de armazenamento backup off-grid, no valor de R$ 100.000,00 instalado na sua casa) + **R$ 180.000,00 de Bônus em Dinheiro** (Total de R$ 280.000,00) para criar um showroom vivo de alta tecnologia.
+*   **L14 (Terra) $\rightarrow$** *Showroom Residencial Off-Grid:* **Sistema de Energia Solar Residencial Premium com Armazenamento** (inversor SolarEdge com Bateria BYD/Tesla de armazenamento backup off-grid, no valor de R$ 100.000,00 instalado na sua casa) + **R$ 180.000,00 de Bônus em Dinheiro** (Total de R$ 280.000,00) para criar um showroom vivo de alta tecnologia.
 *   **L15 (Sol) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
-*   **L16 (Estrela) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
+*   **L16 (Polaris) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
 
 ---
 
@@ -370,7 +370,7 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 *   **L18 (Nebulosa) $\rightarrow$** *Carro Superesportivo:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, valor de R$ 800.000,00 quitado) + Bônus de LPL Semestral Capped (1% da regional).
 *   **L19 (Supernova) $\rightarrow$** *Super Mansão:* **Mansão ou Cobertura Duplex de Alto Padrão** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
 *   **L20 (Galáxia) $\rightarrow$** *Usina de 1MW & Renda Vitalícia:* **Usina Solar Esol de 1MWp** (avaliada em R$ 3.500.000,00 turnkey, instalada e registrada em seu nome) + **Contrato de Arrendamento Garantido (Rent-Back)** da própria usina com aluguel garantido de **R$ 35.000,00 por mês** pago pela holding.
-*   **L21 (Cosmos) $\rightarrow$** *Usina de 2MW, Governança & Equity:* **Usina Solar Esol de 2MWp** (avaliada em R$ 7.000.000,00 turnkey, instalada e registrada em seu nome) + **Arrendamento Garantido (Rent-Back)** de **R$ 70.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
+*   **L21 (Universo) $\rightarrow$** *Usina de 2MW, Governança & Equity:* **Usina Solar Esol de 2MWp** (avaliada em R$ 7.000.000,00 turnkey, instalada e registrada em seu nome) + **Arrendamento Garantido (Rent-Back)** de **R$ 70.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
 
 ---
 

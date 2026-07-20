@@ -87,19 +87,19 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 | **L6** | **Nuvem** | 25.000 | ☁️ | **Scooter Elétrica Premium:** Scooter 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
 | **L7** | **Raio** | 40.000 | ⚡ | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique* (Tudo Pago). |
 | **L8** | **Trovão** | 60.000 | ⛈️ | **Férias Premium & Bônus:** Viagem de 5 dias para Fernando de Noronha/Porto de Galinhas com tudo pago + R$ 5.000,00 de Bônus. |
-| **L9** | **Estratosfera**| 100.000 | 🌌 | **Hub de Vendas Regional:** Verba de R$ 35.000,00 para montagem e fachada do Escritório/Showroom local Esol. |
-| **L10** | **Satélite** | 150.000 | 🛰️ | **Missão Internacional de Negócios:** Viagem de 10 dias para a China (fábricas BYD/Longi) c/ acompanhante + R$ 10.000,00. |
-| **L11** | **Órbita** | 250.000 | 💫 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
-| **L12** | **Gravidade** | 400.000 | 🧲 | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
+| **L9** | **Atmosfera**| 100.000 | 🌌 | **Hub de Vendas Regional:** Verba de R$ 35.000,00 para montagem e fachada do Escritório/Showroom local Esol. |
+| **L10** | **Zênite** | 150.000 | 🛰️ | **Missão Internacional de Negócios:** Viagem de 10 dias para a China (fábricas BYD/Longi) c/ acompanhante + R$ 10.000,00. |
+| **L11** | **Orbital** | 250.000 | 💫 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
+| **L12** | **Helios** | 400.000 | 🧲 | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
 | **L13** | **Lua** | 600.000 | 🌙 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
-| **L14** | **Planeta** | 900.000 | 🌍 | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 180.000,00 em Dinheiro. |
+| **L14** | **Terra** | 900.000 | 🌍 | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 180.000,00 em Dinheiro. |
 | **L15** | **Sol** | 1.500.000 | ☀️ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
-| **L16** | **Estrela** | 2.500.000 | ⭐ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
+| **L16** | **Polaris** | 2.500.000 | ⭐ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
 | **L17** | **Constelação**| 4.000.000 | 🌌 | **Cobertura Premium Frente Mar:** Apartamento de Alto Padrão quitado e escriturado no valor de R$ 1.2 Milhão. |
 | **L18** | **Nebulosa** | 6.000.000 | ☁️ | **Carro Superesportivo de Luxo:** Porsche Taycan, Audi e-tron ou BMW iX quitado no valor de R$ 800.000,00. |
 | **L19** | **Supernova** | 10.000.000| 💥 | **Super Mansão/Cobertura:** Imóvel de Alto Padrão quitado e escriturado no valor de R$ 2.0 Milhões. |
 | **L20** | **Galáxia** | 20.000.000| 🌀 | **Usina de 1MW & Renda Vitalícia:** Usina Solar 1MWp (R$ 3.5M) + Contrato de Arrendamento de R$ 35.000,00/mês. |
-| **L21** | **Cosmos** | 35.000.000| 🪐 | **Usina de 2MW, Renda & Governança:** Usina de 2MWp (R$ 7.0M) + Aluguel de R$ 70.000,00/mês + Equity + Troféu + Conselho. |
+| **L21** | **Universo** | 35.000.000| 🪐 | **Usina de 2MW, Renda & Governança:** Usina de 2MWp (R$ 7.0M) + Aluguel de R$ 70.000,00/mês + Equity + Troféu + Conselho. |
 
 ---
 
