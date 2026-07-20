@@ -59,10 +59,13 @@ Os pontos de qualificação não são zerados no primeiro dia de cada mês. Eles
 
 ---
 
-## 4. ⚖️ REGRA DE EQUILÍBRIO (VOLUME MÁXIMO POR EQUIPE - VME DE 50%)
-Para garantir a sustentabilidade do caixa e premiar o trabalho de expansão equilibrado, aplicamos a trava **VME de 50%**.
-*   **Definição:** O consultor só pode aproveitar, no máximo, **50% da pontuação exigida** para o selo alvo vinda de uma única linha de indicação direta (equipe de um indicado direto).
-*   **Objetivo:** Evitar o "Efeito Carona", estimulando o consultor a desenvolver novos parceiros e atuar em pelo menos **2 ou 3 equipes ativas**.
+## 4. ⚖️ REGRA DE EQUILÍBRIO (VOLUME MÁXIMO POR EQUIPE - VME DINÂMICO ESCALONADO)
+Para garantir a sustentabilidade do caixa e premiar o trabalho de expansão equilibrado, aplicamos a trava **VME Dinâmica Escalonada**.
+*   **Definição:** O consultor só pode aproveitar um percentual máximo da pontuação exigida para o selo vinda de uma única linha de indicação direta (equipe de um indicado direto). O limite do VME muda conforme o nível do selo:
+    *   **Níveis Iniciais (L1 a L6 - Semente a Rio):** **VME de 80%** (facilita as primeiras conquistas de bônus, permitindo focar em uma perna forte no início).
+    *   **Níveis Intermediários (L7 a L15 - Brisa a Sol):** **VME de 50%** (exige o desenvolvimento de pelo menos 2 pernas ativas de indicação para equilibrar).
+    *   **Níveis de Liderança (L16 a L21 - Meteoro a Legado):** **VME de 35%** (exige liderança estruturada de alta performance com pelo menos 3 pernas ativas de indicação).
+*   **Objetivo:** Evitar o "Efeito Carona", estimulando o consultor a desenvolver novos parceiros e atuar em várias equipes ativas.
 
 ### Exemplo Visual de VME para o Selo Raio (8.000 pontos):
 ```mermaid
