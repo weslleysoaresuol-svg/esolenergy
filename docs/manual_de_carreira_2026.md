@@ -21,7 +21,7 @@ Este manual contém todas as regras de metas e as campanhas de prêmios vigentes
 ## 1. 🛡️ DIRETRIZES DE SEGURANÇA E RELAÇÃO JURÍDICA
 Para garantir a integridade do ecossistema Esol e a sua segurança jurídica como parceiro independente, observe as seguintes regras:
 *   **Independência Profissional:** O consultor é um parceiro comercial autônomo. Não há relação de subordinação, cumprimento de horários, exclusividade ou vínculo empregatício (CLT) com a Esol Energy. A atividade é baseada em livre indicação e corretagem de soluções de energia.
-*   **Terminologia Proibida (CLT-Safe):** É expressamente proibido o uso de cargos corporativos (ex: *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"*, *"Coordenador"*) ou termos hierárquicos internos para se referir às qualificações obtidas. O programa adota exclusivamente nomenclaturas baseadas na natureza e no espaço (*Semente, Raiz, Rocha, Gota, Nascente, Rio, Brisa, Vento, Ciclone, Faísca, Chama, Fogueira, Lua, Planeta, Sol, Estrela, Constelação, Nebulosa, Aliança, Sião, Shekinah*).
+*   **Terminologia Proibida (CLT-Safe):** É expressamente proibido o uso de cargos corporativos (ex: *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"*, *"Coordenador"*) ou termos hierárquicos internos para se referir às qualificações obtidas. O programa adota exclusivamente nomenclaturas baseadas na natureza e no espaço (*Semente, Raiz, Rocha, Gota, Nascente, Rio, Brisa, Vento, Ciclone, Faísca, Chama, Fogueira, Lua, Planeta, Sol, Estrela, Constelação, Galáxia, Aliança, Sião, Shekinah*).
 *   **Desacoplamento de Prêmios (Campanhas Dinâmicas):** O alcance de um nível de selo no banco de dados representa apenas uma qualificação honorífica. Os presentes, prêmios ou viagens associados a cada nível pertencem a **Campanhas de Incentivo** dinâmicas criadas pela diretoria com validade e vigência predefinidas, podendo ser ajustados conforme a estratégia de mercado da holding.
 
 ---
@@ -96,10 +96,10 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 | **L15** | **Sol** | 1.500.000 | ☀️ | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 300.000,00 em Dinheiro. |
 | **L16** | **Estrela** | 2.500.000 | ⭐ | **Sede Comercial Regional:** Escritório/Sala Comercial Premium quitada de R$ 500.000,00 + Relógio Rolex de R$ 100.000,00. |
 | **L17** | **Constelação**| 4.000.000 | 🌌 | **Apartamento Frente Mar:** Cobertura de Alto Padrão Frente Mar quitada e escriturada no valor de R$ 1.2 Milhão. |
-| **L18** | **Nebulosa** | 6.000.000 | ☁️ | **Superesportivo & Estilo de Vida:** Porsche Taycan, Audi e-tron ou BMW iX quitado (R$ 800.000,00) + R$ 600.000,00 em Dinheiro. |
-| **L19** | **Supernova** | 10.000.000| 💥 | **Super Mansão de Luxo:** Mansão de Altíssimo Luxo em Condomínio Fechado quitada e escriturada de R$ 2.0 Milhões. |
-| **L20** | **Galáxia** | 20.000.000| 🌀 | **Usina de 1MW & Renda Vitalícia:** Usina Solar 1MWp (R$ 3.5M) + Contrato de Arrendamento de R$ 35.000,00/mês. |
-| **L21** | **Universo** | 35.000.000| 🪐 | **Usina de 2MW, Renda & Governança:** Usina de 2MWp (R$ 7.0M) + Aluguel de R$ 70.000,00/mês + Equity + Troféu + Conselho. |
+| **L18** | **Galáxia** | 6.000.000 | 🌀 | **Superesportivo & Estilo de Vida:** Porsche Taycan, Audi e-tron ou BMW iX quitado (R$ 800.000,00) + R$ 600.000,00 em Dinheiro. |
+| **L19** | **Aliança** | 10.000.000| 🌈 | **Super Mansão de Luxo:** Mansão de Altíssimo Luxo em Condomínio Fechado quitada e escriturada de R$ 2.0 Milhões. |
+| **L20** | **Sião** | 20.000.000| ⛰️ | **Usina de 1MW & Renda Vitalícia:** Usina Solar 1MWp (R$ 3.5M) + Contrato de Arrendamento de R$ 35.000,00/mês. |
+| **L21** | **Shekinah** | 35.000.000| 👑 | **Usina de 2MW, Renda & Governança:** Usina de 2MWp (R$ 7.0M) + Aluguel de R$ 70.000,00/mês + Equity + Troféu + Conselho. |
 
 ---
 

@@ -326,7 +326,7 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 | **L15** | **Sol** | 1.500.000 pontos | ☀️ **Sol** (A Estrela Central) | *"A fonte suprema de energia limpa que gera vida."* |
 | **L16** | **Estrela** | 2.500.000 pontos | ⭐ **Estrela** (Brilho Próprio) | *"A luz própria brilhando alto com autoridade e brilho."* |
 | **L17** | **Constelação**| 4.000.000 pontos | 🌌 **Constelação** (União de Sócios) | *"A união monumental de estrelas alinhadas sob a mesma visão."* |
-| **L18** | **Nebulosa** | 6.000.000 pontos | ☁️ **Nebulosa** (Berçário de Líderes) | *"O berçário grandioso onde novos líderes nascem para brilhar."* |
+| **L18** | **Galáxia** | 6.000.000 pontos | 🌀 **Galáxia** (Império Estelar) | *"Um império de estrelas brilhando em perfeita harmonia comercial."* |
 | **L19** | **Aliança** | 10.000.000 pontos| 🌈 **Aliança** (Pacto e Promessa) | *"A promessa inquebrável de parceria e expansão perpétua."* |
 | **L20** | **Sião** | 20.000.000 pontos| ⛰️ **Sião** (Monte Santo da Vitória)| *"A firmeza do monte santo estabelecendo um reino inabalável."* |
 | **L21** | **Shekinah** | 35.000.000 pontos| 👑 **Shekinah** (Manifestação da Glória)| *"A manifestação plena da luz divina coroando o legado eterno."* |
@@ -381,15 +381,15 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 *Foco: Estrelas de Guia e Agrupamentos de Luz Própria (Status Corporativo e Prestige).*
 *   **L16 (Estrela) $\rightarrow$** *Sede Comercial Própria & Status:* **Sala Comercial Premium de até R$ 500.000,00 quitada e escriturada** em seu nome para sediar a sua Agência Regional Esol + **Relógio Rolex de Luxo (Submariner ou similar, no valor de R$ 100.000,00)** (Total de R$ 600.000,00).
 *   **L17 (Constelação) $\rightarrow$** *Moradia de Luxo:* **Apartamento de Alto Padrão Frente Mar** (Cobertura ou similar, no valor de R$ 1.2 Milhão quitado e escriturado) em seu nome.
-*   **L18 (Nebulosa) $\rightarrow$** *Máquina Superesportiva:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, no valor de R$ 800.000,00 quitado) + **R$ 600.000,00 de Bônus em Dinheiro** (Total de R$ 1.4 Milhão) para desfrutar do novo estilo de vida.
+*   **L18 (Galáxia) $\rightarrow$** *Máquina Superesportiva:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, no valor de R$ 800.000,00 quitado) + **R$ 600.000,00 de Bônus em Dinheiro** (Total de R$ 1.4 Milhão) para desfrutar do novo estilo de vida.
 
 ---
 
 #### **7️⃣ GRUPO: O ABSOLUTO (L19 a L21)**
 *Foco: As Maiores Estruturas do Espaço e Renda Passiva Vitalícia (A Governança).*
-*   **L19 (Supernova) $\rightarrow$** *Super Mansão:* **Mansão de Altíssimo Luxo em Condomínio Fechado** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
-*   **L20 (Galáxia) $\rightarrow$** *Usina de 1MW & Renda Vitalícia:* **Usina Solar Esol de 1MWp** (avaliada em R$ 3.500.000,00 turnkey, instalada e registrada em seu nome) + **Contrato de Arrendamento Garantido (Rent-Back)** da própria usina com aluguel garantido de **R$ 35.000,00 por mês** pago pela holding.
-*   **L21 (Universo) $\rightarrow$** *Usina de 2MW, Governança & Equity:* **Usina Solar Esol de 2MWp** (avaliada em R$ 7.000.000,00 turnkey, instalada e registrada em seu nome) + **Arrendamento Garantido (Rent-Back)** de **R$ 70.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
+*   **L19 (Aliança) $\rightarrow$** *Super Mansão:* **Mansão de Altíssimo Luxo em Condomínio Fechado** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
+*   **L20 (Sião) $\rightarrow$** *Usina de 1MW & Renda Vitalícia:* **Usina Solar Esol de 1MWp** (avaliada em R$ 3.500.000,00 turnkey, instalada e registrada em seu nome) + **Contrato de Arrendamento Garantido (Rent-Back)** da própria usina com aluguel garantido de **R$ 35.000,00 por mês** pago pela holding.
+*   **L21 (Shekinah) $\rightarrow$** *Usina de 2MW, Governança & Equity:* **Usina Solar Esol de 2MWp** (avaliada em R$ 7.000.000,00 turnkey, instalada e registrada em seu nome) + **Arrendamento Garantido (Rent-Back)** de **R$ 70.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
 
 ---
 
