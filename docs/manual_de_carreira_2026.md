@@ -90,7 +90,7 @@ Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmi
 | **L9** | **Estrela** | 2.000.000 | ⭐ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
 | **L10** | **Sol** | 5.000.000 | ☀️ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
 | **L11** | **Constelação**| 12.000.000 | 🌌 | **Carro Superesportivo de Luxo:** Porsche Taycan, Audi e-tron ou BMW iX quitado no valor de R$ 800.000,00. |
-| **L12** | **Galáxia** | 35.000.000 | 🌀 | **Usina Solar Própria:** Usina Esol de R$ 1.5M quitada e arrendada de volta, garantindo R$ 15.000,00/mês vitalício + Equity + Troféu. |
+| **L12** | **Galáxia** | 35.000.000 | 🌀 | **Usina de 1MW, Renda & Governança:** Usina de 1MWp (R$ 3.5M) + Aluguel de R$ 35.000,00/mês + Equity + Troféu + Convite para Conselho da Holding. |
 
 ---
 

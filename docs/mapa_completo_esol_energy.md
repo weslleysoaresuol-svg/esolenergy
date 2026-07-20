@@ -360,7 +360,7 @@ CREATE TABLE public.campanhas_premios (
 *   **L9 (Estrela) $\rightarrow$** *Carro Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
 *   **L10 (Sol) $\rightarrow$** *Apartamento/Casa Quitado:* **Imóvel Quitado** (apartamento de veraneio ou casa residencial, valor de R$ 600.000,00) registrado e escriturado em seu nome.
 *   **L11 (Constelação) $\rightarrow$** *Super Mansão:* **Mansão ou Cobertura Duplex de Alto Padrão** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
-*   **L12 (Galáxia) $\rightarrow$** *Usina Solar Própria & Equity:* **Usina Solar Esol de R$ 1.5 Milhão quitada e arrendada de volta para a Esol**, garantindo R$ 15.000,00/mês de renda passiva vitalícia + Participação Acionária da Holding (Equity) + Bônus de LPL Semestral Capped (1% da regional).
+*   **L12 (Galáxia) $\rightarrow$** *Usina de 1MW, Renda Vitalícia & Governança:* **Usina Solar Esol de 1MWp** (avaliada em R$ 3.500.000,00 turnkey, instalada e registrada em seu nome) + **Contrato de Arrendamento Garantido (Rent-Back)** da própria usina com aluguel garantido de **R$ 35.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
 
 ---
 
