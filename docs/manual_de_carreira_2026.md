@@ -29,8 +29,8 @@ Para garantir a integridade do ecossistema Esol e a sua segurança jurídica com
 
 ---
 
-## 2. 📊 COMO VOCÊ ACUMULA PONTOS
-Os pontos são gerados a partir do faturamento real de cada negócio fechado por você (venda direta) ou pela sua equipe de consultores independentes (rede de indicação MMN):
+## 2. 📊 COMO VOCÊ ACUMULA PONTOS (EXCLUSIVO VENDA DIRETA)
+Os pontos de qualificação de selos são gerados **exclusivamente a partir das suas vendas diretas pessoais**. Não há acúmulo de pontos de qualificação vindo de vendas de sua equipe (rede MMN) para os selos. Se você quiser ter pontos e subir no ranking, você deve realizar vendas diretas.
 
 ### A. Sistemas Solares Turnkey (Cat #1 e #10)
 *   Vendas até R$ 20.000,00: **200 pontos**
@@ -53,30 +53,19 @@ Os pontos são gerados a partir do faturamento real de cada negócio fechado por
 
 ---
 
-## 3. ⏳ REGRAS DE VALIDADE (JANELA DESLIZANTE DE 12 MESES)
-Os pontos de qualificação não são zerados no primeiro dia de cada mês. Eles possuem validade de **365 dias** a partir da data de faturamento de cada negócio fechado.
-*   *Como funciona:* No dia 1º de cada mês, os pontos gerados há mais de 12 meses expiram do seu saldo de qualificação. Isso garante que o selo reflita a produtividade atualizada da sua rede comercial nos últimos 365 dias.
+## 3. ⏳ AS 3 VARIAÇÕES DE RANKINGS E REGRAS DE VALIDADE
+O sistema computa os pontos de vendas diretas pessoais em três categorias independentes no banco de dados para incentivar a produtividade máxima:
+
+*   **1. Ranking Mensal (Visível no Aplicativo):** Zera completamente no primeiro dia de cada mês às 00:00h. É a métrica mandante que o consultor acompanha no seu painel. Serve para calcular o *Bônus de Produtividade Direta* mensal do vendedor e gera a urgência de fechar negócios constantemente ("Dia 1" constante).
+*   **2. Ranking Anual (Oculto no Aplicativo, visível no Admin):** Acumula os pontos do dia 1 de janeiro ao dia 31 de dezembro de cada ano civil. Serve para a diretoria avaliar o desempenho global e entregar premiações institucionais exclusivas e viagens na convenção nacional no início do ano seguinte.
+*   **3. Ranking Permanente/Geral (Oculto no Aplicativo, visível no Admin):** Acúmulo perpétuo e histórico de todas as vendas diretas do consultor desde o seu cadastro na Esol. Usado para selos honoríficos permanentes e planos de reconhecimento vitalício da diretoria.
 
 ---
 
-## 4. ⚖️ REGRA DE EQUILÍBRIO (VOLUME MÁXIMO POR EQUIPE - VME DINÂMICO ESCALONADO)
-Para garantir a sustentabilidade do caixa e premiar o trabalho de expansão equilibrado, aplicamos a trava **VME Dinâmica Escalonada**.
-*   **Definição:** O consultor só pode aproveitar um percentual máximo da pontuação exigida para o selo vinda de uma única linha de indicação direta (equipe de um indicado direto). O limite do VME muda conforme o nível do selo:
-    *   **Níveis Iniciais (L1 a L6 - Semente a Rio):** **VME de 80%** (facilita as primeiras conquistas de bônus, permitindo focar em uma perna forte no início).
-    *   **Níveis Intermediários (L7 a L15 - Brisa a Sol):** **VME de 50%** (exige o desenvolvimento de pelo menos 2 pernas ativas de indicação para equilibrar).
-    *   **Níveis de Liderança (L16 a L21 - Meteoro a Legado):** **VME de 35%** (exige liderança estruturada de alta performance com pelo menos 3 pernas ativas de indicação).
-*   **Objetivo:** Evitar o "Efeito Carona", estimulando o consultor a desenvolver novos parceiros e atuar em várias equipes ativas.
-
-### Exemplo Visual de VME para o Selo Raio (8.000 pontos):
-```mermaid
-graph TD
-    Joao["Você (João) <br> Quer o Selo Raio (8.000 pts)"]
-    Joao -->|Venda Pessoal| VP["Sua Venda Direta: <br> 2.000 pontos <br> (100% Contam)"]
-    Joao -->|Linha Direta 1| EquipeA["Perna do Marcos (Forte) <br> Gerou: 15.000 pontos <br> Limite VME (50%): 4.000 pontos contam"]
-    Joao -->|Linha Direta 2| EquipeB["Perna do Lucas (Menor) <br> Gerou: 1.500 pontos <br> (100% Contam)"]
-    
-    VP & EquipeA & EquipeB --> Sum["Soma Qualificada: <br> 2.000 + 4.000 + 1.500 = 7.500 pts <br> (Faltam 500 pts!)"]
-```
+## 4. ⚖️ AUSÊNCIA DE TRAVAS COMPLEXAS (MERITOCRACIA DIRETA)
+Diferente dos modelos de MMN antigos que usam travas complexas de equipe (VME - Volume Máximo por Equipe), o plano da Esol é baseado em transparência e no seu mérito pessoal de vendas:
+*   **Qualificação por Selos:** Depende 100% de suas vendas diretas pessoais acumuladas no Ranking Mensal. Não há risco de ter pontos bloqueados por pernas ou equipes.
+*   **Comissões de Rede:** O repasse financeiro de sua rede MMN de 7 níveis é pago diretamente em dinheiro em sua conta, sem qualquer trava ou limite de VME. Se a sua equipe vende, você ganha.
 
 ---
 

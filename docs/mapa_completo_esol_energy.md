@@ -398,37 +398,23 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 Este guia rápido e didático deve ser exibido no aplicativo do consultor (na aba "Selos e Prêmios") para que ele entenda o funcionamento do programa de selos de forma intuitiva:
 
 ##### **A. Como você Acumula pontos (Fluxo de Geração)**
-Sempre que você ou alguém da sua rede realiza uma venda, o sistema converte o valor em pontos. Os pontos sobem automaticamente por toda a árvore de rede:
+Sempre que você realiza uma venda direta pessoal, o sistema converte o valor em pontos. Não há acúmulo de pontos vindo de terceiros (rede MMN) para fins de classificação de selos e rankings.
 
 ```mermaid
 graph TD
-    Venda[Venda Concluída] -->|Turnkey / Solar| P1[R$ 30k = 500 pontos]
+    Venda[Sua Venda Direta Concluída] -->|Turnkey / Solar| P1[R$ 30k = 500 pontos]
     Venda -->|Recorrência GD / MLE| P2[Consumo R$ 1k/mês = 40 pontos/mês]
     Venda -->|Loja / Peças| P3[Carrinho R$ 5k = 50 pontos]
     Venda -->|Serviços O&M| P4[Limpeza R$ 500 = 10 pontos]
-    P1 & P2 & P3 & P4 -->|Acúmulo Automático| Saldo[Seu Saldo de Qualificação]
+    P1 & P2 & P3 & P4 -->|Acúmulo Automático| Saldo[Seu Saldo Pessoal]
 ```
 
-##### **B. A Regra do Prazo (Janela Deslizante de 12 meses)**
-*   **Seus pontos não zeram no fim do mês!** Eles acumulam ao longo de 12 meses.
-*   *Como funciona:* Cada ponto ganho tem a validade exata de **365 dias**. Ao completar 1 ano, aquele ponto expira. Isso mantém o saldo de todos atualizado com a produtividade real do último ano, premiando quem se mantém ativo.
+##### **B. A Regra do Prazo (Os 3 Rankings Coexistentes)**
+*   **Seu Ranking Mensal (Visível no App) zera no 1º dia de cada mês!** Isso gera a necessidade de vendas constantes todo mês.
+*   **O Ranking Anual e Permanente (Ocultos no App):** Acumulam seus pontos pessoais ao longo do ano civil e de forma perpétua, respectivamente, para qualificações e premiações especiais promovidas pela diretoria.
 
-##### **C. A Regra do Equilíbrio (Como funciona o VME de 50%)**
-Para conquistar os prêmios maiores (celulares, notebooks, viagens e carros), você deve desenvolver pelo menos **2 ou 3 equipes ativas**. O sistema limita em **50% do total exigido para o selo** o aproveitamento de uma única perna (indicado direto).
-
-Veja o exemplo visual abaixo para a meta do selo **Raio (8.000 pontos)**:
-
-```mermaid
-graph TD
-    Joao["Você (João) <br> Quer obter Selo Raio (8.000 pts)"]
-    Joao -->|Venda Pessoal| VP["Sua Venda Direta: <br> 2.000 pontos <br> (100% Contam)"]
-    Joao -->|Linha Direta 1| EquipeA["Perna do Marcos (Forte) <br> Gerou: 15.000 pontos <br> Limite VME (50%): 4.000 pontos contam"]
-    Joao -->|Linha Direta 2| EquipeB["Perna do Lucas (Menor) <br> Gerou: 1.500 pontos <br> (100% Contam)"]
-    
-    VP & EquipeA & EquipeB --> Sum["Soma Qualificada: <br> 2.000 + 4.000 + 1.500 = 7.500 pts <br> (Faltam 500 pts!)"]
-```
-
-*   **Dica para Evolução:** Se você tem um parceiro com vendas muito fortes (como o Marcos), ajude o seu outro indicado (Lucas) a fazer mais indicações ou faça mais vendas diretas para atingir a meta!
+##### **C. Sem Travas Complexas (Transparência Total)**
+Diferente dos planos antigos do mercado que usavam travas complexas de equipe (VME), o programa Esol é **100% focado no seu mérito pessoal**. Subir no ranking de selos depende exclusivamente da sua produção direta. A sua rede MMN serve para lhe gerar renda passiva recorrente em dinheiro em até 7 níveis, sem qualquer interferência na pontuação dos seus selos.
 
 ##### **D. Como resgatar o prêmio?**
 1.  **Atingiu a meta de qualificação:** O aplicativo exibirá um confete digital e uma notificação de conquista.
