@@ -89,7 +89,7 @@ Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmi
 | **L8** | **Eclipse** | 800.000 | 🌑 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
 | **L9** | **Estrela** | 2.000.000 | ⭐ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
 | **L10** | **Sol** | 5.000.000 | ☀️ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
-| **L11** | **Constelação**| 12.000.000 | 🌌 | **Super Mansão/Cobertura:** Imóvel de Alto Padrão quitado e escriturado no valor de R$ 2.0 Milhões. |
+| **L11** | **Constelação**| 12.000.000 | 🌌 | **Carro Superesportivo de Luxo:** Porsche Taycan, Audi e-tron ou BMW iX quitado no valor de R$ 800.000,00. |
 | **L12** | **Galáxia** | 35.000.000 | 🌀 | **Usina Solar Própria:** Usina Esol de R$ 1.5M quitada e arrendada de volta, garantindo R$ 15.000,00/mês vitalício + Equity + Troféu. |
 
 ---
