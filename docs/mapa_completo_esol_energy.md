@@ -324,9 +324,9 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 | **L13** | **Lua** | 600.000 pontos | 🌙 **Lua** (Luz Satélite) | *"A luz reflexiva que guia os passos na escuridão."* |
 | **L14** | **Planeta** | 900.000 pontos | 🪐 **Planeta** (Mundo Consolidado) | *"A solidez de um mundo inteiro construído com liderança."* |
 | **L15** | **Sol** | 1.500.000 pontos | ☀️ **Sol** (A Estrela Central) | *"A fonte suprema de energia limpa que gera vida."* |
-| **L16** | **Estrela** | 2.500.000 pontos | ⭐ **Estrela** (Brilho Próprio) | *"A luz própria brilhando alto com autoridade e brilho."* |
-| **L17** | **Constelação**| 4.000.000 pontos | 🌌 **Constelação** (União de Sócios) | *"A união monumental de estrelas alinhadas sob a mesma visão."* |
-| **L18** | **Galáxia** | 6.000.000 pontos | 🌀 **Galáxia** (Império Estelar) | *"Um império de estrelas brilhando em perfeita harmonia comercial."* |
+| **L16** | **Meteoro** | 2.500.000 pontos | ☄️ **Meteoro** (Impacto Rápido) | *"Velocidade e brilho intenso marcando época no mercado."* |
+| **L17** | **Cometa** | 4.000.000 pontos | 🌠 **Cometa** (Cauda de Luz) | *"A trajetória de luz brilhante que atrai a atenção de todos."* |
+| **L18** | **Supernova** | 6.000.000 pontos | 💥 **Supernova** (Explosão Estelar) | *"A maior liberação de luz e energia gerando novos horizontes."* |
 | **L19** | **Conquista** | 10.000.000 pontos| 🏆 **Conquista** (Vitória Consolidada) | *"A celebração monumental de conquistar seu espaço definitivo no mercado."* |
 | **L20** | **Plenitude** | 20.000.000 pontos| 💎 **Plenitude** (Abundância e Paz) | *"A satisfação e abundância de quem alcançou a estabilidade total."* |
 | **L21** | **Legado** | 35.000.000 pontos| 👑 **Legado** (Marca Perpétua) | *"A conquista definitiva que ultrapassa as barreiras do tempo e das gerações."* |
@@ -377,11 +377,11 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 
 ---
 
-#### **6️⃣ GRUPO: AS CONSTELAÇÕES (L16 a L18)**
-*Foco: Estrelas de Guia e Agrupamentos de Luz Própria (Status Corporativo e Prestige).*
-*   **L16 (Estrela) $\rightarrow$** *Sede Comercial Própria & Status:* **Sala Comercial Premium de até R$ 500.000,00 quitada e escriturada** em seu nome para sediar a sua Agência Regional Esol + **Relógio Rolex de Luxo (Submariner ou similar, no valor de R$ 100.000,00)** (Total de R$ 600.000,00).
-*   **L17 (Constelação) $\rightarrow$** *Moradia de Luxo:* **Apartamento de Alto Padrão Frente Mar** (Cobertura ou similar, no valor de R$ 1.2 Milhão quitado e escriturado) em seu nome.
-*   **L18 (Galáxia) $\rightarrow$** *Máquina Superesportiva:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, no valor de R$ 800.000,00 quitado) + **R$ 600.000,00 de Bônus em Dinheiro** (Total de R$ 1.4 Milhão) para desfrutar do novo estilo de vida.
+#### **6️⃣ GRUPO: FENÔMENOS ESPACIAIS (L16 a L18)**
+*Foco: Velocidade, Impacto e Brilho Supremo (Status Corporativo e Prestige).*
+*   **L16 (Meteoro) $\rightarrow$** *Sede Comercial Própria & Status:* **Sala Comercial Premium de até R$ 500.000,00 quitada e escriturada** em seu nome para sediar a sua Agência Regional Esol + **Relógio Rolex de Luxo (Submariner ou similar, no valor de R$ 100.000,00)** (Total de R$ 600.000,00).
+*   **L17 (Cometa) $\rightarrow$** *Moradia de Luxo:* **Apartamento de Alto Padrão Frente Mar** (Cobertura ou similar, no valor de R$ 1.2 Milhão quitado e escriturado) em seu nome.
+*   **L18 (Supernova) $\rightarrow$** *Máquina Superesportiva:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, no valor de R$ 800.000,00 quitado) + **R$ 600.000,00 de Bônus em Dinheiro** (Total de R$ 1.4 Milhão) para desfrutar do novo estilo de vida.
 
 ---
 
