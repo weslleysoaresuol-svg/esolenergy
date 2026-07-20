@@ -328,57 +328,57 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 
 ---
 
-#### **1️⃣ GRUPO: NÚCLEO QUÂNTICO (L1 a L3)**
-*Foco: Partículas e Elementos Fundamentais de Luz (A Ignição Elementar).*
-*   **L1 (Fóton) $\rightarrow$** *Infraestrutura Básica de Comunicação:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica Premium + Boné Trucker + **Smartphone 5G de Trabalho** (Motorola ou Xiaomi, de R$ 950,00). *(Liberado com 2.000 pontos pessoais)*.
-*   **L2 (Elétron) $\rightarrow$** *Estação de Trabalho Móvel:* **Notebook Lenovo ou ASUS** (Ryzen 3 LPDDR5/SSD 256GB) + **Mochila Executiva Impermeável** com saída USB (valor total de R$ 1.750,00) para propostas e simulações.
-*   **L3 (Prisma) $\rightarrow$** *Apresentação Móvel de Impacto:* **Kit Apresentador Executivo (Projetor Smart Samsung The Freestyle + Soundbar JBL)** (valor total de R$ 2.400,00) para projetar propostas e diagramas em qualquer sala.
+#### **1️⃣ GRUPO: O FOGO (L1 a L3)**
+*Foco: A Ignição e o Calor Comercial Inicial (Elementos de Combustão).*
+*   **L1 (Faísca) $\rightarrow$** *Infraestrutura Básica de Comunicação:* Crachá PVC + Caderno Couro + Caneta Metal + Polo Oficial + Garrafa Térmica Premium + Boné Trucker + **Smartphone 5G de Trabalho** (Motorola ou Xiaomi, de R$ 950,00). *(Liberado com 2.000 pontos pessoais)*.
+*   **L2 (Chama) $\rightarrow$** *Estação de Trabalho Móvel:* **Notebook Lenovo ou ASUS** (Ryzen 3 LPDDR5/SSD 256GB) + **Mochila Executiva Impermeável** com saída USB (valor total de R$ 1.750,00) para propostas e simulações.
+*   **L3 (Fogueira) $\rightarrow$** *Apresentação Móvel de Impacto:* **Kit Apresentador Executivo (Projetor Smart Samsung The Freestyle + Soundbar JBL)** (valor total de R$ 2.400,00) para projetar propostas e diagramas em qualquer sala.
 
 ---
 
-#### **2️⃣ GRUPO: FLUXO ATMOSFÉRICO (L4 a L6)**
-*Foco: Movimentos e Estados de Matéria da Energia (O Fluxo de Trabalho).*
-*   **L4 (Vento) $\rightarrow$** *Aceleração Comercial:* **Auxílio de Custo Comercial de R$ 5.000,00** para impulsionar a prospecção regional e ativação de mercado.
-*   **L5 (Vortex) $\rightarrow$** *Apresentação Digital & Imersão:* **iPad de 10.2 polegadas com caneta digital e capa** + Imersão VIP de 3 dias de Treinamento Comercial com tudo pago na sede da Esol (valor de R$ 6.000,00).
-*   **L6 (Plasma) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de R$ 17.000,00 quitada e entregue em seu nome).
+#### **2️⃣ GRUPO: A TEMPESTADE (L4 a L6)**
+*Foco: A Força da Natureza e o Acúmulo de Energia (O Movimento de Mercado).*
+*   **L4 (Nuvem) $\rightarrow$** *Aceleração Comercial:* **Auxílio de Custo Comercial de R$ 5.000,00** para impulsionar a prospecção regional e ativação de mercado.
+*   **L5 (Raio) $\rightarrow$** *Apresentação Digital & Imersão:* **iPad de 10.2 polegadas com caneta digital e capa** + Imersão VIP de 3 dias de Treinamento Comercial com tudo pago na sede da Esol (valor de R$ 6.000,00).
+*   **L6 (Trovão) $\rightarrow$** *Mobilidade Limpa:* **Scooter Elétrica de Cidade 0km** (ex: Watts ou Voltz, valor de R$ 17.000,00 quitada e entregue em seu nome).
 
 ---
 
-#### **3️⃣ GRUPO: FENÔMENOS CELESTES (L7 a L9)**
-*Foco: Descargas de Alta Tensão e Brilhos Atmosféricos (O Reconhecimento).*
-*   **L7 (Raio) $\rightarrow$** *Férias Premium Nacionais:* Viagem de 5 dias com acompanhante para Fernando de Noronha ou Porto de Galinhas com tudo pago (R$ 15.000,00) + R$ 5.000,00 de Bônus em Dinheiro (Total de R$ 20.000,00).
-*   **L8 (Trovão) $\rightarrow$** *Inteligência de Mercado Global:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens executivas, hotel 5 estrelas e ingressos da feira, valor de R$ 25.000,00).
-*   **L9 (Aurora) $\rightarrow$** *Hub de Vendas Regional:* **Verba de R$ 35.000,00 para Montagem e Fachada do Escritório/Showroom de Representação Esol** na cidade do parceiro.
+#### **3️⃣ GRUPO: O CÉU (L7 a L9)**
+*Foco: Altitude e Expansão na Atmosfera Terrestre (O Reconhecimento Regional).*
+*   **L7 (Céu) $\rightarrow$** *Férias Premium Nacionais:* Viagem de 5 dias com acompanhante para Fernando de Noronha ou Porto de Galinhas com tudo pago (R$ 15.000,00) + R$ 5.000,00 de Bônus em Dinheiro (Total de R$ 20.000,00).
+*   **L8 (Atmosfera) $\rightarrow$** *Inteligência de Mercado Global:* Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (passagens executivas, hotel 5 estrelas e ingressos da feira, valor de R$ 25.000,00).
+*   **L9 (Órbita) $\rightarrow$** *Hub de Vendas Regional:* **Verba de R$ 35.000,00 para Montagem e Fachada do Escritório/Showroom de Representação Esol** na cidade do parceiro.
 
 ---
 
-#### **4️⃣ GRUPO: ALTITUDE ORBITAL (L10 a L12)**
-*Foco: Ascensão além do Planeta e Trajetória Espacial (A Órbita de Liderança).*
-*   **L10 (Atmosfera) $\rightarrow$** *Missão de Negócios Internacional:* Viagem de 10 dias para a China (visita a fábricas de painéis solares BYD/Longi) com acompanhante (R$ 40.000,00) + R$ 10.000,00 em Dinheiro para despesas (Total de R$ 50.000,00).
-*   **L11 (Zênite) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: Hyundai HB20, Chevrolet Onix ou VW Polo, valor de R$ 95.000,00 quitado e em seu nome).
-*   **L12 (Orbital) $\rightarrow$** *Férias ao Redor do Mundo:* Viagem de Volta ao Mundo (crédito de R$ 70.000,00 para roteiro livre) + R$ 30.000,00 de Bônus em Dinheiro (Total de R$ 100.000,00).
+#### **4️⃣ GRUPO: O SISTEMA SOLAR (L10 a L12)**
+*Foco: Os Astros Orbitais e Centrais do Nosso Sistema (O Status Nacional).*
+*   **L10 (Lua) $\rightarrow$** *Missão de Negócios Internacional:* Viagem de 10 dias para a China (visita a fábricas de painéis solares BYD/Longi) com acompanhante (R$ 40.000,00) + R$ 10.000,00 em Dinheiro para despesas (Total de R$ 50.000,00).
+*   **L11 (Terra) $\rightarrow$** *Carro Hatch Premium:* **Carro Hatch Zero Km** (ex: Hyundai HB20, Chevrolet Onix ou VW Polo, valor de R$ 95.000,00 quitado e em seu nome).
+*   **L12 (Sol) $\rightarrow$** *Férias ao Redor do Mundo:* Viagem de Volta ao Mundo (crédito de R$ 70.000,00 para roteiro livre) + R$ 30.000,00 de Bônus em Dinheiro (Total de R$ 100.000,00).
 
 ---
 
-#### **5️⃣ GRUPO: SISTEMA SOLAR (L13 a L15)**
-*Foco: Corpos Celestes Soberanos Locais (A Consolidação).*
-*   **L13 (Lua) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
-*   **L14 (Terra) $\rightarrow$** *Sedan Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
-*   **L15 (Sol) $\rightarrow$** *Showroom Residencial Off-Grid:* **Sistema de Energia Solar Residencial Premium com Armazenamento** (inversor SolarEdge com Bateria BYD/Tesla de armazenamento backup off-grid, no valor de R$ 100.000,00 instalado na sua casa) + **R$ 300.000,00 de Bônus em Dinheiro** (Total de R$ 400.000,00) para criar um showroom vivo de alta tecnologia.
+#### **5️⃣ GRUPO: O ESPAÇO (L13 a L15)**
+*Foco: Viajantes Celestes e Fontes de Luz Própria (A Consolidação Patrimonial).*
+*   **L13 (Meteoro) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
+*   **L14 (Cometa) $\rightarrow$** *Sedan Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
+*   **L15 (Estrela) $\rightarrow$** *Showroom Residencial Off-Grid:* **Sistema de Energia Solar Residencial Premium com Armazenamento** (inversor SolarEdge com Bateria BYD/Tesla de armazenamento backup off-grid, no valor de R$ 100.000,00 instalado na sua casa) + **R$ 300.000,00 de Bônus em Dinheiro** (Total de R$ 400.000,00) para criar um showroom vivo de alta tecnologia.
 
 ---
 
-#### **6️⃣ GRUPO: ESTRUTURAS CÓSMICAS (L16 a L18)**
-*Foco: Estrelas e Ciclos Celestes Estelares (Patrimônio e Prestige).*
+#### **6️⃣ GRUPO: AS CONSTELAÇÕES (L16 a L18)**
+*Foco: Estrelas de Guia e Agrupamentos Estelares (Status Corporativo e Prestige).*
 *   **L16 (Polaris) $\rightarrow$** *Sede Comercial Própria & Status:* **Sala Comercial Premium de até R$ 500.000,00 quitada e escriturada** em seu nome para sediar a sua Agência Regional Esol + **Relógio Rolex de Luxo (Submariner ou similar, no valor de R$ 100.000,00)** (Total de R$ 600.000,00).
-*   **L17 (Nebulosa) $\rightarrow$** *Moradia de Luxo:* **Apartamento de Alto Padrão Frente Mar** (Cobertura ou similar, no valor de R$ 1.2 Milhão quitado e escriturado) em seu nome.
-*   **L18 (Supernova) $\rightarrow$** *Máquina Superesportiva:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, no valor de R$ 800.000,00 quitado) + **R$ 600.000,00 de Bônus em Dinheiro** (Total de R$ 1.4 Milhão) para desfrutar do novo estilo de vida.
+*   **L17 (Constelação) $\rightarrow$** *Moradia de Luxo:* **Apartamento de Alto Padrão Frente Mar** (Cobertura ou similar, no valor de R$ 1.2 Milhão quitado e escriturado) em seu nome.
+*   **L18 (Nebulosa) $\rightarrow$** *Máquina Superesportiva:* **Carro Esportivo de Altíssimo Luxo Zero Km** (ex: Porsche Taycan, Audi e-tron ou BMW iX, no valor de R$ 800.000,00 quitado) + **R$ 600.000,00 de Bônus em Dinheiro** (Total de R$ 1.4 Milhão) para desfrutar do novo estilo de vida.
 
 ---
 
-#### **7️⃣ GRUPO: ALIANÇA GALÁCTICA (L19 a L21)**
-*Foco: Coletivos e Agrupamentos Cósmicos de Liderança (Renda Passiva Vitalícia e Governança da Holding).*
-*   **L19 (Constelação) $\rightarrow$** *Super Mansão:* **Mansão de Altíssimo Luxo em Condomínio Fechado** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
+#### **7️⃣ GRUPO: O ABSOLUTO (L19 a L21)**
+*Foco: As Maiores Estruturas do Infinito e a Governança da Holding (Renda Passiva Vitalícia).*
+*   **L19 (Supernova) $\rightarrow$** *Super Mansão:* **Mansão de Altíssimo Luxo em Condomínio Fechado** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
 *   **L20 (Galáxia) $\rightarrow$** *Usina de 1MW & Renda Vitalícia:* **Usina Solar Esol de 1MWp** (avaliada em R$ 3.500.000,00 turnkey, instalada e registrada em seu nome) + **Contrato de Arrendamento Garantido (Rent-Back)** da própria usina com aluguel garantido de **R$ 35.000,00 por mês** pago pela holding.
 *   **L21 (Universo) $\rightarrow$** *Usina de 2MW, Governança & Equity:* **Usina Solar Esol de 2MWp** (avaliada em R$ 7.000.000,00 turnkey, instalada e registrada em seu nome) + **Arrendamento Garantido (Rent-Back)** de **R$ 70.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
 
