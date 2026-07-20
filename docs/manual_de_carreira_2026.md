@@ -21,7 +21,7 @@ Este manual contém todas as regras de metas e as campanhas de prêmios vigentes
 ## 1. 🛡️ DIRETRIZES DE SEGURANÇA E RELAÇÃO JURÍDICA
 Para garantir a integridade do ecossistema Esol e a sua segurança jurídica como parceiro independente, observe as seguintes regras:
 *   **Independência Profissional:** O consultor é um parceiro comercial autônomo. Não há relação de subordinação, cumprimento de horários, exclusividade ou vínculo empregatício (CLT) com a Esol Energy. A atividade é baseada em livre indicação e corretagem de soluções de energia.
-*   **Terminologia Proibida (CLT-Safe):** É expressamente proibido o uso de cargos corporativos (ex: *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"*, *"Coordenador"*) ou termos hierárquicos internos para se referir às qualificações obtidas. O programa adota exclusivamente nomenclaturas baseadas no Espaço e nos estados físicos da Energia (*Faísca, Chama, Raio, Lua, Terra, Órbita, Cometa, Eclipse, Estrela, Sol, Constelação, Galáxia*).
+*   **Terminologia Proibida (CLT-Safe):** É expressamente proibido o uso de cargos corporativos (ex: *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"*, *"Coordenador"*) ou termos hierárquicos internos para se referir às qualificações obtidas. O programa adota exclusivamente nomenclaturas baseadas no Espaço e nos estados físicos da Energia (*Fóton, Faísca, Chama, Lumina, Vortex, Plasma, Raio, Aurora, Atmosfera, Zênite, Orbital, Helios, Lua, Terra, Sol, Polaris, Constelação, Nebulosa, Supernova, Galáxia, Universo*).
 *   **Desacoplamento de Prêmios (Campanhas Dinâmicas):** O alcance de um nível de selo no banco de dados representa apenas uma qualificação honorífica. Os presentes, prêmios ou viagens associados a cada nível pertencem a **Campanhas de Incentivo** dinâmicas criadas pela diretoria com validade e vigência predefinidas, podendo ser ajustados conforme a estratégia de mercado da holding.
 
 ---
@@ -92,12 +92,12 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 | **L11** | **Orbital** | 250.000 | 💫 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
 | **L12** | **Helios** | 400.000 | 🧲 | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
 | **L13** | **Lua** | 600.000 | 🌙 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
-| **L14** | **Terra** | 900.000 | 🌍 | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 180.000,00 em Dinheiro. |
-| **L15** | **Sol** | 1.500.000 | ☀️ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
-| **L16** | **Polaris** | 2.500.000 | ⭐ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
-| **L17** | **Constelação**| 4.000.000 | 🌌 | **Cobertura Premium Frente Mar:** Apartamento de Alto Padrão quitado e escriturado no valor de R$ 1.2 Milhão. |
-| **L18** | **Nebulosa** | 6.000.000 | ☁️ | **Carro Superesportivo de Luxo:** Porsche Taycan, Audi e-tron ou BMW iX quitado no valor de R$ 800.000,00. |
-| **L19** | **Supernova** | 10.000.000| 💥 | **Super Mansão/Cobertura:** Imóvel de Alto Padrão quitado e escriturado no valor de R$ 2.0 Milhões. |
+| **L14** | **Terra** | 900.000 | 🌍 | **Sedan Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
+| **L15** | **Sol** | 1.500.000 | ☀️ | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 300.000,00 em Dinheiro. |
+| **L16** | **Polaris** | 2.500.000 | ⭐ | **Sede Comercial Regional:** Escritório/Sala Comercial Premium quitada de R$ 500.000,00 + Relógio Rolex de R$ 100.000,00. |
+| **L17** | **Constelação**| 4.000.000 | 🌌 | **Apartamento Frente Mar:** Cobertura de Alto Padrão Frente Mar quitada e escriturada no valor de R$ 1.2 Milhão. |
+| **L18** | **Nebulosa** | 6.000.000 | ☁️ | **Superesportivo & Estilo de Vida:** Porsche Taycan, Audi e-tron ou BMW iX quitado (R$ 800.000,00) + R$ 600.000,00 em Dinheiro. |
+| **L19** | **Supernova** | 10.000.000| 💥 | **Super Mansão de Luxo:** Mansão de Altíssimo Luxo em Condomínio Fechado quitada e escriturada de R$ 2.0 Milhões. |
 | **L20** | **Galáxia** | 20.000.000| 🌀 | **Usina de 1MW & Renda Vitalícia:** Usina Solar 1MWp (R$ 3.5M) + Contrato de Arrendamento de R$ 35.000,00/mês. |
 | **L21** | **Universo** | 35.000.000| 🪐 | **Usina de 2MW, Renda & Governança:** Usina de 2MWp (R$ 7.0M) + Aluguel de R$ 70.000,00/mês + Equity + Troféu + Conselho. |
 
