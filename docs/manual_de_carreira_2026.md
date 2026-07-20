@@ -75,22 +75,31 @@ graph TD
 ---
 
 ## 5. 🏆 NÍVEIS DE SELOS E PRÊMIOS DA CAMPANHA 2026
-Abaixo estão os 12 selos de reconhecimento e a configuração oficial de prêmios vigentes para o ano de **2026**:
+Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmios vigentes para o ano de **2026**:
 
 | Nível | Selo de Reconhecimento | pontos Mínimos | Insígnia Visual | Prêmio da Campanha Vigente (2026) |
 | :---: | :--- | :---: | :---: | :--- |
-| **L1** | **Faísca** | 0 | ✨ | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium (Polo, Boné, Garrafa, Caderno). *(Liberado com 2.000 pts pessoais)*. |
-| **L2** | **Chama** | 2.500 | 🔥 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS (Ryzen 3 LPDDR5/SSD 256GB) + Mochila Executiva Impermeável de R$ 1.750,00. |
-| **L3** | **Raio** | 8.000 | ⚡ | **Estação Solar & Mapeamento:** Power Station + Mini Drone de R$ 2.400,00 + Suporte opcional sob consulta para montagem de escritório com Smart TV 4K. |
-| **L4** | **Lua** | 20.000 | 🌙 | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias de treinamento na sede. |
-| **L5** | **Terra** | 50.000 | 🌍 | **Scooter Elétrica Premium:** Scooter Elétrica 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
-| **L6** | **Órbita** | 120.000 | 💫 | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique, Alemanha* (Tudo Pago). |
-| **L7** | **Cometa** | 300.000 | ☄️ | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
-| **L8** | **Eclipse** | 800.000 | 🌑 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
-| **L9** | **Estrela** | 2.000.000 | ⭐ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
-| **L10** | **Sol** | 5.000.000 | ☀️ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
-| **L11** | **Constelação**| 12.000.000 | 🌌 | **Carro Superesportivo de Luxo:** Porsche Taycan, Audi e-tron ou BMW iX quitado no valor de R$ 800.000,00. |
-| **L12** | **Galáxia** | 35.000.000 | 🌀 | **Usina de 1MW, Renda & Governança:** Usina de 1MWp (R$ 3.5M) + Aluguel de R$ 35.000,00/mês + Equity + Troféu + Convite para Conselho da Holding. |
+| **L1** | **Faísca** | 0 | ✨ | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium. *(Liberado com 2.000 pts pessoais)*. |
+| **L2** | **Chama** | 2.500 | 🔥 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS + Mochila Executiva de R$ 1.750,00. |
+| **L3** | **Brasa** | 5.000 | 🪵 | **Estação Solar & Mapeamento:** Power Station + Mini Drone com câmera HD de R$ 2.400,00. |
+| **L4** | **Fogueira** | 10.000 | 🏕️ | **Aceleração Local:** Suporte opcional sob consulta para montagem de escritório com Smart TV 4K de R$ 9.500,00. |
+| **L5** | **Raio** | 15.000 | ⚡ | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias na sede de R$ 6.000,00. |
+| **L6** | **Trovão** | 25.000 | ⛈️ | **Scooter Elétrica Premium:** Scooter 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
+| **L7** | **Lua** | 40.000 | 🌙 | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique* (Tudo Pago). |
+| **L8** | **Atmosfera** | 60.000 | 🌌 | **Férias Premium & Bônus:** Viagem de 5 dias para Fernando de Noronha/Porto de Galinhas com tudo pago + R$ 5.000,00 de Bônus. |
+| **L9** | **Terra** | 100.000 | 🌍 | **Hub de Vendas Regional:** Verba de R$ 35.000,00 para montagem e fachada do Escritório/Showroom local Esol. |
+| **L10** | **Gravidade** | 150.000 | 🧲 | **Missão Internacional de Negócios:** Viagem de 10 dias para a China (fábricas BYD/Longi) c/ acompanhante + R$ 10.000,00. |
+| **L11** | **Órbita** | 250.000 | 💫 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
+| **L12** | **Cometa** | 400.000 | ☄️ | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
+| **L13** | **Meteoro** | 600.000 | 🌠 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
+| **L14** | **Eclipse** | 900.000 | 🌑 | **SUV Premium Importado:** Volvo XC40 ou BMW X1 quitado no valor de R$ 280.000,00. |
+| **L15** | **Estrela** | 1.500.000 | ⭐ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
+| **L16** | **Nebulosa** | 2.500.000 | ☁️ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
+| **L17** | **Supernova**| 4.000.000 | 💥 | **Cobertura Premium Frente Mar:** Apartamento de Alto Padrão quitado e escriturado no valor de R$ 1.2 Milhão. |
+| **L18** | **Sol** | 6.000.000 | ☀️ | **Carro Superesportivo de Luxo:** Porsche Taycan, Audi e-tron ou BMW iX quitado no valor de R$ 800.000,00. |
+| **L19** | **Constelação**| 10.000.000| 🌌 | **Super Mansão/Cobertura:** Imóvel de Alto Padrão quitado e escriturado no valor de R$ 2.0 Milhões. |
+| **L20** | **Cosmos** | 20.000.000| 🪐 | **Usina de 1MW & Renda Vitalícia:** Usina Solar 1MWp (R$ 3.5M) + Contrato de Arrendamento de R$ 35.000,00/mês. |
+| **L21** | **Galáxia** | 35.000.000| 🌀 | **Usina de 2MW, Renda & Governança:** Usina de 2MWp (R$ 7.0M) + Aluguel de R$ 70.000,00/mês + Equity + Troféu + Conselho. |
 
 ---
 
