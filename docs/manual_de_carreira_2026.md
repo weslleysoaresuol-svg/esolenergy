@@ -81,7 +81,7 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 | :---: | :--- | :---: | :---: | :--- |
 | **L1** | **Faísca** | 0 | ✨ | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium. *(Liberado com 2.000 pts pessoais)*. |
 | **L2** | **Chama** | 2.500 | 🔥 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS + Mochila Executiva de R$ 1.750,00. |
-| **L3** | **Brasa** | 5.000 | 🪵 | **Estação Solar & Mapeamento:** Power Station + Mini Drone com câmera HD de R$ 2.400,00. |
+| **L3** | **Brasa** | 5.000 | 🪵 | **Apresentação Móvel de Impacto:** Kit Apresentador (Projetor Smart Samsung The Freestyle + Soundbar JBL) de R$ 2.400,00. |
 | **L4** | **Fogueira** | 10.000 | 🏕️ | **Aceleração Local:** Suporte opcional sob consulta para montagem de escritório com Smart TV 4K de R$ 9.500,00. |
 | **L5** | **Raio** | 15.000 | ⚡ | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias na sede de R$ 6.000,00. |
 | **L6** | **Trovão** | 25.000 | ⛈️ | **Scooter Elétrica Premium:** Scooter 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
@@ -92,7 +92,7 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 | **L11** | **Órbita** | 250.000 | 💫 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
 | **L12** | **Cometa** | 400.000 | ☄️ | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
 | **L13** | **Meteoro** | 600.000 | 🌠 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
-| **L14** | **Eclipse** | 900.000 | 🌑 | **SUV Premium Importado:** Volvo XC40 ou BMW X1 quitado no valor de R$ 280.000,00. |
+| **L14** | **Eclipse** | 900.000 | 🌑 | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 180.000,00 em Dinheiro. |
 | **L15** | **Estrela** | 1.500.000 | ⭐ | **Carro Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
 | **L16** | **Nebulosa** | 2.500.000 | ☁️ | **Imóvel Quitado:** Casa residencial ou apartamento de veraneio quitado no valor de R$ 600.000,00. |
 | **L17** | **Supernova**| 4.000.000 | 💥 | **Cobertura Premium Frente Mar:** Apartamento de Alto Padrão quitado e escriturado no valor de R$ 1.2 Milhão. |
