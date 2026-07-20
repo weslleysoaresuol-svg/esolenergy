@@ -79,27 +79,27 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 
 | Nível | Selo de Reconhecimento | pontos Mínimos | Insígnia Visual | Prêmio da Campanha Vigente (2026) |
 | :---: | :--- | :---: | :---: | :--- |
-| **L1** | **Semente** | 0 | 🌱 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L2** | **Raiz** | 2.500 | 🌳 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L3** | **Rocha** | 5.000 | 🪨 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L4** | **Gota** | 10.000 | 💧 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L5** | **Nascente** | 15.000 | 🌊 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L6** | **Rio** | 25.000 | 🏞️ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L7** | **Brisa** | 40.000 | 🍃 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L8** | **Vento** | 60.000 | 💨 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L9** | **Ciclone** | 100.000 | 🌀 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L10** | **Faísca** | 150.000 | ✨ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L11** | **Chama** | 250.000 | 🔥 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L12** | **Fogueira** | 400.000 | 🪵 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L13** | **Lua** | 600.000 | 🌙 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L14** | **Terra** | 900.000 | 🌍 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L15** | **Sol** | 1.500.000 | ☀️ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L16** | **Meteoro** | 2.500.000 | ☄️ | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L17** | **Cometa** | 4.000.000 | 🌠 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L18** | **Supernova** | 6.000.000 | 💥 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L19** | **Triunfo** | 10.000.000| 🏆 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L20** | **Plenitude** | 20.000.000| 💎 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
-| **L21** | **Legado** | 35.000.000| 👑 | **Distribuição de Lucros (Pool 4%):** Participação ativa no bônus mensal de vendas diretas. Kit marca opcional debitado do saldo. |
+| **L1** | **Semente** | 0 | 🌱 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L2** | **Raiz** | 2.500 | 🌳 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L3** | **Rocha** | 5.000 | 🪨 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L4** | **Gota** | 10.000 | 💧 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L5** | **Nascente** | 15.000 | 🌊 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L6** | **Rio** | 25.000 | 🏞️ | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L7** | **Brisa** | 40.000 | 🍃 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L8** | **Vento** | 60.000 | 💨 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L9** | **Ciclone** | 100.000 | 🌀 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L10** | **Faísca** | 150.000 | ✨ | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L11** | **Chama** | 250.000 | 🔥 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L12** | **Fogueira** | 400.000 | 🪵 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L13** | **Lua** | 600.000 | 🌙 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L14** | **Terra** | 900.000 | 🌍 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L15** | **Sol** | 1.500.000 | ☀️ | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L16** | **Meteoro** | 2.500.000 | ☄️ | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L17** | **Cometa** | 4.000.000 | 🌠 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L18** | **Supernova** | 6.000.000 | 💥 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L19** | **Triunfo** | 10.000.000| 🏆 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L20** | **Plenitude** | 20.000.000| 💎 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
+| **L21** | **Legado** | 35.000.000| 👑 | **Bônus de Produtividade Direta:** Qualificação para bônus mensal com base em suas vendas diretas. Kit marca opcional debitado do saldo. |
 
 ---
 

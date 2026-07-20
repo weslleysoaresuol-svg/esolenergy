@@ -339,57 +339,57 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 
 #### **1️⃣ GRUPO: TERRA (L1 a L3) — "A Fundação"**
 *Foco: A Fundação, a Firmeza e a Ativação Pessoal (A Semente do Negócio).*
-*   **L1 (Semente) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional (Crachá, Caderno, Polo, Boné, Squeeze) debitado do saldo acumulado do consultor.
-*   **L2 (Raiz) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L3 (Rocha) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L1 (Semente) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional (Crachá, Caderno, Polo, Boné, Squeeze) debitado do saldo acumulado do consultor.
+*   **L2 (Raiz) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L3 (Rocha) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
 
 ---
 
 #### **2️⃣ GRUPO: ÁGUA (L4 a L6) — "O Fluxo"**
 *Foco: A Fluidez, o Fluxo de Caixa e o Crescimento (O Movimento Comercial).*
-*   **L4 (Gota) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L5 (Nascente) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L6 (Rio) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L4 (Gota) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L5 (Nascente) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L6 (Rio) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
 
 ---
 
 #### **3️⃣ GRUPO: AR (L7 a L9) — "A Expansão"**
 *Foco: A Velocidade, a Altitude e a Expansão Comercial (A Liderança Regional).*
-*   **L7 (Brisa) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L8 (Vento) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L9 (Ciclone) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L7 (Brisa) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L8 (Vento) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L9 (Ciclone) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
 
 ---
 
 #### **4️⃣ GRUPO: FOGO (L10 a L12) — "A Energia"**
 *Foco: A Ignição Máxima, o Calor e a Luz Própria (A Liderança Nacional).*
-*   **L10 (Faísca) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L11 (Chama) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L12 (Fogueira) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L10 (Faísca) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L11 (Chama) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L12 (Fogueira) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
 
 ---
 
 #### **5️⃣ GRUPO: O SISTEMA SOLAR (L13 a L15) — "Os Astros"**
 *Foco: Os Astros Orbitais e a Conquista de Grandes Bens (A Consolidação Patrimonial).*
-*   **L13 (Lua) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L14 (Terra) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L15 (Sol) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L13 (Lua) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L14 (Terra) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L15 (Sol) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
 
 ---
 
 #### **6️⃣ GRUPO: FENÔMENOS ESPACIAIS (L16 a L18) — "O Impacto"**
 *Foco: Velocidade, Impacto e Brilho Supremo (Status Corporativo e Prestige).*
-*   **L16 (Meteoro) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L17 (Cometa) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L18 (Supernova) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L16 (Meteoro) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L17 (Cometa) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L18 (Supernova) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
 
 ---
 
 #### **7️⃣ GRUPO: O LEGADO (L19 a L21) — "A Consagração"**
 *Foco: A Consagração Máxima, Abundância e Renda Passiva Vitalícia (A Governança).*
-*   **L19 (Triunfo) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L20 (Plenitude) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
-*   **L21 (Legado) $\rightarrow$** *Distribuição de Lucros (Pool 4%):* Recebe participação no bônus mensal de vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L19 (Triunfo) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L20 (Plenitude) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
+*   **L21 (Legado) $\rightarrow$** *Bônus de Produtividade Direta:* Recebe qualificação para o bônus mensal com base em suas vendas diretas. Combo Marca opcional debitado do saldo acumulado.
 
 ---
 
