@@ -21,7 +21,7 @@ Este manual contém todas as regras de metas e as campanhas de prêmios vigentes
 ## 1. 🛡️ DIRETRIZES DE SEGURANÇA E RELAÇÃO JURÍDICA
 Para garantir a integridade do ecossistema Esol e a sua segurança jurídica como parceiro independente, observe as seguintes regras:
 *   **Independência Profissional:** O consultor é um parceiro comercial autônomo. Não há relação de subordinação, cumprimento de horários, exclusividade ou vínculo empregatício (CLT) com a Esol Energy. A atividade é baseada em livre indicação e corretagem de soluções de energia.
-*   **Terminologia Proibida (CLT-Safe):** É expressamente proibido o uso de cargos corporativos (ex: *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"*, *"Coordenador"*) ou termos hierárquicos internos para se referir às qualificações obtidas. O programa adota exclusivamente nomenclaturas baseadas na natureza e no espaço (*Semente, Raiz, Rocha, Gota, Nascente, Rio, Brisa, Vento, Ciclone, Faísca, Chama, Fogueira, Lua, Planeta, Sol, Meteoro, Cometa, Supernova, Conquista, Plenitude, Legado*).
+*   **Terminologia Proibida (CLT-Safe):** É expressamente proibido o uso de cargos corporativos (ex: *"Diretor"*, *"Presidente"*, *"Gerente"*, *"Supervisor"*, *"Coordenador"*) ou termos hierárquicos internos para se referir às qualificações obtidas. O programa adota exclusivamente nomenclaturas baseadas na natureza e no espaço (*Semente, Raiz, Rocha, Gota, Nascente, Rio, Brisa, Vento, Ciclone, Faísca, Chama, Fogueira, Lua, Terra, Sol, Meteoro, Cometa, Supernova, Conquista, Plenitude, Legado*).
 *   **Desacoplamento de Prêmios (Campanhas Dinâmicas):** O alcance de um nível de selo no banco de dados representa apenas uma qualificação honorífica. Os presentes, prêmios ou viagens associados a cada nível pertencem a **Campanhas de Incentivo** dinâmicas criadas pela diretoria com validade e vigência predefinidas, podendo ser ajustados conforme a estratégia de mercado da holding.
 
 ---
@@ -92,7 +92,7 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 | **L11** | **Chama** | 250.000 | 🔥 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
 | **L12** | **Fogueira** | 400.000 | 🪵 | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
 | **L13** | **Lua** | 600.000 | 🌙 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
-| **L14** | **Planeta** | 900.000 | 🪐 | **Sedan Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
+| **L14** | **Terra** | 900.000 | 🌍 | **Sedan Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
 | **L15** | **Sol** | 1.500.000 | ☀️ | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 300.000,00 em Dinheiro. |
 | **L16** | **Meteoro** | 2.500.000 | ☄️ | **Sede Comercial Regional:** Escritório/Sala Comercial Premium quitada de R$ 500.000,00 + Relógio Rolex de R$ 100.000,00. |
 | **L17** | **Cometa** | 4.000.000 | 🌠 | **Apartamento Frente Mar:** Cobertura de Alto Padrão Frente Mar quitada e escriturada no valor de R$ 1.2 Milhão. |

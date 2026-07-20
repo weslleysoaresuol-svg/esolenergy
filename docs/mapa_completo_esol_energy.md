@@ -322,7 +322,7 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 | **L11** | **Chama** | 250.000 pontos | 🔥 **Chama** (Brilho do Fogo) | *"O brilho radiante que aquece e ilumina toda a equipe."* |
 | **L12** | **Fogueira** | 400.000 pontos | 🪵 **Fogueira** (União do Fogo) | *"O centro de união e energia que atrai a todos ao redor."* |
 | **L13** | **Lua** | 600.000 pontos | 🌙 **Lua** (Luz Satélite) | *"A luz reflexiva que guia os passos na escuridão."* |
-| **L14** | **Planeta** | 900.000 pontos | 🪐 **Planeta** (Mundo Consolidado) | *"A solidez de um mundo inteiro construído com liderança."* |
+| **L14** | **Terra** | 900.000 pontos | 🌍 **Terra** (Nosso Lar) | *"A solidez de construir uma base comercial firme no nosso planeta."* |
 | **L15** | **Sol** | 1.500.000 pontos | ☀️ **Sol** (A Estrela Central) | *"A fonte suprema de energia limpa que gera vida."* |
 | **L16** | **Meteoro** | 2.500.000 pontos | ☄️ **Meteoro** (Impacto Rápido) | *"Velocidade e brilho intenso marcando época no mercado."* |
 | **L17** | **Cometa** | 4.000.000 pontos | 🌠 **Cometa** (Cauda de Luz) | *"A trajetória de luz brilhante que atrai a atenção de todos."* |
@@ -372,7 +372,7 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 #### **5️⃣ GRUPO: O SISTEMA SOLAR (L13 a L15)**
 *Foco: Os Astros Orbitais e a Conquista de Grandes Bens (A Consolidação Patrimonial).*
 *   **L13 (Lua) $\rightarrow$** *SUV de Luxo:* **SUV de Luxo Zero Km** (ex: Jeep Compass, Toyota Corolla Cross ou BYD Song Plus, valor de R$ 200.000,00 quitado e em seu nome).
-*   **L14 (Planeta) $\rightarrow$** *Sedan Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
+*   **L14 (Terra) $\rightarrow$** *Sedan Elétrico Premium:* **Carro Elétrico Premium Zero Km** (ex: BYD Seal ou Volvo EX30, valor de R$ 300.000,00 quitado).
 *   **L15 (Sol) $\rightarrow$** *Showroom Residencial Off-Grid:* **Sistema de Energia Solar Residencial Premium com Armazenamento** (inversor SolarEdge com Bateria BYD/Tesla de armazenamento backup off-grid, no valor de R$ 100.000,00 instalado na sua casa) + **R$ 300.000,00 de Bônus em Dinheiro** (Total de R$ 400.000,00) para criar um showroom vivo de alta tecnologia.
 
 ---
