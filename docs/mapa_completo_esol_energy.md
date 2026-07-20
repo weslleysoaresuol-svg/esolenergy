@@ -327,7 +327,7 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 | **L16** | **Estrela** | 2.500.000 pontos | ⭐ **Estrela** (Brilho Próprio) | *"A luz própria brilhando alto com autoridade e brilho."* |
 | **L17** | **Constelação**| 4.000.000 pontos | 🌌 **Constelação** (União de Sócios) | *"A união monumental de estrelas alinhadas sob a mesma visão."* |
 | **L18** | **Galáxia** | 6.000.000 pontos | 🌀 **Galáxia** (Império Estelar) | *"Um império de estrelas brilhando em perfeita harmonia comercial."* |
-| **L19** | **Triunfo** | 10.000.000 pontos| 🏆 **Triunfo** (Conquista Gloriosa) | *"A celebração monumental de superar todas as barreiras do mercado."* |
+| **L19** | **Conquista** | 10.000.000 pontos| 🏆 **Conquista** (Vitória Consolidada) | *"A celebração monumental de conquistar seu espaço definitivo no mercado."* |
 | **L20** | **Plenitude** | 20.000.000 pontos| 💎 **Plenitude** (Abundância e Paz) | *"A satisfação e abundância de quem alcançou a estabilidade total."* |
 | **L21** | **Legado** | 35.000.000 pontos| 👑 **Legado** (Marca Perpétua) | *"A conquista definitiva que ultrapassa as barreiras do tempo e das gerações."* |
 
@@ -387,7 +387,7 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 
 #### **7️⃣ GRUPO: O LEGADO (L19 a L21)**
 *Foco: A Consagração Máxima, Abundância e Renda Passiva Vitalícia (A Governança).*
-*   **L19 (Triunfo) $\rightarrow$** *Super Mansão:* **Mansão de Altíssimo Luxo em Condomínio Fechado** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
+*   **L19 (Conquista) $\rightarrow$** *Super Mansão:* **Mansão de Altíssimo Luxo em Condomínio Fechado** (valor de R$ 2.0 Milhões quitada e escriturada) em seu nome.
 *   **L20 (Plenitude) $\rightarrow$** *Usina de 1MW & Renda Vitalícia:* **Usina Solar Esol de 1MWp** (avaliada em R$ 3.500.000,00 turnkey, instalada e registrada em seu nome) + **Contrato de Arrendamento Garantido (Rent-Back)** da própria usina com aluguel garantido de **R$ 35.000,00 por mês** pago pela holding.
 *   **L21 (Legado) $\rightarrow$** *Usina de 2MW, Governança & Equity:* **Usina Solar Esol de 2MWp** (avaliada em R$ 7.000.000,00 turnkey, instalada e registrada em seu nome) + **Arrendamento Garantido (Rent-Back)** de **R$ 70.000,00 por mês** pago pela holding + **Participação Acionária (Equity) na Esol Energy Holding** + **Troféu Estelar Galáxia** + Bônus de LPL Semestral Capped (1% da regional) + **Convite para Assento no Conselho Consultivo** (cargo representativo opcional na empresa como Conselheiro de Expansão Nacional).
 
