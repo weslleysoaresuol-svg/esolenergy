@@ -304,23 +304,32 @@ A pontuação é calculada no banco de dados Supabase com base nas faixas de fat
 
 ---
 
-#### 4. Os 12 Selos de Qualificação, Insígnias e Bordões do Painel
-O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Cada nível possui uma insígnia digital única (figura) e um lema oficial (bordão) que aparecem em destaque no header do seu dashboard, utilizando termos simples e conhecidos do Espaço e da Energia:
+#### 4. Os 21 Selos de Qualificação, Insígnias e Bordões do Painel
+O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Cada nível possui uma insígnia digital única (figura) e um lema oficial (bordão) que aparecem em destaque no header do seu dashboard, utilizando termos divididos em 4 Elementos da Natureza e 3 Coletivos do Espaço e do Divino:
 
 | Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
 | :---: | :--- | :---: | :--- | :--- |
-| **1** | **Faísca** | 0 pontos | ✨ **Faísca Elétrica** (Centelha inicial) | *"A primeira faísca gera a grande corrente."* |
-| **2** | **Chama** | 2.500 pontos | 🔥 **Chama Ativa** (Calor e Energia) | *"O calor da nossa chama aquece toda a rede."* |
-| **3** | **Raio** | 8.000 pontos | ⚡ **Raio Solar** (Conexão e Descarga) | *"A força de um único raio rompe qualquer barreira."* |
-| **4** | **Lua** | 20.000 pontos | 🌙 **Crescente Lunar** (Brilho Constante) | *"Brilho constante que guia os passos na escuridão."* |
-| **5** | **Terra** | 50.000 pontos | 🌍 **Planeta Terra** (Base e Solidez) | *"Firmeza e solidez na base do nosso planeta."* |
-| **6** | **Órbita** | 120.000 pontos | 💫 **Anel Orbital** (Alinhamento e Atração)| *"Alinhamento perfeito que gera atração contínua."* |
-| **7** | **Cometa** | 300.000 pontos | ☄️ **Cometa Veloz** (Brilho em Movimento) | *"Velocidade e impacto que marcam época no mercado."* |
-| **8** | **Eclipse** | 800.000 pontos | 🌑 **Eclipse Total** (Alinhamento Supremo) | *"O encontro monumental da terra com a força do sol."* |
-| **9** | **Estrela** | 2.000.000 pontos | ⭐ **Estrela Brilhante** (Luz Própria) | *"Luz própria que gera e mantém sua própria energia."* |
-| **10** | **Sol** | 5.000.000 pontos | ☀️ **Sol Soberano** (Fonte de Vida) | *"A fonte suprema de energia que alimenta a vida."* |
-| **11** | **Constelação**| 12.000.000 pontos| 🌌 **Constelação Ativa** (Conexão Estelar)| *"A união de estrelas brilhando na mesma direção."* |
-| **12** | **Galáxia** | 35.000.000 pontos| 🌀 **Galáxia Quantum** (Infinito em Expansão)| *"Um império de energia infinita em expansão constante."* |
+| **L1** | **Semente** | 0 pontos | 🌱 **Semente** (Fundação) | *"A primeira semente plantada germina em grande floresta."* |
+| **L2** | **Raiz** | 2.500 pontos | 🌳 **Raiz** (Sustentabilidade) | *"Firmeza interna que sustenta o crescimento comercial."* |
+| **L3** | **Rocha** | 5.000 pontos | 🪨 **Rocha** (Solidez) | *"A fundação inabalável que resiste a qualquer tempestade."* |
+| **L4** | **Gota** | 10.000 pontos | 💧 **Gota** (Unidade do Fluxo) | *"A menor unidade de água que inicia o grande fluxo."* |
+| **L5** | **Nascente** | 15.000 pontos | 🌊 **Nascente** (Origem do Fluxo) | *"A fonte inesgotável onde nasce a grande corrente."* |
+| **L6** | **Rio** | 25.000 pontos | 🏞️ **Rio** (Caminho do Fluxo) | *"A força contínua da água gerando caminhos de abundância."* |
+| **L7** | **Brisa** | 40.000 pontos | 🍃 **Brisa** (Leveza e Altitude) | *"O sopro sutil que prenuncia a mudança de atmosfera."* |
+| **L8** | **Vento** | 60.000 pontos | 💨 **Vento** (Movimento e Altitude) | *"A força invisível que move moinhos e expande horizontes."* |
+| **L9** | **Ciclone** | 100.000 pontos | 🌀 **Ciclone** (Expansão Máxima) | *"A velocidade e energia concentrada que transforma o mercado."* |
+| **L10** | **Faísca** | 150.000 pontos | ✨ **Faísca** (Ignição do Fogo) | *"O calor inicial que desperta a grande chama de liderança."* |
+| **L11** | **Chama** | 250.000 pontos | 🔥 **Chama** (Brilho do Fogo) | *"O brilho radiante que aquece e ilumina toda a equipe."* |
+| **L12** | **Fogueira** | 400.000 pontos | 🪵 **Fogueira** (União do Fogo) | *"O centro de união e energia que atrai a todos ao redor."* |
+| **L13** | **Lua** | 600.000 pontos | 🌙 **Lua** (Luz Satélite) | *"A luz reflexiva que guia os passos na escuridão."* |
+| **L14** | **Planeta** | 900.000 pontos | 🪐 **Planeta** (Mundo Consolidado) | *"A solidez de um mundo inteiro construído com liderança."* |
+| **L15** | **Sol** | 1.500.000 pontos | ☀️ **Sol** (A Estrela Central) | *"A fonte suprema de energia limpa que gera vida."* |
+| **L16** | **Estrela** | 2.500.000 pontos | ⭐ **Estrela** (Brilho Próprio) | *"A luz própria brilhando alto com autoridade e brilho."* |
+| **L17** | **Constelação**| 4.000.000 pontos | 🌌 **Constelação** (União de Sócios) | *"A união monumental de estrelas alinhadas sob a mesma visão."* |
+| **L18** | **Nebulosa** | 6.000.000 pontos | ☁️ **Nebulosa** (Berçário de Líderes) | *"O berçário grandioso onde novos líderes nascem para brilhar."* |
+| **L19** | **Aliança** | 10.000.000 pontos| 🌈 **Aliança** (Pacto e Promessa) | *"A promessa inquebrável de parceria e expansão perpétua."* |
+| **L20** | **Sião** | 20.000.000 pontos| ⛰️ **Sião** (Monte Santo da Vitória)| *"A firmeza do monte santo estabelecendo um reino inabalável."* |
+| **L21** | **Shekinah** | 35.000.000 pontos| 👑 **Shekinah** (Manifestação da Glória)| *"A manifestação plena da luz divina coroando o legado eterno."* |
 
 ---
 
