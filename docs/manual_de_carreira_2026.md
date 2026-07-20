@@ -79,22 +79,22 @@ Abaixo estão os 21 selos de reconhecimento e a configuração oficial de prêmi
 
 | Nível | Selo de Reconhecimento | pontos Mínimos | Insígnia Visual | Prêmio da Campanha Vigente (2026) |
 | :---: | :--- | :---: | :---: | :--- |
-| **L1** | **Faísca** | 0 | ✨ | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium. *(Liberado com 2.000 pts pessoais)*. |
-| **L2** | **Chama** | 2.500 | 🔥 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS + Mochila Executiva de R$ 1.750,00. |
-| **L3** | **Fogueira** | 5.000 | 🪵 | **Apresentação Móvel de Impacto:** Kit Apresentador (Projetor Smart Samsung The Freestyle + Soundbar JBL) de R$ 2.400,00. |
-| **L4** | **Nuvem** | 10.000 | ☁️ | **Aceleração Comercial:** Auxílio de Custo Comercial de R$ 5.000,00 para ativação de mercado. |
-| **L5** | **Raio** | 15.000 | ⚡ | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias na sede de R$ 6.000,00. |
-| **L6** | **Trovão** | 25.000 | ⛈️ | **Scooter Elétrica Premium:** Scooter 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
-| **L7** | **Céu** | 40.000 | 🌤️ | **Férias Premium Nacionais:** Viagem de 5 dias para Fernando de Noronha/Porto de Galinhas com tudo pago + R$ 5.000,00 de Bônus. |
-| **L8** | **Atmosfera**| 60.000 | 🌍 | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique* (Tudo Pago). |
-| **L9** | **Órbita** | 100.000 | 💫 | **Hub de Vendas Regional:** Verba de R$ 35.000,00 para montagem e fachada do Escritório/Showroom local Esol. |
-| **L10** | **Lua** | 150.000 | 🌙 | **Missão Internacional de Negócios:** Viagem de 10 dias para a China (fábricas BYD/Longi) c/ acompanhante + R$ 10.000,00. |
-| **L11** | **Terra** | 250.000 | 🌍 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
-| **L12** | **Sol** | 400.000 | ☀️ | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
-| **L13** | **Meteoro** | 600.000 | 🌠 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
-| **L14** | **Cometa** | 900.000 | ☄️ | **Sedan Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
-| **L15** | **Estrela** | 1.500.000 | ⭐ | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 300.000,00 em Dinheiro. |
-| **L16** | **Polaris** | 2.500.000 | 🎯 | **Sede Comercial Regional:** Escritório/Sala Comercial Premium quitada de R$ 500.000,00 + Relógio Rolex de R$ 100.000,00. |
+| **L1** | **Semente** | 0 | 🌱 | **Smartphone & Kit Boas-Vindas:** Smartphone 5G de R$ 950,00 + Kit Premium. *(Liberado com 2.000 pts pessoais)*. |
+| **L2** | **Raiz** | 2.500 | 🌳 | **Estação de Trabalho Móvel:** Notebook Lenovo/ASUS + Mochila Executiva de R$ 1.750,00. |
+| **L3** | **Rocha** | 5.000 | 🪨 | **Apresentação Móvel de Impacto:** Kit Apresentador (Projetor Smart Samsung The Freestyle + Soundbar JBL) de R$ 2.400,00. |
+| **L4** | **Gota** | 10.000 | 💧 | **Aceleração Comercial:** Auxílio de Custo Comercial de R$ 5.000,00 para ativação de mercado. |
+| **L5** | **Nascente** | 15.000 | 🌊 | **Apresentação Digital & Treinamento:** Tablet iPad 10.2" com Caneta Digital + Imersão VIP de 3 dias na sede de R$ 6.000,00. |
+| **L6** | **Rio** | 25.000 | 🏞️ | **Scooter Elétrica Premium:** Scooter 0km no valor de R$ 17.000,00 (frete incluso e entregue em seu nome). |
+| **L7** | **Brisa** | 40.000 | 🍃 | **Férias Premium Nacionais:** Viagem de 5 dias para Fernando de Noronha/Porto de Galinhas com tudo pago + R$ 5.000,00 de Bônus. |
+| **L8** | **Vento** | 60.000 | 💨 | **Inteligência de Mercado Global:** Viagem de 7 dias com acompanhante para a feira *Intersolar Europe em Munique* (Tudo Pago). |
+| **L9** | **Ciclone** | 100.000 | 🌀 | **Hub de Vendas Regional:** Verba de R$ 35.000,00 para montagem e fachada do Escritório/Showroom local Esol. |
+| **L10** | **Faísca** | 150.000 | ✨ | **Missão Internacional de Negócios:** Viagem de 10 dias para a China (fábricas BYD/Longi) c/ acompanhante + R$ 10.000,00. |
+| **L11** | **Chama** | 250.000 | 🔥 | **Carro Hatch Premium 0km:** Hyundai HB20, Chevrolet Onix ou VW Polo quitado no valor de R$ 95.000,00. |
+| **L12** | **Fogueira** | 400.000 | 🪵 | **Férias Volta ao Mundo:** Viagem de Volta ao Mundo (crédito de R$ 70.000,00) + R$ 30.000,00 de Bônus em Dinheiro. |
+| **L13** | **Lua** | 600.000 | 🌙 | **SUV de Luxo 0km:** Jeep Compass, Toyota Corolla Cross ou BYD Song Plus quitado no valor de R$ 200.000,00. |
+| **L14** | **Planeta** | 900.000 | 🪐 | **Sedan Elétrico Premium 0km:** BYD Seal ou Volvo EX30 quitado no valor de R$ 300.000,00. |
+| **L15** | **Sol** | 1.500.000 | ☀️ | **Showroom Residencial Off-Grid:** Usina Solar Residencial Premium SolarEdge com Armazenamento por Baterias (R$ 100.000,00) + R$ 300.000,00 em Dinheiro. |
+| **L16** | **Estrela** | 2.500.000 | ⭐ | **Sede Comercial Regional:** Escritório/Sala Comercial Premium quitada de R$ 500.000,00 + Relógio Rolex de R$ 100.000,00. |
 | **L17** | **Constelação**| 4.000.000 | 🌌 | **Apartamento Frente Mar:** Cobertura de Alto Padrão Frente Mar quitada e escriturada no valor de R$ 1.2 Milhão. |
 | **L18** | **Nebulosa** | 6.000.000 | ☁️ | **Superesportivo & Estilo de Vida:** Porsche Taycan, Audi e-tron ou BMW iX quitado (R$ 800.000,00) + R$ 600.000,00 em Dinheiro. |
 | **L19** | **Supernova** | 10.000.000| 💥 | **Super Mansão de Luxo:** Mansão de Altíssimo Luxo em Condomínio Fechado quitada e escriturada de R$ 2.0 Milhões. |
