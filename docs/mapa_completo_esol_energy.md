@@ -310,26 +310,26 @@ O aplicativo exibe o selo obtido pelo consultor de forma visual e motivadora. Ca
 | Nível | Nomenclatura Oficial | pontos Mínimos | Insígnia Visual (Figura no Painel) | Bordão Oficial de Motivação (Painel do Consultor) |
 | :---: | :--- | :---: | :--- | :--- |
 | **L1** | **Semente** | 0 pontos | 🌱 **Semente** (Fundação) | *"A primeira semente plantada germina em grande floresta."* |
-| **L2** | **Raiz** | 2.500 pontos | 🌳 **Raiz** (Sustentabilidade) | *"Firmeza interna que sustenta o crescimento comercial."* |
-| **L3** | **Rocha** | 5.000 pontos | 🪨 **Rocha** (Solidez) | *"A fundação inabalável que resiste a qualquer tempestade."* |
-| **L4** | **Gota** | 10.000 pontos | 💧 **Gota** (Unidade do Fluxo) | *"A menor unidade de água que inicia o grande fluxo."* |
-| **L5** | **Nascente** | 15.000 pontos | 🌊 **Nascente** (Origem do Fluxo) | *"A fonte inesgotável onde nasce a grande corrente."* |
-| **L6** | **Rio** | 25.000 pontos | 🏞️ **Rio** (Caminho do Fluxo) | *"A força contínua da água gerando caminhos de abundância."* |
-| **L7** | **Brisa** | 40.000 pontos | 🍃 **Brisa** (Leveza e Altitude) | *"O sopro sutil que prenuncia a mudança de atmosfera."* |
-| **L8** | **Vento** | 60.000 pontos | 💨 **Vento** (Movimento e Altitude) | *"A força invisível que move moinhos e expande horizontes."* |
-| **L9** | **Ciclone** | 100.000 pontos | 🌀 **Ciclone** (Expansão Máxima) | *"A velocidade e energia concentrada que transforma o mercado."* |
-| **L10** | **Faísca** | 150.000 pontos | ✨ **Faísca** (Ignição do Fogo) | *"O calor inicial que desperta a grande chama de liderança."* |
-| **L11** | **Chama** | 250.000 pontos | 🔥 **Chama** (Brilho do Fogo) | *"O brilho radiante que aquece e ilumina toda a equipe."* |
-| **L12** | **Fogueira** | 400.000 pontos | 🪵 **Fogueira** (União do Fogo) | *"O centro de união e energia que atrai a todos ao redor."* |
-| **L13** | **Lua** | 600.000 pontos | 🌙 **Lua** (Luz Satélite) | *"A luz reflexiva que guia os passos na escuridão."* |
-| **L14** | **Terra** | 900.000 pontos | 🌍 **Terra** (Nosso Lar) | *"A solidez de construir uma base comercial firme no nosso planeta."* |
-| **L15** | **Sol** | 1.500.000 pontos | ☀️ **Sol** (A Estrela Central) | *"A fonte suprema de energia limpa que gera vida."* |
-| **L16** | **Meteoro** | 2.500.000 pontos | ☄️ **Meteoro** (Impacto Rápido) | *"Velocidade e brilho intenso marcando época no mercado."* |
-| **L17** | **Cometa** | 4.000.000 pontos | 🌠 **Cometa** (Cauda de Luz) | *"A trajetória de luz brilhante que atrai a atenção de todos."* |
-| **L18** | **Supernova** | 6.000.000 pontos | 💥 **Supernova** (Explosão Estelar) | *"A maior liberação de luz e energia gerando novos horizontes."* |
-| **L19** | **Triunfo** | 10.000.000 pontos| 🏆 **Triunfo** (Conquista Gloriosa) | *"A celebração monumental de superar todas as barreiras do mercado."* |
-| **L20** | **Plenitude** | 20.000.000 pontos| 💎 **Plenitude** (Abundância e Paz) | *"A satisfação e abundância de quem alcançou a estabilidade total."* |
-| **L21** | **Legado** | 35.000.000 pontos| 👑 **Legado** (Marca Perpétua) | *"A conquista definitiva que ultrapassa as barreiras do tempo e das gerações."* |
+| **L2** | **Raiz** | 100 pontos | 🌳 **Raiz** (Sustentabilidade) | *"Firmeza interna que sustenta o crescimento comercial."* |
+| **L3** | **Rocha** | 300 pontos | 🪨 **Rocha** (Solidez) | *"A fundação inabalável que resiste a qualquer tempestade."* |
+| **L4** | **Gota** | 600 pontos | 💧 **Gota** (Unidade do Fluxo) | *"A menor unidade de água que inicia o grande fluxo."* |
+| **L5** | **Nascente** | 1.000 pontos | 🌊 **Nascente** (Origem do Fluxo) | *"A fonte inesgotável onde nasce a grande corrente."* |
+| **L6** | **Rio** | 1.500 pontos | 🏞️ **Rio** (Caminho do Fluxo) | *"A força contínua da água gerando caminhos de abundância."* |
+| **L7** | **Brisa** | 2.000 pontos | 🍃 **Brisa** (Leveza e Altitude) | *"O sopro sutil que prenuncia a mudança de atmosfera."* |
+| **L8** | **Vento** | 2.800 pontos | 💨 **Vento** (Movimento e Altitude) | *"A força invisível que move moinhos e expande horizontes."* |
+| **L9** | **Ciclone** | 3.800 pontos | 🌀 **Ciclone** (Expansão Máxima) | *"A velocidade e energia concentrada que transforma o mercado."* |
+| **L10** | **Faísca** | 5.000 pontos | ✨ **Faísca** (Ignição do Fogo) | *"O calor inicial que desperta a grande chama de liderança."* |
+| **L11** | **Chama** | 6.500 pontos | 🔥 **Chama** (Brilho do Fogo) | *"O brilho radiante que aquece e ilumina toda a equipe."* |
+| **L12** | **Fogueira** | 8.000 pontos | 🪵 **Fogueira** (União do Fogo) | *"O centro de união e energia que atrai a todos ao redor."* |
+| **L13** | **Lua** | 10.000 pontos | 🌙 **Lua** (Luz Satélite) | *"A luz reflexiva que guia os passos na escuridão."* |
+| **L14** | **Terra** | 12.500 pontos | 🌍 **Terra** (Nosso Lar) | *"A solidez de construir uma base comercial firme no nosso planeta."* |
+| **L15** | **Sol** | 15.000 pontos | ☀️ **Sol** (A Estrela Central) | *"A fonte suprema de energia limpa que gera vida."* |
+| **L16** | **Meteoro** | 18.000 pontos | ☄️ **Meteoro** (Impacto Rápido) | *"Velocidade e brilho intenso marcando época no mercado."* |
+| **L17** | **Cometa** | 22.000 pontos | 🌠 **Cometa** (Cauda de Luz) | *"A trajetória de luz brilhante que atrai a atenção de todos."* |
+| **L18** | **Supernova** | 26.000 pontos | 💥 **Supernova** (Explosão Estelar) | *"A maior liberação de luz e energia gerando novos horizontes."* |
+| **L19** | **Triunfo** | 30.000 pontos| 🏆 **Triunfo** (Conquista Gloriosa) | *"A celebração monumental de superar todas as barreiras do mercado."* |
+| **L20** | **Plenitude** | 40.000 pontos| 💎 **Plenitude** (Abundância e Paz) | *"A satisfação e abundância de quem alcançou a estabilidade total."* |
+| **L21** | **Legado** | 50.000 pontos| 👑 **Legado** (Marca Perpétua) | *"A conquista definitiva que ultrapassa as barreiras do tempo e das gerações."* |
 
 ---
 
