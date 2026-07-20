@@ -265,16 +265,14 @@ Para manter a conformidade jurídica total do ecossistema e evitar riscos de pas
 
 ---
 
-#### 2. Regra de Equilíbrio de Linhas (Volume Máximo por Equipe - VME)
-Para evitar o "Efeito Carona" (onde um consultor inativo se qualifica apenas por ter indicado um consultor megavendedor), o sistema aplica a regra de **VME de 50%**:
-*   **Origem dos pontos:** Os pontos de qualificação acumulados vêm de forma combinada das **Vendas Diretas Pessoais** do consultor e das **Vendas de Rede (MMN)** geradas por seus indicados diretos e indiretos na árvore de patrocínio.
-*   **Limite por Linha (VME de 50%):** Para fins de qualificação em qualquer selo, o consultor só pode aproveitar, no máximo, **50% da pontuação exigida daquele selo específico** vinda de uma única linha de indicação direta (equipe de um indicado direto).
-*   *Exemplo:* Para bater a meta do selo **Raio (8.000 pontos)**, o máximo de pontos aproveitáveis de uma única equipe é de **4.000 pontos**. O saldo restante para bater os 8.000 pontos deve ser complementado pelas vendas pessoais do parceiro ou por outras equipes de indicados diretos. Isso blinda o caixa da Esol contra pagamentos redundantes de prêmios e estimula o desenvolvimento equilibrado de equipes.
+#### 2. Regra de Mérito Direto (Exclusividade Pessoal)
+*   **Origem dos pontos:** Os pontos de qualificação acumulados vêm **exclusivamente das Vendas Diretas Pessoais** realizadas pelo próprio consultor. Não há soma de pontos vindos de indicações ou pernas descendentes (MMN) para fins de selos ou rankings.
+*   **Ausência de VME:** Por ser um modelo baseado 100% no mérito e esforço de vendas diretas do próprio consultor, não existe aplicação de trava VME (Volume Máximo por Equipe) para acúmulo de pontos. O parceiro é livre e qualifica-se de acordo com o seu próprio faturamento de vendas diretas pessoais.
 
 ---
 
-#### 3. Tabela de Conversão de pontos por Categoria de Preço
-A pontuação é calculada no banco de dados Supabase com base nas faixas de faturamento de cada negócio fechado, utilizando a palavra **pontos** por extenso:
+#### 3. Tabela Geral de Atribuição de Pontos do Portfólio
+Esta é a tabela mestra que o banco de dados Supabase utiliza para converter o faturamento das vendas diretas pessoais do consultor em pontos no ledger:
 
 ##### **A. Sistemas Solares Turnkey (Cat #1 e #10)**
 *   Preço de venda até R$ 20.000,00: **200 pontos**
@@ -283,7 +281,7 @@ A pontuação é calculada no banco de dados Supabase com base nas faixas de fat
 *   Preço de venda de R$ 100.001,00 a R$ 500.000,00: **4.500 pontos**
 *   Preço de venda acima de R$ 500.001,00: **15.000 pontos**
 
-##### **B. Loja Esol (Kits avulsos, Baterias, EV Chargers) (Cat #2)**
+##### **B. Loja Esol (Kits avulsos, Baterias, EV Chargers - Cat #2)**
 *   Carrinho de compras até R$ 5.000,00: **50 pontos**
 *   Carrinho de compras de R$ 5.001,00 a R$ 15.000,00: **150 pontos**
 *   Carrinho de compras de R$ 15.001,00 a R$ 50.000,00: **500 pontos**
@@ -295,12 +293,21 @@ A pontuação é calculada no banco de dados Supabase com base nas faixas de fat
 *   Mensalidade/Consumo do cliente de R$ 2.001,00 a R$ 10.000,00/mês: **200 pontos / mês** ativo
 *   Mensalidade/Consumo do cliente acima de R$ 10.001,00/mês: **800 pontos / mês** ativo
 
-##### **D. Serviços de O&M (Manutenção e Limpeza) (Cat #6 e #7)**
+##### **D. Serviços de O&M (Manutenção e Limpeza - Cat #6 e #7)**
 *   Valor do serviço até R$ 500,00: **10 pontos**
 *   Valor do serviço de R$ 501,00 a R$ 2.000,00: **50 pontos**
 *   Valor do serviço acima de R$ 2.001,00: **150 pontos**
 
-*Nota: A qualificação do selo utiliza uma **Janela Deslizante de 12 meses**. Pontos gerados com mais de 365 dias expiram automaticamente do saldo do consultor, garantindo a atividade constante da rede.*
+##### **E. Regra do Cálculo do Bônus de Produtividade Direta (Pool de 4%)**
+O Bônus de Produtividade Direta é calculado mensalmente de forma proporcional aos pontos de vendas diretas pessoais obtidos no Ranking Mensal:
+1.  **Montante do Fundo:** O sistema separa 4% da receita de intermediação recebida pela Esol no mês.
+2.  **Soma de Pontos Ativos:** O sistema soma todos os pontos pessoais de quem pontuou no mês ($\sum Pontos$).
+3.  **Valor Unitário do Ponto:** Divide-se o Fundo pela soma de pontos ativos para definir o valor financeiro do ponto ($V_{ponto}$).
+4.  **Repasse Individual:** O consultor recebe:
+    $$\text{Bônus} = Pontos_{pessoais} \times V_{ponto}$$
+    *(Consultores com 0 pontos de venda direta no mês recebem R$ 0,00 de bônus).*
+
+*Nota: Os pontos do consultor são apurados em três tracks de rankings paralelos: Ranking Mensal (que zera no 1º dia de cada mês para pagamento de bônus e urgência de vendas), Ranking Anual (acumulado no ano civil para convenção nacional) e Ranking Permanente (acúmulo perpétuo para selos honoríficos).*
 
 ---
 
