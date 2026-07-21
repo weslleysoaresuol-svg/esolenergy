@@ -252,6 +252,22 @@ Não há distribuição multinível (sem 7 níveis). O consultor recebe uma taxa
 
 ---
 
+### 5.5.1 Diretrizes de Pagamento Mensal, Cancelamento Automático e Cancelamento Administrativo
+Para manter a operação simples, transparente e 100% segura sem criar travas burocráticas no aplicativo do consultor, o sistema adota 3 diretrizes mandantes:
+
+1. **Pagamento Mensal Pós-Efetivação (100% Quitada):**
+   - As comissões da árvore MMN (36%) e o Bônus de Produtividade Direta (4%) são apurados e pagos no ciclo de fechamento mensal.
+   - O dinheiro e os pontos só são liberados se o negócio estiver **100% concluído, auditado e pago** pelo cliente ou geradora parceira no mês de apuração.
+   - O Motor Reverso assegura que a Esol retenha seus 60% de Lucro Líquido automaticamente em todas as transações efetivadas.
+
+2. **Cancelamento Automático (Estorno por Inadimplência ou Reprovação):**
+   - Se uma venda for cancelada pelo cliente, distratada ou reprovada pela concessionária/geradora antes da liquidação, o sistema anula a transação no ledger e executa o estorno automático dos pontos e comissões pendentes da árvore.
+
+3. **Cancelamento Administrativo (Admin Override da Diretoria):**
+   - A diretoria da Esol possui um mecanismo de intervenção direta no painel de administração para estornar, pausar ou cancelar manualmente qualquer contrato, venda, ponto ou comissão a qualquer momento por decisão estratégica, revertendo saldos e históricos no banco de dados.
+
+---
+
 ### 5.6 Programa de Reconhecimento e Selos (Esol Career)
 
 Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career** como um sistema de gamificação de selos de qualificação. O programa mapeia **exatamente 12 níveis de selos** de forma progressiva. Esta quantidade ampliada permite passos menores entre os selos iniciais (gerando recompensa rápida de atividade) e estende a meta para parceiros de alto faturamento, sem interferir na regra de repasse financeiro de 7 níveis de rede.
