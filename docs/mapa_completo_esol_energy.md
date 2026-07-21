@@ -275,15 +275,21 @@ Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de 
 
 1. **Moeda Digital Interna (EcoPontos Esol - EP):**
    - Regra de Conversão: **1 EcoPonto (EP) = R$ 1,00 de Desconto na Fatura de Energia**.
-   - **Bônus de Lado Duplo (Double-Sided Incentive):**
-     - *Cliente Indicador:* Recebe **50 EcoPontos (R$ 50,00)** quando a 1ª fatura do amigo for quitada.
-     - *Amigo Indicado:* Recebe **25 EcoPontos (R$ 25,00)** de presente de boas-vindas na sua 1ª fatura.
+   - **Valores e Prêmios Dinâmicos por Categoria de Portfólio (Blindagem de Caixa):**
+     *   *#1. Sistema Solar Turnkey:* **500 EP** para o indicador | **R$ 250 de desconto** no contrato do amigo.
+     *   *#2. Loja Esol ( wallbox / componentes > R$ 1.000):* **50 EP** para o indicador | **R$ 50 de desconto** para o amigo.
+     *   *#3. Energia por Assinatura (GD - Padrão/Default):* **50 EP** para o indicador | **25 EP** de boas-vindas para o amigo.
+     *   *#4. Mercado Livre (MLE):* **200 EP** para o indicador | **100 EP** de boas-vindas para o amigo.
+     *   *#5. Monitoramento SaaS:* **15 EP** para o indicador | **10 EP** de desconto para o amigo.
+     *   *#6/#7. O&M e Limpeza:* **30 EP** para o indicador | **15 EP** de desconto para o amigo.
+     *   *#8. Seguros Solares:* **20 EP** para o indicador | **10 EP** de desconto para o amigo.
+     *   *Cat #9, #10 e #11 (B2B Corporativo):* Incompatíveis com EcoPontos. Utilizam fluxo de indicação comissional sob conciliação manual da diretoria.
 
-2. **Trilha Gamificada de Embaixadores Solares:**
-   - 🌱 **Conector Verde (1 a 3 indicações):** 50 EcoPontos por amigo.
-   - 🌳 **Guardião Solar (4 a 9 indicações):** 60 EcoPontos por amigo (+20% de bônus).
-   - ⚡ **Mestre da Transição (10 a 24 indicações):** 75 EcoPontos por amigo (+50% de bônus).
-   - 👑 **Lenda Fatura Zero (25+ indicações):** 100 EcoPontos por amigo (+100% de bônus) + Troféu Físico Esol.
+2. **Trilha Gamificada de Embaixadores Solares (GD e MLE):**
+   - 🌱 **Conector Verde (1 a 3 indicações GD):** 50 EcoPontos por amigo.
+   - 🌳 **Guardião Solar (4 a 9 indicações GD):** 60 EcoPontos por amigo (+20% de bônus).
+   - ⚡ **Mestre da Transição (10 a 24 indicações GD):** 75 EcoPontos por amigo (+50% de bônus).
+   - 👑 **Lenda Fatura Zero (25+ indicações GD):** 100 EcoPontos por amigo (+100% de bônus) + Troféu Físico Esol.
 
 3. **O Desafio Fatura Zero & Widget de Viralidade:**
    - O aplicativo exibe a barra de progresso viva: *"Faltam apenas X indicações para você ZERAR sua próxima conta de luz"*.
