@@ -270,6 +270,32 @@ Para manter a operação simples, transparente e 100% segura sem criar travas bu
 
 ---
 
+### 5.5.2 Programa Esol Club — Jornada Gamificada "Indique e Ganhe" (EcoPontos & Fatura Zero)
+Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de Aquisição de Clientes (CAC) reduzido e retenção perpétua de assinantes (Zero Churn), o sistema incorpora o programa **Esol Club** direcionado exclusivamente para contas de **Clientes Finais**:
+
+1. **Moeda Digital Interna (EcoPontos Esol - EP):**
+   - Regra de Conversão: **1 EcoPonto (EP) = R$ 1,00 de Desconto na Fatura de Energia**.
+   - **Bônus de Lado Duplo (Double-Sided Incentive):**
+     - *Cliente Indicador:* Recebe **50 EcoPontos (R$ 50,00)** quando a 1ª fatura do amigo for quitada.
+     - *Amigo Indicado:* Recebe **25 EcoPontos (R$ 25,00)** de presente de boas-vindas na sua 1ª fatura.
+
+2. **Trilha Gamificada de Embaixadores Solares:**
+   - 🌱 **Conector Verde (1 a 3 indicações):** 50 EcoPontos por amigo.
+   - 🌳 **Guardião Solar (4 a 9 indicações):** 60 EcoPontos por amigo (+20% de bônus).
+   - ⚡ **Mestre da Transição (10 a 24 indicações):** 75 EcoPontos por amigo (+50% de bônus).
+   - 👑 **Lenda Fatura Zero (25+ indicações):** 100 EcoPontos por amigo (+100% de bônus) + Troféu Físico Esol.
+
+3. **O Desafio Fatura Zero & Widget de Viralidade:**
+   - O aplicativo exibe a barra de progresso viva: *"Faltam apenas X indicações para você ZERAR sua próxima conta de luz"*.
+   - Ao atingir o saldo suficiente, o aplicativo dispara animações de celebração e disponibiliza um card social personalizável para compartilhamento no Instagram/WhatsApp.
+
+4. **Blindagem e Travas Financeiras do Motor Reverso:**
+   - *Liberação Pós-Pagamento:* EcoPontos só transitam de `pendente` para `disponível` após a distribuidora/geradora confirmar a quitação da 1ª fatura do amigo.
+   - *Abatimento Limitado a 50% por Fatura:* O desconto acumulado abate no máximo 50% do valor da fatura mensal do cliente, garantindo que a Esol receba fluxo de caixa contínuo.
+   - *Rollover de Saldo:* EcoPontos excedentes não expiram e permanecem guardados no "Cofre Solar" para os meses subsequentes.
+
+---
+
 ### 5.6 Programa de Reconhecimento e Selos (Esol Career)
 
 Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career** como um sistema de gamificação de selos de qualificação. O programa mapeia **exatamente 12 níveis de selos** de forma progressiva. Esta quantidade ampliada permite passos menores entre os selos iniciais (gerando recompensa rápida de atividade) e estende a meta para parceiros de alto faturamento, sem interferir na regra de repasse financeiro de 7 níveis de rede.
