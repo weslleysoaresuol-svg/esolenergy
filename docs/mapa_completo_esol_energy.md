@@ -294,6 +294,11 @@ Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de 
    - *Abatimento Limitado a 50% por Fatura:* O desconto acumulado abate no máximo 50% do valor da fatura mensal do cliente, garantindo que a Esol receba fluxo de caixa contínuo.
    - *Rollover de Saldo:* EcoPontos excedentes não expiram e permanecem guardados no "Cofre Solar" para os meses subsequentes.
 
+5. **Integração com a Carteira do Consultor MMN (Alavancagem de Rede no Piloto Automático):**
+   - *Vínculo de Origem:* Todo Cliente Final é vinculado à carteira do **Consultor MMN** que realizou sua prospecção inicial.
+   - *Fluxo B2C Auto-Serviço Digital:* Quando o cliente indica um amigo residencial B2C, o amigo assina online. O cliente indicador ganha os seus **50 EcoPontos (R$ 50 em desconto)** e o **Consultor MMN da carteira (junto com sua árvore de 7 níveis)** passa a receber os **Overrides de Rede MMN (21% repartidos)** sobre o novo contrato!
+   - *Fluxo B2B Corporativo / Turnkey:* Se a indicação do cliente for um projeto empresarial de grande porte, o sistema encaminha o lead para o **Consultor MMN da carteira** realizar a visita presencial e fechar o contrato (ganhando comissão de venda direta de 15% + overrides).
+
 ---
 
 ### 5.6 Programa de Reconhecimento e Selos (Esol Career)
