@@ -274,35 +274,37 @@ Para manter a operação simples, transparente e 100% segura sem criar travas bu
 Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de Aquisição de Clientes (CAC) reduzido e retenção perpétua de assinantes (Zero Churn), o sistema incorpora o programa **Esol Club** direcionado exclusivamente para contas de **Clientes Finais**:
 
 1. **Moeda Digital Interna (EcoPontos Esol - EP):**
-   - Regra de Conversão: **1 EcoPonto (EP) = R$ 1,00 de Desconto na Fatura de Energia**.
-   - **Valores e Prêmios Dinâmicos por Categoria de Portfólio (Blindagem de Caixa):**
-     *   *#1. Sistema Solar Turnkey:* **500 EP** para o indicador | **R$ 250 de desconto** no contrato do amigo.
-     *   *#2. Loja Esol ( wallbox / componentes > R$ 1.000):* **50 EP** para o indicador | **R$ 50 de desconto** para o amigo.
-     *   *#3. Energia por Assinatura (GD - Padrão/Default):* **50 EP** para o indicador | **25 EP** de boas-vindas para o amigo.
-     *   *#4. Mercado Livre (MLE):* **200 EP** para o indicador | **100 EP** de boas-vindas para o amigo.
-     *   *#5. Monitoramento SaaS:* **15 EP** para o indicador | **10 EP** de desconto para o amigo.
-     *   *#6/#7. O&M e Limpeza:* **30 EP** para o indicador | **15 EP** de desconto para o amigo.
-     *   *#8. Seguros Solares:* **20 EP** para o indicador | **10 EP** de desconto para o amigo.
-     *   *Cat #9, #10 e #11 (B2B Corporativo):* Incompatíveis com EcoPontos. Utilizam fluxo de indicação comissional sob conciliação manual da diretoria.
+   - Regra de Conversão: **100 EcoPontos (EP) = R$ 1,00 de Desconto ou Benefício** (1 EP = R$ 0,01).
+   - **Valores Paramétricos de Acúmulo por Categoria (Blindagem do Caixa):**
+     *   *#1. Sistema Solar Turnkey:* **50.000 EP** (R$ 500) para o indicador | **R$ 250 de desconto** no contrato do amigo.
+     *   *#2. Loja Esol ( wallbox / componentes > R$ 1.000):* **5.000 EP** (R$ 50) para o indicador | **R$ 50 de desconto** para o amigo.
+     *   *#3. Energia por Assinatura (GD - Padrão):* **5.000 EP** (R$ 50) para o indicador | **2.500 EP** (R$ 25) para o amigo.
+     *   *#4. Mercado Livre (MLE):* **20.000 EP** (R$ 200) para o indicador | **10.000 EP** (R$ 100) para o amigo.
+     *   *#5. Monitoramento SaaS:* **1.500 EP** (R$ 15) para o indicador | **1.000 EP** (R$ 10) para o amigo.
+     *   *#6/#7. O&M e Limpeza:* **3.000 EP** (R$ 30) para o indicador | **1.500 EP** (R$ 15) para o amigo.
+     *   *#8. Seguros Solares:* **2.000 EP** (R$ 20) para o indicador | **1.000 EP** (R$ 10) para o amigo.
 
-2. **Trilha Gamificada de Embaixadores Solares (GD e MLE):**
-   - 🌱 **Conector Verde (1 a 3 indicações GD):** 50 EcoPontos por amigo.
-   - 🌳 **Guardião Solar (4 a 9 indicações GD):** 60 EcoPontos por amigo (+20% de bônus).
-   - ⚡ **Mestre da Transição (10 a 24 indicações GD):** 75 EcoPontos por amigo (+50% de bônus).
-   - 👑 **Lenda Fatura Zero (25+ indicações GD):** 100 EcoPontos por amigo (+100% de bônus) + Troféu Físico Esol.
+2. **O Catálogo de Resgate (Esol Club Catalog):**
+   Os EcoPontos acumulados podem ser trocados ativamente pelo cliente por:
+   - *Desconto na Conta de Luz (GD/MLE):* Lotes mínimos de resgate de **5.000 EP** (R$ 50) ou **10.000 EP** (R$ 100), limitados a 50% da fatura mensal.
+   - *Voucher da Loja Esol (Componentes):* Lote de **10.000 EP** (R$ 100 de desconto em acessórios).
+   - *Limpeza de Painéis Gratuita:* **35.000 EP** (Esol paga R$ 200 ao instalador credenciado, economizando a margem).
+   - *Brindes de Marca:* **8.000 EP** por Boné Esol, **12.000 EP** por Camiseta Dry-Fit, **18.000 EP** por Garrafa Térmica (Custo de fabricação 60% menor para a Esol).
 
-3. **O Desafio Fatura Zero & Widget de Viralidade:**
-   - O aplicativo exibe a barra de progresso viva: *"Faltam apenas X indicações para você ZERAR sua próxima conta de luz"*.
-   - Ao atingir o saldo suficiente, o aplicativo dispara animações de celebração e disponibiliza um card social personalizável para compartilhamento no Instagram/WhatsApp.
+3. **Trilha Gamificada de Embaixadores Solares (GD e MLE):**
+   - 🌱 **Conector Verde (1 a 3 indicações GD):** Recebe **5.000 EP** por amigo.
+   - 🌳 **Guardião Solar (4 a 9 indicações GD):** Recebe **6.000 EP** por amigo (+20% de bônus).
+   - ⚡ **Mestre da Transição (10 a 24 indicações GD):** Recebe **7.500 EP** por amigo (+50% de bônus).
+   - 👑 **Lenda Fatura Zero (25+ indicações GD):** Recebe **10.000 EP** por amigo (+100% de bônus) + Troféu Físico Esol.
 
 4. **Blindagem e Travas Financeiras do Motor Reverso:**
-   - *Liberação Pós-Pagamento:* EcoPontos só transitam de `pendente` para `disponível` após a distribuidora/geradora confirmar a quitação da 1ª fatura do amigo.
+   - *Liberação Pós-Pagamento:* EcoPontos só transitam de `pendente` para `disponível` após a geradora/distribuidora confirmar o pagamento da 1ª fatura do amigo.
    - *Abatimento Limitado a 50% por Fatura:* O desconto acumulado abate no máximo 50% do valor da fatura mensal do cliente, garantindo que a Esol receba fluxo de caixa contínuo.
    - *Rollover de Saldo:* EcoPontos excedentes não expiram e permanecem guardados no "Cofre Solar" para os meses subsequentes.
 
 5. **Integração com a Carteira do Consultor MMN (Alavancagem de Rede no Piloto Automático):**
    - *Vínculo de Origem:* Todo Cliente Final é vinculado à carteira do **Consultor MMN** que realizou sua prospecção inicial.
-   - *Fluxo B2C Auto-Serviço Digital:* Quando o cliente indica um amigo residencial B2C, o amigo assina online. O cliente indicador ganha os seus **50 EcoPontos (R$ 50 em desconto)** e o **Consultor MMN da carteira (junto com sua árvore de 7 níveis)** passa a receber os **Overrides de Rede MMN (21% repartidos)** sobre o novo contrato!
+   - *Fluxo B2C Auto-Serviço Digital:* Quando o cliente indica um amigo residencial B2C, o amigo assina online. O cliente indicador ganha os seus **5.000 EcoPontos (R$ 50 em desconto)** e o **Consultor MMN da carteira (junto com sua árvore de 7 níveis)** passa a receber os **Overrides de Rede MMN (21% repartidos)** sobre o novo contrato!
    - *Fluxo B2B Corporativo / Turnkey:* Se a indicação do cliente for um projeto empresarial de grande porte, o sistema encaminha o lead para o **Consultor MMN da carteira** realizar a visita presencial e fechar o contrato (ganhando comissão de venda direta de 15% + overrides).
 
 ---
