@@ -300,7 +300,8 @@ Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de 
 4. **Blindagem e Travas Financeiras do Motor Reverso:**
    - *Liberação Pós-Pagamento:* EcoPontos só transitam de `pendente` para `disponível` após a geradora/distribuidora confirmar o pagamento da 1ª fatura do amigo.
    - *Abatimento Limitado a 50% por Fatura:* O desconto acumulado abate no máximo 50% do valor da fatura mensal do cliente, garantindo que a Esol receba fluxo de caixa contínuo.
-   - *Rollover de Saldo:* EcoPontos excedentes não expiram e permanecem guardados no "Cofre Solar" para os meses subsequentes.
+   - *Validade e Expiração Anual:* Os EcoPontos acumulados têm validade até o dia **31 de dezembro do ano corrente**. No dia 1º de janeiro, os pontos não resgatados expiram automaticamente, eliminando o passivo contábil da Esol e gerando senso de urgência de troca no fim do ano.
+   - *Rollover de Saldo (Dentro do Ano):* EcoPontos excedentes não expiram de um mês para o outro, acumulando-se livremente até a data limite de 31 de dezembro do ano vigente.
 
 5. **Integração com a Carteira do Consultor MMN (Alavancagem de Rede no Piloto Automático):**
    - *Vínculo de Origem:* Todo Cliente Final é vinculado à carteira do **Consultor MMN** que realizou sua prospecção inicial.
