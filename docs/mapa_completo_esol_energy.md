@@ -260,11 +260,13 @@ Para manter a operação simples, transparente e 100% segura sem criar travas bu
    - O dinheiro e os pontos só são liberados se o negócio estiver **100% concluído, auditado e pago** pelo cliente ou geradora parceira no mês de apuração.
    - O Motor Reverso assegura que a Esol retenha seus 60% de Lucro Líquido automaticamente em todas as transações efetivadas.
 
-2. **Cancelamento Automático (Estorno por Inadimplência ou Reprovação):**
-   - Se uma venda for cancelada pelo cliente, distratada ou reprovada pela concessionária/geradora antes da liquidação, o sistema anula a transação no ledger e executa o estorno automático dos pontos e comissões pendentes da árvore.
+2. **Cancelamento Automático (Estorno via API / Gateway Bancário):**
+   - Se uma venda for cancelada ou distratada, o evento notifica o módulo financeiro da Esol.
+   - **Fluxo Automatizado (Via API/Gateway):** O gateway bancário executa a devolução ao cliente e, com a confirmação (`refund.success`), o Supabase estorna automaticamente os pontos e comissões pendentes na árvore MMN.
 
-3. **Cancelamento Administrativo (Admin Override da Diretoria):**
-   - A diretoria da Esol possui um mecanismo de intervenção direta no painel de administração para estornar, pausar ou cancelar manualmente qualquer contrato, venda, ponto ou comissão a qualquer momento por decisão estratégica, revertendo saldos e históricos no banco de dados.
+3. **Cancelamento Administrativo com Upload de Comprovante (Fallback Financeiro PIX/TED):**
+   - **Fluxo Manual com Comprovante:** Se o estorno ao cliente for realizado manualmente via transferência ou PIX externo, o operador financeiro realiza o upload do **Comprovante de Devolução (Print/PDF do PIX ou TED)** no painel da Esol.
+   - **Computação e Recálculo Automático:** Ao salvar o arquivo no Supabase Storage (`refund_proofs/`), o banco de dados **computa automaticamente a reversão** de saldos, abate os pontos no `points_ledger` e recalcula as comissões da árvore sem necessidade de intervenção matemática manual.
 
 ---
 
