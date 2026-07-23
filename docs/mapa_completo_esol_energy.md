@@ -201,6 +201,26 @@ O administrador configura o `lucro_alvo` (lucro mínimo) e o percentual de comis
 
 ---
 
+### 5.1.1 Arquitetura de Pool Unificado de Comissão (TDTC)
+Para impedir pagamentos duplos (MMN + Indique e Ganhe) e garantir a estabilidade do caixa da Esol, o sistema adota a **Lei do Pool Único de Comissão**:
+
+$$\text{TDTC Teto} = \text{Bônus Indicador (EcoPontos)} + \text{Desconto Amigo} + \text{Comissão Gestor MMN (N0)} + \text{Overrides da Rede (N1 ao N7)}$$
+
+1. **Venda Direta Tradicional pelo Consultor MMN:**
+   - Consultor N0 recebe **100% da fatia de Venda Direta** (ex: 8% no Turnkey, 15% na GD).
+   - Rede N1-N7 recebe **100% dos Overrides** (ex: 7% no Turnkey, 21% na GD).
+   - Margem Esol é **100% preservada**.
+
+2. **Venda Originada por Indicação de Cliente Final (Esol Club / App):**
+   - A fatia da Venda Direta (ex: 8% no Turnkey, 15% na GD) é **subdividida internamente no nó de origem**:
+     * **Cliente Indicador:** Recebe uma parcela da venda direta convertida em **EcoPontos** (ex: 2,5% no Turnkey, 5% no repasse de GD por streaming).
+     * **Cliente Indicado (Amigo):** Recebe o **Desconto Âncora / Promocional** embutido na proposta técnica ou a economia autossustentável apresentada na Landing Page do link.
+     * **Consultor MMN Gestor da Carteira:** Recebe a parcela restante da venda direta por atuar como tutor/gestor da carteira (ex: 4,25% no Turnkey, 10% no repasse de GD).
+     * **Rede N1 ao N7:** Mantém **100% dos Overrides intactos** (1% por nível no Turnkey, 3% por nível na GD).
+   - **Garantia Contábil:** O valor total distribuído é **rigorosamente idêntico** em ambos os cenários, garantindo lucro líquido constante para a Esol.
+
+---
+
 ### 5.2 Override Igualitário — Inovação Esol
 Diferente das estruturas comerciais tradicionais (onde as comissões diminuem à medida que a profundidade da rede aumenta), a Esol adota o modelo de **Override Igualitário**. Todos os níveis da linha de patrocínio (N1 ao N7) recebem exatamente a mesma taxa percentual de repasse. Isso remove o incentivo de focar apenas no primeiro nível, promovendo uma base forte e treinamento contínuo de novas equipes, mantendo o custo global de comissionamento da Esol totalmente previsível e limitado por produto.
 
@@ -312,10 +332,11 @@ Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de 
    - *Validade e Expiração Anual:* Os EcoPontos acumulados têm validade até o dia **31 de dezembro do ano corrente**. No dia 1º de janeiro, os pontos não resgatados expiram automaticamente, eliminando o passivo contábil da Esol e gerando senso de urgência de troca no fim do ano.
    - *Rollover de Saldo (Dentro do Ano):* EcoPontos excedentes não expiram de um mês para o outro, acumulando-se livremente até a data limite de 31 de dezembro do ano vigente.
 
-6. **Integração com a Carteira do Consultor MMN (Alavancagem de Rede no Piloto Automático):**
-   - *Vínculo de Origem:* Todo Cliente Final é vinculado à carteira do **Consultor MMN** que realizou sua prospecção inicial.
-   - *Fluxo B2C Auto-Serviço Digital:* Quando o cliente indica um amigo residencial B2C, o amigo assina online. O cliente indicador ganha os seus **5.000 EcoPontos (R$ 50 em desconto)** e o **Consultor MMN da carteira (junto com sua árvore de 7 níveis)** passa a receber os **Overrides de Rede MMN (21% repartidos)** sobre o novo contrato!
-   - *Fluxo B2B Corporativo / Turnkey:* Se a indicação do cliente for um projeto empresarial de grande porte, o sistema encaminha o lead para o **Consultor MMN da carteira** realizar a visita presencial e fechar o contrato (ganhando comissão de venda direta de 15% + overrides).
+6. **Integração com a Carteira do Consultor MMN (Alavancagem de Rede sob Pool Unificado TDTC):**
+   - *Vínculo de Origem:* Todo Cliente Final pertence à carteira do **Consultor MMN** que realizou sua prospecção ou cadastro inicial.
+   - *Mecânica de Split no Pool de Venda Direta (Seção 5.1.1):* Quando o cliente indica um amigo no aplicativo, o sistema não gera custo adicional para a Esol. A comissão de Venda Direta (ex: 8% no Turnkey ou 15% do repasse na GD) é fatiada entre o **Cliente Indicador** (EcoPontos) e o **Consultor MMN da Carteira** (comissão de tutoria/fechamento).
+   - *Manutenção dos Overrides da Rede MMN (7 Níveis):* A linha ascendente de liderança do Consultor MMN **continua recebendo 100% dos Overrides (7% no Turnkey e 21% na GD)** sobre o novo contrato indicado pelo cliente final.
+   - *Fluxo B2B Corporativo / Turnkey:* Em projetos de grande porte indicados por clientes, o lead é enviado no painel do **Consultor MMN da carteira** para visita presencial, homologação da proposta e fechamento (recebendo sua fatia de fechamento + overrides de rede).
 
 ---
 
