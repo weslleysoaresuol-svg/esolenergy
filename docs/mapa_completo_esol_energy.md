@@ -367,6 +367,13 @@ Para evitar que a Esol pague comissões perpétuas para "contas fantasmas", inat
      * Em caso de falecimento do titular, seus herdeiros legais habilitados por inventário/alvará judicial podem solicitar o resgate do saldo acumulado dentro do prazo prescricional de 3 anos.
      * Transcorrido o prazo de 3 anos sem manifestação nem reintegração, o saldo prescreve de pleno direito e é revertido para o fundo de inovação e tecnologia da Esol.
 
+6. **Princípio da Irretroatividade Contratual e Respeito à Temporalidade (Art. 5º, XXXVI da CF/88 & Art. 421 do CCB):**
+   - *Proteção do Ato Jurídico Perfeito:* Quando uma nova minuta contratual é publicada no Esol Legal Vault (ex: `v2.0`), a nova versão **NÃO altera retroativamente os contratos assinados no passado sob a versão anterior (`v1.0`)**. O contrato antigo permanece integralmente protegido pelo Princípio do Ato Jurídico Perfeito (Art. 5º, XXXVI da Constituição Federal).
+   - *Transição em Três Modos Legais:*
+     * **Modo Prospectivo (Novos Cadastros):** A nova minuta `v2.0` passa a ser exigida automaticamente apenas para os novos consultores/clientes que se cadastrarem a partir da data da publicação.
+     * **Modo de Renovação Ciclica (Esol Re-Sign):** Quem já possui contrato vigente sob a `v1.0` permanece regido por ela até o término dos seus 12 meses. A atualização para a `v2.0` ocorre voluntariamente no ato da renovação anual.
+     * **Modo Termo Aditivo Regulatório (Mudanças Emergenciais da ANEEL/Governo):** Se houver alteração impositiva de lei federal, o sistema dispara um Termo Aditivo no Esol Sign concedendo um **Prazo de Transição Notificado (30 dias)** para o re-aceite do usuário, garantindo transparência total e ausência de alteração unilateral abusiva.
+
 ---
 
 ### 5.6 Programa de Reconhecimento e Selos (Esol Career)
