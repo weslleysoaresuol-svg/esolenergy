@@ -352,15 +352,18 @@ Para evitar que a Esol pague comissões perpétuas para "contas fantasmas", inat
 3. **Prova de Vida por Biometria Facial (Esol Sign):**
    - No fluxo de renovação no app, o consultor realiza o escaneamento biométrico facial (Face Match R$ 0,00) para atestar que o titular está vivo, ativo e com dados bancários/PIX conferidos, protegendo o repasse financeiro contra fraudes.
 
-4. **Grace Period (60 dias) & Notificações Automatizadas:**
-   - Faltando 30 dias para expirar, o app exibe o widget de renovação. Disparos automáticos por e-mail e WhatsApp ocorrem em 15, 7 e 1 dia.
-   - Vencido o prazo, a conta passa para `aguardando_renovacao`. Suas comissões continuam acumulando no livro-razão (`ledger`), porém o saque fica retido até a conclusão da biometria e assinatura.
+4. **Modo Lock Screen de Bloqueio Operacional & Congelamento de Ganhos:**
+   - *Pré-Aviso (30 dias antes):* Faltando 30 dias para expirar, o app exibe um banner informativo azul. Notificações por e-mail e WhatsApp são enviadas a 15, 7 e 1 dia do vencimento.
+   - *Vencimento do Contrato (Painel Desativado):* Na data exata de expiração dos 12 meses sem renovação, o painel do consultor entra em **Modo Lock Screen Exclusivo**.
+   - *Painel e Recursos Congelados:* O acesso às funcionalidades do app (CRM, visualização da árvore de rede, emissão de propostas e extratos) fica **TEMPORARIAMENTE DESATIVADO**. As comissões e overrides continuam sendo calculadas e acumuladas em background no livro-razão (`ledger`), porém permanecem **CONGELADAS** para visualização e saque.
+   - *Tela Única Visível (Modal Bloqueante):* A única interface exibida ao consultor é a **Tela de Renovação de Contrato & Prova de Vida Digital (R$ 0,00)** com o botão de validação biométrica facial (Esol Sign).
+   - *Liberação Instantânea Pós-Assinatura:* Assim que o consultor realiza o escaneamento facial biométrico (Face Match R$ 0,00 - 30 segundos) e aceita os termos atualizados, o painel é **LIBERADO IMEDIATAMENTE NA HORA**, descongelando os saldos acumulados, ativando saques via PIX e restaurando o acesso total a todos os módulos do ecossistema.
 
 5. **Inatividade Expirada & Compactação Dinâmica de Árvore (Dynamic Compression):**
-   - Se o consultor não assinar a renovação gratuita em até 60 dias pós-vencimento (mais de 180 dias de inércia sem prova de vida):
-     * A conta é classificada como `inativo_expirado`.
-     * **Compactação Dinâmica (Dynamic Compression):** A árvore MMN eleva a linha abaixo dele para não prejudicar os consultores ativos da sua equipe, mantendo a rede engajada.
-     * **Eliminação de Passivos Fantasmas:** Saldos não reclamados por mais de 12 meses são estornados para o fundo de desenvolvimento da Esol.
+   - Se o consultor permanecer em Lock Screen sem realizar a renovação gratuita por mais de **60 dias pós-vencimento** (Grace Period):
+     * A conta é alterada para `inativo_expirado`.
+     * **Compactação Dinâmica (Dynamic Compression):** A árvore MMN promove a linha abaixo dele diretamente ao patrocinador acima, liberando o fluxo da rede para não prejudicar os consultores ativos.
+     * **Eliminação de Passivos Fantasmas:** Saldos congelados não reclamados por mais de 12 meses são revertidos para o fundo de desenvolvimento da Esol.
 
 ---
 
