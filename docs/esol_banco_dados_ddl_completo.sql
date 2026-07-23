@@ -181,6 +181,25 @@ CREATE TABLE public.assinaturas_esol_sign (
   created_at timestamptz DEFAULT now()
 );
 
+-- Central de Governança Jurídica (Esol Legal & Compliance Vault)
+CREATE TABLE public.documentos_minutas_juridicas (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  categoria public.documento_categoria NOT NULL,
+  titulo text NOT NULL, -- Ex: 'Termo de Parceria Comercial Autônoma MMN'
+  versao text NOT NULL, -- Ex: 'v2.1'
+  descricao_alteracoes text, -- Notação do advogado sobre o que mudou
+  arquivo_url text, -- PDF/DOCX original no Supabase Storage
+  conteudo_template text NOT NULL, -- Template HTML/Markdown com tags {{VARIAVEIS}}
+  hash_sha256 text NOT NULL, -- Digest do conteúdo da minuta
+  status text DEFAULT 'rascunho' NOT NULL, -- 'rascunho', 'ativa', 'arquivada'
+  exige_reaceite boolean DEFAULT false,
+  criado_por_id uuid REFERENCES public.profiles(id),
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  UNIQUE (tenant_id, categoria, versao)
+);
+
 -- ==============================================================================
 -- 7. LEDGER CONTÁBIL (PARTIDA DOBRADA E HASHING ENCADEADO)
 -- ==============================================================================
