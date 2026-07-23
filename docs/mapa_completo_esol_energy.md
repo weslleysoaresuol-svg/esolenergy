@@ -352,18 +352,20 @@ Para evitar que a Esol pague comissões perpétuas para "contas fantasmas", inat
 3. **Prova de Vida por Biometria Facial (Esol Sign):**
    - No fluxo de renovação no app, o consultor realiza o escaneamento biométrico facial (Face Match R$ 0,00) para atestar que o titular está vivo, ativo e com dados bancários/PIX conferidos, protegendo o repasse financeiro contra fraudes.
 
-4. **Modo Lock Screen de Bloqueio Operacional & Congelamento de Ganhos:**
+4. **Modo Lock Screen & Prazos de Congelamento (Conforme Código Civil Brasileiro):**
    - *Pré-Aviso (30 dias antes):* Faltando 30 dias para expirar, o app exibe um banner informativo azul. Notificações por e-mail e WhatsApp são enviadas a 15, 7 e 1 dia do vencimento.
-   - *Vencimento do Contrato (Painel Desativado):* Na data exata de expiração dos 12 meses sem renovação, o painel do consultor entra em **Modo Lock Screen Exclusivo**.
-   - *Painel e Recursos Congelados:* O acesso às funcionalidades do app (CRM, visualização da árvore de rede, emissão de propostas e extratos) fica **TEMPORARIAMENTE DESATIVADO**. As comissões e overrides continuam sendo calculadas e acumuladas em background no livro-razão (`ledger`), porém permanecem **CONGELADAS** para visualização e saque.
-   - *Tela Única Visível (Modal Bloqueante):* A única interface exibida ao consultor é a **Tela de Renovação de Contrato & Prova de Vida Digital (R$ 0,00)** com o botão de validação biométrica facial (Esol Sign).
-   - *Liberação Instantânea Pós-Assinatura:* Assim que o consultor realiza o escaneamento facial biométrico (Face Match R$ 0,00 - 30 segundos) e aceita os termos atualizados, o painel é **LIBERADO IMEDIATAMENTE NA HORA**, descongelando os saldos acumulados, ativando saques via PIX e restaurando o acesso total a todos os módulos do ecossistema.
+   - *Vencimento do Contrato (Modo Lock Screen - Dia 0):* Na data exata de expiração dos 12 meses sem renovação, o painel do consultor entra em **Modo Lock Screen Exclusivo**.
+   - *Prazo de Congelamento Retido (180 dias / 6 meses):* O acesso às funcionalidades do app (CRM, visualização da árvore de rede, emissão de propostas) fica **TEMPORARIAMENTE CONGELADO por até 180 dias**. As comissões e overrides continuam sendo calculadas e acumuladas em background no livro-razão (`ledger_lancamentos`) em nome do consultor durante todo esse período.
+   - *Régua Notificatória Legal:* Notificações registradas são enviadas aos 30, 60, 90, 120 e 150 dias de congelamento. Aos 150 dias, o sistema dispara a **Notificação Extrajudicial Digital** concedendo o prazo final impreterível de 30 dias para renovação gratuita.
+   - *Liberação Instantânea Pós-Assinatura:* Em qualquer momento dentro dos 180 dias, assim que o consultor realiza a biometria facial (Esol Sign - 30 segundos) e aceita os termos atualizados, o painel é **LIBERADO IMEDIATAMENTE NA HORA**, descongelando os saldos acumulados e ativando saques via PIX.
 
-5. **Inatividade Expirada & Compactação Dinâmica de Árvore (Dynamic Compression):**
-   - Se o consultor permanecer em Lock Screen sem realizar a renovação gratuita por mais de **60 dias pós-vencimento** (Grace Period):
-     * A conta é alterada para `inativo_expirado`.
-     * **Compactação Dinâmica (Dynamic Compression):** A árvore MMN promove a linha abaixo dele diretamente ao patrocinador acima, liberando o fluxo da rede para não prejudicar os consultores ativos.
-     * **Eliminação de Passivos Fantasmas:** Saldos congelados não reclamados por mais de 12 meses são revertidos para o fundo de desenvolvimento da Esol.
+5. **Abandono Contratual, Compactação Dinâmica & Prescrição Legal (Art. 206 do Código Civil):**
+   - *Rescisão por Abandono (Aos 180 dias):* Transcorridos 180 dias (6 meses) de congelamento sem a realização da renovação gratuita ou prova de vida, o Termo de Parceria é resolvido de pleno direito por **Abandono de Contrato Civil (Art. 475 do Código Civil)**.
+   - *Compactação Dinâmica de Árvore (Dynamic Compression):* A rede MMN do consultor inativo é promovida para o patrocinador acima no 181º dia, garantindo a continuidade e o fluxo de ganhos da equipe ativa.
+   - *Prescrição Trienal de Saldos (Art. 206, § 3º, III do Código Civil):*
+     * O saldo financeiro acumulado até a data da inativação permanece guardado na conta de provisão de contingência da Esol durante o prazo prescricional de **3 anos (conforme Art. 206, § 3º, III do CCB)**.
+     * Em caso de falecimento do titular, seus herdeiros legais habilitados por inventário/alvará judicial podem solicitar o resgate do saldo acumulado dentro do prazo prescricional de 3 anos.
+     * Transcorrido o prazo de 3 anos sem manifestação nem reintegração, o saldo prescreve de pleno direito e é revertido para o fundo de inovação e tecnologia da Esol.
 
 ---
 
