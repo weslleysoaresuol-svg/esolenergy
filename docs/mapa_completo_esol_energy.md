@@ -918,10 +918,17 @@ Para manter este mapa de negócios limpo e legível para seres humanos, todo o s
 #### 5. Resumo das Automações Contábeis & Segurança
 
 Para garantir a confiabilidade matemática das comissões e transações:
-*   **Recálculo de Saldos (Trigger Partida Dobrada):** Toda inserção no livro-razão atualiza automaticamente o balanço geral, debitando da conta de origem e creditando na conta de destino, evitando erros manuais ou saldos flutuantes.
 *   **Chave Criptográfica Encadeada (Trigger Hashing SHA-256):** Cada lançamento contábil carrega o hash criptográfico do lançamento anterior, garantindo imutabilidade de dados históricos do MMN.
 
+---
 
+#### 6. Cockpit Jurídico & Governança Esol (Legal Command Center Dashboard)
+Para dar autonomia total aos advogados e administradores no acompanhamento de minutas, contratos e conformidade legal:
+*   **Visão 360° por Setor (4 Abas):** Mapeamento separado para MMN/Corretores, Clientes Finais (GD/EPC), B2B Mercado Livre (MLE) e Operacional/O&M.
+*   **Central de Upload & Editor de Minutas (Esol Legal Vault):** Permite upload de novos modelos PDF/DOCX ou edição em tempo real com tags dinâmicas (`{{NOME_CLIENTE}}`, `{{CPF_CNPJ}}`, `{{VALOR}}`), sem alterar o código do aplicativo.
+*   **Comparador Visual de Diffs:** Exibe na tela do advogado o comparador de diferenças de texto entre minutas (destacando adições em verde e exclusões em vermelho) antes da publicação.
+*   **Dossiê de Evidências em 1 Clique:** Pesquisa por CPF/CNPJ ou protocolo e gera o pacote zip com o PDF assinado, foto da biometria facial, IP, GPS, Timestamp NTP e extrato do ledger SHA-256 para pronta defesa judicial.
+*   **Gestão Notificatória & Lock Screen:** Monitoramento de contas em prova de vida (Esol Re-Sign), régua de notificações aos 30, 60, 90, 120 e 150 dias e automação de distratos.
 
 ---
 
