@@ -59,6 +59,30 @@ CREATE TABLE public.user_roles (
   UNIQUE (user_id, role)
 );
 
+-- Matriz de Acessos Administrativos (RBAC de 7 Níveis) & Trilha de Auditoria
+CREATE TYPE public.admin_nivel AS ENUM (
+  'super_admin_socio',
+  'admin_juridico',
+  'admin_financeiro',
+  'admin_engenharia',
+  'admin_vendas_mmn',
+  'admin_suporte',
+  'auditor_externo'
+);
+
+CREATE TABLE public.admin_audit_logs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  admin_id uuid REFERENCES public.profiles(id) NOT NULL,
+  papel_utilizado public.admin_nivel NOT NULL,
+  acao text NOT NULL, -- Ex: 'aprovação_saque_pix', 'alteracao_minuta_juridica', 'revogacao_acesso'
+  modulo text NOT NULL, -- Ex: 'financeiro', 'legal_vault', 'acessos'
+  detalhes jsonb DEFAULT '{}'::jsonb, -- Payload completo da alteração para auditoria
+  ip_origem text NOT NULL,
+  user_agent text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
 -- ==============================================================================
 -- 3. HIERARQUIA DE REDE MMN (INDEXAÇÃO LTREE)
 -- ==============================================================================

@@ -36,6 +36,41 @@ Uma **plataforma 360° de energia renovável (EnergyTech)** que atua como um eco
 
 ---
 
+### 2.1 Matriz de Acessos Administrativos & Níveis de Privilégio (RBAC / ABAC Hub)
+Para garantir que futuros sócios, diretores, advogados, analistas e atendentes operem a plataforma com segurança total e privilégio mínimo de acesso, o perfil administrativo subdivide-se em **7 Níveis de Permissões (RBAC)**:
+
+1. **👑 Nível 1: Super Admin / Sócios Executivos (C-Level & Founders):**
+   - *Acesso:* 100% dos módulos do ecossistema.
+   - *Permissões:* Criar/excluir administradores, alterar parâmetros do Motor Reverso (`lucro_alvo`), cadastrar novos SKUs e aprovar saques de grande porte. Exige 2FA biométrico obrigatório.
+
+2. **⚖️ Nível 2: Admin Jurídico & Compliance (Advogados & Governança):**
+   - *Acesso:* Esol Legal Vault, Esol Sign, Dossiês de Evidências e Gestão de Lock Screen.
+   - *Permissões:* Upload e versão de minutas contratuais, disparo de re-aceites e notificações extrajudiciais. Sem acesso a aprovação de saques bancários.
+
+3. **💰 Nível 3: Admin Financeiro & Tesouraria (CFO & Contabilidade Interna):**
+   - *Acesso:* Ledger de Partidas Dobradas, Cockpit de Saques PIX e Faturamento.
+   - *Permissões:* Autorizar saques via PIX/TED, emitir notas fiscais e conciliar repasses de geradoras. Sem permissão para alterar regras de comissão.
+
+4. **🔧 Nível 4: Admin Operacional & Engenharia (Homologação & O&M):**
+   - *Acesso:* Funil de Projetos Turnkey, Vistorias O&M e Selo Verde Esol.
+   - *Permissões:* Atribuir engenheiros/instaladores, aprovar pareceres de acesso de distribuidoras e emitir certificações Selo Verde.
+
+5. **📈 Nível 5: Admin de Vendas & Expansão MMN (Gerência de Rede):**
+   - *Acesso:* Árvore de Rede MMN (`ltree`), Esol Career (12 Selos) e Relatórios de Vendas.
+   - *Permissões:* Auditar qualificação de selos e acompanhar o crescimento da rede. Sem poder para alterar percentuais de repasse MMN.
+
+6. **🎧 Nível 6: Admin Suporte & Helpdesk (Atendimento ao Cliente/Consultor):**
+   - *Acesso:* Central de Chamados, auxílio no onboarding e re-envio de senhas.
+   - *Permissões:* Atendimento a usuários. **Proteção LGPD:** Dados sensíveis (CPF, dados bancários, extratos detalhados) aparecem **mascarados (`***`)**.
+
+7. **🔍 Nível 7: Auditoria Externa & Fisco (Read-Only Audit):**
+   - *Acesso:* Leitura estrita (Read-Only) do Ledger Contábil e relatórios fiscais.
+   - *Permissões:* Apenas visualização e exportação de auditoria contábil. Impossibilitado de criar, editar ou excluir qualquer registro no banco.
+
+*   **Esol Admin Access Center (Central de Gestão de Acessos):** Permite convidar funcionários por e-mail corporativo em 1 clique, revogar acessos instantaneamente em tempo real (*Kill-Switch*) e registra **100% das ações administrativas na Trilha de Auditoria (`admin_audit_logs`)**.
+
+---
+
 ## 3. PORTFÓLIO (11 Categorias em 3 Canais de Venda)
 
 ### 🟢 CANAL 1 — MMN (8 Categorias com Override Igualitário em 7 Níveis)
