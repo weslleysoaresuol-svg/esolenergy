@@ -150,6 +150,7 @@ CREATE TABLE public.carteira_energia (
 
 CREATE TYPE public.documento_categoria AS ENUM (
   'contrato_parceria',
+  'renovacao_termo_parceria', -- Esol Re-Sign (Renovação Anual & Prova de Vida)
   'termo_compromisso_equipe',
   'proposta_solar_turnkey',
   'adesao_gd',
