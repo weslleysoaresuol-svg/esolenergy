@@ -67,7 +67,24 @@ Para garantir que futuros sócios, diretores, advogados, analistas e atendentes 
    - *Acesso:* Leitura estrita (Read-Only) do Ledger Contábil e relatórios fiscais.
    - *Permissões:* Apenas visualização e exportação de auditoria contábil. Impossibilitado de criar, editar ou excluir qualquer registro no banco.
 
-*   **Esol Admin Access Center (Central de Gestão de Acessos):** Permite convidar funcionários por e-mail corporativo em 1 clique, revogar acessos instantaneamente em tempo real (*Kill-Switch*) e registra **100% das ações administrativas na Trilha de Auditoria (`admin_audit_logs`)**.
+---
+
+### 2.2 Esol Equity & Corporate Payroll Hub (Governança Societária & Custo de OPEX)
+Para separar com rigor absoluto os **Sócios-Administradores Principais (Equity)** dos **Administradores Contratados e Funcionários (OPEX)**, o ecossistema incorpora o módulo de controle corporativo em 4 pilares:
+
+1. **Cap Table & Distribuição de Lucros (Sócios-Administradores Principais):**
+   - Mapeamento das cotas sociais (Cap Table em %) dos fundadores/sócios principais.
+   - Apuração trimestral automática do lucro líquido acumulado na conta `3.1.01` do Ledger Contábil para distribuição isenta de dividendos aos sócios proporcionalmente às suas cotas, além da gestão de Pró-Labore mensal fixo.
+
+2. **Gestão de OPEX & Folha de Pagamento (Administradores Contratados e Funcionários):**
+   - Cadastro de salários e honorários negociados por contrato (regimes PJ, CLT ou Prestador de Serviço) para advogados, analistas financeiros, engenheiros e atendentes.
+   - **Integração Automática com o Ledger Contábil:** Todo lançamento de folha debita automaticamente a conta `4.1.01.01` (Despesas com Pessoal Administrativo) e credita o banco operacional da empresa, mantendo o DRE atualizado.
+
+3. **Bônus de Performance & Metas Corporativas:**
+   - Possibilidade de atrelar bônus financeiros variáveis por metas cumpridas (ex: manter a margem líquida da empresa acima de 54%, zerar chamados de suporte em 24h ou homologar usinas abaixo de 10 dias).
+
+4. **Programa de Vesting & Stock Options (Retenção de Talentos):**
+   - Mecanismo para atração e retenção de executivos de alta performance, concedendo gatilhos temporais (36 a 48 meses) para que funcionários destacados adquiram cotas societárias minoritárias e tornem-se futuros sócios.
 
 ---
 

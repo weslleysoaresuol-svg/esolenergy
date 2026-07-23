@@ -79,8 +79,36 @@ CREATE TABLE public.admin_audit_logs (
   modulo text NOT NULL, -- Ex: 'financeiro', 'legal_vault', 'acessos'
   detalhes jsonb DEFAULT '{}'::jsonb, -- Payload completo da alteração para auditoria
   ip_origem text NOT NULL,
-  user_agent text NOT NULL,
   created_at timestamptz DEFAULT now()
+);
+
+-- Tabela do Cap Table de Sócios-Administradores Principais
+CREATE TABLE public.socios_cap_table (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  socio_id uuid REFERENCES public.profiles(id) NOT NULL UNIQUE,
+  percentual_cotas numeric(5, 2) NOT NULL CHECK (percentual_cotas > 0 AND percentual_cotas <= 100),
+  valor_pro_labore numeric(15, 2) DEFAULT 0.00 NOT NULL,
+  data_entrada date NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Tabela de Gestão de OPEX e Folha de Pagamento Administrativa
+CREATE TYPE public.contrato_regime AS ENUM ('pj_honorario', 'clt', 'prestador_autonomo', 'estagio');
+
+CREATE TABLE public.folha_pagamento_opex (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  usuario_id uuid REFERENCES public.profiles(id) NOT NULL,
+  regime public.contrato_regime NOT NULL,
+  cargo_funcao text NOT NULL,
+  remuneracao_base numeric(15, 2) NOT NULL,
+  bonus_metas_estimado numeric(15, 2) DEFAULT 0.00,
+  dados_contratuais jsonb DEFAULT '{}'::jsonb, -- Anexo de contrato, benefícios, retenções
+  ativo boolean DEFAULT true NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
 );
 
 -- ==============================================================================
