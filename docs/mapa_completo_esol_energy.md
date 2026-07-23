@@ -340,6 +340,30 @@ Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de 
 
 ---
 
+### 5.5.3 Renovação Anual Contratual & Prova de Vida Digital (Esol Re-Sign)
+Para evitar que a Esol pague comissões perpétuas para "contas fantasmas", inativas ou de titulares falecidos, o ecossistema adota um mecanismo de **Conformidade Jurídica e Prova de Vida Digital R$ 0,00**:
+
+1. **Vigência de 12 Meses do Termo de Parceria Comercial:**
+   - Todo consultor MMN assina o Termo de Parceria Comercial Autônoma com validade de **12 meses (1 ano civil)**. O contrato **não renova automaticamente por inércia**, exigindo o ato consciente do consultor.
+
+2. **Renovação Digital 100% Gratuita (Custo R$ 0,00):**
+   - A renovação **NÃO cobra taxa de licença, não exige compra de produtos e não impõe metas de faturamento sufocantes**. Trata-se de um procedimento de atualização contratual, bancária e legal.
+
+3. **Prova de Vida por Biometria Facial (Esol Sign):**
+   - No fluxo de renovação no app, o consultor realiza o escaneamento biométrico facial (Face Match R$ 0,00) para atestar que o titular está vivo, ativo e com dados bancários/PIX conferidos, protegendo o repasse financeiro contra fraudes.
+
+4. **Grace Period (60 dias) & Notificações Automatizadas:**
+   - Faltando 30 dias para expirar, o app exibe o widget de renovação. Disparos automáticos por e-mail e WhatsApp ocorrem em 15, 7 e 1 dia.
+   - Vencido o prazo, a conta passa para `aguardando_renovacao`. Suas comissões continuam acumulando no livro-razão (`ledger`), porém o saque fica retido até a conclusão da biometria e assinatura.
+
+5. **Inatividade Expirada & Compactação Dinâmica de Árvore (Dynamic Compression):**
+   - Se o consultor não assinar a renovação gratuita em até 60 dias pós-vencimento (mais de 180 dias de inércia sem prova de vida):
+     * A conta é classificada como `inativo_expirado`.
+     * **Compactação Dinâmica (Dynamic Compression):** A árvore MMN eleva a linha abaixo dele para não prejudicar os consultores ativos da sua equipe, mantendo a rede engajada.
+     * **Eliminação de Passivos Fantasmas:** Saldos não reclamados por mais de 12 meses são estornados para o fundo de desenvolvimento da Esol.
+
+---
+
 ### 5.6 Programa de Reconhecimento e Selos (Esol Career)
 
 Para manter a força de vendas motivada no longo prazo, o ecossistema incorpora o **Esol Career** como um sistema de gamificação de selos de qualificação. O programa mapeia **exatamente 12 níveis de selos** de forma progressiva. Esta quantidade ampliada permite passos menores entre os selos iniciais (gerando recompensa rápida de atividade) e estende a meta para parceiros de alto faturamento, sem interferir na regra de repasse financeiro de 7 níveis de rede.
