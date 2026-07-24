@@ -72,6 +72,18 @@ CREATE TABLE public.cupons_promocionais (
   created_at timestamptz DEFAULT now()
 );
 
+-- Tabela de Configuração de Combos e Venda Casada Transparente (Cross-Selling)
+CREATE TABLE public.combos_produtos_esol (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  nome_combo text NOT NULL, -- Ex: 'Combo Proteção Total', 'Combo Eficiência Corporativa'
+  persona_destino text NOT NULL, -- 'residencial_proprio', 'inquilino', 'pme_grupo_a', 'usina_existente'
+  categorias_incluidas jsonb NOT NULL, -- Array de IDs das categorias (ex: ["cat_1", "cat_6", "cat_8"])
+  percentual_desconto_combo numeric(5, 2) DEFAULT 3.00 NOT NULL,
+  ativo boolean DEFAULT true NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
 -- ==============================================================================
 -- 2. IDENTIDADE E CONTROLE DE ACESSO (PROFILES & ROLES)
 -- ==============================================================================

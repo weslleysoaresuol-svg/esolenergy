@@ -327,6 +327,25 @@ Para proporcionar **gordura de negociação comercial** aos consultores e permit
 
 ---
 
+### 5.6 Consultor Sales Cockpit & Matriz de Matching de Personas (Recomendador Inteligente)
+Para garantir que o consultor saiba **exatamente o que oferecer, como oferecer e quando combinar produtos (venda casada transparente)** para cada tipo de cliente, a plataforma incorpora o **Recomendador de Vendas Inteligente** no aplicativo do consultor:
+
+1. **As 5 Personas de Compradores Mapeadas no App:**
+   - **Persona A (Residencial Próprio):** Quer valorizar a casa e zerar a luz $\rightarrow$ *Recomendação:* **Solar Turnkey #1** + Combo Proteção (Seguro #8 + O&M #6).
+   - **Persona B (Inquilino / Imóvel Alugado):** Quer economia sem obra $\rightarrow$ *Recomendação:* **Assinatura GD #3** + Milhagem Esol Club.
+   - **Persona C (PME & Indústria Grupo A):** Quer reduzir OPEX corporativo $\rightarrow$ *Recomendação:* **Mercado Livre MLE #4** + SaaS Telemetria IoT #5.
+   - **Persona D (Investidor Solar B2B):** Quer rentabilidade líquida > 2% ao mês $\rightarrow$ *Recomendação:* **Usina Solar B2B #10** + Gestão GD #3.
+   - **Persona E (Dono de Usina Existente):** Quer recuperar geração e proteger ativo $\rightarrow$ *Recomendação:* **Limpeza & O&M #6/#7** + SaaS IoT #5 + Seguro #8.
+
+2. **Diagnóstico Guiado em 3 Perguntas (Smart Questionnaire):**
+   - O consultor responde a 3 perguntas rápidas no app (Tipo de Imóvel, Tensão Elétrica e Desejo de Obra). O sistema calcula e apresenta na hora a proposta principal e o **Combo de Venda Casada Transparente** (com desconto de combo de 2% a 4%).
+
+3. **Venda "Junto vs. Separado" (Menu A La Carte):**
+   - *Junto (Combo Recomendado):* Solução completa (equipamento + pós-venda) com desconto de combo.
+   - *Separado (A La Carte):* Se o cliente recusar o pós-venda, o app desmembra a proposta em 1 segundo sem perder a venda do equipamento principal.
+
+---
+
 ### 5.1.1 Arquitetura de Pool Unificado de Comissão (TDTC)
 Para impedir pagamentos duplos (MMN + Indique e Ganhe) e garantir a estabilidade do caixa da Esol, o sistema adota a **Lei do Pool Único de Comissão**:
 
