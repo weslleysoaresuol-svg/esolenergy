@@ -281,18 +281,20 @@ $$\text{Preço Final (P)} = \frac{C_{\text{fixos}}}{1 - (tributo + overhead + ga
 
 #### **Percentual e Propósito do Overhead Administrativo (`overhead = 5,0%`):**
 *   **Percentual Padrão Configurado:** **5,0%** (parametrizável de 5,0% a 8,0% no Cockpit Contábil por SKU/Categoria).
-*   **O que o Overhead Administrativo Cobre (SST, Benefícios & Custos Indiretos OPEX):**
+*   **O que o Overhead Administrativo Cobre (As 12 Categorias de Custos Indiretos OPEX & Ativos):**
     O `overhead` é a reserva financeira autossustentável destinada a cobrir 100% dos custos da unidade administrativa central da Esol Energy:
-    1. **SST & Medicina do Trabalho (Obrigatório eSocial):** PGR (NR-01), PCMSO (NR-07), LTCAT, exames ocupacionais (ASO), envio de eventos de SST ao eSocial (`S-2210`, `S-2220`, `S-2240`), EPIs e treinamentos NR-10/NR-35.
-    2. **Redes de Benefícios Corporativos & Well-being:** Cartões de benefícios flexíveis (Caju/Flash/Swile), plano de saúde/odontológico (Bradesco/SulAmérica), rede de academias (Gympass/TotalPass), seguro de vida e Apoio Psicológico (PAE 24/7).
-    3. **Viagens Corporativas, Passagens & Hospedagens:** Passagens aéreas/terrestres, hotéis, aluguel de carros (Localiza), Uber e ajudas de custo.
-    4. **Telecomunicações, Celulares & Conectividade:** Smartphones corporativos (iPhone/Android), planos 5G (Vivo/Claro/TIM), PABX VoIP 0800 e internet fibra dedicada.
-    5. **Palestras, Capacitação & Eventos:** Palestrantes contratados, workshops internos, treinamentos técnicos e inscrição na Intersolar/CBGD.
-    6. **Alimentação Corporativa & Catering:** VR/VA da equipe, almoços de negócios com bancos/usinas, catering e coffee breaks institucionais.
-    7. **Sede Física & Instalações:** Aluguel da sede/escritório, condomínio, IPTU, energia, água, limpeza, segurança armada e manutenção.
-    8. **Pessoal Administrativo & Encargos:** Salários e honorários (CFO, Advogados, Devs, Engenheiros, Suporte) + INSS patronal e FGTS sob CBO.
-    9. **Tecnologia, Cloud & Softwares:** Servidores Supabase/Cloudflare, licenças (Google Workspace, Microsoft, ERP), APIs de biometria/WhatsApp.
-    10. **Serviços Terceirizados & Conselhos:** Anuidades dos conselhos de classe (**CREA/CFT, OAB, CRC, CRA**), contabilidade e auditoria.
+    1. **Ativos Imobiliários & Sede:** Compra/aluguel de imóveis, condomínio, IPTU, laudo do **Corpo de Bombeiros (AVCB/CLCB)**, alvarás, manutenção predial, água, luz e segurança armada.
+    2. **Frota de Veículos Corporativos:** Compra/aluguel de carros (Localiza), **IPVA**, **Licenciamento Anual (DETRAN)**, **Emplacamento**, oficinas, combustível, pedágios (Sem Parar) e Seguro Total de Frota.
+    3. **Equipamentos, TI & Mobiliário:** Compra/leasing de notebooks, servidores, monitores, impressoras, mesas/cadeiras ergonômicas (NR-17), manutenção e seguro de hardware.
+    4. **SST & Medicina do Trabalho (eSocial):** PGR (NR-01), PCMSO (NR-07), LTCAT, exames ASO, envio de eventos eSocial (`S-2210`, `S-2220`, `S-2240`), EPIs e treinamentos NR-10/35.
+    5. **Redes de Benefícios Corporativos:** Cartão flexível (Caju/Flash), Plano de Saúde/Odonto (Bradesco), Gympass, seguro de vida e Apoio Psicológico PAE.
+    6. **Viagens Corporativas, Passagens & Hotéis:** Passagens aéreas/terrestres, hotéis executivos, Uber e ajudas de custo de deslocamento.
+    7. **Telecomunicações, Celulares & Conectividade:** Smartphones corporativos (iPhone/Android), planos 5G (Vivo/Claro/TIM), PABX VoIP 0800 e fibra dedicada.
+    8. **Palestras, Capacitação & Eventos:** Palestrantes contratados, workshops internos, treinamentos técnicos e inscrição na Intersolar/CBGD.
+    9. **Alimentação Corporativa & Catering:** VR/VA da equipe, almoços de negócios com bancos/usinas, catering e coffee breaks institucionais.
+    10. **Pessoal Administrativo & Encargos:** Salários e honorários (CFO, Advogados, Devs, Engenheiros, Suporte) + INSS patronal e FGTS sob CBO.
+    11. **Tecnologia, Nuvem & Softwares:** Servidores Supabase/Cloudflare, licenças (Google Workspace, Microsoft, ERP), APIs de biometria/WhatsApp.
+    12. **Serviços Terceirizados & Conselhos:** Anuidades dos conselhos de classe (**CREA/CFT, OAB, CRC, CRA**), contabilidade, auditoria e marcas no INPI.
     *   *Resultado:* Cada venda realizada no ecossistema paga automaticamente a estrutura administrativa da Esol, garantindo que o `lucro_alvo` (lucro líquido limpo da empresa) permaneça **100% preservado no caixa**!
 
 *   **Termômetro de Saúde do Overhead (Cockpit dos Donos - Super Admin Level 1):**
