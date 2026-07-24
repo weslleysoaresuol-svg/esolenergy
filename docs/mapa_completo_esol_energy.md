@@ -281,15 +281,18 @@ $$\text{Preço Final (P)} = \frac{C_{\text{fixos}}}{1 - (tributo + overhead + ga
 
 #### **Percentual e Propósito do Overhead Administrativo (`overhead = 5,0%`):**
 *   **Percentual Padrão Configurado:** **5,0%** (parametrizável de 5,0% a 8,0% no Cockpit Contábil por SKU/Categoria).
-*   **O que o Overhead Administrativo Cobre (As 7 Categorias de Custos Indiretos OPEX):**
+*   **O que o Overhead Administrativo Cobre (As 10 Categorias de Custos Indiretos OPEX):**
     O `overhead` é a reserva financeira autossustentável destinada a cobrir 100% dos custos da unidade administrativa central da Esol Energy:
-    1. **Sede Física & Instalações:** Aluguel da sede/escritório, condomínio, IPTU, energia, água, internet fibra e segurança patrimonial.
-    2. **Folha de Pagamento Administrativa & Benefícios:** Salários e honorários (CFO, Advogados, Devs, Engenheiros, Suporte) + INSS, FGTS, VR e Plano de Saúde.
-    3. **Tecnologia, Cloud & Softwares:** Servidores Supabase/Cloudflare, licenças (Google Workspace, Microsoft, ERP), custos de APIs (WhatsApp, Biometria Esol Sign, GPS).
-    4. **Desenvolvimento & Manutenção Contínua:** Atualizações de código, manutenção do site e publicação de aplicativos nas lojas (Apple/Google).
-    5. **Serviços Profissionais Terceirizados & Conselhos:** Anuidades de conselhos de classe (**CREA/CFT, OAB, CRC, CRA**), contabilidade e auditoria externa.
-    6. **Branding, Registro de Marcas & Eventos:** Renovação de domínios, registros de marcas no INPI, assessoria de imprensa (PR) e estandes em feiras (Intersolar).
-    7. **Seguros Corporativos & Suprimentos:** Seguro de Responsabilidade Civil, seguro predial/TI, leasing de notebooks para a equipe e despesas de viagem corporativa.
+    1. **Viagens Corporativas, Passagens & Hospedagens:** Passagens aéreas/terrestres, hotéis, aluguel de carros (Localiza), Uber e ajudas de custo.
+    2. **Telecomunicações, Celulares & Conectividade:** Smartphones corporativos (iPhone/Android), planos 5G (Vivo/Claro/TIM), PABX VoIP 0800 e internet fibra dedicada.
+    3. **Palestras, Capacitação & Eventos:** Palestrantes contratados, workshops internos, treinamentos técnicos e inscrição na Intersolar/CBGD.
+    4. **Alimentação Corporativa & Catering:** VR/VA da equipe, almoços de negócios com bancos/usinas, catering e coffee breaks institucionais.
+    5. **Sede Física & Instalações:** Aluguel da sede/escritório, condomínio, IPTU, energia, água, limpeza, segurança armada e manutenção.
+    6. **Pessoal Administrativo & Benefícios:** Salários e honorários (CFO, Advogados, Devs, Engenheiros, Suporte) + INSS, FGTS, Saúde e Odonto.
+    7. **Tecnologia, Cloud & Softwares:** Servidores Supabase/Cloudflare, licenças (Google Workspace, Microsoft, ERP), APIs de biometria/WhatsApp.
+    8. **Serviços Terceirizados & Conselhos:** Anuidades dos conselhos de classe (**CREA/CFT, OAB, CRC, CRA**), contabilidade e auditoria.
+    9. **Branding, Registro de Marcas & PR:** Registros no INPI, domínios web, assessoria de imprensa e estandes em feiras nacionais.
+    10. **Seguros Corporativos & TI Interno:** Seguro de Responsabilidade Civil, seguro predial/TI, leasing de notebooks e suprimentos de escritório.
     *   *Resultado:* Cada venda realizada no ecossistema paga automaticamente a estrutura administrativa da Esol, garantindo que o `lucro_alvo` (lucro líquido limpo da empresa) permaneça **100% preservado no caixa**!
 
 *   **Termômetro de Saúde do Overhead (Cockpit dos Donos - Super Admin Level 1):**
