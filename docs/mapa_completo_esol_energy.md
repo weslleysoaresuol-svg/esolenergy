@@ -94,8 +94,27 @@ Para separar com rigor absoluto os **Sócios-Administradores Principais (Equity)
 3. **Bônus de Performance & Metas Corporativas:**
    - Possibilidade de atrelar bônus financeiros variáveis por metas cumpridas (ex: manter a margem líquida da empresa acima de 54%, zerar chamados de suporte em 24h ou homologar usinas abaixo de 10 dias).
 
-4. **Programa de Vesting & Stock Options (Retenção de Talentos):**
-   - Mecanismo para atração e retenção de executivos de alta performance, concedendo gatilhos temporais (36 a 48 meses) para que funcionários destacados adquiram cotas societárias minoritárias e tornem-se futuros sócios.
+---
+
+### 2.3 Transição Tributária Progressiva & CNPJ Migration Gateway (Do MEI ao Grande Porte)
+Para permitir que a Esol Energy nassa legalizada e enxuta sob o regime **MEI (Microempreendedor Individual)** e evolua de forma 100% dinâmica no banco de dados à medida que faturar e escalar, o sistema incorpora a **Arquitetura de Transição Tributária em 4 Fases**:
+
+1. **🌱 FASE 1: Operação Inicial MEI (Teto até R$ 81.000,00 / ano):**
+   - Operação enxuta de arranque. Recolhimento fixo DAS (~R$ 75/mês). 1 Titular (sem sócios no contrato). Isenção simplificada de imposto de renda sobre a distribuição do lucro apurado.
+   - **Termômetro Automático do Teto MEI:** O sistema monitora o faturamento acumulado no ano. Ao atingir **85% do teto (R$ 68.850,00)**, o dashboard dispara um alerta recomendando a migração preventiva para ME.
+
+2. **🌿 FASE 2: Microempresa (ME no Simples Nacional - Teto até R$ 360.000,00 / ano):**
+   - Desenquadramento do MEI e transição para SLU (Sociedade Unipessoal) ou LTDA.
+   - **Recursos Destravados:** Permite emissão ilimitada de NFS-e, contratação flexível da equipe (6 modalidades), ativando Pró-Labore + Dividendos Isentos e os 7 níveis da Matriz RBAC de Permissões.
+
+3. **🌳 FASE 3: Empresa de Pequeno Porte (EPP no Simples Nacional - Teto até R$ 4.800.000,00 / ano):**
+   - Entrada formal de novos sócios no Cap Table (`public.socios_cap_table`).
+   - Apuração trimestral de lucros no Ledger Contábil e habilitação completa do Esol Equity & Corporate Payroll Hub.
+
+4. **🏢 FASE 4: Lucro Presumido ou Lucro Real (Faturamento Acima de R$ 4,8 Milhões / ano):**
+   - Holding Esol Energy de grande porte, abertura de filiais white-label, faturamento direto triangulado completo com benefício fiscal de ICMS/ISS, Juros sobre o Capital Próprio (JCP) e isenção total de dividendos sob a Lei 9.249/95.
+
+*   **Migração sem Parar a Operação (CNPJ Migration Gateway):** Ao alterar o regime na Junta Comercial/Receita, o administrador altera o campo `regime_atual` na tabela `config_tributaria_tenant`. **100% dos dados históriccos, contratos assinados no Esol Sign, clientes e a árvore MMN de 7 níveis permanecem intocados e operando sem nenhuma interrupção!**
 
 ---
 

@@ -23,6 +23,26 @@ CREATE TABLE public.tenants (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Configuração Tributária Dinâmica e Migração de CNPJ (MEI -> ME -> EPP -> LTDA)
+CREATE TYPE public.regime_tributario_enum AS ENUM (
+  'mei',                     -- Microempreendedor Individual (Até R$ 81k)
+  'simples_nacional_me',     -- Microempresa (Até R$ 360k)
+  'simples_nacional_epp',    -- Empresa de Pequeno Porte (Até R$ 4,8M)
+  'lucro_presumido',         -- Lucro Presumido (Até R$ 78M)
+  'lucro_real'               -- Lucro Real (Grande Porte)
+);
+
+CREATE TABLE public.config_tributaria_tenant (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE UNIQUE,
+  regime_atual public.regime_tributario_enum DEFAULT 'mei' NOT NULL,
+  faturamento_acumulado_ano numeric(15, 2) DEFAULT 0.00 NOT NULL,
+  teto_regime_vigente numeric(15, 2) DEFAULT 81000.00 NOT NULL,
+  alerta_estouro_disparado boolean DEFAULT false,
+  historico_migracao jsonb DEFAULT '[]'::jsonb, -- Registro de todas as mudanças de CNPJ/Regime
+  updated_at timestamptz DEFAULT now()
+);
+
 -- ==============================================================================
 -- 2. IDENTIDADE E CONTROLE DE ACESSO (PROFILES & ROLES)
 -- ==============================================================================
