@@ -308,21 +308,21 @@ O administrador configura o `lucro_alvo` (lucro mínimo) e o percentual de comis
 
 ---
 
-### 5.1.2 Precificação Ancorada & Restrição Estrita de Cupons (Turnkey & Loja Esol)
-Para proporcionar **gordura de negociação comercial** aos consultores e permitir a aplicação de cupons institucionais **sem colocar em risco a margem limpa nem romper contratos com fornecedores**, o Motor Reverso adota a seguinte diretriz de aplicabilidade:
+### 5.1.2 Precificação Ancorada & Escopo de Cupons (Turnkey, Loja Esol, SaaS & O&M)
+Para proporcionar **gordura de negociação comercial** aos consultores e permitir a aplicação de cupons institucionais **sem colocar em risco a margem limpa da empresa nem romper contratos com fornecedores**, o Motor Reverso adota a seguinte diretriz de aplicabilidade:
 
-1. **Escopo Estrito de Aplicação:**
-   - ✅ **PERMITIDO (Cupons & Ancoragem Comercial):** Aplicável **EXCLUSIVAMENTE** na Categoria #1 (**Solar Turnkey**) e Categoria #2 (**Loja Esol** por SKU). Nestas duas categorias de hardware/obras físicas, o preço de tabela é calculado com ancoragem (ex: **34,0% no Turnkey** / **Piso + 18% na Loja**), criando de 14% a 18% de gordura negociável acima do piso inviolável (**20,0% no Turnkey** e **piso individual por SKU na Loja**).
-   - ⛔ **PROIBIDO / ISENTO (Sem Cupons ou Ancoragem):** Categoria #3 (**Assinatura GD**), Categoria #4 (**Mercado Livre MLE**), Categoria #5 (**SaaS Telemetria**), Categoria #6/#7 (**Limpeza e O&M**) e Categoria #8 (**Seguros Solares**). Por serem altamente sensíveis às tabelas negociadas com geradoras, comercializadoras e seguradoras, essas categorias mantêm seus **preços e repasses fixos**, perfeitamente correlacionados com o Pool MMN/Indique e Ganhe (ex: **64,0% de retenção líquida na Esol** + **36,0% no MMN/EcoPontos**).
+1. **Escopo de Aplicação de Cupons e Ancoragem:**
+   - ✅ **PERMITIDO (Cupons & Ancoragem Comercial):** Aplicável nas Categorias #1 (**Solar Turnkey**), #2 (**Loja Esol** por SKU), #5 (**SaaS Telemetria IoT**) e #6/#7 (**Limpeza e O&M de Painéis**). Nestas quatro categorias de hardware, produtos e serviços próprios, o preço de tabela é calculado com ancoragem (ex: **34% no Turnkey**, **70% no SaaS**, **50% no O&M** e **Piso + 18% na Loja**), criando de 14% a 30% de gordura negociável acima do piso inviolável (**20% Turnkey**, **40% SaaS**, **30% O&M** e **piso individual por SKU na Loja**).
+   - ⛔ **PROIBIDO / ISENTO (Sem Cupons ou Ancoragem):** Categoria #3 (**Assinatura GD**), Categoria #4 (**Mercado Livre MLE**) e Categoria #8 (**Seguros Solares**). Por dependerem estritamente de tabelas repassadas por geradoras, comercializadoras no atacado e seguradoras, essas categorias mantêm seus **preços e repasses fixos**, perfeitamente correlacionados com o Pool MMN/Indique e Ganhe (ex: **64,0% de retenção líquida na Esol** + **36,0% no MMN/EcoPontos**).
 
-2. **A Cascata de Descontos e Cupons (Empilhamento Restrito a Turnkey & Loja):**
-   - *Camada 1 (Cupom de Campanha Mkt):* Cupons cadastrados no banco (`SOLARBLACK5`, `VERAOSOLAR3`) aplicando de 3% a 5% de abatimento em projetos Turnkey ou itens da Loja.
+2. **A Cascata de Descontos e Cupons (Empilhamento Restrito às Categorias Permitidas):**
+   - *Camada 1 (Cupom de Campanha Mkt):* Cupons cadastrados no banco (`SOLARBLACK5`, `TELEMETRIA30`) aplicando de 3% a 5% de abatimento.
    - *Camada 2 (Desconto Balcão do Consultor):* O consultor desliza a barra de desconto no app (0% a 5%), escolhendo se consome a gordura da tabela ou cede uma fatia da sua própria comissão de Venda Direta N0.
    - *Camada 3 (Desconto Pgto à Vista / PIX):* Abatimento especial de 3% a 5% por eliminar taxas de gateway e juros bancários.
-   - *Camada 4 (Desconto de Combo / Cross-sell):* Desconto de 2% a 4% ao adquirir componentes adicionais da loja no mesmo pedido.
+   - *Camada 4 (Desconto de Combo / Cross-sell):* Desconto de 2% a 4% ao adquirir componentes da loja ou planos de manutenção no mesmo pedido.
 
-3. **Trava Cega de Proteção de Margem Piso por SKU (Margin Floor Guardrail):**
-   - Não importa quantas camadas de cupom o cliente empilhe no Turnkey ou na Loja, **o Motor Reverso bloqueia a emissão da proposta se a margem líquida final for cair abaixo do piso mínimo do produto/SKU (ex: < 20,0% no Turnkey ou < `lucro_alvo_piso` do SKU na Loja)**.
+3. **Trava Cega de Proteção de Margem Piso por SKU/Categoria (Margin Floor Guardrail):**
+   - Não importa quantas camadas de cupom o cliente empilhe, **o Motor Reverso bloqueia a emissão da proposta se a margem líquida final for cair abaixo do piso mínimo histórico da categoria ou produto (ex: < 20% no Turnkey, < 40% no SaaS, < 30% no O&M ou < `lucro_alvo_piso` do SKU na Loja)**.
    - *Solicitação de Alçada (Level 2):* Se o desconto estourar o piso, a proposta é bloqueada no app e exige aprovação formal do Diretor Comercial (Level 2) no Cockpit Admin.
 
 ---
