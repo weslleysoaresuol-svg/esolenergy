@@ -2658,3 +2658,77 @@ Os webhooks de envio de WhatsApp, gateway de pagamento (Asaas) e faturamento con
 
 
 ---
+
+## 16. ARQUITETURA MODULAR DO BANCO DE DADOS
+
+### 16.1 Justificativa da Modularização
+O ecossistema Esol Energy ultrapassou o limiar de mantenabilidade para um único arquivo DDL monolítico (1.055+ linhas, 48+ KB). Para garantir **escalabilidade de equipe**, **deploy incremental**, **auditoria focada** e **eliminação de merge conflicts**, o schema foi dividido em **11 módulos autocontidos** organizados no diretório `docs/database/`.
+
+**Princípio:** Cada módulo representa um **Bounded Context** do Domain-Driven Design (DDD), com fronteiras de domínio claramente definidas e dependências explícitas.
+
+### 16.2 Estrutura de Diretório
+
+```
+docs/database/
+├── README.md                          — Índice, grafo de dependências, script de execução
+├── 00_extensions.sql                  — Extensões PostgreSQL (ltree, pgcrypto)
+├── 01_tenants_config.sql              — Tenants, tributação, overhead, cupons, combos
+├── 02_identidade_rbac.sql             — Profiles, roles, RBAC, audit logs, cap table, OPEX
+├── 03_rede_mmn.sql                    — Rede MMN (ltree), índices de path
+├── 04_crm_clientes.sql                — CRM, leads, pipeline de vendas
+├── 05_carteira_energia.sql            — Carteira GD/MLE, contratos recorrentes
+├── 06_esol_sign.sql                   — Assinaturas eletrônicas, KYC, minutas jurídicas
+├── 07_ledger_contabil.sql             — Plano de contas, lançamentos, triggers SHA-256
+├── 08_distratos_retencao.sql          — Distratos, conformidade, retenção
+├── 09_esol_club_ecopontos.sql         — EcoPoints, resgates, fidelidade
+├── 10_engenharia_epc.sql              — Engenharia Solar EPC (7 fases + triggers)
+└── esol_banco_dados_ddl_completo.sql  — Referência consolidada (NÃO editar diretamente)
+```
+
+### 16.3 Tabela-Índice de Módulos
+
+| # | Módulo | Domínio | Tabelas | Enums | Triggers |
+|:---:|:---|:---|:---:|:---:|:---:|
+| 00 | `00_extensions.sql` | Extensões PostgreSQL | — | — | — |
+| 01 | `01_tenants_config.sql` | Tenants, Tributação, Cupons, Combos | 5 | 2 | — |
+| 02 | `02_identidade_rbac.sql` | Profiles, Roles, RBAC, Cap Table, OPEX | 5 | 4 | — |
+| 03 | `03_rede_mmn.sql` | Rede MMN (ltree hierárquica) | 1 | — | — |
+| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline | 1 | 1 | — |
+| 05 | `05_carteira_energia.sql` | Carteira GD/MLE (Recorrência) | 1 | 2 | — |
+| 06 | `06_esol_sign.sql` | Assinaturas, KYC, Minutas Jurídicas | 2 | 2 | — |
+| 07 | `07_ledger_contabil.sql` | Plano de Contas, Lançamentos, Hash Chain | 2 | 1 | 2 |
+| 08 | `08_distratos_retencao.sql` | Distratos, Conformidade | 1 | — | — |
+| 09 | `09_esol_club_ecopontos.sql` | EcoPoints, Resgates, Fidelidade | 2 | 1 | — |
+| 10 | `10_engenharia_epc.sql` | EPC Turnkey (7 Fases Completas) | 7 | 9 | 2 |
+| — | **TOTAL** | — | **27** | **22** | **4** |
+
+### 16.4 Grafo de Dependências
+
+```mermaid
+graph TD
+    A["00_extensions<br/>(ltree, pgcrypto)"] --> B["01_tenants_config<br/>(tenants, tributação)"]
+    B --> C["02_identidade_rbac<br/>(profiles, roles, RBAC)"]
+    C --> D["03_rede_mmn<br/>(MMN ltree)"]
+    C --> E["04_crm_clientes<br/>(clientes, leads)"]
+    E --> F["05_carteira_energia<br/>(GD, MLE)"]
+    C --> G["06_esol_sign<br/>(assinaturas, KYC)"]
+    B --> H["07_ledger_contabil<br/>(contas, SHA-256)"]
+    F --> I["08_distratos_retencao<br/>(distratos)"]
+    E --> J["09_esol_club_ecopontos<br/>(EcoPoints)"]
+    E --> K["10_engenharia_epc<br/>(EPC completo)"]
+    K -.->|"trigger FK"| H
+    K -.->|"trigger FK"| D
+```
+
+> **Linha sólida (→):** Dependência de FK direta (CREATE TABLE precisa da tabela de destino).
+> **Linha tracejada (-.->):** Dependência de trigger (a tabela referenciada precisa existir para o trigger funcionar, mas não impede a criação da tabela).
+
+### 16.5 Regras de Contribuição
+
+1. **Onde editar:** Sempre no **módulo individual** (`docs/database/XX_nome.sql`), nunca no monolítico.
+2. **Regenerar o monolítico:** Após editar, executar o script de concatenação documentado no `README.md` do diretório.
+3. **Novo módulo:** Numerar sequencialmente (`11_novo_modulo.sql`), atualizar o README e esta seção do mapa.
+4. **FKs cruzadas:** Se o novo módulo referenciar tabelas de módulos com número maior, documentar a dependência circular no README.
+5. **Enums existentes:** Para adicionar valores a enums de outro módulo, usar `ALTER TYPE ... ADD VALUE` no módulo que **usa** o novo valor.
+
+---
