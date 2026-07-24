@@ -14,14 +14,14 @@
 | 01 | `01_tenants_config.sql` | Tenants, Tributação, Cupons, Combos | 5 | 2 | — |
 | 02 | `02_identidade_rbac.sql` | Profiles, Roles, RBAC, Cap Table, OPEX | 5 | 4 | — |
 | 03 | `03_rede_mmn.sql` | Rede MMN (ltree hierárquica) | 1 | — | — |
-| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline | 1 | 1 | — |
+| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline, Personas | 1 | 2 | — |
 | 05 | `05_carteira_energia.sql` | Carteira GD/MLE (Recorrência) | 1 | 2 | — |
 | 06 | `06_esol_sign.sql` | Assinaturas, KYC, Minutas Jurídicas | 2 | 2 | — |
 | 07 | `07_ledger_contabil.sql` | Plano de Contas, Lançamentos, Hash Chain | 2 | 1 | 2 |
 | 08 | `08_distratos_retencao.sql` | Distratos, Conformidade | 1 | — | — |
 | 09 | `09_esol_club_ecopontos.sql` | EcoPoints, Resgates, Fidelidade | 2 | 1 | — |
 | 10 | `10_engenharia_epc.sql` | EPC Turnkey (7 Fases Completas) | 7 | 9 | 2 |
-| — | **TOTAL** | — | **27** | **22** | **4** |
+| — | **TOTAL** | — | **27** | **23** | **4** |
 
 ---
 

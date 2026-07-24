@@ -570,51 +570,281 @@ Para garantir que o consultor saiba **exatamente o que oferecer, como oferecer e
    - *Junto (Combo Recomendado):* Solução completa (equipamento + pós-venda + gestão) com desconto de combo.
    - *Separado (A La Carte):* Se o cliente quiser apenas o kit, o carregador EV ou o projeto básico, o app gera o orçamento individual em 1 segundo.
 
-### 5.6.1 Auditoria do Cockpit de Vendas (Julho/2026)
+### 5.6.1 Especificação Funcional do Cockpit de Vendas (Novo Projeto)
 
-**Status Geral: ⚠️ CRM funcional, mas sem ferramentas de inteligência de vendas.**
+O Cockpit de Vendas é a **tela principal do consultor** no app. É dividido em **7 módulos de tela**, cada um conectado a um ou mais motores e tabelas do banco de dados.
 
-#### O que FUNCIONA hoje no dashboard do consultor (`role = "corretor"`):
-| Funcionalidade | Rota | Status |
-|:---|:---|:---:|
-| Lista de clientes agrupada por status | `/app` | ✅ |
-| Alerta SLA de leads frios (3+ dias) | `/app` | ✅ |
-| 3 KPIs rápidos (ativos, concluídos, parados) | `/app` | ✅ |
-| Cotações de kits (prontos + customizados) | `/app/cotacoes` | ✅ |
-| Geração de propostas (Motor Reverso) | `/app/propostas` | ✅ |
-| Simulação de financiamento | `/app/financiamentos` | ✅ |
-| Minhas Comissões | `/app/parceiro/financeiro` | ✅ |
-| Agenda de reuniões | `/app/agenda` | ✅ |
-| WhatsApp deep link para leads frios | `/app` | ✅ |
+---
 
-#### 12 Lacunas Críticas Identificadas:
+#### MÓDULO 1 — Cards de Atalho Rápido (Barra Superior)
+**Objetivo:** O consultor não precisa navegar menus. Tudo que ele faz no dia-a-dia é um clique.
 
-**🔴 Bloqueia vendas (Prioridade Crítica):**
-1. **Sem Seletor de Personas (A-J):** 0 de 10 personas implementadas no app
-2. **Sem Simulador Solar (Motor de Engenharia):** Tabela `dimensionamento_solar` desconectada do frontend
-3. **Sem catálogo de 8 categorias MMN:** Consultor só vê "Cotações" genéricas
-4. **Sem preview de comissão por deal:** Não sabe quanto vai ganhar antes de fechar
+```
+┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+│ + Novo   │ │ ⚡ Cotar │ │ 📄 Nova  │ │ 🐷 Finan-│ │ 🧮 Simu- │ │ 📊 Meu   │
+│ Cliente  │ │ Kit/Loja │ │ Proposta │ │ ciamento │ │ lador    │ │ Resultado│
+│          │ │          │ │          │ │          │ │ Solar    │ │          │
+└──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘
+```
 
-**🟡 Limita eficiência (Prioridade Alta):**
-5. Sem cards de atalho rápido (admin tem, consultor não)
-6. Sem construtor de Combos (`combos_produtos_esol` desconectado)
-7. Sem aplicação de Cupons (`cupons_promocionais` desconectado)
-8. Sem Mini-BI pessoal (conversão %, pipeline R$, comissão acumulada)
+| Card | Ação | Rota | Motor Envolvido |
+|:---|:---|:---|:---|
+| + Novo Cliente | Cadastra lead no CRM | `/app/novo` | — |
+| ⚡ Cotar Kit/Loja | Cotação de kits prontos ou customizados | `/app/cotacoes` | Motor Reverso |
+| 📄 Nova Proposta | Gera proposta comercial em PDF | `/app/propostas/nova` | Motor Reverso + Motor 1 |
+| 🐷 Financiamento | Simula parcelas em financeiras parceiras | `/app/financiamentos` | — |
+| 🧮 Simulador Solar | Calcula engenharia solar completa | `/app/simulador-solar` | Motor de Engenharia |
+| 📊 Meu Resultado | KPIs pessoais e comissões acumuladas | `/app/parceiro/financeiro` | Motor 1 + Motor 2 |
 
-**🟢 Enriquece experiência (Prioridade Média):**
-9. Sem status do projeto EPC (7 fases + Selo Verde)
-10. Sem Carteira de Energia GD/MLE (assinaturas recorrentes)
-11. Sem Kanban visual pessoal (drag-and-drop)
-12. Sem financiamento solar integrado (análise de crédito do banco)
+*Tabelas envolvidas:* `clientes`, `cotacoes`, `propostas`, `parametros_comerciais`, `dimensionamento_solar`
 
-#### Roadmap de Correção (4 Fases):
+---
 
-| Fase | Escopo | Entregas |
-|:---:|:---|:---|
-| **1** | Quick Wins (Dashboard) | Cards de atalho rápido + Mini-BI + Seletor de Personas |
-| **2** | Ferramentas de Engenharia | Simulador Solar + Simulador de Lotes + Preview de Comissão |
-| **3** | Catálogo Completo | 8 Categorias + Combos + Cupons + Carteira GD/MLE |
-| **4** | Pós-Venda & Acompanhamento | Status EPC + Agendamento O&M + Financiamento Solar |
+#### MÓDULO 2 — Seletor de Persona (Recomendador Inteligente)
+**Objetivo:** O consultor seleciona o **perfil do cliente** e o sistema recomenda automaticamente quais produtos oferecer, em combo ou avulso.
+
+**Fluxo de Tela:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🎯 QUAL É O PERFIL DO SEU CLIENTE?                        │
+│                                                             │
+│  [ A ] Dono de casa (quer zerar a luz)                      │
+│  [ B ] Inquilino / Alugado (sem obra)                       │
+│  [ C ] Empresa PME / Indústria (OPEX)                       │
+│  [ D ] Investidor Solar (rentabilidade)                     │
+│  [ E ] Dono de Usina (manutenção)                           │
+│  [ F ] Dono de Lote/Terreno (m²)                            │
+│  [ G ] Quer Bateria / Nobreak                               │
+│  [ H ] Tem sobra de créditos (vender)                       │
+│  [ I ] Quer Kit Pronto ou Customizado                       │
+│  [ J ] Quer componente avulso / EV Charger                  │
+│                                                             │
+│  [ 🔍 RECOMENDAR PRODUTOS ]                                 │
+├─────────────────────────────────────────────────────────────┤
+│  📦 RESULTADO DA RECOMENDAÇÃO:                              │
+│                                                             │
+│  ✅ Produto Principal: Solar Turnkey #1 (15% TDTC)          │
+│  ➕ Combo Proteção: Seguro #8 + O&M #6 (-4% combo)         │
+│  💰 Sua Comissão Estimada: R$ 3.200 (8% Motor 1)           │
+│                                                             │
+│  [ 📄 GERAR PROPOSTA ]  [ 🧮 SIMULAR ENGENHARIA ]          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Matriz de Recomendação (Regras de Negócio no Backend):**
+
+| Persona | Produto Principal | Cross-sell (Combo) | Motor | Canal |
+|:---:|:---|:---|:---:|:---:|
+| A | Solar Turnkey #1 | Seguro #8 + O&M #6 | Motor 1 | MMN |
+| B | Assinatura GD #3 | Esol Club (EcoPontos) | Motor 2 | MMN |
+| C | Mercado Livre MLE #4 | SaaS Telemetria IoT #5 | Motor 2 | MMN |
+| D | Usina Solar B2B #10 | Gestão GD #3 | — | Indicação B2B |
+| E | Limpeza #7 + O&M #6 | SaaS IoT #5 + Seguro #8 | Motor 1 | MMN |
+| F | Simulador Lotes → Usina #10 | GD compartilhada #3 | — | Indicação B2B |
+| G | Sistemas Híbridos #1 + Baterias #2 | Monitoramento #5 | Motor 1 | MMN |
+| H | Monetização Excedente GD #3 | Limpeza #7 (otimizar geração) | Motor 2 | MMN |
+| I | Montador de Kits Esol Store #2 | Seguro #8 | Motor 1 | MMN |
+| J | Carrinho Rápido Esol Store #2 | — | Motor 1 | MMN |
+
+*Tabelas envolvidas:* `clientes` (campo `persona_tipo`), `combos_produtos_esol`, `cupons_promocionais`
+
+*Nova coluna necessária no banco:* `clientes.persona_tipo ENUM('A','B','C','D','E','F','G','H','I','J')`
+
+---
+
+#### MÓDULO 3 — Simulador Solar (Motor de Engenharia)
+**Objetivo:** O consultor digita os dados de consumo ou área do terreno e o motor calcula toda a engenharia.
+
+**Duas Entradas Possíveis:**
+
+| Modo | Input do Consultor | Cálculo | Output |
+|:---|:---|:---|:---|
+| **Por Consumo** | Consumo médio em kWh/mês (da fatura de luz) | $P_{kWp} = \frac{kWh}{30 \times HSP \times 0.80}$ | kWp, módulos, inversor, geração, economia, payback |
+| **Por Área (m²)** | Área total do lote/terreno em m² | Área útil (67%) → painéis → kWp → kWh/mês | Capacidade máxima, geração, lucro mensal GD |
+
+**Tela:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🧮 SIMULADOR SOLAR ESOL — MOTOR DE ENGENHARIA              │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Como deseja simular?                                       │
+│  (●) Pela conta de luz (consumo kWh/mês)                    │
+│  ( ) Pela área do terreno (m²)                              │
+│                                                             │
+│  Consumo Médio Mensal: [ 450 ] kWh/mês                      │
+│  Estado/Cidade:        [ Goiânia - GO  ▼ ]                  │
+│  HSP Automático:       [ 4.92 ] h/dia (calculado)           │
+│  Tarifa de Energia:    [ R$ 0,85 ] /kWh                     │
+│                                                             │
+│  [ 🔬 CALCULAR DIMENSIONAMENTO ]                            │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│  📊 RESULTADO DA ENGENHARIA:                                │
+│                                                             │
+│  • Potência Necessária:    3.81 kWp                         │
+│  • Módulos 585W:           7 unidades                       │
+│  • Inversor Recomendado:   Deye SUN-5K-SG04LP3-EU (5kW)    │
+│  • Geração Estimada:       411 kWh/mês                      │
+│  • Economia Mensal:        R$ 349,35                        │
+│  • Payback Estimado:       4.2 anos                         │
+│  • VPL em 25 anos:         R$ 78.450,00                     │
+│  • CO₂ Evitado:            2.1 toneladas/ano                │
+│                                                             │
+│  💰 SUA COMISSÃO (Motor 1 — 8% direto):  R$ 1.920,00       │
+│  🏢 Receita Esol (Lucro Alvo 20%):       R$ 4.800,00       │
+│                                                             │
+│  [ 📄 GERAR PROPOSTA ]  [ 📥 SALVAR DIMENSIONAMENTO ]      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+*Tabelas envolvidas:* `dimensionamento_solar`, `bom_materiais`, `projetos_epc`, `parametros_comerciais`
+
+*Motores acionados:* Motor de Engenharia → Motor Reverso (precificação) → Motor 1 (preview comissão)
+
+---
+
+#### MÓDULO 4 — Preview de Comissão em Tempo Real
+**Objetivo:** O consultor vê **quanto vai ganhar** antes de fechar o negócio. Isso motiva a venda.
+
+**Regras:**
+- **Motor 1 (produtos próprios):** Comissão = `preco_venda × TDTC% × fatia_N0%`
+- **Motor 2 (receita parceiro):** Comissão = `receita_mensal_esol × 36% × fatia_N0%` (recorrente!)
+- A tela mostra a comissão **única** (Motor 1) e a **recorrente mensal** (Motor 2) separadamente.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  💰 PREVIEW DE COMISSÃO — [Nome do Cliente]                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Produto: Solar Turnkey 3.81 kWp                            │
+│  Preço de Venda (Motor Reverso): R$ 24.000,00               │
+│                                                             │
+│  ┌─── Comissão Única (Motor 1) ───────────────────────┐     │
+│  │  TDTC Total: 15% = R$ 3.600,00                     │     │
+│  │  Sua Parte (N0 — 8%): R$ 1.920,00                   │     │
+│  │  Rede N1-N7 (7%): R$ 1.680,00                       │     │
+│  └─────────────────────────────────────────────────────┘     │
+│                                                             │
+│  ┌─── Cross-sell: Seguro Solar (Motor 2) ─────────────┐     │
+│  │  Repasse Mensal da Seguradora: R$ 30,00/mês         │     │
+│  │  Sua Comissão Mensal (15%): R$ 4,50/mês              │     │
+│  │  Em 12 meses: R$ 54,00 | Em 5 anos: R$ 270,00       │     │
+│  └─────────────────────────────────────────────────────┘     │
+│                                                             │
+│  📊 TOTAL COMISSÃO ESTIMADA:                                │
+│  • Pagamento Único: R$ 1.920,00                             │
+│  • Recorrência Mensal: R$ 4,50/mês (perpétuo)              │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+*Tabelas envolvidas:* `propostas`, `parametros_comerciais`, `combos_produtos_esol`, `historico_comissoes_epc`
+
+---
+
+#### MÓDULO 5 — Mini-BI Pessoal (Meus Resultados)
+**Objetivo:** O consultor acompanha seu desempenho sem depender do admin.
+
+**KPIs exibidos:**
+
+| KPI | Fonte | Fórmula |
+|:---|:---|:---|
+| Pipeline Ativo (R$) | `clientes` | SUM(valor_estimado) WHERE status IN (contato, proposta_enviada, negociacao) |
+| Taxa de Conversão (%) | `clientes` | concluidos / (concluidos + perdidos) × 100 |
+| Comissão Acumulada (R$) | `historico_comissoes_epc` | SUM(valor_comissao) WHERE mes_ref = mês_atual |
+| Recorrência Mensal (R$) | `carteira_energia` | SUM(comissao_mensal_consultor) WHERE status = 'ativo' |
+| Clientes Ativos | `clientes` | COUNT WHERE status NOT IN (concluido, perdido) |
+| Tempo Médio de Fechamento | `clientes` | AVG(fechado_em - created_at) em dias |
+| Leads Frios (alerta) | `clientes` | COUNT WHERE dias_sem_contato >= 3 |
+
+**Gráficos:**
+1. Barras — Faturamento Mensal (últimos 6 meses)
+2. Pizza — Distribuição por Persona (A-J)
+3. Linha — Evolução de Comissão Recorrente (Motor 2)
+
+*Tabelas envolvidas:* `clientes`, `propostas`, `historico_comissoes_epc`, `carteira_energia`
+
+---
+
+#### MÓDULO 6 — Catálogo de 8 Categorias MMN
+**Objetivo:** O consultor acessa todas as 8 linhas de produto do ecossistema, não apenas cotações genéricas.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  📦 CATÁLOGO ESOL ENERGY — O QUE VOCÊ PODE VENDER           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐            │
+│  │🏠 #1   │  │🛒 #2   │  │⚡ #3   │  │🔌 #4   │            │
+│  │Turnkey │  │Loja    │  │GD      │  │MLE     │            │
+│  │Motor 1 │  │Motor 1 │  │Motor 2 │  │Motor 2 │            │
+│  └────────┘  └────────┘  └────────┘  └────────┘            │
+│                                                             │
+│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐            │
+│  │📊 #5   │  │🔧 #6   │  │🧹 #7   │  │🛡️ #8   │            │
+│  │SaaS IoT│  │O&M     │  │Limpeza │  │Seguros │            │
+│  │Motor 1 │  │Motor 1 │  │Motor 1 │  │Motor 2 │            │
+│  └────────┘  └────────┘  └────────┘  └────────┘            │
+│                                                             │
+│  Cada card mostra: Comissão %, Tipo Motor, Ação (Vender)    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Ao clicar numa categoria, o sistema abre o fluxo específico:
+- **#1 Turnkey:** Simulador Solar → Proposta → Contrato
+- **#2 Loja:** Carrinho de produtos → Checkout
+- **#3 GD:** Cadastro de assinatura → Contrato GD
+- **#4 MLE:** Formulário de migração → Contrato MLE
+- **#5 SaaS:** Ativação de plano → Proposta de telemetria
+- **#6 O&M:** Agendamento de visita → Orçamento
+- **#7 Limpeza:** Agendamento → Orçamento
+- **#8 Seguros:** Simulação de apólice → Contratação
+
+*Tabelas envolvidas:* Todas as 27 tabelas do ecossistema, conforme categoria
+
+---
+
+#### MÓDULO 7 — Construtor de Combos & Cupons
+**Objetivo:** O consultor aplica descontos de forma segura, com as travas do Motor Reverso.
+
+**Fluxo:**
+1. Consultor seleciona os produtos no carrinho (ex: Turnkey + Seguro + Limpeza)
+2. O Motor Reverso calcula o preço individual e o **desconto de combo** automaticamente (2-4%)
+3. O consultor pode adicionar:
+   - Cupom institucional (SOLARBLACK5) — Camada 1
+   - Desconto balcão (slider 0-5%) — Camada 2
+   - Desconto PIX à vista (3-5%) — Camada 3
+4. O Motor Reverso exibe a **trava cega** em tempo real:
+   ```
+   Margem Atual: 28% ██████████████░░░░ 
+   Piso Mínimo:  20% ████████████
+   Status: ✅ APROVADO — Margem acima do piso
+   ```
+5. Se a margem cair abaixo do piso: 🔴 **BLOQUEADO** — Requer aprovação do Diretor (Level 2)
+
+*Tabelas envolvidas:* `combos_produtos_esol`, `cupons_promocionais`, `parametros_comerciais`
+
+---
+
+#### Tabelas do Banco Necessárias para o Cockpit (Novas vs. Existentes)
+
+| Tabela | Módulo DDL | Existe? | Uso no Cockpit |
+|:---|:---|:---:|:---|
+| `clientes` | 04_crm_clientes | ✅ | CRM, Pipeline, Personas |
+| `propostas` | (código legado) | ✅ | Geração de propostas |
+| `parametros_comerciais` | 01_tenants_config | ✅ | Motor Reverso, TDTC |
+| `combos_produtos_esol` | 01_tenants_config | ✅ | Construtor de combos |
+| `cupons_promocionais` | 01_tenants_config | ✅ | Aplicação de cupons |
+| `dimensionamento_solar` | 10_engenharia_epc | ✅ | Simulador Solar |
+| `bom_materiais` | 10_engenharia_epc | ✅ | Lista de materiais |
+| `projetos_epc` | 10_engenharia_epc | ✅ | DRE, preço, status |
+| `historico_comissoes_epc` | 10_engenharia_epc | ✅ | Preview e histórico de comissões |
+| `carteira_energia` | 05_carteira_energia | ✅ | GD/MLE, recorrência Motor 2 |
+| `rede_mmn_consultores` | 03_rede_mmn | ✅ | Override N1-N7 |
+| `financiamento_solar` | 10_engenharia_epc | ✅ | Simulação de financiamento |
+
+> **Coluna nova necessária:** Adicionar `persona_tipo` na tabela `clientes` (Módulo `04_crm_clientes.sql`) para armazenar o perfil do cliente identificado pelo consultor.
 
 ---
 
@@ -2721,7 +2951,7 @@ docs/database/
 ├── 01_tenants_config.sql              — Tenants, tributação, overhead, cupons, combos
 ├── 02_identidade_rbac.sql             — Profiles, roles, RBAC, audit logs, cap table, OPEX
 ├── 03_rede_mmn.sql                    — Rede MMN (ltree), índices de path
-├── 04_crm_clientes.sql                — CRM, leads, pipeline de vendas
+├── 04_crm_clientes.sql                — CRM, leads, pipeline de vendas, personas (A-J)
 ├── 05_carteira_energia.sql            — Carteira GD/MLE, contratos recorrentes
 ├── 06_esol_sign.sql                   — Assinaturas eletrônicas, KYC, minutas jurídicas
 ├── 07_ledger_contabil.sql             — Plano de contas, lançamentos, triggers SHA-256
@@ -2739,7 +2969,7 @@ docs/database/
 | 01 | `01_tenants_config.sql` | Tenants, Tributação, Cupons, Combos | 5 | 2 | — |
 | 02 | `02_identidade_rbac.sql` | Profiles, Roles, RBAC, Cap Table, OPEX | 5 | 4 | — |
 | 03 | `03_rede_mmn.sql` | Rede MMN (ltree hierárquica) | 1 | — | — |
-| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline | 1 | 1 | — |
+| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline, Personas | 1 | 2 | — |
 | 05 | `05_carteira_energia.sql` | Carteira GD/MLE (Recorrência) | 1 | 2 | — |
 | 06 | `06_esol_sign.sql` | Assinaturas, KYC, Minutas Jurídicas | 2 | 2 | — |
 | 07 | `07_ledger_contabil.sql` | Plano de Contas, Lançamentos, Hash Chain | 2 | 1 | 2 |
