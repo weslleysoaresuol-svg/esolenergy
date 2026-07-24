@@ -214,15 +214,223 @@ Abaixo está o mapeamento detalhado de etapas para a contratação e entrega de 
 ---
 
 #### 4.1.1 As 7 Fases Operacionais do Solar Turnkey (EPC Completo)
-Para integrar a engenharia de campo com os motores financeiro, tributário e jurídico da Esol, cada projeto Turnkey se divide em **7 Fases Sequenciais**:
+Para integrar a engenharia de campo com os motores financeiro, tributário e jurídico da Esol, cada projeto Turnkey se divide em **7 Fases Sequenciais**, cada uma com representação formal no banco de dados e integração automática com o Ledger Contábil:
 
-1. **Fase 1: Engenharia & Dimensionamento Físico-Elétrico:** Leitura de fatura de energia via OCR/IA, cálculo da potência necessária ($P_{\text{kWp}}$) com base nas HSP (Horas de Sol Pleno) NASA/CRESESB e Fator de Desempenho (PR $\approx 80\%$), e seleção do arranjo de painéis/inversores.
-2. **Fase 2: Suprimentos & Procurement (Lista BOM):** Geração da Lista de Materiais (Módulos, Inversores, String Box, Cabos, Fixadores) e cotação automática via API nos maiores distribuidores de hardware do Brasil (Solfácil, Edeltec, WDC, Aldo) para obter o menor custo FOB/CIF.
-3. **Fase 3: Obras, Instalação & ART:** Execução da instalação física de campo por equipe própria ou credenciada (custo por Wp), contratação de frete rodoviário e emissão da ART (Anotação de Responsabilidade Técnica) no CREA/CFT.
-4. **Fase 4: Homologação Regulatória na Concessionária:** Elaboração do projeto executivo elétrico, protocolo da Solicitação de Acesso (Parecer de Acesso) na concessionária local (CPFL, Enel, Cemig) e acompanhamento da troca para o Medidor Bidirecional.
-5. **Fase 5: DRE do Projeto & Motor Reverso:** Cálculo em tempo real da DRE da venda ($\text{Preço} - \text{BOM} - \text{Impostos} - \text{Frete} - \text{Mão de Obra} - \text{ART} - \text{TDTC 8\%} - \text{Overhead 5\%} = \text{Lucro Líquido Esol}$), com trava cega garantindo margem líquido piso $\ge 20,0\%$.
-6. **Fase 6: Financiamento Fintech & Meios de Pagamento:** Análise de crédito instantânea (CPF/CNPJ) via API dos bancos solares (BV, Santander, Solfácil, BB) em até 84x com 120 dias de carência, ou liquidação à vista no PIX c/ desconto.
-7. **Fase 7: Legal Vault & Assinatura Biométrica (Esol Re-Sign):** Emissão do Contrato EPC de Empreitada com garantias (25 anos de eficiência de módulos, 10 anos inversor, 1 ano instalação) e assinatura biométrica digital facial + geolocalização.
+1. **Fase 1: Engenharia & Dimensionamento Físico-Elétrico (`dimensionamento_solar`):** Leitura de fatura de energia via OCR/IA, cálculo da potência necessária ($P_{\text{kWp}}$) com base nas HSP (Horas de Sol Pleno) NASA/CRESESB e Fator de Desempenho (PR $\approx 80\%$), e seleção do arranjo de painéis/inversores. Persiste todos os cálculos na tabela `public.dimensionamento_solar` com suporte a múltiplas revisões/cenários por cliente. **Fórmula principal:**
+   $$P_{\text{kWp}} = \frac{\text{Consumo Médio Mensal (kWh)}}{30 \times \text{HSP Local} \times \text{PR (0.80)}}$$
+   *Inclui o Simulador de Lotes (Persona F):* O cliente informa a área do terreno em m², o sistema calcula automaticamente a área útil (67%), quantidade de painéis, potência kWp, geração kWh/mês e lucro líquido por GD.
+
+2. **Fase 2: Suprimentos & Procurement (`bom_materiais`):** Geração da Lista de Materiais BOM (Módulos, Inversores, String Box, Cabos, Fixadores) e cotação automática via API nos maiores distribuidores de hardware do Brasil (Solfácil, Edeltec, WDC, Aldo, Fotus) para obter o menor custo FOB/CIF. Cada item é registrado com SKU, marca, quantidade, preço unitário e distribuidor na tabela `public.bom_materiais`.
+
+3. **Fase 3: Obras, Instalação & ART (`instalacao_campo`):** Execução da instalação física de campo por equipe própria ou credenciada (custo por Wp), contratação de frete rodoviário e emissão da ART no CREA/CFT. O **checklist fotográfico obrigatório de 4 categorias** (estrutura mecânica, cabeamento CC/CA, inversor instalado, string box) é registrado na tabela `public.instalacao_campo`. O pagamento do instalador **SÓ é liberado** após checklist 100% aprovado.
+
+4. **Fase 4: Homologação Regulatória na Concessionária (`homologacao_concessionaria`):** Elaboração do projeto executivo elétrico, protocolo da Solicitação de Acesso (Parecer de Acesso) na concessionária local (CPFL, Enel, Cemig) e acompanhamento da troca para o Medidor Bidirecional. Rastreado na tabela `public.homologacao_concessionaria` com status progressivo de 7 estados (do `elaborando_projeto` ao `ativo_gerando`).
+
+5. **Fase 5: DRE do Projeto & Motor Reverso (`projetos_epc`):** Cálculo em tempo real da DRE da venda, persistido na tabela `public.projetos_epc` com a seguinte decomposição:
+   $$\begin{aligned}
+   \text{Preço Final} &= \frac{C_{\text{fixos}}}{1 - (\text{tributo } 6\% + \text{overhead } 5\% + \text{TDTC } 15\%) - \text{lucro\_alvo } 20\%} \\[8pt]
+   \text{Onde: } C_{\text{fixos}} &= \text{BOM} + \text{Frete} + \text{Mão de Obra} + \text{ART/Homologação}
+   \end{aligned}$$
+   **Trava Cega (Margin Floor Guardrail):** Constraint `CHECK` no banco garante que nenhum projeto avance além da fase de dimensionamento se a margem líquida for < 20%.
+
+6. **Fase 6: Financiamento Fintech & Meios de Pagamento (`financiamento_solar`):** Análise de crédito instantânea (CPF/CNPJ) via API dos bancos solares (BV, Santander, Solfácil, BB) em até 84x com 120 dias de carência, ou liquidação à vista no PIX c/ desconto (3% a 5%). Registrado na tabela `public.financiamento_solar` com status de 8 estados (do `analise_credito` ao `quitado`).
+
+7. **Fase 7: Legal Vault & Assinatura Biométrica (Esol Re-Sign):** Emissão do Contrato EPC de Empreitada (`contrato_epc_empreitada` no enum `documento_categoria`) com garantias (25 anos de eficiência de módulos, 10 anos inversor, 1 ano instalação) e assinatura biométrica digital facial + geolocalização.
+
+**Integração Automática ao Concluir o Projeto:**
+Ao marcar a fase como `concluido`, dois triggers automáticos executam em cascata:
+- **`trg_projeto_epc_concluido_ledger`:** Gera lançamentos de Partida Dobrada no Ledger Contábil (Receita Turnkey + Provisão TDTC MMN), emite o **Selo Verde Esol** automaticamente e registra a data de conclusão.
+- **`trg_projeto_epc_comissao_mmn`:** Distribui automaticamente as comissões na árvore MMN (8% N0 + 1% por nível N1 ao N7 = 15% TDTC total) e registra no `historico_comissoes_epc`.
+
+```mermaid
+erDiagram
+    dimensionamento_solar ||--o{ bom_materiais : "lista de componentes"
+    dimensionamento_solar ||--|| projetos_epc : "vincula projeto"
+    projetos_epc ||--|| instalacao_campo : "execução de obra"
+    projetos_epc ||--|| homologacao_concessionaria : "processo regulatório"
+    projetos_epc ||--|| financiamento_solar : "financiamento"
+    projetos_epc ||--o{ historico_comissoes_epc : "comissões MMN"
+    projetos_epc ||--o{ ledger_lancamentos : "lançamentos contábeis"
+    projetos_epc ||--o{ assinaturas_esol_sign : "contrato EPC"
+    clientes ||--o{ dimensionamento_solar : "solicita dimensionamento"
+    profiles ||--o{ projetos_epc : "consultor vende"
+    profiles ||--o{ instalacao_campo : "instalador executa"
+    profiles ||--o{ homologacao_concessionaria : "engenheiro homologa"
+```
+
+---
+
+#### 4.1.2 Interfaces TypeScript do Módulo EPC (Frontend)
+Para que o time de desenvolvimento frontend renderize o funil de obras EPC e o Simulador de Lotes (Persona F), as seguintes interfaces TypeScript são utilizadas:
+
+```typescript
+// ═══════════════════════════════════════════════════════════════
+// INTERFACES DO MÓDULO DE ENGENHARIA SOLAR TURNKEY (EPC)
+// ═══════════════════════════════════════════════════════════════
+
+// Dimensionamento Solar (Fase 1 — Motor de Engenharia)
+export interface IDimensionamentoSolar {
+  id: string;
+  clienteId: string;
+  consultorId: string;
+  versao: number;
+  aprovado: boolean;
+
+  // Dados da Fatura
+  concessionaria: string;
+  tipoTarifa: 'b1_residencial' | 'b2_rural' | 'b3_comercial' | 'a4_industrial_media_tensao';
+  tensaoEntrada: 'monofasico_127v' | 'bifasico_220v' | 'trifasico_220v' | 'trifasico_380v';
+  historicoConsumo12m: number[]; // 12 valores kWh
+  consumoMedioMensalKwh: number;
+  tarifaKwhConcessionaria: number;
+  fioBPercentual: number;
+
+  // Engenharia Solar
+  hspLocal: number;
+  performanceRatio: number;
+  potenciaKwp: number;
+  quantidadeModulos: number;
+  potenciaModuloWp: number;
+  tipoModulo: string;
+  tipoInversor: string;
+  potenciaInversorKw: number;
+  tipoEstrutura: 'telhado_ceramico' | 'telhado_fibrocimento' | 'telhado_metalico' | 'laje_plana' | 'solo_terreno' | 'carport_estacionamento';
+
+  // Simulador de Lotes (Persona F)
+  areaTerrenoM2?: number;
+  areaUtilM2?: number;
+  fatorAproveitamentoTerreno: number;
+
+  // Resultados
+  geracaoEstimadaMensalKwh: number;
+  geracaoEstimadaAnualKwh: number;
+  economiaMensalReais: number;
+  paybackAnos: number;
+  vplEconomia25Anos: number;
+  co2EvitadoKgAno?: number;
+}
+
+// Projeto EPC Completo (Coração do Módulo Turnkey)
+export type ProjetoEpcFase =
+  | 'dimensionamento'
+  | 'procurement_bom'
+  | 'instalacao_campo'
+  | 'homologacao'
+  | 'dre_motor_reverso'
+  | 'financiamento'
+  | 'legal_vault_assinatura'
+  | 'concluido'
+  | 'cancelado';
+
+export interface IProjetoEPC {
+  id: string;
+  clienteId: string;
+  consultorId: string;
+  dimensionamentoId: string;
+  numeroProjeto: string; // Ex: 'EPC-2026-0001'
+  faseAtual: ProjetoEpcFase;
+
+  // Motor Reverso — DRE do Projeto
+  custoBomHardware: number;
+  custoFreteLogistica: number;
+  custoMaoObraInstalacao: number;
+  custoArtHomologacao: number;
+  custoTotalFixo: number;
+
+  percentualImpostos: number;   // 0.0600
+  percentualOverhead: number;   // 0.0500
+  percentualTdtc: number;       // 0.1500
+  percentualLucroAlvo: number;  // 0.2000
+
+  precoTabelaAncorado: number;
+  descontoAplicadoTotal: number;
+  precoFinalVenda: number;
+
+  valorImpostos: number;
+  valorOverhead: number;
+  valorTdtcMmn: number;
+  lucroLiquidoEsol: number;
+  margemLiquidaPercentual: number; // >= 0.2000
+
+  // Selo Verde Esol
+  seloVerdeEmitido: boolean;
+  seloVerdeDataEmissao?: string;
+  seloVerdeNumeroCertificado?: string;
+
+  // Timestamps por Fase
+  dataInicioProjeto: string;
+  dataAprovacaoProposta?: string;
+  dataPedidoBom?: string;
+  dataInicioObra?: string;
+  dataFimObra?: string;
+  dataProtocoloConcessionaria?: string;
+  dataVistoriaConcessionaria?: string;
+  dataMedidorBidirecional?: string;
+  dataGeracaoAtiva?: string;
+  dataConclusao?: string;
+
+  // SLA
+  slaInstalacaoDias: number;  // 15
+  slaHomologacaoDias: number; // 30
+  slaVistoriaDias: number;    // 45
+}
+
+// BOM — Item da Lista de Materiais (Fase 2)
+export interface IBomMaterial {
+  id: string;
+  dimensionamentoId: string;
+  tipoComponente: string;
+  skuProduto?: string;
+  descricao: string;
+  marca: string;
+  quantidade: number;
+  potenciaWp?: number;
+  precoUnitario: number;
+  precoTotal: number;
+  distribuidorParceiro: string;
+  freteEstimado: number;
+  prazoEntregaDias?: number;
+}
+
+// Instalação de Campo (Fase 3)
+export interface IInstalacaoCampo {
+  id: string;
+  projetoEpcId: string;
+  instaladorId: string;
+  engenheiroArtId?: string;
+  custoPorWp: number;
+  potenciaInstaladaKwp: number;
+  custoTotalMaoObra: number;
+  fotosEstruturaMecanica: string[];
+  fotosCabeamentoCcCa: string[];
+  fotosInversorInstalado: string[];
+  fotosStringBox: string[];
+  checklistCompleto: boolean;
+  artNumeroRegistro?: string;
+  artConselho?: string;
+  artUf?: string;
+  artArquivoUrl?: string;
+  status: 'agendada' | 'em_andamento' | 'checklist_pendente' | 'aprovada' | 'rejeitada';
+}
+
+// Financiamento Solar (Fase 6)
+export interface IFinanciamentoSolar {
+  id: string;
+  projetoEpcId: string;
+  clienteId: string;
+  modalidade: 'pix_a_vista' | 'cartao_credito' | 'financiamento_bancario' | 'boleto_bancario';
+  bancoParceiro?: string;
+  valorTotalFinanciado: number;
+  entradaValor: number;
+  numeroParcelas?: number;
+  taxaJurosMensal?: number;
+  valorParcelaMensal?: number;
+  carenciaDias: number;
+  descontoPix: number;
+  scoreCreditoAprovado?: number;
+  status: 'analise_credito' | 'aprovado' | 'reprovado' | 'liberado' | 'quitado';
+}
+```
 
 ---
 
