@@ -53,6 +53,25 @@ CREATE TABLE public.config_overhead_dashboard (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Tabela de Gestão de Cupons Promocionais e Descontos
+CREATE TYPE public.cupom_tipo_desconto AS ENUM ('porcentagem', 'valor_fixo');
+
+CREATE TABLE public.cupons_promocionais (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  codigo text NOT NULL UNIQUE, -- Ex: 'SOLAR5', 'CLIENTEVIP', 'INSPECAO100'
+  descricao text,
+  tipo_desconto public.cupom_tipo_desconto DEFAULT 'porcentagem' NOT NULL,
+  valor_desconto numeric(15, 2) NOT NULL, -- Ex: 5.00 para 5% ou 500.00 para R$ 500
+  categorias_permitidas jsonb DEFAULT '[]'::jsonb, -- IDs das categorias aplicáveis
+  uso_maximo_total integer DEFAULT 100,
+  usos_realizados integer DEFAULT 0 NOT NULL,
+  data_inicio timestamptz DEFAULT now() NOT NULL,
+  data_validade timestamptz NOT NULL,
+  ativo boolean DEFAULT true NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
 -- ==============================================================================
 -- 2. IDENTIDADE E CONTROLE DE ACESSO (PROFILES & ROLES)
 -- ==============================================================================

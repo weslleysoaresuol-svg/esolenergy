@@ -308,6 +308,26 @@ O administrador configura o `lucro_alvo` (lucro mínimo) e o percentual de comis
 
 ---
 
+### 5.1.2 Precificação Ancorada, Cascata de Cupons & Trava de Margem Piso (Margin Floor Guardrail)
+Para proporcionar **gordura de negociação comercial** aos consultores e permitir a aplicação de cupons institucionais sem colocar em risco a margem limpa da empresa, o Motor Reverso adota a **Precificação em 3 Níveis de Margem**:
+
+1. **Os 3 Níveis de Margem do Motor Reverso:**
+   - **Margem de Tabela (Ancorada):** Precificação inicial apresentada na proposta comercial (ex: **32% de margem no Turnkey** / **38% na Loja**). Incorpora uma gordura comercial negociável de 14% a 18%.
+   - **Margem Alvo Recomendada:** Meta de fechamento padrão (ex: **24% no Turnkey** / **28% na Loja**).
+   - **Margem Piso (Piso Mínimo Irrevogável):** Limite mínimo de proteção financeira (ex: **18% no Turnkey** / **20% na Loja**).
+
+2. **A Cascata de Descontos e Cupons (Empilhamento de até 4 Camadas):**
+   - *Camada 1 (Cupom de Campanha Mkt):* Cupons cadastrados no banco (`SOLARBLACK5`, `VERAOSOLAR3`) aplicando de 3% a 5% de abatimento.
+   - *Camada 2 (Desconto Balcão do Consultor):* O consultor desliza a barra de desconto no app (0% a 5%), escolhendo se consome a gordura da tabela ou cede uma fatia da sua própria comissão de Venda Direta N0.
+   - *Camada 3 (Desconto Pgto à Vista / PIX):* Abatimento especial de 3% a 5% por eliminar taxas de gateway e juros bancários.
+   - *Camada 4 (Desconto de Combo / Cross-sell):* Desconto de 2% a 4% ao incluir serviços adicionais (Seguro Solar, Telemetria IoT).
+
+3. **Trava de Proteção de Margem Piso (Margin Floor Guardrail):**
+   - Não importa quantas camadas de cupom o cliente empilhe, **o Motor Reverso bloqueia a emissão da proposta se a margem líquida final for cair abaixo do piso mínimo de proteção (ex: < 18% no Turnkey)**.
+   - *Solicitação de Alçada (Level 2):* Se o desconto estourar o piso, a proposta é bloqueada no app do consultor e exige aprovação formal de alçada do Diretor Comercial (Level 2) no Cockpit Admin.
+
+---
+
 ### 5.1.1 Arquitetura de Pool Unificado de Comissão (TDTC)
 Para impedir pagamentos duplos (MMN + Indique e Ganhe) e garantir a estabilidade do caixa da Esol, o sistema adota a **Lei do Pool Único de Comissão**:
 
