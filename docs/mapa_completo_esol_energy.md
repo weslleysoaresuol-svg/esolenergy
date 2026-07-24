@@ -275,9 +275,19 @@ Um investidor de grande porte contrata a Esol para desenvolver uma usina solar q
 ## 5. MODELO DE REDE (MMN) E DOIS MOTORES DE COMISSÃO
 
 ### 5.1 Motor Reverso com Proteção de Margem
-A fórmula do Motor Reverso garante que o valor final do projeto turnkey ou kits da loja cubra todos os impostos, custos, custos de distribuição MMN (TDTC) e garanta a margem de lucro mínima definida pela Esol:
+A fórmula do Motor Reverso garante que o valor final do projeto turnkey ou kits da loja cubra todos os impostos, custos de hardware, custos de distribuição MMN (TDTC), despesas de estrutura e garanta a margem de lucro mínima definida pela Esol:
 
 $$\text{Preço Final (P)} = \frac{C_{\text{fixos}}}{1 - (tributo + overhead + garantia + \text{TDTC}) - lucro_{\text{alvo}}}$$
+
+#### **Percentual e Propósito do Overhead Administrativo (`overhead = 5,0%`):**
+*   **Percentual Padrão Configurado:** **5,0%** (parametrizável de 5,0% a 8,0% no Cockpit Contábil por SKU/Categoria).
+*   **Para que serve o Overhead Administrativo (Propósito Operacional):**
+    O `overhead` é a reserva financeira autossustentável destinada a cobrir 100% dos custos da unidade administrativa central da Esol Energy:
+    1. **Folha de Pagamento Administrativa (OPEX Payroll):** Salários e honorários da equipe contratada (advogados do Esol Legal Vault, analistas financeiros, engenheiros de homologação e suporte sob as 6 modalidades contratuais e CBO MTE/eSocial).
+    2. **Pró-Labore dos Sócios-Administradores:** Cobertura do Pró-Labore mensal dos sócios fundadores.
+    3. **Infraestrutura Cloud & APIs:** Servidores PostgreSQL Supabase, hospedagem Cloudflare, hashing SHA-256 e validação biométrica Esol Sign / Esol Re-Sign.
+    4. **Contabilidade & Assessoria Jurídica/Regulatória:** Anuidade de conselhos de classe (CREA, OAB, CRC, CRA) e custos contábeis fiscais.
+    *   *Resultado:* Cada venda realizada no ecossistema paga automaticamente a estrutura administrativa da Esol, garantindo que o `lucro_alvo` (lucro líquido limpo da empresa) permaneça **100% preservado no caixa**!
 
 O administrador configura o `lucro_alvo` (lucro mínimo) e o percentual de comissão da rede (TDTC) por SKU ou tipo de produto no Cockpit Contábil.
 
