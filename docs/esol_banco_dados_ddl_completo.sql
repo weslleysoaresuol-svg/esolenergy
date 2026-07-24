@@ -103,6 +103,9 @@ CREATE TABLE public.folha_pagamento_opex (
   usuario_id uuid REFERENCES public.profiles(id) NOT NULL,
   regime public.contrato_regime NOT NULL,
   cargo_funcao text NOT NULL,
+  codigo_cbo text NOT NULL, -- Código CBO oficial (Ex: '2143-05' Engenheiro, '2410-05' Advogado)
+  conselho_classe_registro jsonb DEFAULT '{}'::jsonb, -- Ex: {"orgao": "CREA-SP", "numero": "506948/D"}
+  sindicato_enquadramento text, -- Enquadramento no eSocial / CCT
   remuneracao_base numeric(15, 2) NOT NULL,
   bonus_metas_estimado numeric(15, 2) DEFAULT 0.00,
   dados_contratuais jsonb DEFAULT '{}'::jsonb, -- Anexo de contrato, benefícios, retenções

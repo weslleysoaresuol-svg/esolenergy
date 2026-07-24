@@ -77,7 +77,8 @@ Para separar com rigor absoluto os **Sócios-Administradores Principais (Equity)
    - Apuração trimestral automática do lucro líquido acumulado na conta `3.1.01` do Ledger Contábil para distribuição isenta de dividendos aos sócios proporcionalmente às suas cotas, além da gestão de Pró-Labore mensal fixo.
 
 2. **Gestão de OPEX & Folha de Pagamento (Administradores Contratados e Funcionários):**
-   - Cadastro de salários e honorários negociados por contrato (regimes PJ, CLT ou Prestador de Serviço) para advogados, analistas financeiros, engenheiros e atendentes.
+   - **Enquadramento em CBO, Conselhos de Classe & Sindicatos:** Todo contrato de trabalho/prestação é obrigatoriamente vinculado ao seu **Código CBO oficial do MTE/eSocial** (ex: `2143-05` Engenheiro Eletricista, `2410-05` Advogado, `2522-10` Contador, `2521-05` Administrador) e ao registro profissional do respectivo Conselho de Classe (**CREA/CFT, OAB, CRC, CRA**), observando pisos salariais sindicais e Convenções Coletivas (CCT).
+   - **Salários e Honorários Negociados:** Cadastro de salários e honorários por contrato (regimes PJ, CLT ou Prestador de Serviço) para advogados, analistas financeiros, engenheiros e atendentes.
    - **Integração Automática com o Ledger Contábil:** Todo lançamento de folha debita automaticamente a conta `4.1.01.01` (Despesas com Pessoal Administrativo) e credita o banco operacional da empresa, mantendo o DRE atualizado.
 
 3. **Bônus de Performance & Metas Corporativas:**
