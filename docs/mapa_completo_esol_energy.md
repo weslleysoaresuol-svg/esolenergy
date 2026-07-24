@@ -328,9 +328,9 @@ Para proporcionar **gordura de negociação comercial** aos consultores e permit
 ---
 
 ### 5.6 Consultor Sales Cockpit & Matriz de Matching de Personas (Recomendador Inteligente)
-Para garantir que o consultor saiba **exatamente o que oferecer, como oferecer e quando combinar produtos (venda casada transparente)** para qualquer dúvida ou desejo de cliente, a plataforma incorpora o **Recomendador de Vendas Inteligente** no aplicativo do consultor:
+Para garantir que o consultor saiba **exatamente o que oferecer, como oferecer e quando combinar produtos (venda casada transparente ou venda avulsa)** para qualquer necessidade de cliente ou integrador, a plataforma incorpora o **Recomendador de Vendas Inteligente** no aplicativo do consultor:
 
-1. **As 8 Personas de Compradores Mapeadas no App:**
+1. **As 10 Personas de Compradores Mapeadas no App:**
    - **Persona A (Residencial Próprio):** Quer valorizar a casa e zerar a luz $\rightarrow$ *Recomendação:* **Solar Turnkey #1** + Combo Proteção (Seguro #8 + O&M #6).
    - **Persona B (Inquilino / Imóvel Alugado):** Quer economia sem obra $\rightarrow$ *Recomendação:* **Assinatura GD #3** + Milhagem Esol Club.
    - **Persona C (PME & Indústria Grupo A):** Quer reduzir OPEX corporativo $\rightarrow$ *Recomendação:* **Mercado Livre MLE #4** + SaaS Telemetria IoT #5.
@@ -339,13 +339,15 @@ Para garantir que o consultor saiba **exatamente o que oferecer, como oferecer e
    - **Persona F (Dono de Lote/Terreno - ex: 750 m²):** Quer saber quantas placas cabem, geração (kWh/mês) e lucro R$/mês $\rightarrow$ *Recomendação:* **Simulador de Lotes + Usina B2B #10** (Calcula: 67% área útil $\rightarrow$ 194 painéis de 585W $\rightarrow$ 113.5 kWp $\rightarrow$ 13.500 kWh/mês $\rightarrow$ **R$ 11.000,00/mês de lucro via GD**).
    - **Persona G (Baterias & Nobreak Solar BESS):** Quer proteção contra apagões e energia à noite $\rightarrow$ *Recomendação:* **Sistemas Híbridos #1 + Baterias LiFePO4 #2** (BYD/Deye c/ chaveamento zero milissegundos).
    - **Persona H (Sobra de Créditos Solares):** Tem usina própria gerando excedente e quer vender $\rightarrow$ *Recomendação:* **Monetização de Excedente de GD #3 (Esol Shared Grid)** (Aloca créditos para outros consumidores e deposita R$ líquido na conta bancária do cliente).
+   - **Persona I (Comprador de Kits Prontos / Customizados):** Integrador ou cliente que quer cotar kit completo sob medida $\rightarrow$ *Recomendação:* **Montador de Kits da Esol Store #2** (Cotação instantânea de Kits Express 3.3kWp a 75kWp ou montagem customizada com travamento de `lucro_alvo_piso`).
+   - **Persona J (Comprador A La Carte de Componentes & EV Chargers):** Cliente buscando comprar carregador elétrico, microinversor ou peças avulsas $\rightarrow$ *Recomendação:* **Carrinho Rápido Esol Store #2** (Wallbox 7.4kW/22kW, Microinversores, Baterias avulsas e cabos com link de pagamento imediato).
 
-2. **Diagnóstico Guiado & Simulador de Lotes:**
-   - O consultor digita os dados do cliente (ex: área do terreno em m², consumo atual ou sobra de créditos em kWh). O app calcula em tempo real o número de placas, geração esperada e lucro financeiro em R$/mês.
+2. **Diagnóstico Guiado & Ferramentas do App:**
+   - O consultor digita os dados do cliente (área em m², consumo kWh, lista de componentes da loja ou necessidade de kit). O app calcula em tempo real os preços, comissões e propostas em PDF.
 
 3. **Venda "Junto vs. Separado" (Menu A La Carte):**
    - *Junto (Combo Recomendado):* Solução completa (equipamento + pós-venda + gestão) com desconto de combo.
-   - *Separado (A La Carte):* Se o cliente recusar o pós-venda, o app desmembra a proposta em 1 segundo sem perder a venda do equipamento principal.
+   - *Separado (A La Carte):* Se o cliente quiser apenas o kit, o carregador EV ou o projeto básico, o app gera o orçamento individual em 1 segundo.
 
 ---
 
