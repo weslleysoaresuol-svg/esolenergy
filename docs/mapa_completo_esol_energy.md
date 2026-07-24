@@ -213,6 +213,19 @@ Abaixo está o mapeamento detalhado de etapas para a contratação e entrega de 
 
 ---
 
+#### 4.1.1 As 7 Fases Operacionais do Solar Turnkey (EPC Completo)
+Para integrar a engenharia de campo com os motores financeiro, tributário e jurídico da Esol, cada projeto Turnkey se divide em **7 Fases Sequenciais**:
+
+1. **Fase 1: Engenharia & Dimensionamento Físico-Elétrico:** Leitura de fatura de energia via OCR/IA, cálculo da potência necessária ($P_{\text{kWp}}$) com base nas HSP (Horas de Sol Pleno) NASA/CRESESB e Fator de Desempenho (PR $\approx 80\%$), e seleção do arranjo de painéis/inversores.
+2. **Fase 2: Suprimentos & Procurement (Lista BOM):** Geração da Lista de Materiais (Módulos, Inversores, String Box, Cabos, Fixadores) e cotação automática via API nos maiores distribuidores de hardware do Brasil (Solfácil, Edeltec, WDC, Aldo) para obter o menor custo FOB/CIF.
+3. **Fase 3: Obras, Instalação & ART:** Execução da instalação física de campo por equipe própria ou credenciada (custo por Wp), contratação de frete rodoviário e emissão da ART (Anotação de Responsabilidade Técnica) no CREA/CFT.
+4. **Fase 4: Homologação Regulatória na Concessionária:** Elaboração do projeto executivo elétrico, protocolo da Solicitação de Acesso (Parecer de Acesso) na concessionária local (CPFL, Enel, Cemig) e acompanhamento da troca para o Medidor Bidirecional.
+5. **Fase 5: DRE do Projeto & Motor Reverso:** Cálculo em tempo real da DRE da venda ($\text{Preço} - \text{BOM} - \text{Impostos} - \text{Frete} - \text{Mão de Obra} - \text{ART} - \text{TDTC 8\%} - \text{Overhead 5\%} = \text{Lucro Líquido Esol}$), com trava cega garantindo margem líquido piso $\ge 20,0\%$.
+6. **Fase 6: Financiamento Fintech & Meios de Pagamento:** Análise de crédito instantânea (CPF/CNPJ) via API dos bancos solares (BV, Santander, Solfácil, BB) em até 84x com 120 dias de carência, ou liquidação à vista no PIX c/ desconto.
+7. **Fase 7: Legal Vault & Assinatura Biométrica (Esol Re-Sign):** Emissão do Contrato EPC de Empreitada com garantias (25 anos de eficiência de módulos, 10 anos inversor, 1 ano instalação) e assinatura biométrica digital facial + geolocalização.
+
+---
+
 ### 4.2 🛒 Loja Esol (Categoria #2)
 E-commerce oficial para venda de partes físicas e equipamentos solares sem necessidade de contratação de serviços associados.
 *   **MODO 1: KITS PRONTOS (Combos pré-configurados pelo admin)**
