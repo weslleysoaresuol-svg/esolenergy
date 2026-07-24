@@ -281,12 +281,15 @@ $$\text{Preço Final (P)} = \frac{C_{\text{fixos}}}{1 - (tributo + overhead + ga
 
 #### **Percentual e Propósito do Overhead Administrativo (`overhead = 5,0%`):**
 *   **Percentual Padrão Configurado:** **5,0%** (parametrizável de 5,0% a 8,0% no Cockpit Contábil por SKU/Categoria).
-*   **Para que serve o Overhead Administrativo (Propósito Operacional):**
+*   **O que o Overhead Administrativo Cobre (As 7 Categorias de Custos Indiretos OPEX):**
     O `overhead` é a reserva financeira autossustentável destinada a cobrir 100% dos custos da unidade administrativa central da Esol Energy:
-    1. **Folha de Pagamento Administrativa (OPEX Payroll):** Salários e honorários da equipe contratada (advogados do Esol Legal Vault, analistas financeiros, engenheiros de homologação e suporte sob as 6 modalidades contratuais e CBO MTE/eSocial).
-    2. **Pró-Labore dos Sócios-Administradores:** Cobertura do Pró-Labore mensal dos sócios fundadores.
-    3. **Infraestrutura Cloud & APIs:** Servidores PostgreSQL Supabase, hospedagem Cloudflare, hashing SHA-256 e validação biométrica Esol Sign / Esol Re-Sign.
-    4. **Contabilidade & Assessoria Jurídica/Regulatória:** Anuidade de conselhos de classe (CREA, OAB, CRC, CRA) e custos contábeis fiscais.
+    1. **Sede Física & Instalações:** Aluguel da sede/escritório, condomínio, IPTU, energia, água, internet fibra e segurança patrimonial.
+    2. **Folha de Pagamento Administrativa & Benefícios:** Salários e honorários (CFO, Advogados, Devs, Engenheiros, Suporte) + INSS, FGTS, VR e Plano de Saúde.
+    3. **Tecnologia, Cloud & Softwares:** Servidores Supabase/Cloudflare, licenças (Google Workspace, Microsoft, ERP), custos de APIs (WhatsApp, Biometria Esol Sign, GPS).
+    4. **Desenvolvimento & Manutenção Contínua:** Atualizações de código, manutenção do site e publicação de aplicativos nas lojas (Apple/Google).
+    5. **Serviços Profissionais Terceirizados & Conselhos:** Anuidades de conselhos de classe (**CREA/CFT, OAB, CRC, CRA**), contabilidade e auditoria externa.
+    6. **Branding, Registro de Marcas & Eventos:** Renovação de domínios, registros de marcas no INPI, assessoria de imprensa (PR) e estandes em feiras (Intersolar).
+    7. **Seguros Corporativos & Suprimentos:** Seguro de Responsabilidade Civil, seguro predial/TI, leasing de notebooks para a equipe e despesas de viagem corporativa.
     *   *Resultado:* Cada venda realizada no ecossistema paga automaticamente a estrutura administrativa da Esol, garantindo que o `lucro_alvo` (lucro líquido limpo da empresa) permaneça **100% preservado no caixa**!
 
 *   **Termômetro de Saúde do Overhead (Cockpit dos Donos - Super Admin Level 1):**
