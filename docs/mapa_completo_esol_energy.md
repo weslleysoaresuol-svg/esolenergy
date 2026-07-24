@@ -289,6 +289,13 @@ $$\text{Preço Final (P)} = \frac{C_{\text{fixos}}}{1 - (tributo + overhead + ga
     4. **Contabilidade & Assessoria Jurídica/Regulatória:** Anuidade de conselhos de classe (CREA, OAB, CRC, CRA) e custos contábeis fiscais.
     *   *Resultado:* Cada venda realizada no ecossistema paga automaticamente a estrutura administrativa da Esol, garantindo que o `lucro_alvo` (lucro líquido limpo da empresa) permaneça **100% preservado no caixa**!
 
+*   **Termômetro de Saúde do Overhead (Cockpit dos Donos - Super Admin Level 1):**
+    No Dashboard dos Sócios, a plataforma exibe o indicador em tempo real que compara a **Arrecadação de Overhead (5% das Vendas)** contra o **Custo Real de Pessoal (OPEX Payroll + Servidores)**:
+    - 🟢 **Status Verde (Consumo < 85%):** Operação saudável com margem livre em reais (ex: R$ 40.000/mês disponíveis) para contratar novos funcionários.
+    - 🟡 **Status Amarelo (Consumo 85% a 99%):** Alerta no painel indicando aproximação do teto de contratação da folha.
+    - 🔴 **Status Vermelho (Consumo >= 100% - Estouro de Folha):** Trava automática no botão "Contratar Novo Funcionário", exigindo aprovação em 2FA dos sócios para ajustar temporariamente a taxa de overhead ou pausar contratações.
+    - 🔬 **Simulador Pré-Contratação:** O sócio simula o salário negociado de um novo membro antes de admiti-lo, descobrindo o impacto exato na margem de caixa na mesma hora.
+
 O administrador configura o `lucro_alvo` (lucro mínimo) e o percentual de comissão da rede (TDTC) por SKU ou tipo de produto no Cockpit Contábil.
 
 ---

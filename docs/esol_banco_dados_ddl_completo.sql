@@ -43,6 +43,16 @@ CREATE TABLE public.config_tributaria_tenant (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Tabela de Monitoramento de Saúde do Overhead Administrativo (Dashboard dos Donos)
+CREATE TABLE public.config_overhead_dashboard (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE UNIQUE,
+  overhead_percentual_padrao numeric(5, 2) DEFAULT 5.00 NOT NULL,
+  teto_alerta_amarelo_percent numeric(5, 2) DEFAULT 85.00 NOT NULL, -- Alerta aos 85%
+  teto_trava_vermelha_percent numeric(5, 2) DEFAULT 100.00 NOT NULL, -- Trava aos 100%
+  updated_at timestamptz DEFAULT now()
+);
+
 -- ==============================================================================
 -- 2. IDENTIDADE E CONTROLE DE ACESSO (PROFILES & ROLES)
 -- ==============================================================================
