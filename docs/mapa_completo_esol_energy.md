@@ -570,6 +570,52 @@ Para garantir que o consultor saiba **exatamente o que oferecer, como oferecer e
    - *Junto (Combo Recomendado):* Solução completa (equipamento + pós-venda + gestão) com desconto de combo.
    - *Separado (A La Carte):* Se o cliente quiser apenas o kit, o carregador EV ou o projeto básico, o app gera o orçamento individual em 1 segundo.
 
+### 5.6.1 Auditoria do Cockpit de Vendas (Julho/2026)
+
+**Status Geral: ⚠️ CRM funcional, mas sem ferramentas de inteligência de vendas.**
+
+#### O que FUNCIONA hoje no dashboard do consultor (`role = "corretor"`):
+| Funcionalidade | Rota | Status |
+|:---|:---|:---:|
+| Lista de clientes agrupada por status | `/app` | ✅ |
+| Alerta SLA de leads frios (3+ dias) | `/app` | ✅ |
+| 3 KPIs rápidos (ativos, concluídos, parados) | `/app` | ✅ |
+| Cotações de kits (prontos + customizados) | `/app/cotacoes` | ✅ |
+| Geração de propostas (Motor Reverso) | `/app/propostas` | ✅ |
+| Simulação de financiamento | `/app/financiamentos` | ✅ |
+| Minhas Comissões | `/app/parceiro/financeiro` | ✅ |
+| Agenda de reuniões | `/app/agenda` | ✅ |
+| WhatsApp deep link para leads frios | `/app` | ✅ |
+
+#### 12 Lacunas Críticas Identificadas:
+
+**🔴 Bloqueia vendas (Prioridade Crítica):**
+1. **Sem Seletor de Personas (A-J):** 0 de 10 personas implementadas no app
+2. **Sem Simulador Solar (Motor de Engenharia):** Tabela `dimensionamento_solar` desconectada do frontend
+3. **Sem catálogo de 8 categorias MMN:** Consultor só vê "Cotações" genéricas
+4. **Sem preview de comissão por deal:** Não sabe quanto vai ganhar antes de fechar
+
+**🟡 Limita eficiência (Prioridade Alta):**
+5. Sem cards de atalho rápido (admin tem, consultor não)
+6. Sem construtor de Combos (`combos_produtos_esol` desconectado)
+7. Sem aplicação de Cupons (`cupons_promocionais` desconectado)
+8. Sem Mini-BI pessoal (conversão %, pipeline R$, comissão acumulada)
+
+**🟢 Enriquece experiência (Prioridade Média):**
+9. Sem status do projeto EPC (7 fases + Selo Verde)
+10. Sem Carteira de Energia GD/MLE (assinaturas recorrentes)
+11. Sem Kanban visual pessoal (drag-and-drop)
+12. Sem financiamento solar integrado (análise de crédito do banco)
+
+#### Roadmap de Correção (4 Fases):
+
+| Fase | Escopo | Entregas |
+|:---:|:---|:---|
+| **1** | Quick Wins (Dashboard) | Cards de atalho rápido + Mini-BI + Seletor de Personas |
+| **2** | Ferramentas de Engenharia | Simulador Solar + Simulador de Lotes + Preview de Comissão |
+| **3** | Catálogo Completo | 8 Categorias + Combos + Cupons + Carteira GD/MLE |
+| **4** | Pós-Venda & Acompanhamento | Status EPC + Agendamento O&M + Financiamento Solar |
+
 ---
 
 ### 5.1.1 Arquitetura de Pool Unificado de Comissão (TDTC)
