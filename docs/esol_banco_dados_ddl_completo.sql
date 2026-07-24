@@ -83,12 +83,22 @@ CREATE TABLE public.admin_audit_logs (
 );
 
 -- Tabela do Cap Table de Sócios-Administradores Principais
+CREATE TYPE public.socio_opcao_remuneracao AS ENUM (
+  'dividendos_isentos_100',
+  'pro_labore_fixo',
+  'juros_capital_proprio_jcp',
+  'modelo_hibrido_flexivel'
+);
+
 CREATE TABLE public.socios_cap_table (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   socio_id uuid REFERENCES public.profiles(id) NOT NULL UNIQUE,
   percentual_cotas numeric(5, 2) NOT NULL CHECK (percentual_cotas > 0 AND percentual_cotas <= 100),
   valor_pro_labore numeric(15, 2) DEFAULT 0.00 NOT NULL,
+  opcao_remuneracao public.socio_opcao_remuneracao DEFAULT 'modelo_hibrido_flexivel' NOT NULL,
+  periodicidade_dividendos text DEFAULT 'mensal' NOT NULL, -- 'mensal', 'trimestral', 'anual'
+  instrucoes_bancarias_socio jsonb DEFAULT '{}'::jsonb,
   data_entrada date NOT NULL,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()

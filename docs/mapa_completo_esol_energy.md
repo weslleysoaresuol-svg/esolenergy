@@ -72,9 +72,13 @@ Para garantir que futuros sócios, diretores, advogados, analistas e atendentes 
 ### 2.2 Esol Equity & Corporate Payroll Hub (Governança Societária & Custo de OPEX)
 Para separar com rigor absoluto os **Sócios-Administradores Principais (Equity)** dos **Administradores Contratados e Funcionários (OPEX)**, o ecossistema incorpora o módulo de controle corporativo em 4 pilares:
 
-1. **Cap Table & Distribuição de Lucros (Sócios-Administradores Principais):**
-   - Mapeamento das cotas sociais (Cap Table em %) dos fundadores/sócios principais.
-   - Apuração trimestral automática do lucro líquido acumulado na conta `3.1.01` do Ledger Contábil para distribuição isenta de dividendos aos sócios proporcionalmente às suas cotas, além da gestão de Pró-Labore mensal fixo.
+1. **Cap Table & As 5 Opções de Remuneração dos Sócios/Donos:**
+   - *Escolha de Recebimento pelo Sócio:* Cada sócio fundador/proprietário configura no seu painel como deseja receber seus proventos sob a lei brasileira:
+     1. **Distribuição de Lucros / Dividendos 100% Isentos (Lei 9.249/95 Art. 10):** Lucro líquido apurado no Ledger (`3.1.01`) transferido para a conta do sócio **100% ISENTO de Imposto de Renda (IRPF)** e sem INSS.
+     2. **Pró-Labore Fixo (Decreto 3.048/99):** Remuneração mensal pelo trabalho de gestão (com recolhimento de INSS para aposentadoria e IRPF).
+     3. **Juros sobre o Capital Próprio - JCP (Lei 9.249/95 Art. 9º):** Remuneração do capital investido que economiza 34% de IRPJ/CSLL na holding Esol.
+     4. **Mútuo Societário (Código Civil Art. 586):** Contrato de empréstimo remunerado ou antecipação pontual entre sócio e empresa.
+     5. **Modelo Híbrido Flexível (Recomendado):** Pró-Labore Mínimo de Eficiência Fiscal + Distribuição Mensal/Trimestral de Dividendos Isentos.
 
 2. **Gestão de OPEX & As 6 Modalidades Contratuais sob a Lei Brasileira:**
    - **6 Regimes de Contratação Permitidos:**
