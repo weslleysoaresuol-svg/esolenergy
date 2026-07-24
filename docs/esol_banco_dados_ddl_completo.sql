@@ -95,7 +95,14 @@ CREATE TABLE public.socios_cap_table (
 );
 
 -- Tabela de Gestão de OPEX e Folha de Pagamento Administrativa
-CREATE TYPE public.contrato_regime AS ENUM ('pj_honorario', 'clt', 'prestador_autonomo', 'estagio');
+CREATE TYPE public.contrato_regime AS ENUM (
+  'clt_tradicional',
+  'clt_intermitente',
+  'pj_honorario',
+  'advogado_associado_oab',
+  'estagio_lei_11788',
+  'socio_equity_prolabore'
+);
 
 CREATE TABLE public.folha_pagamento_opex (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

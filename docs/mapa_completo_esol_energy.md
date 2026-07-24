@@ -76,9 +76,15 @@ Para separar com rigor absoluto os **Sócios-Administradores Principais (Equity)
    - Mapeamento das cotas sociais (Cap Table em %) dos fundadores/sócios principais.
    - Apuração trimestral automática do lucro líquido acumulado na conta `3.1.01` do Ledger Contábil para distribuição isenta de dividendos aos sócios proporcionalmente às suas cotas, além da gestão de Pró-Labore mensal fixo.
 
-2. **Gestão de OPEX & Folha de Pagamento (Administradores Contratados e Funcionários):**
-   - **Enquadramento em CBO, Conselhos de Classe & Sindicatos:** Todo contrato de trabalho/prestação é obrigatoriamente vinculado ao seu **Código CBO oficial do MTE/eSocial** (ex: `2143-05` Engenheiro Eletricista, `2410-05` Advogado, `2522-10` Contador, `2521-05` Administrador) e ao registro profissional do respectivo Conselho de Classe (**CREA/CFT, OAB, CRC, CRA**), observando pisos salariais sindicais e Convenções Coletivas (CCT).
-   - **Salários e Honorários Negociados:** Cadastro de salários e honorários por contrato (regimes PJ, CLT ou Prestador de Serviço) para advogados, analistas financeiros, engenheiros e atendentes.
+2. **Gestão de OPEX & As 6 Modalidades Contratuais sob a Lei Brasileira:**
+   - **6 Regimes de Contratação Permitidos:**
+     1. *CLT Tradicional:* Suporte, atendimentos de rotina e funções operacionais contínuas (com CBO no eSocial).
+     2. *CLT Intermitente (Art. 452-A CLT):* Técnicos de vistoria e inspetores O&M convocados sob demanda.
+     3. *Prestação de Serviços PJ (Art. 442-B CLT & Lei 13.429/17):* CFOs contratados, devs sênior, engenheiros e especialistas.
+     4. *Advogado Associado (Estatuto OAB Lei 8.906/94):* Bancada jurídica interna do Esol Legal Vault.
+     5. *Estágio Supervisionado (Lei 11.788/08):* Estudantes de engenharia, direito, TI e administração supervisionados por titulares de Conselhos.
+     6. *Acordo de Sócios / Equity & Vesting:* Founders e executivos C-Level (Pró-Labore + Dividendos isentos).
+   - **Enquadramento em CBO, Conselhos de Classe & Sindicatos:** Vinculação obrigatória ao Código CBO MTE/eSocial (ex: `2143-05` Eng. Eletricista, `2410-05` Advogado, `2522-10` Contador) e órgãos de classe (**CREA/CFT, OAB, CRC, CRA**).
    - **Integração Automática com o Ledger Contábil:** Todo lançamento de folha debita automaticamente a conta `4.1.01.01` (Despesas com Pessoal Administrativo) e credita o banco operacional da empresa, mantendo o DRE atualizado.
 
 3. **Bônus de Performance & Metas Corporativas:**
