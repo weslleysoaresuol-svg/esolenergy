@@ -556,22 +556,30 @@ CREATE INDEX IF NOT EXISTS idx_clientes_sla ON public.clientes(status_distribuic
 -- Enums: carteira_status, mercado_tipo
 -- ==============================================================================
 
-CREATE TYPE public.carteira_status AS ENUM (
-  'novo',
-  'analise_viabilidade',
-  'aguardando_documentos',
-  'proposta_enviada',
-  'contrato_assinado',
-  'protocolado_distribuidora',
-  'homologado',
-  'ativo',
-  'suspenso',
-  'cancelado'
-);
+DO $$ BEGIN
+  CREATE TYPE public.carteira_status AS ENUM (
+    'novo',
+    'analise_viabilidade',
+    'aguardando_documentos',
+    'proposta_enviada',
+    'contrato_assinado',
+    'protocolado_distribuidora',
+    'homologado',
+    'ativo',
+    'suspenso',
+    'cancelado'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TYPE public.mercado_tipo AS ENUM ('gd', 'mle');
+DO $$ BEGIN
+  CREATE TYPE public.mercado_tipo AS ENUM ('gd', 'mle');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TABLE public.carteira_energia (
+CREATE TABLE IF NOT EXISTS public.carteira_energia (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
@@ -663,9 +671,13 @@ CREATE TABLE public.documentos_minutas_juridicas (
 -- Triggers: trg_atualizar_saldos_ledger, trg_gerar_hash_lancamento
 -- ==============================================================================
 
-CREATE TYPE public.ledger_tipo_conta AS ENUM ('ativo', 'passivo', 'patrimonio', 'receita', 'despesa');
+DO $$ BEGIN
+  CREATE TYPE public.ledger_tipo_conta AS ENUM ('ativo', 'passivo', 'patrimonio', 'receita', 'despesa');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TABLE public.ledger_contas (
+CREATE TABLE IF NOT EXISTS public.ledger_contas (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   codigo text NOT NULL, -- Ex: '1.1.01.01'
@@ -677,7 +689,7 @@ CREATE TABLE public.ledger_contas (
   UNIQUE (tenant_id, codigo)
 );
 
-CREATE TABLE public.ledger_lancamentos (
+CREATE TABLE IF NOT EXISTS public.ledger_lancamentos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   data_lancamento timestamptz DEFAULT now() NOT NULL,
@@ -717,6 +729,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS trg_atualizar_saldos_ledger ON public.ledger_lancamentos;
 CREATE TRIGGER trg_atualizar_saldos_ledger
   AFTER INSERT ON public.ledger_lancamentos
   FOR EACH ROW
@@ -752,6 +765,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS trg_gerar_hash_lancamento ON public.ledger_lancamentos;
 CREATE TRIGGER trg_gerar_hash_lancamento
   BEFORE INSERT ON public.ledger_lancamentos
   FOR EACH ROW
@@ -787,9 +801,13 @@ CREATE TABLE public.distratos_conformidade (
 -- Enums: ecopontos_status
 -- ==============================================================================
 
-CREATE TYPE public.ecopontos_status AS ENUM ('pendente', 'disponivel', 'expirado', 'resgatado', 'cancelado');
+DO $$ BEGIN
+  CREATE TYPE public.ecopontos_status AS ENUM ('pendente', 'disponivel', 'expirado', 'resgatado', 'cancelado');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TABLE public.ecopontos_ledger (
+CREATE TABLE IF NOT EXISTS public.ecopontos_ledger (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   cliente_indicador_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
@@ -805,7 +823,7 @@ CREATE TABLE public.ecopontos_ledger (
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE TABLE public.ecopontos_resgates (
+CREATE TABLE IF NOT EXISTS public.ecopontos_resgates (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
