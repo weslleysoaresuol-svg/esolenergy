@@ -38,3 +38,8 @@ brand-kit/temp-fonts/
 .venv/
 __pycache__/
 
+
+# Environment Variables
+.env
+.env.*
+!.env.example
