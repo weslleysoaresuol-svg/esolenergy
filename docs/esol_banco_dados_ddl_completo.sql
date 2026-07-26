@@ -2694,14 +2694,12 @@ COMMIT;
 --            Impede o deslocamento da equipe de engenharia antes da entrega fÃ­sica confirmada.
 -- =======================================================================================
 
-BEGIN;
-
 -- ---------------------------------------------------------------------------------------
 -- 1. CENTRAL DE RASTREAMENTO (TRACKING DE KITS EPC / E-COMMERCE)
 -- ---------------------------------------------------------------------------------------
-CREATE TABLE public.logistica_rastreio_pedidos (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id UUID NOT NULL REFERENCES public.tenants_config(id),
+CREATE TABLE IF NOT EXISTS public.logistica_rastreio_pedidos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
     origem_modulo VARCHAR(50) NOT NULL, -- 'epc_turnkey', 'loja_virtual'
     origem_id UUID NOT NULL, -- ID do Projeto ou ID do Pedido
     fornecedor_origem VARCHAR(100) NOT NULL, -- 'WEG', 'Aldo', 'Centro de Distribuicao Esol'
@@ -2719,8 +2717,8 @@ CREATE TABLE public.logistica_rastreio_pedidos (
 -- ---------------------------------------------------------------------------------------
 -- 2. HISTÃ“RICO DE EVENTOS LOGÃSTICOS (WEBHOOKS DA TRANSPORTADORA)
 -- ---------------------------------------------------------------------------------------
-CREATE TABLE public.logistica_eventos_tracking (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS public.logistica_eventos_tracking (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     rastreio_id UUID NOT NULL REFERENCES public.logistica_rastreio_pedidos(id) ON DELETE CASCADE,
     data_evento TIMESTAMP WITH TIME ZONE NOT NULL,
     descricao_evento VARCHAR(255) NOT NULL, -- ex: "Carga deu entrada na filial de destino"
@@ -2733,10 +2731,6 @@ CREATE TABLE public.logistica_eventos_tracking (
 -- ---------------------------------------------------------------------------------------
 -- 3. CONSTRAINT DE SEGURANÃ‡A (O SEMÃFORO DA ENGENHARIA)
 -- ---------------------------------------------------------------------------------------
--- Aqui adicionamos uma validaÃ§Ã£o (lÃ³gica recomendada para a API ou DB) 
--- simulando a regra de negÃ³cios: O agendamento da instalaÃ§Ã£o do EPC nÃ£o pode
--- acontecer se o status logÃ­stico nÃ£o for 'entregue'.
-
 -- Adicionando FK na tabela de engenharia para vincular ao rastreio
 ALTER TABLE public.projetos_epc 
 ADD COLUMN IF NOT EXISTS logistica_rastreio_id UUID REFERENCES public.logistica_rastreio_pedidos(id);
@@ -2744,12 +2738,10 @@ ADD COLUMN IF NOT EXISTS logistica_rastreio_id UUID REFERENCES public.logistica_
 -- ---------------------------------------------------------------------------------------
 -- ÃNDICES DE PERFORMANCE E BUSCA
 -- ---------------------------------------------------------------------------------------
-CREATE INDEX idx_logistica_origem ON public.logistica_rastreio_pedidos(origem_modulo, origem_id);
-CREATE INDEX idx_logistica_codigo ON public.logistica_rastreio_pedidos(codigo_rastreio);
-CREATE INDEX idx_logistica_status ON public.logistica_rastreio_pedidos(status_macro);
-CREATE INDEX idx_eventos_anomalia ON public.logistica_eventos_tracking(is_anomalia) WHERE is_anomalia = TRUE;
-
-COMMIT;
+CREATE INDEX IF NOT EXISTS idx_logistica_origem ON public.logistica_rastreio_pedidos(origem_modulo, origem_id);
+CREATE INDEX IF NOT EXISTS idx_logistica_codigo ON public.logistica_rastreio_pedidos(codigo_rastreio);
+CREATE INDEX IF NOT EXISTS idx_logistica_status ON public.logistica_rastreio_pedidos(status_macro);
+CREATE INDEX IF NOT EXISTS idx_eventos_anomalia ON public.logistica_eventos_tracking(is_anomalia) WHERE is_anomalia = TRUE;
 
 
 -- =======================================================================================
