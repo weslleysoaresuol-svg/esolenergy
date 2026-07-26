@@ -2467,90 +2467,85 @@ CREATE TRIGGER trg_check_curso_concluido
 -- MÃ“DULO 20: MOTOR DE SPLIT DE PAGAMENTOS E BAAS
 -- DescriÃ§Ã£o: IntegraÃ§Ã£o com Gateway (Asaas/Stripe) para evitar bitributaÃ§Ã£o.
 --            Cria Subcontas para consultores, gerencia Faturas (PIX/Boleto) e o Split.
+-- Ecossistema: Esol Energy | Banco: Supabase (PostgreSQL 15+)
+-- DependÃªncias: 01_tenants_config.sql, 02_identidade_rbac.sql, 04_crm_clientes.sql
 -- =======================================================================================
-
-BEGIN;
 
 -- ---------------------------------------------------------------------------------------
 -- 1. SUBCONTAS BANCÃRIAS (KYC E GATEWAY IDS)
 -- ---------------------------------------------------------------------------------------
--- Todo consultor MMN precisa de uma conta virtual no Gateway para receber os repasses do Split.
-CREATE TABLE public.banking_subcontas (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    tenant_id UUID NOT NULL REFERENCES public.tenants_config(id),
-    gateway_provider VARCHAR(50) NOT NULL DEFAULT 'asaas', -- asaas, stripe, pagarme
-    gateway_account_id VARCHAR(100) NOT NULL, -- O ID da subconta gerada na nuvem
-    gateway_wallet_id VARCHAR(100), -- Carteira virtual associada (se aplicÃ¡vel)
-    status_kyc VARCHAR(30) DEFAULT 'pendente', -- pendente, aprovado, rejeitado
-    motivo_rejeicao_kyc TEXT,
-    is_ativa BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+CREATE TABLE IF NOT EXISTS public.banking_subcontas (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    tenant_id uuid NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    gateway_provider varchar(50) NOT NULL DEFAULT 'asaas',
+    gateway_account_id varchar(100) NOT NULL,
+    gateway_wallet_id varchar(100),
+    status_kyc varchar(30) DEFAULT 'pendente',
+    motivo_rejeicao_kyc text,
+    is_ativa boolean DEFAULT false,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
     UNIQUE(user_id, gateway_provider)
 );
 
 -- ---------------------------------------------------------------------------------------
 -- 2. FATURAS E LINKS DE PAGAMENTO (O BOLETO/PIX DO CLIENTE)
 -- ---------------------------------------------------------------------------------------
-CREATE TABLE public.banking_faturas (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id UUID NOT NULL REFERENCES public.tenants_config(id),
-    cliente_id UUID NOT NULL REFERENCES public.clientes(id),
-    origem_modulo VARCHAR(50) NOT NULL, -- 'epc_turnkey', 'gd_assinatura', 'loja'
-    origem_id UUID NOT NULL, -- ID do Projeto ou Pedido
-    gateway_provider VARCHAR(50) NOT NULL DEFAULT 'asaas',
-    gateway_charge_id VARCHAR(100) NOT NULL UNIQUE, -- ID da CobranÃ§a no Gateway
-    valor_total NUMERIC(15,2) NOT NULL,
-    metodo_pagamento VARCHAR(50) NOT NULL, -- 'pix', 'boleto', 'credit_card'
-    link_pagamento VARCHAR(500),
-    status_pagamento VARCHAR(50) DEFAULT 'pendente', -- pendente, recebido, atrasado, falha
-    data_vencimento DATE NOT NULL,
-    data_pagamento TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS public.banking_faturas (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id uuid NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    cliente_id uuid NOT NULL REFERENCES public.clientes(id),
+    origem_modulo varchar(50) NOT NULL,
+    origem_id uuid NOT NULL,
+    gateway_provider varchar(50) NOT NULL DEFAULT 'asaas',
+    gateway_charge_id varchar(100) NOT NULL UNIQUE,
+    valor_total numeric(15,2) NOT NULL,
+    metodo_pagamento varchar(50) NOT NULL,
+    link_pagamento varchar(500),
+    status_pagamento varchar(50) DEFAULT 'pendente',
+    data_vencimento date NOT NULL,
+    data_pagamento timestamptz,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
 );
 
 -- ---------------------------------------------------------------------------------------
 -- 3. REGRAS DE SPLIT (O CORTE NA NUVEM)
 -- ---------------------------------------------------------------------------------------
--- Onde a MÃ¡gica Acontece: Mapeia como os 50k do cliente serÃ£o fatiados ANTES de cair na Esol.
-CREATE TABLE public.banking_transacoes_split (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fatura_id UUID NOT NULL REFERENCES public.banking_faturas(id) ON DELETE CASCADE,
-    subconta_recebedora_id UUID REFERENCES public.banking_subcontas(id), -- Null = Conta Matriz (Esol)
-    valor_fatia NUMERIC(15,2) NOT NULL,
-    percentual_fatia NUMERIC(5,2),
-    motivo_fatia VARCHAR(100) NOT NULL, -- 'comissao_venda_direta', 'royalties_n1', 'receita_matriz'
-    ledger_lancamento_id UUID, -- Relaciona com a provisÃ£o no MÃ³dulo 5
-    gateway_split_id VARCHAR(100), -- ID do split gerado no Gateway
-    status_repasse VARCHAR(50) DEFAULT 'aguardando_pagamento', -- aguardando_pagamento, repassado, falha
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS public.banking_transacoes_split (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    fatura_id uuid NOT NULL REFERENCES public.banking_faturas(id) ON DELETE CASCADE,
+    subconta_recebedora_id uuid REFERENCES public.banking_subcontas(id),
+    valor_fatia numeric(15,2) NOT NULL,
+    percentual_fatia numeric(5,2),
+    motivo_fatia varchar(100) NOT NULL,
+    ledger_lancamento_id uuid,
+    gateway_split_id varchar(100),
+    status_repasse varchar(50) DEFAULT 'aguardando_pagamento',
+    created_at timestamptz DEFAULT now()
 );
 
 -- ---------------------------------------------------------------------------------------
 -- 4. WEBHOOKS AUDIT LOG (O OUVIDO DO GATEWAY)
 -- ---------------------------------------------------------------------------------------
--- Log imutÃ¡vel de todas as notificaÃ§Ãµes financeiras que o Gateway manda para a Esol.
-CREATE TABLE public.banking_webhooks_logs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    gateway_provider VARCHAR(50) NOT NULL,
-    evento_tipo VARCHAR(100) NOT NULL, -- ex: 'PAYMENT_RECEIVED', 'PAYMENT_OVERDUE'
-    payload_json JSONB NOT NULL,
-    processado BOOLEAN DEFAULT FALSE,
-    erro_processamento TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS public.banking_webhooks_logs (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    gateway_provider varchar(50) NOT NULL,
+    evento_tipo varchar(100) NOT NULL,
+    payload_json jsonb NOT NULL,
+    processado boolean DEFAULT false,
+    erro_processamento text,
+    created_at timestamptz DEFAULT now()
 );
 
 -- ---------------------------------------------------------------------------------------
 -- ÃNDICES DE PERFORMANCE E BUSCA
 -- ---------------------------------------------------------------------------------------
-CREATE INDEX idx_banking_faturas_status ON public.banking_faturas(status_pagamento);
-CREATE INDEX idx_banking_faturas_origem ON public.banking_faturas(origem_modulo, origem_id);
-CREATE INDEX idx_banking_split_fatura ON public.banking_transacoes_split(fatura_id);
-CREATE INDEX idx_banking_webhook_processado ON public.banking_webhooks_logs(processado) WHERE processado = FALSE;
-
-COMMIT;
+CREATE INDEX IF NOT EXISTS idx_banking_faturas_status ON public.banking_faturas(status_pagamento);
+CREATE INDEX IF NOT EXISTS idx_banking_faturas_origem ON public.banking_faturas(origem_modulo, origem_id);
+CREATE INDEX IF NOT EXISTS idx_banking_split_fatura ON public.banking_transacoes_split(fatura_id);
+CREATE INDEX IF NOT EXISTS idx_banking_webhook_processado ON public.banking_webhooks_logs(processado) WHERE processado = false;
 
 
 -- =======================================================================================
