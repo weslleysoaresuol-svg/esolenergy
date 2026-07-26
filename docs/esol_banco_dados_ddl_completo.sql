@@ -2036,33 +2036,38 @@ CREATE INDEX IF NOT EXISTS idx_campanhas_agendamento ON public.campanhas_marketi
 -- Enums: evento_conversao, plataforma_ads
 -- ==============================================================================
 
-CREATE TYPE public.evento_conversao AS ENUM ('page_view', 'lead_form', 'initiate_checkout', 'purchase', 'contract_signed');
-CREATE TYPE public.plataforma_ads AS ENUM ('meta_ads', 'google_ads', 'tiktok_ads', 'linkedin_ads');
+DO $$ BEGIN
+  CREATE TYPE public.evento_conversao AS ENUM ('page_view', 'lead_form', 'initiate_checkout', 'purchase', 'contract_signed');
+EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE public.plataforma_ads AS ENUM ('meta_ads', 'google_ads', 'tiktok_ads', 'linkedin_ads');
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: CAPI (CONVERSIONS API) SERVER-SIDE EVENTS
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.tracking_server_events (
+CREATE TABLE IF NOT EXISTS public.tracking_server_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  cliente_id uuid REFERENCES public.clientes(id), -- Quem converteu
-  consultor_id uuid REFERENCES public.profiles(id), -- Dono do trÃ¡fego (se houver)
+  cliente_id uuid REFERENCES public.clientes(id),
+  consultor_id uuid REFERENCES public.profiles(id),
   
   evento public.evento_conversao NOT NULL,
   plataforma public.plataforma_ads NOT NULL,
-  pixel_id_usado text,                           -- Qual pixel recebeu o disparo (Corporate ou Consultor)
+  pixel_id_usado text,
   
-  valor_conversao numeric(12,2) DEFAULT 0.00,    -- Ãštil para ROAS (Ex: R$ 50.000)
+  valor_conversao numeric(12,2) DEFAULT 0.00,
   moeda varchar(3) DEFAULT 'BRL',
   
   user_ip inet,
   user_agent text,
-  fbc text,                                      -- Facebook Click ID (via cookie)
-  fbp text,                                      -- Facebook Browser ID
-  gclid text,                                    -- Google Click ID
+  fbc text,
+  fbp text,
+  gclid text,
   
-  payload_enviado jsonb,                         -- Corpo do JSON disparado pra API da Meta/Google
-  status_http integer,                           -- 200 (Sucesso), 400 (Erro)
+  payload_enviado jsonb,
+  status_http integer,
   
   created_at timestamptz DEFAULT now()
 );
@@ -2070,7 +2075,7 @@ CREATE TABLE public.tracking_server_events (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 2: GASTO DE ANÃšNCIOS (ROAS DASHBOARD BI)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.ad_spend_diario (
+CREATE TABLE IF NOT EXISTS public.ad_spend_diario (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   
@@ -2089,8 +2094,8 @@ CREATE TABLE public.ad_spend_diario (
   UNIQUE(tenant_id, data_referencia, plataforma, campanha_id)
 );
 
-CREATE INDEX idx_tracking_events_cliente ON public.tracking_server_events(cliente_id);
-CREATE INDEX idx_ad_spend_data ON public.ad_spend_diario(data_referencia);
+CREATE INDEX IF NOT EXISTS idx_tracking_events_cliente ON public.tracking_server_events(cliente_id);
+CREATE INDEX IF NOT EXISTS idx_ad_spend_data ON public.ad_spend_diario(data_referencia);
 
 
 -- ==============================================================================
