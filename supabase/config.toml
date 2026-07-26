@@ -62,3 +62,6 @@ verify_jwt = false
 
 [functions.esol-sign-template]
 verify_jwt = false
+
+[functions.esol-sign-kyc]
+verify_jwt = false
