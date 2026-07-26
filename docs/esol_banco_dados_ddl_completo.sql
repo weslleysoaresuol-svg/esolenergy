@@ -1515,170 +1515,151 @@ CREATE INDEX IF NOT EXISTS idx_avaliacoes_tecnico ON public.avaliacoes_servico(t
 -- Enums: categoria_produto, status_pedido
 -- ==============================================================================
 
--- Categorias de produtos vendidos na Loja Esol (Categoria #2 do MMN)
-CREATE TYPE public.categoria_produto AS ENUM (
-  'painel_solar',           -- MÃ³dulos fotovoltaicos (mono/poli)
-  'inversor',               -- Inversores string, micro, hÃ­brido
-  'estrutura_fixacao',      -- Trilhos, grampos, parafusos (telhado/solo)
-  'string_box',             -- ProteÃ§Ã£o CC com fusÃ­veis e DPS
-  'cabo_conector',          -- Cabos solares, conectores MC4
-  'bateria',                -- LiFePO4, lead-acid, BYD, Pylontech
-  'carregador_ev',          -- Wallbox 7kW-22kW, carregadores portÃ¡teis
-  'sensor_iot',             -- Medidores inteligentes, gateways IoT
-  'kit_pronto',             -- Combo prÃ©-montado (painÃ©is+inversor+estrutura)
-  'kit_personalizado',      -- Kit montado pelo consultor/cliente
-  'acessorio'               -- Ferramentas, EPIs, cabos extras
-);
+DO $$ BEGIN
+  CREATE TYPE public.categoria_produto AS ENUM (
+    'painel_solar',           -- MÃ³dulos fotovoltaicos (mono/poli)
+    'inversor',               -- Inversores string, micro, hÃ­brido
+    'estrutura_fixacao',      -- Trilhos, grampos, parafusos (telhado/solo)
+    'string_box',             -- ProteÃ§Ã£o CC com fusÃ­veis e DPS
+    'cabo_conector',          -- Cabos solares, conectores MC4
+    'bateria',                -- LiFePO4, lead-acid, BYD, Pylontech
+    'carregador_ev',          -- Wallbox 7kW-22kW, carregadores portÃ¡teis
+    'sensor_iot',             -- Medidores inteligentes, gateways IoT
+    'kit_pronto',             -- Combo prÃ©-montado (painÃ©is+inversor+estrutura)
+    'kit_personalizado',      -- Kit montado pelo consultor/cliente
+    'acessorio'               -- Ferramentas, EPIs, cabos extras
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.status_pedido AS ENUM (
-  'carrinho',               -- Itens selecionados, checkout nÃ£o iniciado
-  'aguardando_pagamento',   -- Checkout realizado, pagamento pendente
-  'pago',                   -- Pagamento confirmado
-  'separacao',              -- Em separaÃ§Ã£o no distribuidor
-  'enviado',                -- Despachado (com cÃ³digo de rastreio)
-  'entregue',               -- Recebido pelo cliente
-  'instalacao_pendente',    -- Entregue, aguardando instalaÃ§Ã£o
-  'concluido',              -- Instalado e funcionando
-  'cancelado',              -- Cancelado pelo cliente ou admin
-  'devolvido'               -- DevoluÃ§Ã£o processada (CDC Art. 49)
-);
+DO $$ BEGIN
+  CREATE TYPE public.status_pedido AS ENUM (
+    'carrinho',               -- Itens selecionados, checkout nÃ£o iniciado
+    'aguardando_pagamento',   -- Checkout realizado, pagamento pendente
+    'pago',                   -- Pagamento confirmado
+    'separacao',              -- Em separaÃ§Ã£o no distribuidor
+    'enviado',                -- Despachado (com cÃ³digo de rastreio)
+    'entregue',               -- Recebido pelo cliente
+    'instalacao_pendente',    -- Entregue, aguardando instalaÃ§Ã£o
+    'concluido',              -- Instalado e funcionando
+    'cancelado',              -- Cancelado pelo cliente ou admin
+    'devolvido'               -- DevoluÃ§Ã£o processada (CDC Art. 49)
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: CATÃLOGO DE PRODUTOS (SKUs)
--- Gerenciado pelo admin. Cada produto tem preÃ§o de custo (do
--- distribuidor) e preÃ§o de venda (calculado pelo Motor Reverso)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.produtos_loja (
+CREATE TABLE IF NOT EXISTS public.produtos_loja (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
 
-  -- IdentificaÃ§Ã£o
-  sku text NOT NULL,                -- Ex: 'ESOL-PNL-550W-MONO-001'
-  nome text NOT NULL,               -- Ex: 'Painel Solar Canadian 550W Monocristalino'
+  sku text NOT NULL,
+  nome text NOT NULL,
   descricao text,
   categoria public.categoria_produto NOT NULL,
-  marca text,                       -- Ex: 'Canadian Solar', 'Deye', 'BYD'
-  modelo text,                      -- Ex: 'CS6W-550MS'
-  imagem_url text,                  -- URL da foto no Cloudflare R2
+  marca text,
+  modelo text,
+  imagem_url text,
 
-  -- EspecificaÃ§Ãµes tÃ©cnicas (para validaÃ§Ã£o de compatibilidade)
-  potencia_wp numeric(10,2),        -- Watts-pico (para painÃ©is e inversores)
-  tensao_voc numeric(8,2),          -- TensÃ£o de circuito aberto (V) â€” painÃ©is
-  corrente_isc numeric(8,2),        -- Corrente de curto-circuito (A) â€” painÃ©is
-  mppt_min_v numeric(8,2),          -- TensÃ£o mÃ­nima MPPT (V) â€” inversores
-  mppt_max_v numeric(8,2),          -- TensÃ£o mÃ¡xima MPPT (V) â€” inversores
-  corrente_max_entrada numeric(8,2),-- Corrente mÃ¡xima de entrada (A) â€” inversores
-  capacidade_kwh numeric(8,2),      -- Capacidade em kWh (baterias)
-  potencia_carga_kw numeric(8,2),   -- PotÃªncia de carga (kW) â€” carregadores EV
+  potencia_wp numeric(10,2),
+  tensao_voc numeric(8,2),
+  corrente_isc numeric(8,2),
+  mppt_min_v numeric(8,2),
+  mppt_max_v numeric(8,2),
+  corrente_max_entrada numeric(8,2),
+  capacidade_kwh numeric(8,2),
+  potencia_carga_kw numeric(8,2),
 
-  -- PreÃ§os
-  preco_custo numeric(12,2) NOT NULL,    -- PreÃ§o FOB do distribuidor
-  preco_custo_frete numeric(12,2) DEFAULT 0, -- Frete estimado
-  preco_venda numeric(12,2),             -- Calculado pelo Motor Reverso (preÃ§o ao consumidor)
-  lucro_alvo_pct numeric(5,4) DEFAULT 0.2000, -- Margem de lucro configurÃ¡vel por SKU
-  tdtc_pct numeric(5,4) DEFAULT 0.1500,  -- TDTC especÃ­fico do produto
+  preco_custo numeric(12,2) NOT NULL,
+  preco_custo_frete numeric(12,2) DEFAULT 0,
+  preco_venda numeric(12,2),
+  lucro_alvo_pct numeric(5,4) DEFAULT 0.2000,
+  tdtc_pct numeric(5,4) DEFAULT 0.1500,
 
-  -- Estoque
   estoque_disponivel integer DEFAULT 0,
   estoque_minimo integer DEFAULT 5,
-  distribuidor_parceiro text,       -- Ex: 'Aldo Solar', 'Edeltec', 'Sou Energy'
+  distribuidor_parceiro text,
   prazo_entrega_dias integer DEFAULT 7,
 
-  -- Status
   ativo boolean DEFAULT true,
-  destaque boolean DEFAULT false,   -- Produto em destaque na vitrine
+  destaque boolean DEFAULT false,
 
-  -- Metadados
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE UNIQUE INDEX idx_produtos_sku ON public.produtos_loja(tenant_id, sku);
-CREATE INDEX idx_produtos_categoria ON public.produtos_loja(categoria) WHERE ativo = true;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_produtos_sku ON public.produtos_loja(tenant_id, sku);
+CREATE INDEX IF NOT EXISTS idx_produtos_categoria ON public.produtos_loja(categoria) WHERE ativo = true;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 2: PEDIDOS DA LOJA
--- Cada pedido pode ter mÃºltiplos itens. O preÃ§o final Ã©
--- recalculado pelo Motor Reverso no checkout
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.pedidos_loja (
+CREATE TABLE IF NOT EXISTS public.pedidos_loja (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
-  consultor_id uuid REFERENCES public.profiles(id), -- Consultor que vendeu
+  consultor_id uuid REFERENCES public.profiles(id),
 
-  -- IdentificaÃ§Ã£o
-  numero_pedido text NOT NULL, -- Ex: 'PED-2026-0001'
+  numero_pedido text NOT NULL,
   status public.status_pedido DEFAULT 'carrinho' NOT NULL,
 
-  -- Valores (calculados a partir dos itens)
-  subtotal numeric(12,2) DEFAULT 0,         -- Soma dos itens antes de descontos
-  desconto_combo numeric(12,2) DEFAULT 0,   -- Desconto de combo (combos_produtos)
-  desconto_cupom numeric(12,2) DEFAULT 0,   -- Desconto de cupom (cupons_promocionais)
-  desconto_pix numeric(12,2) DEFAULT 0,     -- Desconto PIX Ã  vista
+  subtotal numeric(12,2) DEFAULT 0,
+  desconto_combo numeric(12,2) DEFAULT 0,
+  desconto_cupom numeric(12,2) DEFAULT 0,
+  desconto_pix numeric(12,2) DEFAULT 0,
   valor_frete numeric(12,2) DEFAULT 0,
-  valor_total numeric(12,2) DEFAULT 0,      -- Subtotal - descontos + frete
+  valor_total numeric(12,2) DEFAULT 0,
 
-  -- ComissÃ£o (Motor 1)
-  tdtc_total numeric(12,2) DEFAULT 0,       -- Total de comissÃ£o da rede
-  comissao_consultor numeric(12,2) DEFAULT 0, -- Parte do consultor (N0)
+  tdtc_total numeric(12,2) DEFAULT 0,
+  comissao_consultor numeric(12,2) DEFAULT 0,
 
-  -- Pagamento
-  forma_pagamento text,      -- 'pix', 'cartao_credito', 'boleto', 'financiamento'
-  codigo_rastreio text,      -- CÃ³digo de rastreio dos Correios/transportadora
+  forma_pagamento text,
+  codigo_rastreio text,
 
-  -- EndereÃ§o de entrega
   endereco_entrega text,
   cidade_entrega text,
   estado_entrega varchar(2),
   cep_entrega varchar(9),
 
-  -- Cupom aplicado
-  cupom_id uuid, -- FK para cupons_promocionais (01_tenants_config)
-  combo_id uuid, -- FK para combos_produtos (01_tenants_config)
+  cupom_id uuid,
+  combo_id uuid,
 
-  -- Timestamps
   data_pedido timestamptz DEFAULT now(),
   data_pagamento timestamptz,
   data_envio timestamptz,
   data_entrega timestamptz,
   data_cancelamento timestamptz,
 
-  -- Metadados
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_pedidos_cliente ON public.pedidos_loja(cliente_id, status);
-CREATE INDEX idx_pedidos_consultor ON public.pedidos_loja(consultor_id, status);
+CREATE INDEX IF NOT EXISTS idx_pedidos_cliente ON public.pedidos_loja(cliente_id, status);
+CREATE INDEX IF NOT EXISTS idx_pedidos_consultor ON public.pedidos_loja(consultor_id, status);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 3: ITENS DO PEDIDO
--- Cada item Ã© um produto do catÃ¡logo com quantidade e preÃ§o
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.itens_pedido (
+CREATE TABLE IF NOT EXISTS public.itens_pedido (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   pedido_id uuid REFERENCES public.pedidos_loja(id) ON DELETE CASCADE,
   produto_id uuid REFERENCES public.produtos_loja(id),
 
-  -- Dados do item
   sku text NOT NULL,
   nome_produto text NOT NULL,
   categoria public.categoria_produto NOT NULL,
   quantidade integer NOT NULL CHECK (quantidade > 0),
   preco_unitario numeric(12,2) NOT NULL,
-  preco_total numeric(12,2) NOT NULL, -- quantidade Ã— preco_unitario
+  preco_total numeric(12,2) NOT NULL,
 
-  -- EspecificaÃ§Ãµes (snapshot no momento da compra)
   potencia_wp numeric(10,2),
   marca text,
   modelo text,
 
-  -- Metadados
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_itens_pedido ON public.itens_pedido(pedido_id);
+CREATE INDEX IF NOT EXISTS idx_itens_pedido ON public.itens_pedido(pedido_id);
 
 
 -- ==============================================================================
