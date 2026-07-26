@@ -1805,62 +1805,65 @@ CREATE INDEX IF NOT EXISTS idx_fila_gatilho ON public.fila_notificacoes(gatilho)
 -- Enums: api_key_ambiente, webhook_evento_tipo, delivery_status
 -- ==============================================================================
 
-CREATE TYPE public.api_key_ambiente AS ENUM ('test', 'live');
+DO $$ BEGIN
+  CREATE TYPE public.api_key_ambiente AS ENUM ('test', 'live');
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.webhook_evento_tipo AS ENUM (
-  'lead.created', 'lead.updated',
-  'contract.signed', 'contract.canceled',
-  'epc.phase_changed', 'epc.approved',
-  'commission.ready', 'commission.paid',
-  'eco_points.credited', 'eco_points.redeemed',
-  '*' -- Curinga para todos os eventos
-);
+DO $$ BEGIN
+  CREATE TYPE public.webhook_evento_tipo AS ENUM (
+    'lead.created', 'lead.updated',
+    'contract.signed', 'contract.canceled',
+    'epc.phase_changed', 'epc.approved',
+    'commission.ready', 'commission.paid',
+    'eco_points.credited', 'eco_points.redeemed',
+    '*' -- Curinga para todos os eventos
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.delivery_status AS ENUM ('success', 'failed', 'pending');
+DO $$ BEGIN
+  CREATE TYPE public.delivery_status AS ENUM ('success', 'failed', 'pending');
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: API KEYS (Gerenciamento de acesso externo e de IAs)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.api_keys (
+CREATE TABLE IF NOT EXISTS public.api_keys (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  profile_id uuid REFERENCES public.profiles(id), -- Quem criou a chave
+  profile_id uuid REFERENCES public.profiles(id),
 
-  nome text NOT NULL,                    -- Ex: 'IntegraÃ§Ã£o ERP Omie', 'Agente IA'
+  nome text NOT NULL,
   ambiente public.api_key_ambiente NOT NULL,
-  key_prefix text NOT NULL,              -- Ex: 'sk_live_' ou 'sk_test_'
-  key_hash text NOT NULL,                -- Hash SHA-256 do token (nÃ£o guardar plaintext)
-  key_hint text NOT NULL,                -- 4 Ãºltimos caracteres (ex: '...4f8a')
+  key_prefix text NOT NULL,
+  key_hash text NOT NULL,
+  key_hint text NOT NULL,
   
-  -- PermissÃµes (Scopes)
-  scopes jsonb DEFAULT '["read:leads"]', -- Ex: ["read:leads", "write:epc", "agent:meta"]
+  scopes jsonb DEFAULT '["read:leads"]'::jsonb,
   
-  -- SeguranÃ§a e Metadados
   ativo boolean DEFAULT true,
   revogado_em timestamptz,
   ultimo_uso_em timestamptz,
-  expira_em timestamptz,                 -- Opcional
+  expira_em timestamptz,
   
   created_at timestamptz DEFAULT now()
 );
 
-CREATE UNIQUE INDEX idx_api_keys_hash ON public.api_keys(key_hash);
-CREATE INDEX idx_api_keys_tenant ON public.api_keys(tenant_id) WHERE ativo = true;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_api_keys_hash ON public.api_keys(key_hash);
+CREATE INDEX IF NOT EXISTS idx_api_keys_tenant ON public.api_keys(tenant_id) WHERE ativo = true;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 2: WEBHOOK ENDPOINTS (Destinos para notificaÃ§Ãµes HTTP)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.webhooks_endpoints (
+CREATE TABLE IF NOT EXISTS public.webhooks_endpoints (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
 
-  url text NOT NULL,                     -- Destino do POST (ex: n8n, Zapier)
+  url text NOT NULL,
   descricao text,
   ambiente public.api_key_ambiente NOT NULL,
-  eventos public.webhook_evento_tipo[] NOT NULL, -- Array de eventos inscritos
+  eventos public.webhook_evento_tipo[] NOT NULL,
   
-  -- SeguranÃ§a
-  secret_signing_key text NOT NULL,      -- Chave (hmac sha256) gerada para o cliente validar o payload
+  secret_signing_key text NOT NULL,
   ativo boolean DEFAULT true,
   
   created_at timestamptz DEFAULT now(),
@@ -1870,7 +1873,7 @@ CREATE TABLE public.webhooks_endpoints (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 3: WEBHOOK DELIVERIES (Observabilidade e Logs)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.webhook_deliveries (
+CREATE TABLE IF NOT EXISTS public.webhook_deliveries (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   endpoint_id uuid REFERENCES public.webhooks_endpoints(id) ON DELETE CASCADE,
   
@@ -1878,32 +1881,31 @@ CREATE TABLE public.webhook_deliveries (
   payload_enviado jsonb NOT NULL,
   
   status public.delivery_status DEFAULT 'pending',
-  http_status_code smallint,             -- Ex: 200, 400, 500
-  response_body text,                    -- Corpo da resposta do servidor de destino
-  tempo_execucao_ms integer,             -- LatÃªncia
+  http_status_code smallint,
+  response_body text,
+  tempo_execucao_ms integer,
   
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_webhook_deliveries_endpoint ON public.webhook_deliveries(endpoint_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_endpoint ON public.webhook_deliveries(endpoint_id, created_at DESC);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 4: EDGE FUNCTIONS (Custom Code / AutomaÃ§Ãµes Nativas)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.edge_functions (
+CREATE TABLE IF NOT EXISTS public.edge_functions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   autor_id uuid REFERENCES public.profiles(id),
 
-  nome text NOT NULL,                    -- Ex: 'Roteamento Lead MT'
+  nome text NOT NULL,
   descricao text,
   gatilho_evento public.webhook_evento_tipo NOT NULL,
   
-  codigo_ts text NOT NULL,               -- CÃ³digo TypeScript da funÃ§Ã£o
-  ativo boolean DEFAULT false,           -- Requer deploy para ativar
+  codigo_ts text NOT NULL,
+  ativo boolean DEFAULT false,
   ambiente public.api_key_ambiente NOT NULL,
   
-  -- EstatÃ­sticas
   total_invocacoes integer DEFAULT 0,
   taxa_erro_pct numeric(5,2) DEFAULT 0,
   
