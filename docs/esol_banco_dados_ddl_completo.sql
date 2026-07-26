@@ -1920,53 +1920,61 @@ CREATE TABLE public.edge_functions (
 -- Enums: midia_tipo, campanha_status, social_plataforma
 -- ==============================================================================
 
-CREATE TYPE public.midia_tipo AS ENUM ('imagem', 'video', 'pdf', 'svg', 'documento');
-CREATE TYPE public.campanha_status AS ENUM ('rascunho', 'agendada', 'em_execucao', 'pausada', 'concluida', 'cancelada');
-CREATE TYPE public.social_plataforma AS ENUM ('instagram', 'facebook', 'linkedin', 'whatsapp', 'youtube');
+DO $$ BEGIN
+  CREATE TYPE public.midia_tipo AS ENUM ('imagem', 'video', 'pdf', 'svg', 'documento');
+EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE public.campanha_status AS ENUM ('rascunho', 'agendada', 'em_execucao', 'pausada', 'concluida', 'cancelada');
+EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE public.social_plataforma AS ENUM ('instagram', 'facebook', 'linkedin', 'whatsapp', 'youtube');
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: ASSETS DIGITAIS E MÃDIAS (Digital Asset Management - DAM)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.midias_arquivos (
+CREATE TABLE IF NOT EXISTS public.midias_arquivos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  autor_id uuid REFERENCES public.profiles(id),  -- Designer responsÃ¡vel
+  autor_id uuid REFERENCES public.profiles(id),
   
   titulo text NOT NULL,
   descricao text,
   tipo public.midia_tipo NOT NULL,
-  url_arquivo text NOT NULL,                     -- URL do Storage (Supabase/S3)
-  resolucao text,                                -- Ex: '1920x1080'
+  url_arquivo text NOT NULL,
+  resolucao text,
   tamanho_bytes bigint,
-  tags text[],                                   -- Ex: ['banner', 'promocao', 'site']
+  tags text[],
   
-  aprovado boolean DEFAULT false,                -- Fluxo de aprovaÃ§Ã£o do Diretor
+  aprovado boolean DEFAULT false,
   aprovado_por uuid REFERENCES public.profiles(id),
   
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_midias_tags ON public.midias_arquivos USING GIN (tags);
+CREATE INDEX IF NOT EXISTS idx_midias_tags ON public.midias_arquivos USING GIN (tags);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 2: MATERIAIS PARA CONSULTORES (MuniÃ§Ã£o de Venda)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.materiais_consultor (
+CREATE TABLE IF NOT EXISTS public.materiais_consultor (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   midia_id uuid REFERENCES public.midias_arquivos(id) ON DELETE CASCADE,
   
   titulo text NOT NULL,
-  categoria text NOT NULL,                       -- Ex: 'Stories Insta', 'Panfleto PDF'
-  texto_copy_sugerido text,                      -- Texto base para o consultor colar na rede social
+  categoria text NOT NULL,
+  texto_copy_sugerido text,
   
-  permite_co_branding boolean DEFAULT true,      -- Se true, o App estampa a foto e QR Code do consultor
-  coordenadas_qr_code jsonb,                     -- Onde colar o QR Code na imagem {x: 100, y: 800, size: 200}
-  coordenadas_foto jsonb,                        -- Onde colar a foto do perfil
+  permite_co_branding boolean DEFAULT true,
+  coordenadas_qr_code jsonb,
+  coordenadas_foto jsonb,
   
   ativo boolean DEFAULT true,
-  downloads_totais integer DEFAULT 0,            -- Engajamento da rede
+  downloads_totais integer DEFAULT 0,
   
   created_at timestamptz DEFAULT now()
 );
@@ -1974,18 +1982,18 @@ CREATE TABLE public.materiais_consultor (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 3: INTEGRAÃ‡Ã•ES SOCIAIS (SMM - Social Media Management)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.social_integrations (
+CREATE TABLE IF NOT EXISTS public.social_integrations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   
   plataforma public.social_plataforma NOT NULL,
-  nome_conta text NOT NULL,                      -- Ex: 'Esol Energy Oficial (@esolenergy)'
+  nome_conta text NOT NULL,
   
-  access_token text NOT NULL,                    -- Oauth Token (idealmente encriptado via pgcrypto na prÃ¡tica)
+  access_token text NOT NULL,
   refresh_token text,
   token_expires_at timestamptz,
   
-  page_id text,                                  -- ID da pÃ¡gina no FB/LinkedIn
+  page_id text,
   ativo boolean DEFAULT true,
   
   created_at timestamptz DEFAULT now(),
@@ -1995,21 +2003,20 @@ CREATE TABLE public.social_integrations (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 4: CAMPANHAS DE MARKETING E DISPAROS OMNICHANNEL
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.campanhas_marketing (
+CREATE TABLE IF NOT EXISTS public.campanhas_marketing (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  midia_id uuid REFERENCES public.midias_arquivos(id), -- Arte vinculada
+  midia_id uuid REFERENCES public.midias_arquivos(id),
   
   nome text NOT NULL,
-  conteudo_texto text NOT NULL,                  -- Copy do post
+  conteudo_texto text NOT NULL,
   status public.campanha_status DEFAULT 'rascunho',
   
-  canais_publicacao public.social_plataforma[],  -- Onde publicar (Array)
+  canais_publicacao public.social_plataforma[],
   
-  agendado_para timestamptz,                     -- Quando publicar
-  publicado_em timestamptz,                      -- ConfirmaÃ§Ã£o de publicaÃ§Ã£o
+  agendado_para timestamptz,
+  publicado_em timestamptz,
   
-  -- MÃ©tricas agregadas de retorno (opcional p/ relatÃ³rios de Growth)
   total_likes integer DEFAULT 0,
   total_compartilhamentos integer DEFAULT 0,
   total_cliques integer DEFAULT 0,
@@ -2018,7 +2025,7 @@ CREATE TABLE public.campanhas_marketing (
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_campanhas_agendamento ON public.campanhas_marketing(agendado_para) WHERE status = 'agendada';
+CREATE INDEX IF NOT EXISTS idx_campanhas_agendamento ON public.campanhas_marketing(agendado_para) WHERE status = 'agendada';
 
 
 -- ==============================================================================
