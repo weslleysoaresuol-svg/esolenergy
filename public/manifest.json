@@ -1,0 +1,26 @@
+{
+  "name": "Esol Energy - Plataforma Solar & MMN",
+  "short_name": "Esol Energy",
+  "description": "Plataforma Solar, Mercado Livre de Energia e Gestão MMN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0b1329",
+  "background_color": "#030712",
+  "categories": ["business", "finance", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
