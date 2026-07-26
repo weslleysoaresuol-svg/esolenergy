@@ -2781,20 +2781,19 @@ CREATE INDEX IF NOT EXISTS idx_dict_skus_categoria ON public.dict_fornecedores_s
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- 1. ENABLE RLS: ATIVAÃ‡ÃƒO DE ROW LEVEL SECURITY EM TODAS AS TABELAS
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
--- O default do PostgreSQL Ã© permitir acesso. Habilitar o RLS muda para "Deny-by-Default".
--- NinguÃ©m acessa nada a menos que uma Policy libere explicitamente.
 
-ALTER TABLE public.clientes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.historico_comissoes_mmn ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tickets_atendimento ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.ledger_lancamentos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.clientes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.historico_comissoes_mmn ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.tickets_atendimento ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.ledger_lancamentos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- 2. POLÃTICAS DE ROTEAMENTO (PrevenÃ§Ã£o BOLA/IDOR)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 -- 2.1 TABELA: clientes
--- REGRA: Um consultor sÃ³ pode ver os clientes atribuÃ­dos a ele mesmo.
+DROP POLICY IF EXISTS "consultor_visualiza_proprios_clientes" ON public.clientes;
 CREATE POLICY "consultor_visualiza_proprios_clientes" 
 ON public.clientes
 FOR SELECT
@@ -2805,7 +2804,7 @@ USING (
   auth.jwt() ->> 'role' IN ('admin', 'lider_mmn_regional')
 );
 
--- REGRA: Um consultor NÃƒO pode atualizar o status de um cliente de outro corretor.
+DROP POLICY IF EXISTS "consultor_atualiza_proprios_clientes" ON public.clientes;
 CREATE POLICY "consultor_atualiza_proprios_clientes" 
 ON public.clientes
 FOR UPDATE
@@ -2818,7 +2817,7 @@ WITH CHECK (
 );
 
 -- 2.2 TABELA: tickets_atendimento
--- REGRA: O solicitante vÃª seus prÃ³prios tickets, o atendente vÃª os tickets atribuÃ­dos a ele.
+DROP POLICY IF EXISTS "visualizacao_isolada_tickets" ON public.tickets_atendimento;
 CREATE POLICY "visualizacao_isolada_tickets" 
 ON public.tickets_atendimento
 FOR SELECT
@@ -2836,23 +2835,21 @@ USING (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 -- 3.1 TABELA: historico_comissoes_mmn (SAQUES)
--- REGRA: O consultor pode inserir um pedido de SAQUE, MAS APENAS se o JWT
--- conter a flag AAL2 (Authenticator Assurance Level 2), provando o uso do Google Auth (TOTP/Passkeys).
-
+DROP POLICY IF EXISTS "saque_comissao_exige_mfa" ON public.historico_comissoes_mmn;
 CREATE POLICY "saque_comissao_exige_mfa"
 ON public.historico_comissoes_mmn
 FOR INSERT
 TO authenticated
 WITH CHECK (
-  auth.uid() = consultor_id -- Impede saque para terceiros (IDOR)
+  auth.uid() = consultor_id 
   AND 
   tipo_movimentacao = 'saque'
   AND 
-  (auth.jwt()->>'aal') = 'aal2' -- <- EXIGÃŠNCIA SOC 2: MFA ObrigatÃ³rio para transaÃ§Ãµes
+  (auth.jwt()->>'aal') = 'aal2'
 );
 
 -- 3.2 TABELA: profiles (ALTERAÃ‡ÃƒO DE CHAVE PIX)
--- REGRA: Alterar dados bancÃ¡rios ou PIX exige MFA AAL2.
+DROP POLICY IF EXISTS "alteracao_pix_exige_mfa" ON public.profiles;
 CREATE POLICY "alteracao_pix_exige_mfa"
 ON public.profiles
 FOR UPDATE
@@ -2864,7 +2861,6 @@ WITH CHECK (
   id = auth.uid()
   AND 
   (
-    -- Se a chave pix nova for diferente da velha, exige MFA
     (NEW.chave_pix_hash IS DISTINCT FROM OLD.chave_pix_hash AND (auth.jwt()->>'aal') = 'aal2')
     OR
     (NEW.chave_pix_hash IS NOT DISTINCT FROM OLD.chave_pix_hash)
