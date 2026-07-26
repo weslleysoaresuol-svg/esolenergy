@@ -1370,153 +1370,141 @@ CREATE TRIGGER trg_projeto_epc_comissao_mmn
 -- Enums: tipo_servico, status_ordem_servico, status_agendamento
 -- ==============================================================================
 
--- Tipos de serviÃ§o que a Esol oferece no pÃ³s-venda
-CREATE TYPE public.tipo_servico AS ENUM (
-  'limpeza_paineis',        -- Categoria #7 â€” Lavagem quÃ­mica/fÃ­sica especializada
-  'manutencao_corretiva',   -- Categoria #6 â€” Reparo/substituiÃ§Ã£o de componentes
-  'manutencao_preventiva',  -- Categoria #6 â€” Vistoria periÃ³dica programada
-  'vistoria_tecnica',       -- InspeÃ§Ã£o tÃ©cnica obrigatÃ³ria (Selo Verde)
-  'troca_inversor',         -- SubstituiÃ§Ã£o de inversor com garantia
-  'monitoramento_iot',      -- Categoria #5 â€” InstalaÃ§Ã£o/manutenÃ§Ã£o de SaaS IoT
-  'reativacao_sistema',     -- ReativaÃ§Ã£o apÃ³s sinistro/desligamento
-  'retrofit_modulos'        -- Upgrade de mÃ³dulos para maior eficiÃªncia
-);
+DO $$ BEGIN
+  CREATE TYPE public.tipo_servico AS ENUM (
+    'limpeza_paineis',        -- Categoria #7 â€” Lavagem quÃ­mica/fÃ­sica especializada
+    'manutencao_corretiva',   -- Categoria #6 â€” Reparo/substituiÃ§Ã£o de componentes
+    'manutencao_preventiva',  -- Categoria #6 â€” Vistoria periÃ³dica programada
+    'vistoria_tecnica',       -- InspeÃ§Ã£o tÃ©cnica obrigatÃ³ria (Selo Verde)
+    'troca_inversor',         -- SubstituiÃ§Ã£o de inversor com garantia
+    'monitoramento_iot',      -- Categoria #5 â€” InstalaÃ§Ã£o/manutenÃ§Ã£o de SaaS IoT
+    'reativacao_sistema',     -- ReativaÃ§Ã£o apÃ³s sinistro/desligamento
+    'retrofit_modulos'        -- Upgrade de mÃ³dulos para maior eficiÃªncia
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.status_ordem_servico AS ENUM (
-  'aberta',                 -- SolicitaÃ§Ã£o recebida, aguardando triagem
-  'triagem',                -- Em anÃ¡lise pela equipe tÃ©cnica
-  'agendada',               -- Data e tÃ©cnico atribuÃ­dos
-  'em_andamento',           -- TÃ©cnico em campo executando
-  'checklist_pendente',     -- ServiÃ§o concluÃ­do, fotos pendentes
-  'concluida',              -- Checklist aprovado, serviÃ§o finalizado
-  'cancelada'               -- Cancelada pelo cliente ou admin
-);
+DO $$ BEGIN
+  CREATE TYPE public.status_ordem_servico AS ENUM (
+    'aberta',                 -- SolicitaÃ§Ã£o recebida, aguardando triagem
+    'triagem',                -- Em anÃ¡lise pela equipe tÃ©cnica
+    'agendada',               -- Data e tÃ©cnico atribuÃ­dos
+    'em_andamento',           -- TÃ©cnico em campo executando
+    'checklist_pendente',     -- ServiÃ§o concluÃ­do, fotos pendentes
+    'concluida',              -- Checklist aprovado, serviÃ§o finalizado
+    'cancelada'               -- Cancelada pelo cliente ou admin
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.status_agendamento AS ENUM (
-  'pendente',               -- Aguardando confirmaÃ§Ã£o do tÃ©cnico
-  'confirmado',             -- TÃ©cnico confirmou presenÃ§a
-  'em_rota',                -- TÃ©cnico a caminho (GPS ativo)
-  'no_local',               -- TÃ©cnico chegou ao endereÃ§o
-  'finalizado',             -- Visita concluÃ­da
-  'reagendado',             -- Cliente solicitou nova data
-  'no_show'                 -- TÃ©cnico ou cliente nÃ£o compareceu
-);
+DO $$ BEGIN
+  CREATE TYPE public.status_agendamento AS ENUM (
+    'pendente',               -- Aguardando confirmaÃ§Ã£o do tÃ©cnico
+    'confirmado',             -- TÃ©cnico confirmou presenÃ§a
+    'em_rota',                -- TÃ©cnico a caminho (GPS ativo)
+    'no_local',               -- TÃ©cnico chegou ao endereÃ§o
+    'finalizado',             -- Visita concluÃ­da
+    'reagendado',             -- Cliente solicitou nova data
+    'no_show'                 -- TÃ©cnico ou cliente nÃ£o compareceu
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: ORDENS DE SERVIÃ‡O (O&M, Limpeza, Vistoria)
--- Cada ordem representa um serviÃ§o solicitado por um cliente
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.ordens_servico (
+CREATE TABLE IF NOT EXISTS public.ordens_servico (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
-  consultor_id uuid REFERENCES public.profiles(id), -- Consultor que vendeu o serviÃ§o
-  tecnico_id uuid REFERENCES public.profiles(id),   -- TÃ©cnico/instalador atribuÃ­do
+  consultor_id uuid REFERENCES public.profiles(id),
+  tecnico_id uuid REFERENCES public.profiles(id),
 
-  -- Dados do serviÃ§o
   tipo public.tipo_servico NOT NULL,
   status public.status_ordem_servico DEFAULT 'aberta' NOT NULL,
-  numero_ordem text NOT NULL, -- Ex: 'OS-2026-0001' (gerado pelo sistema)
-  descricao text,             -- DescriÃ§Ã£o do problema ou serviÃ§o solicitado
-  prioridade smallint DEFAULT 2 CHECK (prioridade BETWEEN 1 AND 3), -- 1=urgente, 2=normal, 3=baixa
+  numero_ordem text NOT NULL,
+  descricao text,
+  prioridade smallint DEFAULT 2 CHECK (prioridade BETWEEN 1 AND 3),
 
-  -- EndereÃ§o do serviÃ§o (pode diferir do cadastro do cliente)
   endereco_servico text,
   cidade_servico text,
   estado_servico varchar(2),
   latitude numeric(10,7),
   longitude numeric(10,7),
 
-  -- Custos e comissÃ£o (Motor 1 â€” Categoria #6/#7)
   custo_materiais numeric(12,2) DEFAULT 0,
   custo_mao_obra numeric(12,2) DEFAULT 0,
   custo_deslocamento numeric(12,2) DEFAULT 0,
   preco_cobrado_cliente numeric(12,2) DEFAULT 0,
-  comissao_consultor numeric(12,2) DEFAULT 0, -- Motor 1 (TDTC% Ã— preÃ§o)
+  comissao_consultor numeric(12,2) DEFAULT 0,
 
-  -- Checklist fotogrÃ¡fico (como no EPC â€” Fase 3)
-  fotos_antes jsonb DEFAULT '[]', -- URLs das fotos antes do serviÃ§o
-  fotos_depois jsonb DEFAULT '[]', -- URLs das fotos depois do serviÃ§o
+  fotos_antes jsonb DEFAULT '[]'::jsonb,
+  fotos_depois jsonb DEFAULT '[]'::jsonb,
   checklist_aprovado boolean DEFAULT false,
 
-  -- Equipamento relacionado (se aplicÃ¡vel)
-  projeto_epc_id uuid, -- ReferÃªncia ao projeto EPC original (se houver)
-  equipamento_descricao text, -- Ex: 'Inversor Deye SUN-5K-SG04LP3-EU S/N: 123456'
+  projeto_epc_id uuid,
+  equipamento_descricao text,
 
-  -- SLA (Service Level Agreement)
-  sla_prazo_dias integer DEFAULT 7, -- Prazo mÃ¡ximo para conclusÃ£o
+  sla_prazo_dias integer DEFAULT 7,
   data_solicitacao timestamptz DEFAULT now(),
   data_agendamento timestamptz,
   data_inicio_servico timestamptz,
   data_conclusao timestamptz,
 
-  -- Metadados
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
--- Ãndices de performance
-CREATE INDEX idx_os_cliente ON public.ordens_servico(cliente_id, status);
-CREATE INDEX idx_os_tecnico ON public.ordens_servico(tecnico_id, status);
-CREATE INDEX idx_os_tipo ON public.ordens_servico(tipo);
+CREATE INDEX IF NOT EXISTS idx_os_cliente ON public.ordens_servico(cliente_id, status);
+CREATE INDEX IF NOT EXISTS idx_os_tecnico ON public.ordens_servico(tecnico_id, status);
+CREATE INDEX IF NOT EXISTS idx_os_tipo ON public.ordens_servico(tipo);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 2: AGENDAMENTOS TÃ‰CNICOS
--- Controla a agenda de visitas dos tÃ©cnicos em campo
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.agendamentos_tecnicos (
+CREATE TABLE IF NOT EXISTS public.agendamentos_tecnicos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   ordem_servico_id uuid REFERENCES public.ordens_servico(id) ON DELETE CASCADE,
   tecnico_id uuid REFERENCES public.profiles(id) NOT NULL,
   cliente_id uuid REFERENCES public.clientes(id) NOT NULL,
 
-  -- Agendamento
   data_agendada date NOT NULL,
   hora_inicio time NOT NULL,
   hora_fim_estimada time,
   status public.status_agendamento DEFAULT 'pendente' NOT NULL,
 
-  -- LocalizaÃ§Ã£o em tempo real (para "em_rota" e "no_local")
   latitude_checkin numeric(10,7),
   longitude_checkin numeric(10,7),
   hora_checkin timestamptz,
   hora_checkout timestamptz,
 
-  -- ObservaÃ§Ãµes
   notas_tecnico text,
   notas_cliente text,
 
-  -- Metadados
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_agendamento_tecnico_data ON public.agendamentos_tecnicos(tecnico_id, data_agendada);
-CREATE INDEX idx_agendamento_cliente ON public.agendamentos_tecnicos(cliente_id, data_agendada);
+CREATE INDEX IF NOT EXISTS idx_agendamento_tecnico_data ON public.agendamentos_tecnicos(tecnico_id, data_agendada);
+CREATE INDEX IF NOT EXISTS idx_agendamento_cliente ON public.agendamentos_tecnicos(cliente_id, data_agendada);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 3: AVALIAÃ‡Ã•ES DE SERVIÃ‡O (NPS & Feedback)
--- O cliente avalia o serviÃ§o apÃ³s conclusÃ£o da OS
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.avaliacoes_servico (
+CREATE TABLE IF NOT EXISTS public.avaliacoes_servico (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   ordem_servico_id uuid REFERENCES public.ordens_servico(id) ON DELETE CASCADE,
   cliente_id uuid REFERENCES public.clientes(id) NOT NULL,
   tecnico_id uuid REFERENCES public.profiles(id),
 
-  -- AvaliaÃ§Ã£o
-  nota smallint NOT NULL CHECK (nota BETWEEN 1 AND 5), -- 1=pÃ©ssimo ... 5=excelente
-  nps smallint CHECK (nps BETWEEN 0 AND 10),           -- Net Promoter Score (0-10)
+  nota smallint NOT NULL CHECK (nota BETWEEN 1 AND 5),
+  nps smallint CHECK (nps BETWEEN 0 AND 10),
   comentario text,
   recomendaria boolean DEFAULT true,
 
-  -- Metadados
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_avaliacoes_tecnico ON public.avaliacoes_servico(tecnico_id);
+CREATE INDEX IF NOT EXISTS idx_avaliacoes_tecnico ON public.avaliacoes_servico(tecnico_id);
 
 
 -- ==============================================================================
