@@ -68,3 +68,6 @@ verify_jwt = false
 
 [functions.esol-sign-vault]
 verify_jwt = false
+
+[functions.enotas-nfe-client]
+verify_jwt = false
