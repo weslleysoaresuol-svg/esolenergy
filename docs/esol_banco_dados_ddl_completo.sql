@@ -601,34 +601,42 @@ CREATE TABLE IF NOT EXISTS public.carteira_energia (
 
 
 -- ==============================================================================
--- ✍️ MÓDULO 06: ESOL SIGN — ASSINATURAS ELETRÔNICAS, KYC & MINUTAS JURÍDICAS
+-- âœï¸ MÃ“DULO 06: ESOL SIGN â€” ASSINATURAS ELETRÃ”NICAS, KYC & MINUTAS JURÃDICAS
 -- Ecossistema: Esol Energy | Banco: Supabase (PostgreSQL 15+)
--- Dependências: 01_tenants_config.sql, 02_identidade_rbac.sql
+-- DependÃªncias: 01_tenants_config.sql, 02_identidade_rbac.sql
 -- Tabelas: assinaturas_digitais, documentos_minutas_juridicas
 -- Enums: documento_categoria, kyc_status
 -- Base Legal: MP 2.200-2/2001 e Lei 14.063/2020
 -- ==============================================================================
 
-CREATE TYPE public.documento_categoria AS ENUM (
-  'contrato_parceria',
-  'renovacao_termo_parceria', -- Esol Re-Sign (Renovação Anual & Prova de Vida)
-  'termo_compromisso_equipe',
-  'proposta_solar_turnkey',
-  'adesao_gd',
-  'denuncia_contrato_mle',
-  'distrato_cancelamento'
-);
+DO $$ BEGIN
+  CREATE TYPE public.documento_categoria AS ENUM (
+    'contrato_parceria',
+    'renovacao_termo_parceria', -- Esol Re-Sign (RenovaÃ§Ã£o Anual & Prova de Vida)
+    'termo_compromisso_equipe',
+    'proposta_solar_turnkey',
+    'adesao_gd',
+    'denuncia_contrato_mle',
+    'distrato_cancelamento'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TYPE public.kyc_status AS ENUM ('pending', 'approved', 'rejected', 'bypass');
+DO $$ BEGIN
+  CREATE TYPE public.kyc_status AS ENUM ('pending', 'approved', 'rejected', 'bypass');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TABLE public.assinaturas_digitais (
+CREATE TABLE IF NOT EXISTS public.assinaturas_digitais (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
-  user_id uuid REFERENCES auth.users(id), -- Signatário
+  user_id uuid REFERENCES auth.users(id), -- SignatÃ¡rio
   tipo_documento public.documento_categoria NOT NULL,
-  referencia_id uuid NOT NULL, -- Link genérico (propostas, clientes, carteira)
+  referencia_id uuid NOT NULL, -- Link genÃ©rico (propostas, clientes, carteira)
   conteudo_hash text NOT NULL, -- SHA-256 do contrato
-  assinatura_url text NOT NULL, -- Assinatura física desenhada
+  assinatura_url text NOT NULL, -- Assinatura fÃ­sica desenhada
   selfie_url text, -- Selfie KYC
   documento_frente_url text,
   documento_verso_url text,
@@ -642,17 +650,17 @@ CREATE TABLE public.assinaturas_digitais (
   created_at timestamptz DEFAULT now()
 );
 
--- Central de Governança Jurídica (Esol Legal & Compliance Vault)
-CREATE TABLE public.documentos_minutas_juridicas (
+-- Central de GovernanÃ§a JurÃ­dica (Esol Legal & Compliance Vault)
+CREATE TABLE IF NOT EXISTS public.documentos_minutas_juridicas (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   categoria public.documento_categoria NOT NULL,
-  titulo text NOT NULL, -- Ex: 'Termo de Parceria Comercial Autônoma MMN'
+  titulo text NOT NULL, -- Ex: 'Termo de Parceria Comercial AutÃ´noma MMN'
   versao text NOT NULL, -- Ex: 'v2.1'
-  descricao_alteracoes text, -- Notação do advogado sobre o que mudou
+  descricao_alteracoes text, -- NotaÃ§Ã£o do advogado sobre o que mudou
   arquivo_url text, -- PDF/DOCX original no Supabase Storage
   conteudo_template text NOT NULL, -- Template HTML/Markdown com tags {{VARIAVEIS}}
-  hash_sha256 text NOT NULL, -- Digest do conteúdo da minuta
+  hash_sha256 text NOT NULL, -- Digest do conteÃºdo da minuta
   status text DEFAULT 'rascunho' NOT NULL, -- 'rascunho', 'ativa', 'arquivada'
   exige_reaceite boolean DEFAULT false,
   criado_por_id uuid REFERENCES public.profiles(id),
@@ -779,7 +787,7 @@ CREATE TRIGGER trg_gerar_hash_lancamento
 -- Tabelas: distratos_conformidade
 -- ==============================================================================
 
-CREATE TABLE public.distratos_conformidade (
+CREATE TABLE IF NOT EXISTS public.distratos_conformidade (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   carteira_energia_id uuid REFERENCES public.carteira_energia(id) ON DELETE CASCADE,
