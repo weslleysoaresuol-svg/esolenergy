@@ -387,7 +387,7 @@ CREATE TRIGGER on_auth_user_created
 -- Ãndices: idx_rede_mmn_path (GiST)
 -- ==============================================================================
 
-CREATE TABLE public.rede_mmn (
+CREATE TABLE IF NOT EXISTS public.rede_mmn (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   usuario_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE UNIQUE,
   patrocinador_id uuid REFERENCES public.profiles(id),
@@ -396,7 +396,7 @@ CREATE TABLE public.rede_mmn (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_rede_mmn_path ON public.rede_mmn USING gist(path);
+CREATE INDEX IF NOT EXISTS idx_rede_mmn_path ON public.rede_mmn USING gist(path);
 
 
 -- ==============================================================================
@@ -407,45 +407,57 @@ CREATE INDEX idx_rede_mmn_path ON public.rede_mmn USING gist(path);
 -- Enums: cliente_status_tipo, persona_tipo, status_distribuicao_tipo
 -- ==============================================================================
 
-CREATE TYPE public.cliente_status_tipo AS ENUM (
-  'novo',
-  'contato',
-  'visita_agendada',
-  'proposta_enviada',
-  'negociacao',
-  'contrato_assinado',
-  'instalacao',
-  'concluido',
-  'perdido'
-);
+DO $$ BEGIN
+  CREATE TYPE public.cliente_status_tipo AS ENUM (
+    'novo',
+    'contato',
+    'visita_agendada',
+    'proposta_enviada',
+    'negociacao',
+    'contrato_assinado',
+    'instalacao',
+    'concluido',
+    'perdido'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Estado do Motor de Roteamento de Leads
-CREATE TYPE public.status_distribuicao_tipo AS ENUM (
-  'capturado_site',           -- Lead acabou de entrar no funil
-  'plantao_adm',              -- Caiu na madrugada, equipe interna segura
-  'aguardando_gotejamento',   -- Na fila das 08:00 para Throttling
-  'oferecido_consultor',      -- SLA de 30m estÃ¡ correndo
-  'assumido_consultor',       -- Consultor clicou em 'Atender' no App
-  'perdido_sla',              -- Consultor nÃ£o atendeu em 30m
-  'assumido_adm'              -- NinguÃ©m atendeu, AdministraÃ§Ã£o assumiu a venda
-);
+DO $$ BEGIN
+  CREATE TYPE public.status_distribuicao_tipo AS ENUM (
+    'capturado_site',           -- Lead acabou de entrar no funil
+    'plantao_adm',              -- Caiu na madrugada, equipe interna segura
+    'aguardando_gotejamento',   -- Na fila das 08:00 para Throttling
+    'oferecido_consultor',      -- SLA de 30m estÃ¡ correndo
+    'assumido_consultor',       -- Consultor clicou em 'Atender' no App
+    'perdido_sla',              -- Consultor nÃ£o atendeu em 30m
+    'assumido_adm'              -- NinguÃ©m atendeu, AdministraÃ§Ã£o assumiu a venda
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Persona do Cockpit de Vendas (SeÃ§Ã£o 5.6 do Mapa)
-CREATE TYPE public.persona_tipo AS ENUM (
-  'A',  -- Residencial PrÃ³prio (quer zerar a luz)
-  'B',  -- Inquilino / Alugado (sem obra â†’ GD Assinatura)
-  'C',  -- PME & IndÃºstria Grupo A (OPEX â†’ MLE)
-  'D',  -- Investidor Solar B2B (rentabilidade â†’ Usina)
-  'E',  -- Dono de Usina Existente (manutenÃ§Ã£o â†’ O&M + Limpeza)
-  'F',  -- Dono de Lote/Terreno (mÂ² â†’ Simulador DinÃ¢mico)
-  'G',  -- Baterias & Nobreak BESS (proteÃ§Ã£o contra apagÃµes)
-  'H',  -- Sobra de CrÃ©ditos Solares (vender excedente â†’ Shared Grid)
-  'I',  -- Comprador de Kits Prontos/Customizados (Integrador)
-  'J'   -- Comprador A La Carte de Componentes & EV Chargers
-);
+DO $$ BEGIN
+  CREATE TYPE public.persona_tipo AS ENUM (
+    'A',  -- Residencial PrÃ³prio (quer zerar a luz)
+    'B',  -- Inquilino / Alugado (sem obra â†’ GD Assinatura)
+    'C',  -- PME & IndÃºstria Grupo A (OPEX â†’ MLE)
+    'D',  -- Investidor Solar B2B (rentabilidade â†’ Usina)
+    'E',  -- Dono de Usina Existente (manutenÃ§Ã£o â†’ O&M + Limpeza)
+    'F',  -- Dono de Lote/Terreno (mÂ² â†’ Simulador DinÃ¢mico)
+    'G',  -- Baterias & Nobreak BESS (proteÃ§Ã£o contra apagÃµes)
+    'H',  -- Sobra de CrÃ©ditos Solares (vender excedente â†’ Shared Grid)
+    'I',  -- Comprador de Kits Prontos/Customizados (Integrador)
+    'J'   -- Comprador A La Carte de Componentes & EV Chargers
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Tabela Central de Clientes/Leads
-CREATE TABLE public.clientes (
+CREATE TABLE IF NOT EXISTS public.clientes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   corretor_id uuid REFERENCES public.profiles(id), -- Quem estÃ¡ atendendo agora
@@ -484,7 +496,7 @@ CREATE TABLE public.clientes (
 );
 
 -- Esol Scheduler: Tabela de ReuniÃµes (Alternativa ao Calendly)
-CREATE TABLE public.crm_agendamentos (
+CREATE TABLE IF NOT EXISTS public.crm_agendamentos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
   consultor_id uuid REFERENCES public.profiles(id), -- Pode ser Nulo se estiver no PlantÃ£o ADM
@@ -501,7 +513,7 @@ CREATE TABLE public.crm_agendamentos (
 );
 
 -- Logs de Penalidade e Roteamento (HistÃ³rico de RejeiÃ§Ãµes por SLA)
-CREATE TABLE public.lead_routing_logs (
+CREATE TABLE IF NOT EXISTS public.lead_routing_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   cliente_id uuid REFERENCES public.clientes(id) ON DELETE CASCADE,
   consultor_rejeitado_id uuid REFERENCES public.profiles(id),
@@ -526,35 +538,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_lead_capturado_trigger ON public.clientes;
 CREATE TRIGGER trg_lead_capturado_trigger
 BEFORE INSERT ON public.clientes
 FOR EACH ROW EXECUTE FUNCTION trg_lead_capturado();
 
-
 -- Ãndices de Alta Performance
-CREATE INDEX idx_agendamentos_consultor ON public.crm_agendamentos(consultor_id, data_hora_inicio);
-CREATE INDEX idx_clientes_sla ON public.clientes(status_distribuicao, hora_fim_sla);
-
--- ==============================================================================
--- ðŸ“… PG_CRON: SIMULAÃ‡ÃƒO DA ARQUITETURA DE THROTTLING MATINAL
--- ==============================================================================
-/*
-  O Throttling Matinal (Gotejamento) impede a pane no servidor Ã s 08:00.
-  SELECT cron.schedule('morning_drip_cron', '* 8 * * *', $$
-    UPDATE public.clientes 
-    SET status_distribuicao = 'capturado_site'
-    WHERE id IN (
-      SELECT id FROM public.clientes WHERE status_distribuicao = 'plantao_adm' ORDER BY horario_captura ASC LIMIT 1
-    );
-  $$);
-
-  O SLA Fiscalizador Roda a cada 5 Minutos:
-  SELECT cron.schedule('sla_30m_police', '*/5 * * * *', $$
-    UPDATE public.clientes 
-    SET status_distribuicao = 'perdido_sla', corretor_id = NULL
-    WHERE status_distribuicao = 'oferecido_consultor' AND hora_fim_sla < now();
-  $$);
-*/
+CREATE INDEX IF NOT EXISTS idx_agendamentos_consultor ON public.crm_agendamentos(consultor_id, data_hora_inicio);
+CREATE INDEX IF NOT EXISTS idx_clientes_sla ON public.clientes(status_distribuicao, hora_fim_sla);
 
 
 -- ==============================================================================
