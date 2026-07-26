@@ -28,7 +28,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Enums: regime_tributario_enum, cupom_tipo_desconto
 -- ==============================================================================
 
-CREATE TABLE public.tenants (
+CREATE TABLE IF NOT EXISTS public.tenants (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   nome_fantasia text NOT NULL,
   razao_social text NOT NULL,
@@ -40,15 +40,19 @@ CREATE TABLE public.tenants (
 );
 
 -- ConfiguraÃ§Ã£o TributÃ¡ria DinÃ¢mica e MigraÃ§Ã£o de CNPJ (MEI -> ME -> EPP -> LTDA)
-CREATE TYPE public.regime_tributario_enum AS ENUM (
-  'mei',                     -- Microempreendedor Individual (AtÃ© R$ 81k)
-  'simples_nacional_me',     -- Microempresa (AtÃ© R$ 360k)
-  'simples_nacional_epp',    -- Empresa de Pequeno Porte (AtÃ© R$ 4,8M)
-  'lucro_presumido',         -- Lucro Presumido (AtÃ© R$ 78M)
-  'lucro_real'               -- Lucro Real (Grande Porte)
-);
+DO $$ BEGIN
+  CREATE TYPE public.regime_tributario_enum AS ENUM (
+    'mei',                     -- Microempreendedor Individual (AtÃ© R$ 81k)
+    'simples_nacional_me',     -- Microempresa (AtÃ© R$ 360k)
+    'simples_nacional_epp',    -- Empresa de Pequeno Porte (AtÃ© R$ 4,8M)
+    'lucro_presumido',         -- Lucro Presumido (AtÃ© R$ 78M)
+    'lucro_real'               -- Lucro Real (Grande Porte)
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TABLE public.config_tributaria_tenant (
+CREATE TABLE IF NOT EXISTS public.config_tributaria_tenant (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE UNIQUE,
   regime_atual public.regime_tributario_enum DEFAULT 'mei' NOT NULL,
@@ -60,7 +64,7 @@ CREATE TABLE public.config_tributaria_tenant (
 );
 
 -- Tabela de Monitoramento de SaÃºde do Overhead Administrativo (Dashboard dos Donos)
-CREATE TABLE public.config_overhead_dashboard (
+CREATE TABLE IF NOT EXISTS public.config_overhead_dashboard (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE UNIQUE,
   overhead_percentual_padrao numeric(5, 2) DEFAULT 5.00 NOT NULL,
@@ -70,9 +74,13 @@ CREATE TABLE public.config_overhead_dashboard (
 );
 
 -- Tabela de GestÃ£o de Cupons Promocionais e Descontos
-CREATE TYPE public.cupom_tipo_desconto AS ENUM ('porcentagem', 'valor_fixo');
+DO $$ BEGIN
+  CREATE TYPE public.cupom_tipo_desconto AS ENUM ('porcentagem', 'valor_fixo');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TABLE public.cupons_promocionais (
+CREATE TABLE IF NOT EXISTS public.cupons_promocionais (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   codigo text NOT NULL UNIQUE, -- Ex: 'SOLAR5', 'CLIENTEVIP', 'INSPECAO100'
@@ -89,7 +97,7 @@ CREATE TABLE public.cupons_promocionais (
 );
 
 -- Tabela de ConfiguraÃ§Ã£o de Combos e Venda Casada Transparente (Cross-Selling)
-CREATE TABLE public.combos_produtos (
+CREATE TABLE IF NOT EXISTS public.combos_produtos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   nome_combo text NOT NULL, -- Ex: 'Combo ProteÃ§Ã£o Total', 'Combo EficiÃªncia Corporativa'
@@ -103,7 +111,7 @@ CREATE TABLE public.combos_produtos (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- COMMAND CENTER: PARÃ‚METROS CONFIGURÃVEIS DO NEGÃ“CIO
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.parametros_negocio (
+CREATE TABLE IF NOT EXISTS public.parametros_negocio (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   
@@ -123,10 +131,14 @@ CREATE TABLE public.parametros_negocio (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- COMMAND CENTER: FEATURE FLAGS (LiberaÃ§Ã£o Gradual de MÃ³dulos)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TYPE public.feature_flag_modo AS ENUM ('aberto', 'admin_only', 'desligado');
-CREATE TYPE public.feature_flag_categoria AS ENUM ('blindado', 'condicional', 'livre');
+DO $$ BEGIN
+  CREATE TYPE public.feature_flag_modo AS ENUM ('aberto', 'admin_only', 'desligado');
+  CREATE TYPE public.feature_flag_categoria AS ENUM ('blindado', 'condicional', 'livre');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TABLE public.feature_flags (
+CREATE TABLE IF NOT EXISTS public.feature_flags (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   
@@ -146,7 +158,7 @@ CREATE TABLE public.feature_flags (
   ordem_exibicao integer DEFAULT 0,              -- Ordem na sidebar
   
   ativado_em timestamptz,                        -- Quando foi ligado pela primeira vez
-  ativado_por uuid REFERENCES public.profiles(id),
+  ativado_por uuid,                              -- ReferÃªncia flexÃ­vel
   
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now(),
@@ -157,7 +169,7 @@ CREATE TABLE public.feature_flags (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- COMMAND CENTER: HISTÃ“RICO DE ALTERAÃ‡Ã•ES DE PARÃ‚METROS
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.parametros_historico (
+CREATE TABLE IF NOT EXISTS public.parametros_historico (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   
@@ -165,13 +177,27 @@ CREATE TABLE public.parametros_historico (
   valor_anterior numeric(15, 4),
   valor_novo numeric(15, 4) NOT NULL,
   
-  alterado_por uuid REFERENCES public.profiles(id),
+  alterado_por uuid,
   motivo text,                                   -- Justificativa opcional da alteraÃ§Ã£o
   
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_parametros_hist_chave ON public.parametros_historico(chave_parametro, created_at);
+CREATE INDEX IF NOT EXISTS idx_parametros_hist_chave ON public.parametros_historico(chave_parametro, created_at);
+
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+-- SEED: TENANT RAIZ PADRÃƒO DA ESOL ENERGY
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+INSERT INTO public.tenants (id, nome_fantasia, razao_social, cnpj, dominio, config_visual)
+VALUES (
+  '00000000-0000-0000-0000-000000000001'::uuid,
+  'Esol Energy',
+  'Esol Energy SoluÃ§Ãµes SustentÃ¡veis LTDA',
+  '00.000.000/0001-00',
+  'esolenergy.com.br',
+  '{"primary_color": "#00E599", "theme": "dark"}'::jsonb
+)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- ==============================================================================
