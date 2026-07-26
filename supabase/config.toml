@@ -74,3 +74,6 @@ file_size_limit = "50MiB"
 # Registros de Edge Functions do CICLO 3
 [functions.financeiro-webhook]
 verify_jwt = false
+
+[functions.ledger-engine]
+verify_jwt = false
