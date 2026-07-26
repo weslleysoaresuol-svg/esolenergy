@@ -1,7 +1,7 @@
 # 🗄️ Esol Energy — Esquema de Banco de Dados Modular
 
 > **Banco:** PostgreSQL 15+ (Supabase)  
-> **Versão do Schema:** v25 (Cofre de Segurança RLS, MFA e Trust Center Adicionados)  
+> **Versão do Schema:** v26 (Storage Buckets, RLS por Pasta, Cofre de Segurança)  
 > **Atualizado em:** Julho/2026
 
 ---
@@ -35,6 +35,7 @@
 | 22 | `22_logistica_supply_chain.sql` | Logística, Tracking Rastreio Kits EPC |
 | 23 | `23_motor_dados_referencia.sql` | Tarifas ANEEL, Snapshot/Rollback de Dados |
 | 24 | `24_security_rls_policies.sql` | Row Level Security, Prevenção IDOR, MFA AAL2 |
+| 25 | `25_supabase_storage_setup.sql` | Storage Buckets (7 Cofres), MIME Types, RLS de Pastas |
 
 ---
 
