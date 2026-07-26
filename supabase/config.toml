@@ -47,7 +47,7 @@ api_url = "http://localhost:54321"
 enabled = true
 file_size_limit = "50MiB"
 
-# Registros de Edge Functions do CICLO 3
+# Registros de Edge Functions do CICLO 3 (100% Concluídos)
 [functions.financeiro-webhook]
 verify_jwt = false
 
@@ -70,4 +70,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.enotas-nfe-client]
+verify_jwt = false
+
+[functions.fiscal-autofaturamento-rpa]
 verify_jwt = false
