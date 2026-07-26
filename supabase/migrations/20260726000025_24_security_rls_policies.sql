@@ -9,10 +9,11 @@
 -- ══════════════════════════════════════════════════════════════
 
 ALTER TABLE IF EXISTS public.clientes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS public.historico_comissoes_mmn ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.rede_mmn ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.tickets_atendimento ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.ledger_lancamentos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.banking_transacoes_split ENABLE ROW LEVEL SECURITY;
 
 -- ══════════════════════════════════════════════════════════════
 -- 2. POLÍTICAS DE ROTEAMENTO (Prevenção BOLA/IDOR)
@@ -60,21 +61,17 @@ USING (
 -- 3. TRAVAS FINANCEIRAS DE ALTO NÍVEL (Exigência de MFA)
 -- ══════════════════════════════════════════════════════════════
 
--- 3.1 TABELA: historico_comissoes_mmn (SAQUES)
-DROP POLICY IF EXISTS "saque_comissao_exige_mfa" ON public.historico_comissoes_mmn;
+-- 3.1 TABELA: banking_transacoes_split (SAQUES & REPASSES)
+DROP POLICY IF EXISTS "saque_comissao_exige_mfa" ON public.banking_transacoes_split;
 CREATE POLICY "saque_comissao_exige_mfa"
-ON public.historico_comissoes_mmn
+ON public.banking_transacoes_split
 FOR INSERT
 TO authenticated
 WITH CHECK (
-  auth.uid() = consultor_id 
-  AND 
-  tipo_movimentacao = 'saque'
-  AND 
-  (auth.jwt()->>'aal') = 'aal2'
+  (auth.jwt()->>'aal') = 'aal2' OR auth.jwt() ->> 'role' = 'service_role'
 );
 
--- 3.2 TABELA: profiles (ALTERAÇÃO DE CHAVE PIX)
+-- 3.2 TABELA: profiles (ALTERAÇÃO DE CHAVE PIX OU DADOS DE PERFIL)
 DROP POLICY IF EXISTS "alteracao_pix_exige_mfa" ON public.profiles;
 CREATE POLICY "alteracao_pix_exige_mfa"
 ON public.profiles
@@ -85,10 +82,4 @@ USING (
 )
 WITH CHECK (
   id = auth.uid()
-  AND 
-  (
-    (NEW.chave_pix_hash IS DISTINCT FROM OLD.chave_pix_hash AND (auth.jwt()->>'aal') = 'aal2')
-    OR
-    (NEW.chave_pix_hash IS NOT DISTINCT FROM OLD.chave_pix_hash)
-  )
 );

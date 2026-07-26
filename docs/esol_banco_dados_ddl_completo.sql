@@ -2783,10 +2783,11 @@ CREATE INDEX IF NOT EXISTS idx_dict_skus_categoria ON public.dict_fornecedores_s
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 ALTER TABLE IF EXISTS public.clientes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS public.historico_comissoes_mmn ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.rede_mmn ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.tickets_atendimento ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.ledger_lancamentos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.banking_transacoes_split ENABLE ROW LEVEL SECURITY;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- 2. POLÃTICAS DE ROTEAMENTO (PrevenÃ§Ã£o BOLA/IDOR)
@@ -2834,18 +2835,14 @@ USING (
 -- 3. TRAVAS FINANCEIRAS DE ALTO NÃVEL (ExigÃªncia de MFA)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- 3.1 TABELA: historico_comissoes_mmn (SAQUES)
-DROP POLICY IF EXISTS "saque_comissao_exige_mfa" ON public.historico_comissoes_mmn;
+-- 3.1 TABELA: banking_transacoes_split (SAQUES & REPASSES)
+DROP POLICY IF EXISTS "saque_comissao_exige_mfa" ON public.banking_transacoes_split;
 CREATE POLICY "saque_comissao_exige_mfa"
-ON public.historico_comissoes_mmn
+ON public.banking_transacoes_split
 FOR INSERT
 TO authenticated
 WITH CHECK (
-  auth.uid() = consultor_id 
-  AND 
-  tipo_movimentacao = 'saque'
-  AND 
-  (auth.jwt()->>'aal') = 'aal2'
+  (auth.jwt()->>'aal') = 'aal2' OR auth.jwt() ->> 'role' = 'service_role'
 );
 
 -- 3.2 TABELA: profiles (ALTERAÃ‡ÃƒO DE CHAVE PIX)

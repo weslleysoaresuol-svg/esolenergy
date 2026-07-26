@@ -1,74 +1,50 @@
 # A string used to distinguish different Supabase projects on the same host. Defaults to the working directory name when running `supabase init`.
-project_id = "mmskdcvbnaqgbzmigfak"
+project_id = "vgnyzrfvbpwzikcqrsdr"
 
 [api]
+enabled = true
 port = 54321
-# Extra schemas to add to the search_path of every request.
 schemas = ["public", "graphql_public"]
-# Extra schemas to expose to the PostgREST API.
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
 port = 54322
-# The database major version to use. This has to be the same as your remote database's.
 major_version = 15
 
 [auth]
-port = 54327
-# Access token expiration in seconds (default 3600)
-# Ajuste do Plano 1: 3600 segundos (1 hora) - compliance SOC 2
-jwt_expiry = 3600
-# Allow/disallow new user signups (default true)
-# Ajuste do Plano 1: Controlado via sistema
-enable_signup = true
-# Require email confirmation (default true)
-require_email_confirmation = true
-# Enable refresh token rotation
-enable_refresh_token_rotation = true
-# Max time to live for refresh tokens (default 336 hours = 14 days)
-refresh_token_reuse_interval = 10
-
-[auth.email]
-# Enable email provider
-enable_signup = true
-# Double confirm email changes
-double_confirm_changes = true
-# Enable magic link (Plano 1)
-enable_confirmations = true
-
-[auth.sms]
-# Enable SMS provider for OTP (Plano 1 - Twilio/Z-API)
-enable = true
-# Template para o código
-template = "Seu código de acesso para a Esol Energy é: {{ .Code }}"
-# Expiração em 3 minutos (180 segundos) conforme Plano 1
-otp_exp = 180
-
-# Parâmetros de Redirect URLs (Plano 1)
-[auth.api]
-allowed_uris = [
+enabled = true
+site_url = "https://esolenergy.com.br"
+additional_redirect_urls = [
   "http://localhost:5173",
   "https://*.lovable.dev",
-  "https://esolenergy.com.br",
   "https://esolenergy.com",
   "https://admin.esolenergy.com.br"
 ]
+jwt_expiry = 3600
+enable_signup = true
 
-# Configuração SSO (Google)
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+[auth.sms]
+enable_signup = true
+
 [auth.external.google]
 enabled = true
 client_id = "env(GOOGLE_CLIENT_ID)"
 secret = "env(GOOGLE_CLIENT_SECRET)"
-# Redirect URI baseada nas permitidas
 redirect_uri = "https://esolenergy.com.br/auth/callback"
 
 [studio]
+enabled = true
 port = 54323
 api_url = "http://localhost:54321"
 
-# Configuração de Storage (Preparação para Plano 2)
 [storage]
+enabled = true
 file_size_limit = "50MiB"
 
 # Registros de Edge Functions do CICLO 3
@@ -76,4 +52,7 @@ file_size_limit = "50MiB"
 verify_jwt = false
 
 [functions.ledger-engine]
+verify_jwt = false
+
+[functions.motor-dimensionamento-solar]
 verify_jwt = false
