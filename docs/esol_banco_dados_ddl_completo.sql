@@ -1670,142 +1670,131 @@ CREATE INDEX IF NOT EXISTS idx_itens_pedido ON public.itens_pedido(pedido_id);
 -- Enums: canal_comunicacao, status_notificacao, gatilho_notificacao
 -- ==============================================================================
 
--- Canais de comunicaÃ§Ã£o disponÃ­veis
-CREATE TYPE public.canal_comunicacao AS ENUM (
-  'whatsapp',               -- Link parametrizado wa.me (redirect)
-  'email',                  -- Resend / Brevo API
-  'push_web',               -- Web Push Notification (PWA)
-  'sms',                    -- SMS transacional (futuro)
-  'app_interno'             -- NotificaÃ§Ã£o dentro do painel (sino)
-);
+DO $$ BEGIN
+  CREATE TYPE public.canal_comunicacao AS ENUM (
+    'whatsapp',               -- Link parametrizado wa.me (redirect)
+    'email',                  -- Resend / Brevo API
+    'push_web',               -- Web Push Notification (PWA)
+    'sms',                    -- SMS transacional (futuro)
+    'app_interno'             -- NotificaÃ§Ã£o dentro do painel (sino)
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.status_notificacao AS ENUM (
-  'pendente',               -- Na fila, aguardando envio
-  'enviada',                -- Enviada com sucesso
-  'entregue',               -- ConfirmaÃ§Ã£o de entrega (webhook)
-  'lida',                   -- Aberta/visualizada pelo destinatÃ¡rio
-  'falha',                  -- Erro no envio (retry automÃ¡tico)
-  'cancelada'               -- Cancelada antes do envio
-);
+DO $$ BEGIN
+  CREATE TYPE public.status_notificacao AS ENUM (
+    'pendente',               -- Na fila, aguardando envio
+    'enviada',                -- Enviada com sucesso
+    'entregue',               -- ConfirmaÃ§Ã£o de entrega (webhook)
+    'lida',                   -- Aberta/visualizada pelo destinatÃ¡rio
+    'falha',                  -- Erro no envio (retry automÃ¡tico)
+    'cancelada'               -- Cancelada antes do envio
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
--- Eventos do ecossistema que disparam notificaÃ§Ãµes automÃ¡ticas
-CREATE TYPE public.gatilho_notificacao AS ENUM (
-  -- CRM & Vendas
-  'novo_lead',                      -- Lead cadastrado pelo site ou consultor
-  'lead_frio_3_dias',               -- SLA: lead sem contato hÃ¡ 3+ dias
-  'proposta_enviada',               -- Consultor enviou proposta ao cliente
-  'proposta_visualizada',           -- Cliente abriu o PDF da proposta
-  'proposta_aceita',                -- Cliente aceitou a proposta
-  'proposta_expirando',             -- Proposta vencendo em 48h
+DO $$ BEGIN
+  CREATE TYPE public.gatilho_notificacao AS ENUM (
+    -- CRM & Vendas
+    'novo_lead',                      -- Lead cadastrado pelo site ou consultor
+    'lead_frio_3_dias',               -- SLA: lead sem contato hÃ¡ 3+ dias
+    'proposta_enviada',               -- Consultor enviou proposta ao cliente
+    'proposta_visualizada',           -- Cliente abriu o PDF da proposta
+    'proposta_aceita',                -- Cliente aceitou a proposta
+    'proposta_expirando',             -- Proposta vencendo em 48h
 
-  -- EPC & Projetos
-  'projeto_fase_avancou',           -- Projeto mudou de fase no EPC
-  'checklist_instalacao_pendente',  -- Instalador precisa enviar fotos
-  'homologacao_aprovada',           -- ConcessionÃ¡ria aprovou o projeto
-  'selo_verde_emitido',             -- Sistema ativou o Selo Verde
+    -- EPC & Projetos
+    'projeto_fase_avancou',           -- Projeto mudou de fase no EPC
+    'checklist_instalacao_pendente',  -- Instalador precisa enviar fotos
+    'homologacao_aprovada',           -- ConcessionÃ¡ria aprovou o projeto
+    'selo_verde_emitido',             -- Sistema ativou o Selo Verde
 
-  -- Financeiro
-  'comissao_liberada',              -- ComissÃ£o disponÃ­vel para saque
-  'saque_aprovado',                 -- Saque PIX processado
-  'pagamento_recebido',             -- Pagamento do cliente confirmado
+    -- Financeiro
+    'comissao_liberada',              -- ComissÃ£o disponÃ­vel para saque
+    'saque_aprovado',                 -- Saque PIX processado
+    'pagamento_recebido',             -- Pagamento do cliente confirmado
 
-  -- PÃ³s-Venda
-  'os_aberta',                      -- Nova ordem de serviÃ§o criada
-  'agendamento_confirmado',         -- TÃ©cnico confirmou visita
-  'servico_concluido',              -- Ordem de serviÃ§o finalizada
-  'avaliacao_pendente',             -- Pedir avaliaÃ§Ã£o ao cliente
+    -- PÃ³s-Venda
+    'os_aberta',                      -- Nova ordem de serviÃ§o criada
+    'agendamento_confirmado',         -- TÃ©cnico confirmou visita
+    'servico_concluido',              -- Ordem de serviÃ§o finalizada
+    'avaliacao_pendente',             -- Pedir avaliaÃ§Ã£o ao cliente
 
-  -- MMN & Rede
-  'novo_consultor_na_rede',         -- Novo downline cadastrado
-  'selo_carreira_desbloqueado',     -- Consultor atingiu novo selo de carreira
-  'meta_mensal_atingida',           -- Meta de vendas do mÃªs batida
+    -- MMN & Rede
+    'novo_consultor_na_rede',         -- Novo downline cadastrado
+    'selo_carreira_desbloqueado',     -- Consultor atingiu novo selo de carreira
+    'meta_mensal_atingida',           -- Meta de vendas do mÃªs batida
 
-  -- Legal & Compliance
-  'contrato_assinado',              -- Contrato assinado via Esol Sign
-  'prova_vida_pendente',            -- Re-Sign de renovaÃ§Ã£o de contrato
-  'distrato_solicitado',            -- Cliente solicitou cancelamento
+    -- Legal & Compliance
+    'contrato_assinado',              -- Contrato assinado via Esol Sign
+    'prova_vida_pendente',            -- Re-Sign de renovaÃ§Ã£o de contrato
+    'distrato_solicitado',            -- Cliente solicitou cancelamento
 
-  -- Esol Club
-  'ecopontos_creditados',           -- Pontos creditados ao cliente
-  'resgate_aprovado'                -- Resgate de benefÃ­cio aprovado
-);
+    -- Esol Club
+    'ecopontos_creditados',           -- Pontos creditados ao cliente
+    'resgate_aprovado'                -- Resgate de benefÃ­cio aprovado
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: TEMPLATES DE COMUNICAÃ‡ÃƒO
--- Templates reusÃ¡veis com variÃ¡veis dinÃ¢micas ({{NOME}}, etc.)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.templates_comunicacao (
+CREATE TABLE IF NOT EXISTS public.templates_comunicacao (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
 
-  -- IdentificaÃ§Ã£o
-  nome text NOT NULL,               -- Ex: 'Boas-vindas do Novo Lead'
+  nome text NOT NULL,
   gatilho public.gatilho_notificacao NOT NULL,
   canal public.canal_comunicacao NOT NULL,
 
-  -- ConteÃºdo
-  assunto text,                     -- Assunto do email (ignorado p/ WhatsApp)
-  corpo_template text NOT NULL,     -- Corpo com variÃ¡veis: {{NOME}}, {{VALOR}}, {{LINK}}
-  -- VariÃ¡veis disponÃ­veis: {{NOME_CLIENTE}}, {{NOME_CONSULTOR}}, {{VALOR}},
-  -- {{LINK_PROPOSTA}}, {{LINK_CONTRATO}}, {{DATA}}, {{TELEFONE}}, {{CIDADE}}
+  assunto text,
+  corpo_template text NOT NULL,
 
-  -- ConfiguraÃ§Ã£o
   ativo boolean DEFAULT true,
   prioridade smallint DEFAULT 2 CHECK (prioridade BETWEEN 1 AND 3),
-  delay_minutos integer DEFAULT 0,  -- Atraso antes de enviar (ex: 30min apÃ³s lead)
+  delay_minutos integer DEFAULT 0,
   max_retentativas integer DEFAULT 3,
 
-  -- Metadados
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
-CREATE UNIQUE INDEX idx_template_gatilho_canal ON public.templates_comunicacao(tenant_id, gatilho, canal);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_template_gatilho_canal ON public.templates_comunicacao(tenant_id, gatilho, canal);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 2: FILA DE NOTIFICAÃ‡Ã•ES
--- Cada notificaÃ§Ã£o Ã© um registro na fila, processado por
--- Edge Functions (Cloudflare Workers) ou Supabase Functions
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.fila_notificacoes (
+CREATE TABLE IF NOT EXISTS public.fila_notificacoes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   template_id uuid REFERENCES public.templates_comunicacao(id),
 
-  -- DestinatÃ¡rio
   destinatario_id uuid REFERENCES public.profiles(id),
   destinatario_nome text,
-  destinatario_telefone text,       -- Para WhatsApp/SMS
-  destinatario_email text,          -- Para email
+  destinatario_telefone text,
+  destinatario_email text,
 
-  -- ConteÃºdo renderizado (template jÃ¡ preenchido)
   canal public.canal_comunicacao NOT NULL,
   gatilho public.gatilho_notificacao NOT NULL,
   assunto_renderizado text,
   corpo_renderizado text NOT NULL,
 
-  -- Status de envio
   status public.status_notificacao DEFAULT 'pendente' NOT NULL,
   tentativas integer DEFAULT 0,
-  erro_mensagem text,               -- Detalhe do erro se status = 'falha'
+  erro_mensagem text,
 
-  -- ReferÃªncia ao contexto (qual lead, proposta, OS, etc.)
-  referencia_tipo text,             -- 'cliente', 'proposta', 'ordem_servico', 'projeto_epc'
-  referencia_id uuid,               -- ID do registro relacionado
+  referencia_tipo text,
+  referencia_id uuid,
 
-  -- Timestamps
   agendado_para timestamptz DEFAULT now(),
   enviado_em timestamptz,
   entregue_em timestamptz,
   lido_em timestamptz,
 
-  -- Metadados
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_fila_status ON public.fila_notificacoes(status) WHERE status = 'pendente';
-CREATE INDEX idx_fila_destinatario ON public.fila_notificacoes(destinatario_id, created_at DESC);
-CREATE INDEX idx_fila_gatilho ON public.fila_notificacoes(gatilho);
+CREATE INDEX IF NOT EXISTS idx_fila_status ON public.fila_notificacoes(status) WHERE status = 'pendente';
+CREATE INDEX IF NOT EXISTS idx_fila_destinatario ON public.fila_notificacoes(destinatario_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_fila_gatilho ON public.fila_notificacoes(gatilho);
 
 
 -- ==============================================================================
