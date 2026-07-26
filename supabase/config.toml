@@ -70,3 +70,7 @@ api_url = "http://localhost:54321"
 # Configuração de Storage (Preparação para Plano 2)
 [storage]
 file_size_limit = "50MiB"
+
+# Registros de Edge Functions do CICLO 3
+[functions.financeiro-webhook]
+verify_jwt = false
