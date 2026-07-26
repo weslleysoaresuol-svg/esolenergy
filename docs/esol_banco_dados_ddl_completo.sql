@@ -2679,101 +2679,97 @@ CREATE INDEX IF NOT EXISTS idx_eventos_anomalia ON public.logistica_eventos_trac
 
 
 -- =======================================================================================
--- MÓDULO 23: COFRE DE DADOS DE MERCADO (PRICING VAULT)
--- Descrição: Dicionário central de Tarifas ANEEL, Impostos Estaduais (SEFAZ),
---            Tabelas de Financiamento Bancário (CET) e Custos de Hardware (B2B).
---            Isola as regras variáveis do Motor Reverso (Módulo 3).
+-- MÃ“DULO 23: COFRE DE DADOS DE MERCADO (PRICING VAULT)
+-- DescriÃ§Ã£o: DicionÃ¡rio central de Tarifas ANEEL, Impostos Estaduais (SEFAZ),
+--            Tabelas de Financiamento BancÃ¡rio (CET) e Custos de Hardware (B2B).
+--            Isola as regras variÃ¡veis do Motor Reverso (MÃ³dulo 3).
+-- Ecossistema: Esol Energy | Banco: Supabase (PostgreSQL 15+)
+-- DependÃªncias: 01_tenants_config.sql
 -- =======================================================================================
 
-BEGIN;
-
 -- ---------------------------------------------------------------------------------------
--- 1. DICIONÁRIO DE TARIFAS DE ENERGIA (ANEEL)
+-- 1. DICIONÃRIO DE TARIFAS DE ENERGIA (ANEEL)
 -- ---------------------------------------------------------------------------------------
-CREATE TABLE public.dict_concessionarias_aneel (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    nome_concessionaria VARCHAR(150) NOT NULL UNIQUE, -- Ex: 'CPFL Paulista', 'Enel SP'
-    uf_atuacao VARCHAR(2) NOT NULL,
-    tarifa_b1_residencial NUMERIC(10, 6) NOT NULL, -- R$/kWh
-    tarifa_b2_rural NUMERIC(10, 6) NOT NULL,
-    tarifa_b3_comercial NUMERIC(10, 6) NOT NULL,
-    fator_fio_b_percentual NUMERIC(5, 4) NOT NULL, -- Lei 14.300 (ex: 30% em 2024 = 0.3000)
-    taxa_iluminacao_publica_media NUMERIC(10, 2), -- CIP/COSIP
-    data_ultima_revisao_tarifaria DATE NOT NULL,
-    is_ativo BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS public.dict_concessionarias_aneel (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    nome_concessionaria varchar(150) NOT NULL UNIQUE,
+    uf_atuacao varchar(2) NOT NULL,
+    tarifa_b1_residencial numeric(10, 6) NOT NULL,
+    tarifa_b2_rural numeric(10, 6) NOT NULL,
+    tarifa_b3_comercial numeric(10, 6) NOT NULL,
+    fator_fio_b_percentual numeric(5, 4) NOT NULL,
+    taxa_iluminacao_publica_media numeric(10, 2),
+    data_ultima_revisao_tarifaria date NOT NULL,
+    is_ativo boolean DEFAULT true,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
 );
 
 -- ---------------------------------------------------------------------------------------
--- 2. DICIONÁRIO DE TRIBUTOS ESTADUAIS E FEDERAIS (SEFAZ / RFB)
+-- 2. DICIONÃRIO DE TRIBUTOS ESTADUAIS E FEDERAIS (SEFAZ / RFB)
 -- ---------------------------------------------------------------------------------------
-CREATE TABLE public.dict_tributos_estaduais (
-    uf VARCHAR(2) PRIMARY KEY,
-    aliquota_icms_energia_percentual NUMERIC(5, 4) NOT NULL, -- Ex: 0.1800 (18%)
-    aliquota_icms_equipamentos_percentual NUMERIC(5, 4) NOT NULL,
-    possui_convenio_confaz_isencao_gd BOOLEAN DEFAULT TRUE, -- Convênio ICMS 16/2015
-    data_atualizacao DATE NOT NULL DEFAULT CURRENT_DATE
+CREATE TABLE IF NOT EXISTS public.dict_tributos_estaduais (
+    uf varchar(2) PRIMARY KEY,
+    aliquota_icms_energia_percentual numeric(5, 4) NOT NULL,
+    aliquota_icms_equipamentos_percentual numeric(5, 4) NOT NULL,
+    possui_convenio_confaz_isencao_gd boolean DEFAULT true,
+    data_atualizacao date NOT NULL DEFAULT CURRENT_DATE
 );
 
 -- ---------------------------------------------------------------------------------------
--- 3. DICIONÁRIO DE FINANCIAMENTOS (BANCOS E TAXAS)
+-- 3. DICIONÃRIO DE FINANCIAMENTOS (BANCOS E TAXAS)
 -- ---------------------------------------------------------------------------------------
--- Essencial para compor o "Pague em 72x" nas propostas de Venda Direta (Turnkey)
-CREATE TABLE public.dict_financeiras_taxas (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    banco_nome VARCHAR(100) NOT NULL, -- 'Santander', 'BV Financeira', 'Solfácil'
-    tipo_cliente VARCHAR(20) NOT NULL, -- 'PF' ou 'PJ'
-    prazo_meses INTEGER NOT NULL, -- Ex: 72
-    carencia_meses INTEGER DEFAULT 0, -- Ex: 6 (Pague a primeira em 6 meses)
-    taxa_juros_mes_percentual NUMERIC(6, 4) NOT NULL, -- Ex: 1.49% = 0.0149
-    cet_mes_percentual NUMERIC(6, 4) NOT NULL, -- Custo Efetivo Total
-    fator_multiplicador NUMERIC(8, 6) NOT NULL, -- Fator direto para multiplicar o valor à vista
-    taxa_abertura_credito_tac NUMERIC(10, 2) DEFAULT 0.00,
-    is_ativo BOOLEAN DEFAULT TRUE,
-    data_atualizacao DATE NOT NULL DEFAULT CURRENT_DATE,
+CREATE TABLE IF NOT EXISTS public.dict_financeiras_taxas (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    banco_nome varchar(100) NOT NULL,
+    tipo_cliente varchar(20) NOT NULL,
+    prazo_meses integer NOT NULL,
+    carencia_meses integer DEFAULT 0,
+    taxa_juros_mes_percentual numeric(6, 4) NOT NULL,
+    cet_mes_percentual numeric(6, 4) NOT NULL,
+    fator_multiplicador numeric(8, 6) NOT NULL,
+    taxa_abertura_credito_tac numeric(10, 2) DEFAULT 0.00,
+    is_ativo boolean DEFAULT true,
+    data_atualizacao date NOT NULL DEFAULT CURRENT_DATE,
     UNIQUE(banco_nome, tipo_cliente, prazo_meses)
 );
 
 -- ---------------------------------------------------------------------------------------
--- 4. CATÁLOGO B2B DE FORNECEDORES (HARDWARE)
+-- 4. CATÃLOGO B2B DE FORNECEDORES (HARDWARE)
 -- ---------------------------------------------------------------------------------------
--- Atualizado via CSV ou API para refletir o custo real dos Inversores e Painéis
-CREATE TABLE public.dict_fornecedores_skus (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fornecedor_nome VARCHAR(100) NOT NULL, -- 'WEG', 'Aldo Solar', 'Serrana'
-    codigo_sku VARCHAR(100) NOT NULL,
-    categoria VARCHAR(50) NOT NULL, -- 'PAINEL', 'INVERSOR', 'MICROINVERSOR', 'CABO'
-    potencia_w NUMERIC(10, 2), -- Potência em Watts
-    custo_compra_bruto NUMERIC(15, 2) NOT NULL,
-    peso_kg NUMERIC(10, 2) NOT NULL, -- Essencial para cálculo de frete logístico
-    link_api_estoque VARCHAR(500),
-    data_atualizacao TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+CREATE TABLE IF NOT EXISTS public.dict_fornecedores_skus (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    fornecedor_nome varchar(100) NOT NULL,
+    codigo_sku varchar(100) NOT NULL,
+    categoria varchar(50) NOT NULL,
+    potencia_w numeric(10, 2),
+    custo_compra_bruto numeric(15, 2) NOT NULL,
+    peso_kg numeric(10, 2) NOT NULL,
+    link_api_estoque varchar(500),
+    data_atualizacao timestamptz DEFAULT now(),
     UNIQUE(fornecedor_nome, codigo_sku)
 );
 
 -- ---------------------------------------------------------------------------------------
+-- 5. DICIONÃRIO DE ADQUIRÃŠNCIA (TAXAS DE CARTÃƒO DE CRÃ‰DITO / MAQUININHA)
 -- ---------------------------------------------------------------------------------------
--- 5. DICIONÁRIO DE ADQUIRÊNCIA (TAXAS DE CARTÃO DE CRÉDITO / MAQUININHA)
--- ---------------------------------------------------------------------------------------
-CREATE TABLE public.dict_taxas_adquirencia_cartao (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    gateway_nome VARCHAR(50) NOT NULL, -- 'Stone', 'Cielo', 'Pagar.me'
-    numero_parcelas INTEGER NOT NULL, -- 1 a 12 (ou 21)
-    taxa_mdr_percentual NUMERIC(6, 4) NOT NULL, -- Taxa transacional base (ex: 1.5%)
-    taxa_antecipacao_percentual NUMERIC(6, 4) NOT NULL, -- Taxa para receber à vista
-    taxa_total_retida_percentual NUMERIC(6, 4) GENERATED ALWAYS AS (taxa_mdr_percentual + taxa_antecipacao_percentual) STORED,
-    data_atualizacao DATE NOT NULL DEFAULT CURRENT_DATE,
+CREATE TABLE IF NOT EXISTS public.dict_taxas_adquirencia_cartao (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    gateway_nome varchar(50) NOT NULL,
+    numero_parcelas integer NOT NULL,
+    taxa_mdr_percentual numeric(6, 4) NOT NULL,
+    taxa_antecipacao_percentual numeric(6, 4) NOT NULL,
+    taxa_total_retida_percentual numeric(6, 4) GENERATED ALWAYS AS (taxa_mdr_percentual + taxa_antecipacao_percentual) STORED,
+    data_atualizacao date NOT NULL DEFAULT CURRENT_DATE,
     UNIQUE(gateway_nome, numero_parcelas)
 );
 
--- ÍNDICES DE PERFORMANCE E BUSCA
 -- ---------------------------------------------------------------------------------------
-CREATE INDEX idx_dict_aneel_uf ON public.dict_concessionarias_aneel(uf_atuacao);
-CREATE INDEX idx_dict_financeiras_banco ON public.dict_financeiras_taxas(banco_nome);
-CREATE INDEX idx_dict_skus_categoria ON public.dict_fornecedores_skus(categoria);
-
-COMMIT;
+-- ÃNDICES DE PERFORMANCE E BUSCA
+-- ---------------------------------------------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_dict_aneel_uf ON public.dict_concessionarias_aneel(uf_atuacao);
+CREATE INDEX IF NOT EXISTS idx_dict_financeiras_banco ON public.dict_financeiras_taxas(banco_nome);
+CREATE INDEX IF NOT EXISTS idx_dict_skus_categoria ON public.dict_fornecedores_skus(categoria);
 
 
 -- ==============================================================================
