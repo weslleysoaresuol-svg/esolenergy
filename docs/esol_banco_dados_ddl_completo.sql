@@ -2111,58 +2111,46 @@ CREATE INDEX IF NOT EXISTS idx_ad_spend_data ON public.ad_spend_diario(data_refe
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: COFRE DE AUDITORIA (Lixeira e HistÃ³rico)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.security_audit_logs (
+CREATE TABLE IF NOT EXISTS public.security_audit_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   
-  -- Quem fez a alteraÃ§Ã£o
-  ator_id uuid REFERENCES public.profiles(id),  -- O usuÃ¡rio logado que alterou
+  ator_id uuid REFERENCES public.profiles(id),
   
-  -- O que foi alterado
-  nome_tabela text NOT NULL,                    -- Ex: 'clientes', 'ledger_lancamentos'
-  registro_id uuid NOT NULL,                    -- O ID da linha alterada
+  nome_tabela text NOT NULL,
+  registro_id uuid NOT NULL,
   
-  -- AÃ§Ã£o (INSERT, UPDATE, DELETE)
   acao text NOT NULL,
   
-  -- Dados CrÃ­ticos (O "Snapshot" JSONB da mÃ¡quina do tempo)
-  dado_anterior jsonb,                          -- Como a linha era ANTES (vazio se INSERT)
-  dado_novo jsonb,                              -- Como a linha ficou DEPOIS (vazio se DELETE)
+  dado_anterior jsonb,
+  dado_novo jsonb,
   
-  -- Metadados de contexto (Opcional, para rastreio do backend)
   ip_origem inet,
   user_agent text,
   
   created_at timestamptz DEFAULT now()
 );
 
--- Ãndices pesados para busca rÃ¡pida no painel de Lixeira/Auditoria
-CREATE INDEX idx_audit_tabela_registro ON public.security_audit_logs(nome_tabela, registro_id);
-CREATE INDEX idx_audit_ator ON public.security_audit_logs(ator_id);
-CREATE INDEX idx_audit_data ON public.security_audit_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_audit_tabela_registro ON public.security_audit_logs(nome_tabela, registro_id);
+CREATE INDEX IF NOT EXISTS idx_audit_ator ON public.security_audit_logs(ator_id);
+CREATE INDEX IF NOT EXISTS idx_audit_data ON public.security_audit_logs(created_at);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- FUNÃ‡ÃƒO 1: TRIGGER UNIVERSAL DE AUDITORIA
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
--- Esta funÃ§Ã£o pode ser plugada em QUALQUER tabela operacional para blindÃ¡-la.
--- Ela detecta o usuÃ¡rio logado via JWT (auth.uid()) e salva o JSON.
-
 CREATE OR REPLACE FUNCTION public.process_audit_log()
 RETURNS TRIGGER AS $$
 DECLARE
   v_ator_id uuid;
   v_tenant_id uuid;
 BEGIN
-  -- Tenta pegar o ID do usuÃ¡rio que fez a aÃ§Ã£o via contexto do Supabase Auth
   BEGIN
     v_ator_id := auth.uid();
   EXCEPTION WHEN OTHERS THEN
-    v_ator_id := NULL; -- ModificaÃ§Ã£o feita por backend service/cron
+    v_ator_id := NULL;
   END;
 
-  -- Se for um UPDATE
   IF (TG_OP = 'UPDATE') THEN
-    -- Pega o tenant_id dinamicamente, se a tabela possuir
     BEGIN
       EXECUTE 'SELECT tenant_id FROM ' || TG_TABLE_SCHEMA || '.' || TG_TABLE_NAME || ' WHERE id = $1' INTO v_tenant_id USING NEW.id;
     EXCEPTION WHEN OTHERS THEN v_tenant_id := NULL; END;
@@ -2172,7 +2160,6 @@ BEGIN
     
     RETURN NEW;
     
-  -- Se for um DELETE
   ELSIF (TG_OP = 'DELETE') THEN
     BEGIN
       EXECUTE 'SELECT tenant_id FROM ' || TG_TABLE_SCHEMA || '.' || TG_TABLE_NAME || ' WHERE id = $1' INTO v_tenant_id USING OLD.id;
@@ -2187,11 +2174,6 @@ BEGIN
   RETURN NULL;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Exemplo de como plugar (Gatilho real seria executado na instalaÃ§Ã£o do banco):
--- CREATE TRIGGER trg_audit_clientes
--- AFTER UPDATE OR DELETE ON public.clientes
--- FOR EACH ROW EXECUTE FUNCTION public.process_audit_log();
 
 
 -- ==============================================================================
