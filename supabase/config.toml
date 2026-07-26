@@ -59,3 +59,6 @@ verify_jwt = false
 
 [functions.motor-viabilidade-financeira]
 verify_jwt = false
+
+[functions.esol-sign-template]
+verify_jwt = false
