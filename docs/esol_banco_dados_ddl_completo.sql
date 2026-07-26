@@ -2186,42 +2186,51 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ENUMS DE COMUNICAÃ‡ÃƒO E ROTEAMENTO
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-CREATE TYPE public.categoria_ticket AS ENUM (
-  'orcamento', 'duvida_tecnica', 'financeiro', 'contrato', 
-  'reclamacao', 'ouvidoria', 'sugestao'
-);
+DO $$ BEGIN
+  CREATE TYPE public.categoria_ticket AS ENUM (
+    'orcamento', 'duvida_tecnica', 'financeiro', 'contrato', 
+    'reclamacao', 'ouvidoria', 'sugestao'
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.prioridade_ticket AS ENUM (
-  'alta',               -- SLA 15min atribuiÃ§Ã£o / 4h resoluÃ§Ã£o
-  'media',              -- SLA 1h atribuiÃ§Ã£o / 24h resoluÃ§Ã£o
-  'baixa'               -- SLA 4h atribuiÃ§Ã£o / 48h resoluÃ§Ã£o
-);
+DO $$ BEGIN
+  CREATE TYPE public.prioridade_ticket AS ENUM (
+    'alta',               -- SLA 15min atribuiÃ§Ã£o / 4h resoluÃ§Ã£o
+    'media',              -- SLA 1h atribuiÃ§Ã£o / 24h resoluÃ§Ã£o
+    'baixa'               -- SLA 4h atribuiÃ§Ã£o / 48h resoluÃ§Ã£o
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.status_ticket AS ENUM (
-  'aberto', 'em_atendimento', 'aguardando_cliente', 
-  'aguardando_interno', 'resolvido', 'fechado', 'reaberto'
-);
+DO $$ BEGIN
+  CREATE TYPE public.status_ticket AS ENUM (
+    'aberto', 'em_atendimento', 'aguardando_cliente', 
+    'aguardando_interno', 'resolvido', 'fechado', 'reaberto'
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
--- Estado do Motor de Roteamento HÃ­brido (Helpdesk)
-CREATE TYPE public.ticket_distribuicao_tipo AS ENUM (
-  'capturado',                -- Acabou de entrar
-  'plantao_noturno',          -- Fila retida da madrugada (Chatbot/ADM Night)
-  'aguardando_gotejamento',   -- Fila das 08:00 (Throttling)
-  'na_fila_roteamento',       -- Sistema procurando atendente livre
-  'oferecido_atendente',      -- SLA de atribuiÃ§Ã£o correndo (15min, 1h ou 4h)
-  'assumido',                 -- Atendente comeÃ§ou a resolver
-  'escalado_nivel_2',         -- Atendente falhou no SLA, subiu de nÃ­vel
-  'escalado_gerencia'         -- NÃ­vel 2 falhou, subiu pro chefe
-);
+DO $$ BEGIN
+  CREATE TYPE public.ticket_distribuicao_tipo AS ENUM (
+    'capturado',                -- Acabou de entrar
+    'plantao_noturno',          -- Fila retida da madrugada (Chatbot/ADM Night)
+    'aguardando_gotejamento',   -- Fila das 08:00 (Throttling)
+    'na_fila_roteamento',       -- Sistema procurando atendente livre
+    'oferecido_atendente',      -- SLA de atribuiÃ§Ã£o correndo (15min, 1h ou 4h)
+    'assumido',                 -- Atendente comeÃ§ou a resolver
+    'escalado_nivel_2',         -- Atendente falhou no SLA, subiu de nÃ­vel
+    'escalado_gerencia'         -- NÃ­vel 2 falhou, subiu pro chefe
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
-CREATE TYPE public.tipo_ouvidoria AS ENUM (
-  'reclamacao', 'denuncia', 'elogio', 'sugestao', 'solicitacao_informacao'
-);
+DO $$ BEGIN
+  CREATE TYPE public.tipo_ouvidoria AS ENUM (
+    'reclamacao', 'denuncia', 'elogio', 'sugestao', 'solicitacao_informacao'
+  );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1: CENTRAL DE CHAMADOS / TICKETS (Helpdesk com SLA)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.tickets_atendimento (
+CREATE TABLE IF NOT EXISTS public.tickets_atendimento (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   
@@ -2229,11 +2238,9 @@ CREATE TABLE public.tickets_atendimento (
   ano_referencia integer NOT NULL DEFAULT EXTRACT(YEAR FROM now()),
   sequencial integer NOT NULL,
   
-  -- IdentificaÃ§Ã£o
   solicitante_id uuid REFERENCES public.profiles(id),
   cliente_id uuid REFERENCES public.clientes(id),
   
-  -- ClassificaÃ§Ã£o
   categoria public.categoria_ticket NOT NULL,
   prioridade public.prioridade_ticket NOT NULL DEFAULT 'media',
   status public.status_ticket NOT NULL DEFAULT 'aberto',
@@ -2241,20 +2248,17 @@ CREATE TABLE public.tickets_atendimento (
   assunto text NOT NULL,
   descricao text NOT NULL,
   
-  -- Motor de Roteamento HÃ­brido
   status_distribuicao public.ticket_distribuicao_tipo DEFAULT 'capturado',
-  nivel_escalacao integer DEFAULT 1, -- N1 (Junior), N2 (Pleno/Engenharia), N3 (GerÃªncia)
+  nivel_escalacao integer DEFAULT 1,
   hora_abertura timestamptz DEFAULT now(),
-  hora_fim_sla_atribuicao timestamptz, -- Tempo limite para alguÃ©m ASSUMIR
-  hora_fim_sla_resolucao timestamptz,  -- Tempo limite para RESOLVER
+  hora_fim_sla_atribuicao timestamptz,
+  hora_fim_sla_resolucao timestamptz,
   
-  -- AtribuiÃ§Ã£o
   departamento_destino text,
   atendente_id uuid REFERENCES public.profiles(id),
-  tempo_primeira_resposta interval, -- MÃ©trica de GamificaÃ§Ã£o do Suporte
+  tempo_primeira_resposta interval,
   sla_estourado boolean DEFAULT false,
   
-  -- ReferÃªncias e Qualidade
   contrato_id uuid,
   nota_satisfacao integer CHECK (nota_satisfacao BETWEEN 1 AND 5),
   comentario_avaliacao text,
@@ -2265,14 +2269,13 @@ CREATE TABLE public.tickets_atendimento (
   fechado_em timestamptz
 );
 
--- Ãndices de Alta Performance para o Motor de EscalaÃ§Ã£o
-CREATE INDEX idx_tickets_distribuicao ON public.tickets_atendimento(status_distribuicao, hora_fim_sla_atribuicao);
-CREATE INDEX idx_tickets_status ON public.tickets_atendimento(status, prioridade);
+CREATE INDEX IF NOT EXISTS idx_tickets_distribuicao ON public.tickets_atendimento(status_distribuicao, hora_fim_sla_atribuicao);
+CREATE INDEX IF NOT EXISTS idx_tickets_status ON public.tickets_atendimento(status, prioridade);
 
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 1.B: LOGS DE ESCALAÃ‡ÃƒO (PuniÃ§Ã£o por LentidÃ£o)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.ticket_routing_logs (
+CREATE TABLE IF NOT EXISTS public.ticket_routing_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   ticket_id uuid REFERENCES public.tickets_atendimento(id) ON DELETE CASCADE,
   atendente_rejeitado_id uuid REFERENCES public.profiles(id),
@@ -2284,13 +2287,12 @@ CREATE TABLE public.ticket_routing_logs (
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- TABELA 2: LIVE CHAT (SLA ULTRA-RÃPIDO DE 30 SEGUNDOS)
 -- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-CREATE TABLE public.live_chat_sessoes (
+CREATE TABLE IF NOT EXISTS public.live_chat_sessoes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   cliente_id uuid REFERENCES public.clientes(id),
   
-  -- SLA de 30 Segundos
-  status text DEFAULT 'na_fila', -- na_fila, conectado, encerrado, bot_noturno
+  status text DEFAULT 'na_fila',
   hora_fim_sla_30s timestamptz,
   atendente_id uuid REFERENCES public.profiles(id),
   
@@ -2298,68 +2300,29 @@ CREATE TABLE public.live_chat_sessoes (
   encerrado_em timestamptz
 );
 
--- Demais tabelas mantidas (chat_canais, chat_mensagens, comunicados, ouvidoria)
--- ... [ConteÃºdo Omitido para Foco na Arquitetura de Roteamento] ...
-
 -- ==============================================================================
 -- âš™ï¸ PROCEDURES: MOTOR HÃBRIDO (WATERFALL, ESCALATION & THROTTLING)
 -- ==============================================================================
 
--- 1. Captura de Tickets e Live Chat: HorÃ¡rio Comercial vs PlantÃ£o
-CREATE OR REPLACE FUNCTION trg_atendimento_capturado() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION public.trg_atendimento_capturado() RETURNS trigger AS $$
 BEGIN
   IF EXTRACT(HOUR FROM now() AT TIME ZONE 'America/Sao_Paulo') BETWEEN 8 AND 17 THEN
     NEW.status_distribuicao = 'capturado';
-    -- Definir SLA de AtribuiÃ§Ã£o baseado na Prioridade
     IF NEW.prioridade = 'alta' THEN NEW.hora_fim_sla_atribuicao = now() + interval '15 minutes';
     ELSIF NEW.prioridade = 'media' THEN NEW.hora_fim_sla_atribuicao = now() + interval '1 hour';
     ELSE NEW.hora_fim_sla_atribuicao = now() + interval '4 hours';
     END IF;
   ELSE
     NEW.status_distribuicao = 'plantao_noturno';
-    -- Fica congelado atÃ© as 08:00
   END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_ticket_capturado ON public.tickets_atendimento;
 CREATE TRIGGER trg_ticket_capturado
 BEFORE INSERT ON public.tickets_atendimento
-FOR EACH ROW EXECUTE FUNCTION trg_atendimento_capturado();
-
-
--- ==============================================================================
--- ðŸ“… PG_CRON: ARQUITETURA DE THROTTLING E ESCALATION (SUPORTE)
--- ==============================================================================
-/*
-  O Throttling Matinal (Gotejamento de Tickets Acumulados):
-  SELECT cron.schedule('morning_drip_tickets', '* 8 * * *', $$
-    -- Roteamento por Workload (Entrega pro atendente com menos tickets)
-    UPDATE public.tickets_atendimento 
-    SET status_distribuicao = 'na_fila_roteamento'
-    WHERE id IN (
-      SELECT id FROM public.tickets_atendimento 
-      WHERE status_distribuicao = 'plantao_noturno' 
-      ORDER BY prioridade ASC, hora_abertura ASC 
-      LIMIT 5 -- Solta de 5 em 5 minutos para nÃ£o matar o suporte
-    );
-  $$);
-
-  O Policial de EscalaÃ§Ã£o (Roda a cada 5 Minutos):
-  SELECT cron.schedule('sla_escalation_police', '*/5 * * * *', $$
-    -- Arranca o ticket do Atendente que demorou e Escala o NÃ­vel
-    UPDATE public.tickets_atendimento 
-    SET status_distribuicao = 'escalado_nivel_2',
-        nivel_escalacao = nivel_escalacao + 1,
-        atendente_id = NULL,
-        sla_estourado = true
-    WHERE status_distribuicao = 'oferecido_atendente' 
-      AND hora_fim_sla_atribuicao < now();
-  $$);
-
-  Live Chat Policial (Roda a cada 10 SEGUNDOS em worker Node.js/Edge):
-  -- Arranca o chat do atendente se bater 30s.
-*/
+FOR EACH ROW EXECUTE FUNCTION public.trg_atendimento_capturado();
 
 
 -- =======================================================================================
