@@ -1,4 +1,4 @@
--- ==============================================================================
+﻿-- ==============================================================================
 -- ⚙️ MÓDULO 10: ENGENHARIA SOLAR TURNKEY — EPC COMPLETO (7 FASES)
 -- Ecossistema: Esol Energy | Banco: Supabase (PostgreSQL 15+)
 -- Dependências: 01_tenants_config.sql, 02_identidade_rbac.sql,
@@ -189,9 +189,14 @@ CREATE TABLE public.projetos_epc (
 
   -- DRE Decomposta
   valor_impostos numeric(15, 4) DEFAULT 0.0000 NOT NULL,
+  -- [CUSTOS OCULTOS - AUDITORIA CEO]
+  requer_troca_padrao_concessionaria boolean DEFAULT false,
+  valor_custo_padrao_entrada numeric(15, 4) DEFAULT 0.0000 NOT NULL,
+  percentual_reserva_garantia_om numeric(5, 4) DEFAULT 0.0150 NOT NULL, -- 1.5% retido para o fundo
+  valor_reserva_garantia_om numeric(15, 4) DEFAULT 0.0000 NOT NULL,
   valor_overhead numeric(15, 4) DEFAULT 0.0000 NOT NULL,
   valor_tdtc_mmn numeric(15, 4) DEFAULT 0.0000 NOT NULL,
-  lucro_liquido_esol numeric(15, 4) DEFAULT 0.0000 NOT NULL,
+  lucro_liquido_matriz numeric(15, 4) DEFAULT 0.0000 NOT NULL,
   margem_liquida_percentual numeric(5, 4) DEFAULT 0.0000 NOT NULL,
 
   -- ════════════════════════════════════════════════════════════════════

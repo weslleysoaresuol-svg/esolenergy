@@ -1,27 +1,40 @@
 # 🗄️ Esol Energy — Esquema de Banco de Dados Modular
 
 > **Banco:** PostgreSQL 15+ (Supabase)  
-> **Versão do Schema:** v11  
+> **Versão do Schema:** v25 (Cofre de Segurança RLS, MFA e Trust Center Adicionados)  
 > **Atualizado em:** Julho/2026
 
 ---
 
 ## 📋 Índice de Módulos
 
-| # | Arquivo | Domínio | Tabelas | Enums | Triggers |
-|:---:|:---|:---|:---:|:---:|:---:|
-| 00 | `00_extensions.sql` | Extensões PostgreSQL | — | — | — |
-| 01 | `01_tenants_config.sql` | Tenants, Tributação, Cupons, Combos | 5 | 2 | — |
-| 02 | `02_identidade_rbac.sql` | Profiles, Roles, RBAC, Cap Table, OPEX | 5 | 4 | — |
-| 03 | `03_rede_mmn.sql` | Rede MMN (ltree hierárquica) | 1 | — | — |
-| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline, Personas | 1 | 2 | — |
-| 05 | `05_carteira_energia.sql` | Carteira GD/MLE (Recorrência) | 1 | 2 | — |
-| 06 | `06_esol_sign.sql` | Assinaturas, KYC, Minutas Jurídicas | 2 | 2 | — |
-| 07 | `07_ledger_contabil.sql` | Plano de Contas, Lançamentos, Hash Chain | 2 | 1 | 2 |
-| 08 | `08_distratos_retencao.sql` | Distratos, Conformidade | 1 | — | — |
-| 09 | `09_esol_club_ecopontos.sql` | EcoPoints, Resgates, Fidelidade | 2 | 1 | — |
-| 10 | `10_engenharia_epc.sql` | EPC Turnkey (7 Fases Completas) | 7 | 9 | 2 |
-| — | **TOTAL** | — | **27** | **23** | **4** |
+| # | Arquivo | Domínio |
+|:---:|:---|:---|
+| 00 | `00_extensions.sql` | Extensões PostgreSQL (ltree, pgcrypto) |
+| 01 | `01_tenants_config.sql` | Tenants, Tributação, Overhead, Cupons, Combos |
+| 02 | `02_identidade_rbac.sql` | Profiles, Roles, RBAC, Cap Table, OPEX |
+| 03 | `03_rede_mmn.sql` | Rede MMN (ltree hierárquica) |
+| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline, Personas, Throttling |
+| 05 | `05_carteira_energia.sql` | Carteira GD/MLE (Recorrência) |
+| 06 | `06_motor_assinaturas.sql` | Assinaturas, KYC, Minutas Jurídicas |
+| 07 | `07_ledger_contabil.sql` | Plano de Contas, Lançamentos, Hash Chain |
+| 08 | `08_distratos_retencao.sql` | Distratos, Conformidade, Funil WhatsApp |
+| 09 | `09_clube_fidelidade.sql` | EcoPoints, Resgates, Fidelidade |
+| 10 | `10_engenharia_epc.sql` | EPC Turnkey (7 Fases Completas) |
+| 11 | `11_pos_vendas_om.sql` | Pós-Venda, O&M, Agendamentos, Avaliações |
+| 12 | `12_loja_ecommerce.sql` | Catálogo de Produtos, Pedidos, Itens |
+| 13 | `13_comunicacao_notificacoes.sql` | Templates, Fila de Notificações, Gatilhos |
+| 14 | `14_developer_api.sql` | API Keys, Webhooks, Edge Functions, Logs |
+| 15 | `15_marketing_brand.sql` | DAM, SMM, Artes Consultor, Campanhas |
+| 16 | `16_performance_marketing.sql` | UTM, Server-Side CAPI, ROAS, Pixels |
+| 17 | `17_security_audit_vault.sql` | Lixeira de Dados, Time Machine (Snapshots) |
+| 18 | `18_comunicacao_atendimento.sql` | Tickets, Chat Interno, Ouvidoria, Protocolos |
+| 19 | `19_esol_academy.sql` | Universidade EAD, Feed, Manuais de Vendas |
+| 20 | `20_banking_split_pagamentos.sql` | BaaS, Split Recebíveis, Gateway (Asaas/Stripe) |
+| 21 | `21_motor_fiscal_erp.sql` | Nota Fiscal, Autofaturamento, eNotas/Omie |
+| 22 | `22_logistica_supply_chain.sql` | Logística, Tracking Rastreio Kits EPC |
+| 23 | `23_motor_dados_referencia.sql` | Tarifas ANEEL, Snapshot/Rollback de Dados |
+| 24 | `24_security_rls_policies.sql` | Row Level Security, Prevenção IDOR, MFA AAL2 |
 
 ---
 
@@ -39,11 +52,24 @@ graph TD
     F --> I["08_distratos_retencao"]
     E --> J["09_esol_club_ecopontos"]
     E --> K["10_engenharia_epc"]
-    K --> H
-    K --> D
+    K -.-> H
+    K -.-> D
+    E --> L["11_pos_vendas_om"]
+    E --> M["12_loja_ecommerce"]
+    E --> N["13_comunicacao_notificacoes"]
+    L -.-> K
+    C --> O["14_developer_api"]
+    E --> P["15_marketing_brand"]
+    F --> Q["16_performance_marketing"]
+    A --> R["17_security_audit_vault"]
+    E --> S["18_comunicacao_atendimento"]
+    C --> T["19_esol_academy"]
+    C --> U["20_banking_split_pagamentos"]
+    U --> V["21_motor_fiscal_erp"]
+    K -.-> W["22_logistica_supply_chain"]
+    X["23_motor_dados_referencia"] -.-> C
+    C -.-> Y["24_security_rls_policies"]
 ```
-
-**Regra:** Um módulo SÓ pode referenciar (FK) tabelas de módulos com número **menor** que o seu, com exceção do módulo `10_engenharia_epc.sql` que referencia `07_ledger_contabil.sql` (FK cruzada via triggers).
 
 ---
 
@@ -51,7 +77,7 @@ graph TD
 
 ### PowerShell (Windows)
 ```powershell
-# Concatena todos os módulos na ordem correta e gera o monolítico
+# Concatena todos os 25 módulos na ordem correta e gera o monolítico
 $modules = @(
   "00_extensions.sql",
   "01_tenants_config.sql",
@@ -59,16 +85,30 @@ $modules = @(
   "03_rede_mmn.sql",
   "04_crm_clientes.sql",
   "05_carteira_energia.sql",
-  "06_esol_sign.sql",
+  "06_motor_assinaturas.sql",
   "07_ledger_contabil.sql",
   "08_distratos_retencao.sql",
-  "09_esol_club_ecopontos.sql",
-  "10_engenharia_epc.sql"
+  "09_clube_fidelidade.sql",
+  "10_engenharia_epc.sql",
+  "11_pos_vendas_om.sql",
+  "12_loja_ecommerce.sql",
+  "13_comunicacao_notificacoes.sql",
+  "14_developer_api.sql",
+  "15_marketing_brand.sql",
+  "16_performance_marketing.sql",
+  "17_security_audit_vault.sql",
+  "18_comunicacao_atendimento.sql",
+  "19_esol_academy.sql",
+  "20_banking_split_pagamentos.sql",
+  "21_motor_fiscal_erp.sql",
+  "22_logistica_supply_chain.sql",
+  "23_motor_dados_referencia.sql",
+  "24_security_rls_policies.sql"
 )
 
 $header = @"
 -- ==============================================================================
--- 🗄️ ESOL ENERGY — ESQUEMA DE BANCO DE DADOS DDL COMPLETO (v11)
+-- 🗄️ ESOL ENERGY — ESQUEMA DE BANCO DE DADOS DDL COMPLETO (v25)
 -- Banco de Dados: PostgreSQL (Supabase)
 -- ⚠️  ESTE ARQUIVO É GERADO AUTOMATICAMENTE POR CONCATENAÇÃO DOS MÓDULOS.
 -- ⚠️  NÃO EDITE DIRETAMENTE. Edite o módulo correspondente em docs/database/
@@ -88,7 +128,7 @@ Write-Host "✅ Monolítico regenerado com sucesso!"
 ### Bash (Linux/Mac)
 ```bash
 #!/bin/bash
-# Concatena todos os módulos na ordem correta
+# Concatena todos os 25 módulos na ordem correta
 cat \
   docs/database/00_extensions.sql \
   docs/database/01_tenants_config.sql \
@@ -96,40 +136,26 @@ cat \
   docs/database/03_rede_mmn.sql \
   docs/database/04_crm_clientes.sql \
   docs/database/05_carteira_energia.sql \
-  docs/database/06_esol_sign.sql \
+  docs/database/06_motor_assinaturas.sql \
   docs/database/07_ledger_contabil.sql \
   docs/database/08_distratos_retencao.sql \
-  docs/database/09_esol_club_ecopontos.sql \
+  docs/database/09_clube_fidelidade.sql \
   docs/database/10_engenharia_epc.sql \
+  docs/database/11_pos_vendas_om.sql \
+  docs/database/12_loja_ecommerce.sql \
+  docs/database/13_comunicacao_notificacoes.sql \
+  docs/database/14_developer_api.sql \
+  docs/database/15_marketing_brand.sql \
+  docs/database/16_performance_marketing.sql \
+  docs/database/17_security_audit_vault.sql \
+  docs/database/18_comunicacao_atendimento.sql \
+  docs/database/19_esol_academy.sql \
+  docs/database/20_banking_split_pagamentos.sql \
+  docs/database/21_motor_fiscal_erp.sql \
+  docs/database/22_logistica_supply_chain.sql \
+  docs/database/23_motor_dados_referencia.sql \
+  docs/database/24_security_rls_policies.sql \
   > docs/esol_banco_dados_ddl_completo.sql
 
-echo "✅ Monolítico regenerado com sucesso!"
+echo "✅ Monolítico de v25 regenerado com sucesso!"
 ```
-
----
-
-## 📝 Regras de Contribuição
-
-1. **Onde editar:** Sempre edite o **módulo individual** (`docs/database/XX_nome.sql`), nunca o monolítico diretamente.
-2. **Regenerar o monolítico:** Após editar um módulo, execute o script acima para regenerar o `esol_banco_dados_ddl_completo.sql`.
-3. **Novo módulo:** Numere sequencialmente (`11_novo_modulo.sql`), atualize este README e o script de concatenação.
-4. **FKs cruzadas:** Se o novo módulo referenciar tabelas de módulos com número maior, documente a dependência circular aqui.
-5. **Enums existentes:** Para adicionar valores a enums existentes em outro módulo, use `ALTER TYPE ... ADD VALUE` no módulo que **usa** o novo valor.
-
----
-
-## 🗺️ Mapa de FKs Cruzadas entre Módulos
-
-| Módulo Origem | Módulo Destino | FK |
-|:---|:---|:---|
-| `10_engenharia_epc` | `07_ledger_contabil` | Trigger `trg_projeto_epc_concluido_ledger` → `ledger_lancamentos` |
-| `10_engenharia_epc` | `03_rede_mmn` | Trigger `trg_projeto_epc_comissao_mmn` → `rede_mmn` |
-| `08_distratos_retencao` | `06_esol_sign` | FK `assinatura_distrato_id` → `assinaturas_esol_sign` |
-
----
-
-## 📂 Arquivo Monolítico de Referência
-
-O arquivo `esol_banco_dados_ddl_completo.sql` (na raiz de `docs/`) é a **versão consolidada** de todos os módulos acima. Ele é mantido como referência de leitura e para compatibilidade com ferramentas que exigem um único arquivo SQL.
-
-> ⚠️ **Não edite o monolítico diretamente.** Edite o módulo correspondente e regenere.

@@ -1,8 +1,8 @@
--- ==============================================================================
+﻿-- ==============================================================================
 -- ✍️ MÓDULO 06: ESOL SIGN — ASSINATURAS ELETRÔNICAS, KYC & MINUTAS JURÍDICAS
 -- Ecossistema: Esol Energy | Banco: Supabase (PostgreSQL 15+)
 -- Dependências: 01_tenants_config.sql, 02_identidade_rbac.sql
--- Tabelas: assinaturas_esol_sign, documentos_minutas_juridicas
+-- Tabelas: assinaturas_digitais, documentos_minutas_juridicas
 -- Enums: documento_categoria, kyc_status
 -- Base Legal: MP 2.200-2/2001 e Lei 14.063/2020
 -- ==============================================================================
@@ -19,7 +19,7 @@ CREATE TYPE public.documento_categoria AS ENUM (
 
 CREATE TYPE public.kyc_status AS ENUM ('pending', 'approved', 'rejected', 'bypass');
 
-CREATE TABLE public.assinaturas_esol_sign (
+CREATE TABLE public.assinaturas_digitais (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   user_id uuid REFERENCES auth.users(id), -- Signatário

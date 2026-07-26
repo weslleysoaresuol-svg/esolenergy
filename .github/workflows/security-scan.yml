@@ -1,0 +1,71 @@
+name: Esol Energy DevSecOps (Security by Design)
+
+on:
+  push:
+    branches: [ "main", "staging" ]
+  pull_request:
+    branches: [ "main", "staging" ]
+
+jobs:
+  secret-detection:
+    name: 🕵️ TruffleHog (Vazamento de Senhas)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Run TruffleHog Secret Scanner
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  sast-semgrep:
+    name: 🛡️ Semgrep (Análise Estática de Código)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run Semgrep CI
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/owasp-top-ten
+            p/typescript
+            p/javascript
+          generateSarif: "1"
+
+      - name: Upload SARIF file for GitHub Advanced Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep.sarif
+
+  sql-lint-security:
+    name: 🔒 PostgreSQL Security Linter (RLS & MFA Checks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Verify RLS and MFA Policies
+        run: |
+          echo "Verificando se Row Level Security (RLS) está presente nas migrações..."
+          if ! grep -q -r "ENABLE ROW LEVEL SECURITY" docs/database/; then
+            echo "::error::FALHA: Nenhuma tabela com RLS ativado encontrada! BOLA/IDOR Risco Crítico."
+            exit 1
+          fi
+          
+          echo "Verificando se as travas de MFA estão presentes..."
+          if ! grep -q -r "auth.jwt()->>'aal') = 'aal2'" docs/database/; then
+            echo "::error::FALHA: Trava financeira de MFA (AAL2) removida ou não encontrada. SOC 2 Falhou!"
+            exit 1
+          fi
+          
+          echo "Auditoria de Segurança de Banco de Dados: PASSOU."

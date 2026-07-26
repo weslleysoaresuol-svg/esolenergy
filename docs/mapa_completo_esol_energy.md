@@ -15,7 +15,7 @@ Uma **plataforma 360° de energia renovável (EnergyTech)** que atua como um eco
 2. **Camada de Resiliência de APIs (Provider Abstraction Layer):** Banco de dados centralizado e proprietário. A Esol detém a propriedade absoluta dos dados do cliente e roteia leads dinamicamente via painel administrativo, permitindo trocar de parceiro fornecedor (usina/comercializadora) sem impacto na rede MMN ou interrupção na telemetria.
 3. **Foco 100% em Renda Passiva Recorrente (Royalties de Energia):** Produtos de consumo e utilidade (Geração Distribuída e Mercado Livre de Energia) remuneram a rede exclusivamente sobre a recorrência mensal, gerando uma carteira de renda passiva sólida para os parceiros comerciais.
 4. **Selo Verde Esol:** Certificação ecológica exclusiva para os sistemas físicos instalados e homologados pela própria Esol Energy. Garante conformidade com a Lei 14.300/2022, origem limpa e redução de CO₂, sendo vetado para produtos de terceiros por razões de segurança jurídica.
-5. **Motor de Assinatura Próprio (Esol Sign - R$ 0/mês):** Validação jurídica interna conforme a MP 2.200-2/2001 e Lei 14.063/2020, eliminando tarifas por documento assinado.
+5. **Motor de Assinatura Próprio (Motor de Assinaturas - R$ 0/mês):** Validação jurídica interna conforme a MP 2.200-2/2001 e Lei 14.063/2020, eliminando tarifas por documento assinado.
 6. **Mecanismo Anti-Fraude e KYC:** Validação facial (Face Match) e cadastral integrada no onboarding do cliente para proteção legal da rede.
 7. **Exatidão Centesimal:** Registro de todas as frações financeiras e energéticas com precisão de 4 casas decimais no banco de dados.
 8. **Contabilidade em Partida Dobrada (Ledger):** Livro-razão imutável utilizando hashes SHA-256 para auditoria de comissões e splits tributários.
@@ -44,7 +44,7 @@ Para garantir que futuros sócios, diretores, advogados, analistas e atendentes 
    - *Permissões:* Criar/excluir administradores, alterar parâmetros do Motor Reverso (`lucro_alvo`), cadastrar novos SKUs e aprovar saques de grande porte. Exige 2FA biométrico obrigatório.
 
 2. **⚖️ Nível 2: Admin Jurídico & Compliance (Advogados & Governança):**
-   - *Acesso:* Esol Legal Vault, Esol Sign, Dossiês de Evidências e Gestão de Lock Screen.
+   - *Acesso:* Governan�a Legal Vault, Motor de Assinaturas, Dossiês de Evidências e Gestão de Lock Screen.
    - *Permissões:* Upload e versão de minutas contratuais, disparo de re-aceites e notificações extrajudiciais. Sem acesso a aprovação de saques bancários.
 
 3. **💰 Nível 3: Admin Financeiro & Tesouraria (CFO & Contabilidade Interna):**
@@ -85,7 +85,7 @@ Para separar com rigor absoluto os **Sócios-Administradores Principais (Equity)
      1. *CLT Tradicional:* Suporte, atendimentos de rotina e funções operacionais contínuas (com CBO no eSocial).
      2. *CLT Intermitente (Art. 452-A CLT):* Técnicos de vistoria e inspetores O&M convocados sob demanda.
      3. *Prestação de Serviços PJ (Art. 442-B CLT & Lei 13.429/17):* CFOs contratados, devs sênior, engenheiros e especialistas.
-     4. *Advogado Associado (Estatuto OAB Lei 8.906/94):* Bancada jurídica interna do Esol Legal Vault.
+     4. *Advogado Associado (Estatuto OAB Lei 8.906/94):* Bancada jurídica interna do Governan�a Legal Vault.
      5. *Estágio Supervisionado (Lei 11.788/08):* Estudantes de engenharia, direito, TI e administração supervisionados por titulares de Conselhos.
      6. *Acordo de Sócios / Equity & Vesting:* Founders e executivos C-Level (Pró-Labore + Dividendos isentos).
    - **Enquadramento em CBO, Conselhos de Classe & Sindicatos:** Vinculação obrigatória ao Código CBO MTE/eSocial (ex: `2143-05` Eng. Eletricista, `2410-05` Advogado, `2522-10` Contador) e órgãos de classe (**CREA/CFT, OAB, CRC, CRA**).
@@ -114,7 +114,7 @@ Para permitir que a Esol Energy nassa legalizada e enxuta sob o regime **MEI (Mi
 4. **🏢 FASE 4: Lucro Presumido ou Lucro Real (Faturamento Acima de R$ 4,8 Milhões / ano):**
    - Holding Esol Energy de grande porte, abertura de filiais white-label, faturamento direto triangulado completo com benefício fiscal de ICMS/ISS, Juros sobre o Capital Próprio (JCP) e isenção total de dividendos sob a Lei 9.249/95.
 
-*   **Migração sem Parar a Operação (CNPJ Migration Gateway):** Ao alterar o regime na Junta Comercial/Receita, o administrador altera o campo `regime_atual` na tabela `config_tributaria_tenant`. **100% dos dados históriccos, contratos assinados no Esol Sign, clientes e a árvore MMN de 7 níveis permanecem intocados e operando sem nenhuma interrupção!**
+*   **Migração sem Parar a Operação (CNPJ Migration Gateway):** Ao alterar o regime na Junta Comercial/Receita, o administrador altera o campo `regime_atual` na tabela `config_tributaria_tenant`. **100% dos dados históriccos, contratos assinados no Motor de Assinaturas, clientes e a árvore MMN de 7 níveis permanecem intocados e operando sem nenhuma interrupção!**
 
 ---
 
@@ -125,7 +125,7 @@ Para permitir que a Esol Energy nassa legalizada e enxuta sob o regime **MEI (Mi
 | # | Categoria | Tipo de Produto | Motor de Comissão | Modelo de Faturamento |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | 🏠 **Sistema Solar Completo** | Projeto turnkey (equipamentos + serviços + ART + Selo Verde) | **Motor 1** (15% TDTC) | Faturamento único / Financiamento |
-| 2 | 🛒 **Loja Esol (Produtos)** | E-commerce de kits, inversores, painéis, baterias, EV chargers e IoT. | **Motor 1** (por SKU) | Compra única |
+| 2 | 🛒 **LOJA VIRTUAL (Produtos)** | E-commerce de kits, inversores, painéis, baterias, EV chargers e IoT. | **Motor 1** (por SKU) | Compra única |
 | 3 | ⚡ **Energia por Assinatura (GD)** | Assinatura de créditos solares de usinas parceiras (B2C/B2B leve) | **Motor 2** (36% receita) | **100% Recorrente Mensal** |
 | 4 | 🔌 **Mercado Livre de Energia (MLE)** | Agenciamento/migração de PMEs para comercializadora varejista | **Motor 2** (36% receita) | **100% Recorrente Mensal** |
 | 5 | 📊 **Monitoramento Remoto** | SaaS de telemetria e análise de desempenho de usinas físicas | **Motor 1** (25% TDTC) | Assinatura mensal |
@@ -133,7 +133,7 @@ Para permitir que a Esol Energy nassa legalizada e enxuta sob o regime **MEI (Mi
 | 7 | 🧹 **Limpeza de Painéis** | Lavagem química e física especializada de módulos solares | **Motor 1** (12% TDTC) | Serviço único |
 | 8 | 🛡️ **Seguros Solares** | Seguro de danos e perda de receita para sistemas instalados | **Motor 2** (36% receita) | **Recorrente Mensal** |
 
-*Nota: A categoria de "Usados" foi eliminada por falta de escalabilidade inicial. Equipamentos de Internet das Coisas (IoT) foram integrados na Loja Esol (SKUs de automação/medição) e no canal de indicações corporativas B2B.*
+*Nota: A categoria de "Usados" foi eliminada por falta de escalabilidade inicial. Equipamentos de Internet das Coisas (IoT) foram integrados na LOJA VIRTUAL (SKUs de automação/medição) e no canal de indicações corporativas B2B.*
 
 ### 🟡 CANAL 2 — INDICAÇÃO CORPORATIVA DIRETA (2 Produtos B2B)
 leads estratégicos de grande porte repassados ao comercial interno da Esol. Paga comissão de indicação única (2% a 5% da margem Esol) para o consultor direto, sem espalhar na rede MMN.
@@ -166,7 +166,7 @@ Abaixo está o mapeamento detalhado de etapas para a contratação e entrega de 
    *   *Payback e VPL:* retorno de investimento calculado e projeção de economia total para os próximos 25 anos.
    *   **Resultado:** Geração automática de uma proposta comercial altamente profissional em formato PDF.
 
-2. **📦 Seleção e Configuração de Kits (Loja Esol — Módulo 7)**
+2. **📦 Seleção e Configuração de Kits (LOJA VIRTUAL — Módulo 7)**
    *   *Kit Pronto:* Seleção de pacotes homologados e pré-configurados.
    *   *Kit Personalizado:* O consultor monta componente por componente, e o sistema valida dinamicamente os limites elétricos de MPPT para evitar incompatibilidade entre inversores e painéis.
 
@@ -180,7 +180,7 @@ Abaixo está o mapeamento detalhado de etapas para a contratação e entrega de 
 4. **🏦 Simulação de Financiamento Integrado**
    O aplicativo conecta-se com parceiros bancários (Solfácil, BV, Santander) para simular parcelas. O objetivo é que o valor mensal da parcela de financiamento seja menor do que a economia imediata gerada na conta de luz, fazendo com que o sistema se pague desde o primeiro dia.
 
-5. **✍️ Contrato e Biometria Digital (Esol Sign — Módulo 13)**
+5. **✍️ Contrato e Biometria Digital (Motor de Assinaturas — Módulo 13)**
    O cliente assina digitalmente o contrato direto no celular. O motor de assinaturas captura metadados, geolocalização e fotos dos documentos/selfie para processar o KYC (verificação facial contra fraudes).
 
 6. **🚚 Faturamento Triangular e Split de Pagamentos**
@@ -251,7 +251,7 @@ erDiagram
     projetos_epc ||--|| financiamento_solar : "financiamento"
     projetos_epc ||--o{ historico_comissoes_epc : "comissões MMN"
     projetos_epc ||--o{ ledger_lancamentos : "lançamentos contábeis"
-    projetos_epc ||--o{ assinaturas_esol_sign : "contrato EPC"
+    projetos_epc ||--o{ assinaturas_digitais : "contrato EPC"
     clientes ||--o{ dimensionamento_solar : "solicita dimensionamento"
     profiles ||--o{ projetos_epc : "consultor vende"
     profiles ||--o{ instalacao_campo : "instalador executa"
@@ -434,7 +434,7 @@ export interface IFinanciamentoSolar {
 
 ---
 
-### 4.2 🛒 Loja Esol (Categoria #2)
+### 4.2 🛒 LOJA VIRTUAL (Categoria #2)
 E-commerce oficial para venda de partes físicas e equipamentos solares sem necessidade de contratação de serviços associados.
 *   **MODO 1: KITS PRONTOS (Combos pré-configurados pelo admin)**
     Pacotes com preço fechado, calculado pelo Motor Reverso com margem individual.
@@ -529,11 +529,11 @@ O administrador configura o `lucro_alvo` (lucro mínimo) e o percentual de comis
 
 ---
 
-### 5.1.2 Precificação Ancorada & Escopo de Cupons (Turnkey, Loja Esol, SaaS & O&M)
+### 5.1.2 Precificação Ancorada & Escopo de Cupons (Turnkey, LOJA VIRTUAL, SaaS & O&M)
 Para proporcionar **gordura de negociação comercial** aos consultores e permitir a aplicação de cupons institucionais **sem colocar em risco a margem limpa da empresa nem romper contratos com fornecedores**, o Motor Reverso adota a seguinte diretriz de aplicabilidade:
 
 1. **Escopo de Aplicação de Cupons e Ancoragem:**
-   - ✅ **PERMITIDO (Cupons & Ancoragem Comercial):** Aplicável nas Categorias #1 (**Solar Turnkey**), #2 (**Loja Esol** por SKU), #5 (**SaaS Telemetria IoT**) e #6/#7 (**Limpeza e O&M de Painéis**). Nestas quatro categorias de hardware, produtos e serviços próprios, o preço de tabela é calculado com ancoragem (ex: **34% no Turnkey**, **70% no SaaS**, **50% no O&M** e **Piso + 18% na Loja**), criando de 14% a 30% de gordura negociável acima do piso inviolável (**20% Turnkey**, **40% SaaS**, **30% O&M** e **piso individual por SKU na Loja**).
+   - ✅ **PERMITIDO (Cupons & Ancoragem Comercial):** Aplicável nas Categorias #1 (**Solar Turnkey**), #2 (**LOJA VIRTUAL** por SKU), #5 (**SaaS Telemetria IoT**) e #6/#7 (**Limpeza e O&M de Painéis**). Nestas quatro categorias de hardware, produtos e serviços próprios, o preço de tabela é calculado com ancoragem (ex: **34% no Turnkey**, **70% no SaaS**, **50% no O&M** e **Piso + 18% na Loja**), criando de 14% a 30% de gordura negociável acima do piso inviolável (**20% Turnkey**, **40% SaaS**, **30% O&M** e **piso individual por SKU na Loja**).
    - ⛔ **PROIBIDO / ISENTO (Sem Cupons ou Ancoragem):** Categoria #3 (**Assinatura GD**), Categoria #4 (**Mercado Livre MLE**) e Categoria #8 (**Seguros Solares**). Por dependerem estritamente de tabelas repassadas por geradoras, comercializadoras no atacado e seguradoras, essas categorias mantêm seus **preços e repasses fixos**, perfeitamente correlacionados com o Pool MMN/Indique e Ganhe (ex: **64,0% de retenção líquida na Esol** + **36,0% no MMN/EcoPontos**).
 
 2. **A Cascata de Descontos e Cupons (Empilhamento Restrito às Categorias Permitidas):**
@@ -553,7 +553,7 @@ Para garantir que o consultor saiba **exatamente o que oferecer, como oferecer e
 
 1. **As 10 Personas de Compradores Mapeadas no App:**
    - **Persona A (Residencial Próprio):** Quer valorizar a casa e zerar a luz $\rightarrow$ *Recomendação:* **Solar Turnkey #1** + Combo Proteção (Seguro #8 + O&M #6).
-   - **Persona B (Inquilino / Imóvel Alugado):** Quer economia sem obra $\rightarrow$ *Recomendação:* **Assinatura GD #3** + Milhagem Esol Club.
+   - **Persona B (Inquilino / Imóvel Alugado):** Quer economia sem obra $\rightarrow$ *Recomendação:* **Assinatura GD #3** + Milhagem Clube de Fidelidade.
    - **Persona C (PME & Indústria Grupo A):** Quer reduzir OPEX corporativo $\rightarrow$ *Recomendação:* **Mercado Livre MLE #4** + SaaS Telemetria IoT #5.
    - **Persona D (Investidor Solar B2B):** Quer rentabilidade líquida > 2% ao mês $\rightarrow$ *Recomendação:* **Usina Solar B2B #10** + Gestão GD #3.
    - **Persona E (Dono de Usina Existente):** Quer recuperar geração e proteger ativo $\rightarrow$ *Recomendação:* **Limpeza & O&M #6/#7** + SaaS IoT #5 + Seguro #8.
@@ -636,7 +636,7 @@ O Cockpit de Vendas é a **tela principal do consultor** no app. É dividido em 
 | Persona | Produto Principal | Cross-sell (Combo) | Motor | Canal |
 |:---:|:---|:---|:---:|:---:|
 | A | Solar Turnkey #1 | Seguro #8 + O&M #6 | Motor 1 | MMN |
-| B | Assinatura GD #3 | Esol Club (EcoPontos) | Motor 2 | MMN |
+| B | Assinatura GD #3 | Clube de Fidelidade (EcoPontos) | Motor 2 | MMN |
 | C | Mercado Livre MLE #4 | SaaS Telemetria IoT #5 | Motor 2 | MMN |
 | D | Usina Solar B2B #10 | Gestão GD #3 | — | Indicação B2B |
 | E | Limpeza #7 + O&M #6 | SaaS IoT #5 + Seguro #8 | Motor 1 | MMN |
@@ -646,7 +646,7 @@ O Cockpit de Vendas é a **tela principal do consultor** no app. É dividido em 
 | I | Montador de Kits Esol Store #2 | Seguro #8 | Motor 1 | MMN |
 | J | Carrinho Rápido Esol Store #2 | — | Motor 1 | MMN |
 
-*Tabelas envolvidas:* `clientes` (campo `persona_tipo`), `combos_produtos_esol`, `cupons_promocionais`
+*Tabelas envolvidas:* `clientes` (campo `persona_tipo`), `combos_produtos`, `cupons_promocionais`
 
 *Nova coluna necessária no banco:* `clientes.persona_tipo ENUM('A','B','C','D','E','F','G','H','I','J')`
 
@@ -739,7 +739,7 @@ O Cockpit de Vendas é a **tela principal do consultor** no app. É dividido em 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-*Tabelas envolvidas:* `propostas`, `parametros_comerciais`, `combos_produtos_esol`, `historico_comissoes_epc`
+*Tabelas envolvidas:* `propostas`, `parametros_comerciais`, `combos_produtos`, `historico_comissoes_epc`
 
 ---
 
@@ -823,7 +823,7 @@ Ao clicar numa categoria, o sistema abre o fluxo específico:
    ```
 5. Se a margem cair abaixo do piso: 🔴 **BLOQUEADO** — Requer aprovação do Diretor (Level 2)
 
-*Tabelas envolvidas:* `combos_produtos_esol`, `cupons_promocionais`, `parametros_comerciais`
+*Tabelas envolvidas:* `combos_produtos`, `cupons_promocionais`, `parametros_comerciais`
 
 ---
 
@@ -834,7 +834,7 @@ Ao clicar numa categoria, o sistema abre o fluxo específico:
 | `clientes` | 04_crm_clientes | ✅ | CRM, Pipeline, Personas |
 | `propostas` | (código legado) | ✅ | Geração de propostas |
 | `parametros_comerciais` | 01_tenants_config | ✅ | Motor Reverso, TDTC |
-| `combos_produtos_esol` | 01_tenants_config | ✅ | Construtor de combos |
+| `combos_produtos` | 01_tenants_config | ✅ | Construtor de combos |
 | `cupons_promocionais` | 01_tenants_config | ✅ | Aplicação de cupons |
 | `dimensionamento_solar` | 10_engenharia_epc | ✅ | Simulador Solar |
 | `bom_materiais` | 10_engenharia_epc | ✅ | Lista de materiais |
@@ -858,7 +858,7 @@ $$\text{TDTC Teto} = \text{Bônus Indicador (EcoPontos)} + \text{Desconto Amigo}
    - Rede N1-N7 recebe **100% dos Overrides** (ex: 7% no Turnkey, 21% na GD).
    - Margem Esol é **100% preservada**.
 
-2. **Venda Originada por Indicação de Cliente Final (Esol Club / App):**
+2. **Venda Originada por Indicação de Cliente Final (Clube de Fidelidade / App):**
    - A fatia da Venda Direta (ex: 8% no Turnkey, 15% na GD) é **subdividida internamente no nó de origem**:
      * **Cliente Indicador:** Recebe uma parcela da venda direta convertida em **EcoPontos** (ex: 2,5% no Turnkey, 5% no repasse de GD por streaming).
      * **Cliente Indicado (Amigo):** Recebe o **Desconto Âncora / Promocional** embutido na proposta técnica ou a economia autossustentável apresentada na Landing Page do link.
@@ -880,7 +880,7 @@ O Motor 1 é aplicado aos produtos de fabricação e execução direta da Esol, 
 | :---: | :--- | :---: | :---: | :---: |
 | **#1** | 🏠 Sistema Solar Turnkey | 15% | 8% | 1% por nível (Total 7%) |
 | **#5** | 📊 Monitoramento Remoto | 25% | 18% | 1% por nível (Total 7%) |
-| **#2** | 🛒 Loja Esol (Kits, Inversores, EV Chargers) | *Paramétrico por SKU* | *Paramétrico por SKU* | 1% por nível (Total 7%) |
+| **#2** | 🛒 LOJA VIRTUAL (Kits, Inversores, EV Chargers) | *Paramétrico por SKU* | *Paramétrico por SKU* | 1% por nível (Total 7%) |
 | **#6** | 🔧 Manutenção (O&M) | 10% | 6,5% | 0,5% por nível (Total 3,5%) |
 | **#7** | 🧹 Limpeza de Painéis | 12% | 8,5% | 0,5% por nível (Total 3,5%) |
 
@@ -937,54 +937,41 @@ Para manter a operação simples, transparente e 100% segura sem criar travas bu
 
 ---
 
-### 5.5.2 Programa Esol Club — Jornada Gamificada "Indique e Ganhe" (EcoPontos & Fatura Zero)
-Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de Aquisição de Clientes (CAC) reduzido e retenção perpétua de assinantes (Zero Churn), o sistema incorpora o programa **Esol Club** direcionado exclusivamente para contas de **Clientes Finais**:
+### 5.5.2 Programa Clube de Fidelidade - Gamificação Profunda e Tokenomics (Custo Zero Upfront)
 
-1. **Moeda Digital Interna (EcoPontos Esol - EP):**
-   - Regra de Conversão: **100 EcoPontos (EP) = R$ 1,00 de Desconto ou Benefício** (1 EP = R$ 0,01).
-   - **Modelo de Streaming de Pontos (Payback Imediato & Risco Zero):**
-     Para garantir payback imediato e lucro líquido positivo desde o primeiro mês, a Esol não distribui bônus Upfront em dinheiro/pontos em produtos recorrentes. Os pontos são creditados de forma **fracionada e condicional ao pagamento mensal**:
-     *   *#1. Sistema Solar EPC Turnkey:* **50.000 EP** (R$ 500) liberados em lote único para o indicador, porém **somente após a quitação de 100% da obra** ou liberação total do financiamento pelo banco. (O indicado não ganha pontos; o link oferece R$ 250 de desconto técnico embutido no markup).
-     *   *#2. Loja Esol ( wallbox / kit > R$ 1k):* **5.000 EP** (R$ 50) liberados em lote único pós-entrega física do produto.
-     *   *#3. Geração Distribuída (GD Assinatura):* **500 EP** (R$ 5,00) creditados **mensalmente por 10 meses** (total de 5.000 EP) na carteira do indicador, contanto que a fatura do amigo indicado esteja paga no respectivo mês.
-     *   *#4. Mercado Livre (MLE):* **2.000 EP** (R$ 20,00) creditados **mensalmente por 10 meses** (total de 20.000 EP) na carteira do indicador, condicionado ao pagamento da mensalidade livre.
-     *   *#5. Monitoramento SaaS:* **150 EP** (R$ 1,50) creditados **mensalmente por 10 meses** (total de 1.500 EP).
-     *   *#6/#7. Limpeza e O&M:* **3.000 EP** (R$ 30) liberados pós-conclusão física e pagamento do serviço.
-     *   *#8. Seguros Solares:* **200 EP** (R$ 2,00) creditados **mensalmente por 10 meses** (total de 2.000 EP).
+Para impulsionar o crescimento viral orgânico do ecossistema Esol com Custo de Aquisição de Clientes (CAC) nulo e retenção perpétua (Zero Churn), o sistema incorpora o programa **Clube de Fidelidade** com uma economia gamificada rigorosamente projetada para startups (Preservação de Caixa).
 
-2. **O Funil do Link de Indicação (Marketing & Valor Percebido):**
-   - **Sem Pontos para o Indicado:** O amigo convidado **não recebe pontos de boas-vindas**, eliminando custos redundantes.
-   - **Link Persuasivo de Alto Impacto:** O link gerado no aplicativo direciona o indicado a uma Landing Page dinâmica e personalizada:
-     *   *Gatilho Social:* *"Seu amigo [Nome do Indicador] economizou R$ X este mês com a Esol e enviou um convite exclusivo para você economizar até 20% na sua conta de luz sem investir nada!"*
-     *   *Simulador Expresso:* Um widget interativo onde o amigo insere seu consumo mensal e vê instantaneamente sua economia estimada em 1, 5 e 25 anos.
-     *   *Selo Verde Dinâmico:* Demonstrativo de redução de emissões de CO₂ e árvores salvas se ele realizar a transição.
+1. **Moeda Digital Interna (EcoPontos - EP):**
+   - Regra de Conversão: **100 EcoPontos (EP) = R$ 1,00 em Benefícios Digitais** (1 EP = R$ 0,01).
+   - **Streaming Condicional (Risco Zero para o Caixa):**
+     A Esol **nunca** distribui bônus Upfront em dinheiro. Os pontos são creditados de forma **fracionada e condicionada ao pagamento mensal do indicado**:
+     *   *#1. Sistema EPC Turnkey:* 50.000 EP (R$ 500) liberados apenas após a usina estar paga à Esol.
+     *   *#2. Geração Distribuída (GD Assinatura):* 500 EP creditados *mensalmente por 10 meses* (apenas se o indicado pagar a conta naquele mês).
 
-3. **O Catálogo de Resgate (Esol Club Catalog):**
-   Os EcoPontos acumulados podem ser trocados ativamente pelo cliente por:
-   - *Desconto na Conta de Luz (GD/MLE):* Lotes mínimos de resgate de **5.000 EP** (R$ 50), limitados a 50% da fatura mensal.
-   - *Voucher da Loja Esol (Componentes):* Lote de **10.000 EP** (R$ 100 de desconto em acessórios).
-   - *Limpeza de Painéis Gratuita:* **35.000 EP** (Esol paga R$ 200 ao instalador credenciado, economizando a margem).
-   - *Brindes de Marca:* **8.000 EP** por Boné Esol, **12.000 EP** por Camiseta Dry-Fit, **18.000 EP** por Garrafa Térmica (Custo de fabricação 60% menor para a Esol).
+2. **Micro-Recompensas (Dopamina Diária a Custo Zero):**
+   Para viciar o cliente positivamente no app sem gastar caixa:
+   - *Completar Perfil Completo (KYC):* 200 EP (Custo zero, melhora base de dados).
+   - *Adimplência (Pagar via PIX até o vencimento):* 50 EP/mês (Custo zero, reduz inadimplência).
+   - *Educação Solar:* 100 EP ao assistir um vídeo tutorial no app sobre leitura da fatura (Custo zero, reduz tickets no suporte).
 
-4. **Trilha Gamificada de Embaixadores Solares (GD e MLE):**
-   Subir de nível de embaixador no app aumenta o valor da recorrência de EcoPontos mensais recebidos por indicação ativa:
-   - 🌱 **Conector Verde (1 a 3 indicações GD):** Recebe **500 EP** mensais por amigo por 10 meses.
-   - 🌳 **Guardião Solar (4 a 9 indicações GD):** Recebe **600 EP** mensais por amigo por 10 meses (+20% de bônus).
-   - ⚡ **Mestre da Transição (10 a 24 indicações GD):** Recebe **750 EP** mensais por amigo por 10 meses (+50% de bônus).
-   - 👑 **Lenda Fatura Zero (25+ indicações GD):** Recebe **1.000 EP** mensais por amigo por 10 meses (+100% de bônus) + Troféu Físico Esol.
+3. **Mecanismos de Queima (Sorteios e Roletas Digitais):**
+   Sistemas de pontos geram passivos contábeis gigantescos. Para resolver isso sem comprar prêmios caros físicos:
+   - **Rifas de Custo Marginal Zero:** O cliente "queima" 200 EP para comprar um bilhete digital para o sorteio de *"1 Mês de Conta de Luz Grátis"* ou *"Acelerador 2x de Pontos no próximo mês"*.
+   - Se 2.000 clientes compram o bilhete, a Esol apagou um passivo de 400.000 EP (R$ 4.000) entregando um prêmio digital que consome apenas o lucro de um mês de um cliente (Custo marginal irrelevante).
 
-5. **Blindagem e Travas Financeiras do Motor Reverso:**
-   - *Liberação Condicional Recorrente:* Nos produtos recorrentes, os pontos são liberados apenas após a confirmação do repasse da geradora parceira à Esol no mês correspondente. Se o amigo cancelar a assinatura, os repasses de pontos cessam imediatamente.
-   - *Abatimento Limitado a 50% por Fatura:* O desconto acumulado abate no máximo 50% do valor da fatura mensal do cliente, garantindo que a Esol receba fluxo de caixa contínuo.
-   - *Validade e Expiração Anual:* Os EcoPontos acumulados têm validade até o dia **31 de dezembro do ano corrente**. No dia 1º de janeiro, os pontos não resgatados expiram automaticamente, eliminando o passivo contábil da Esol e gerando senso de urgência de troca no fim do ano.
-   - *Rollover de Saldo (Dentro do Ano):* EcoPontos excedentes não expiram de um mês para o outro, acumulando-se livremente até a data limite de 31 de dezembro do ano vigente.
+4. **Trilha Gamificada e Queda de Nível (Aversão à Perda):**
+   Subir de nível aumenta o bônus mensal por indicação. Contudo, a lógica lê dinamicamente a base de *clientes ativos*:
+   - 🟢 **Conector Verde (1 a 3 indicações ativas):** Base 1x.
+   - 🟡 **Guardião Solar (4 a 9 indicações ativas):** Bônus de +20%.
+   - 👑 **Lenda Fatura Zero (10+ indicações ativas):** Bônus de +50%.
+   - *Gatilho de Queda:* Se um indicado cancelar, o saldo de ativos cai. Se o "Lenda" cair para 9 indicações, ele **perde o nível** e os bônus extras imediatamente. O app avisa: *"Atenção! Você está a 1 indicação de perder a Coroa Lenda. Indique alguém em 7 dias!"*
 
-6. **Integração com a Carteira do Consultor MMN (Alavancagem de Rede sob Pool Unificado TDTC):**
-   - *Vínculo de Origem:* Todo Cliente Final pertence à carteira do **Consultor MMN** que realizou sua prospecção ou cadastro inicial.
-   - *Mecânica de Split no Pool de Venda Direta (Seção 5.1.1):* Quando o cliente indica um amigo no aplicativo, o sistema não gera custo adicional para a Esol. A comissão de Venda Direta (ex: 8% no Turnkey ou 15% do repasse na GD) é fatiada entre o **Cliente Indicador** (EcoPontos) e o **Consultor MMN da Carteira** (comissão de tutoria/fechamento).
-   - *Manutenção dos Overrides da Rede MMN (7 Níveis):* A linha ascendente de liderança do Consultor MMN **continua recebendo 100% dos Overrides (7% no Turnkey e 21% na GD)** sobre o novo contrato indicado pelo cliente final.
-   - *Fluxo B2B Corporativo / Turnkey:* Em projetos de grande porte indicados por clientes, o lead é enviado no painel do **Consultor MMN da carteira** para visita presencial, homologação da proposta e fechamento (recebendo sua fatia de fechamento + overrides de rede).
+5. **Blindagem Financeira (Motor Reverso):**
+   - *Abatimento Máximo:* O resgate de pontos abate no máximo 50% do valor da fatura GD, garantindo fluxo de caixa.
+   - *Expiração:* EcoPontos têm validade até o dia **31 de dezembro**. No Réveillon, pontos não resgatados viram "pó", limpando o balanço contábil da empresa.
 
+6. **Integração com a Rede MMN (Split de Riqueza):**
+   - Todo cliente final pertence à carteira de um **Consultor MMN**. Quando o cliente indica um amigo, ele ganha EcoPontos (limitados), mas a comissão financeira de Liderança (Overrides dos 7 Níveis) e de fechamento sobem normalmente para a rede MMN que o gerou.
 ---
 
 ### 5.5.3 Renovação Anual Contratual & Prova de Vida Digital (Esol Re-Sign)
@@ -996,7 +983,7 @@ Para evitar que a Esol pague comissões perpétuas para "contas fantasmas", inat
 2. **Renovação Digital 100% Gratuita (Custo R$ 0,00):**
    - A renovação **NÃO cobra taxa de licença, não exige compra de produtos e não impõe metas de faturamento sufocantes**. Trata-se de um procedimento de atualização contratual, bancária e legal.
 
-3. **Prova de Vida por Biometria Facial (Esol Sign):**
+3. **Prova de Vida por Biometria Facial (Motor de Assinaturas):**
    - No fluxo de renovação no app, o consultor realiza o escaneamento biométrico facial (Face Match R$ 0,00) para atestar que o titular está vivo, ativo e com dados bancários/PIX conferidos, protegendo o repasse financeiro contra fraudes.
 
 4. **Modo Lock Screen & Prazos de Congelamento (Conforme Código Civil Brasileiro):**
@@ -1004,7 +991,7 @@ Para evitar que a Esol pague comissões perpétuas para "contas fantasmas", inat
    - *Vencimento do Contrato (Modo Lock Screen - Dia 0):* Na data exata de expiração dos 12 meses sem renovação, o painel do consultor entra em **Modo Lock Screen Exclusivo**.
    - *Prazo de Congelamento Retido (180 dias / 6 meses):* O acesso às funcionalidades do app (CRM, visualização da árvore de rede, emissão de propostas) fica **TEMPORARIAMENTE CONGELADO por até 180 dias**. As comissões e overrides continuam sendo calculadas e acumuladas em background no livro-razão (`ledger_lancamentos`) em nome do consultor durante todo esse período.
    - *Régua Notificatória Legal:* Notificações registradas são enviadas aos 30, 60, 90, 120 e 150 dias de congelamento. Aos 150 dias, o sistema dispara a **Notificação Extrajudicial Digital** concedendo o prazo final impreterível de 30 dias para renovação gratuita.
-   - *Liberação Instantânea Pós-Assinatura:* Em qualquer momento dentro dos 180 dias, assim que o consultor realiza a biometria facial (Esol Sign - 30 segundos) e aceita os termos atualizados, o painel é **LIBERADO IMEDIATAMENTE NA HORA**, descongelando os saldos acumulados e ativando saques via PIX.
+   - *Liberação Instantânea Pós-Assinatura:* Em qualquer momento dentro dos 180 dias, assim que o consultor realiza a biometria facial (Motor de Assinaturas - 30 segundos) e aceita os termos atualizados, o painel é **LIBERADO IMEDIATAMENTE NA HORA**, descongelando os saldos acumulados e ativando saques via PIX.
 
 5. **Abandono Contratual, Compactação Dinâmica & Prescrição Legal (Art. 206 do Código Civil):**
    - *Rescisão por Abandono (Aos 180 dias):* Transcorridos 180 dias (6 meses) de congelamento sem a realização da renovação gratuita ou prova de vida, o Termo de Parceria é resolvido de pleno direito por **Abandono de Contrato Civil (Art. 475 do Código Civil)**.
@@ -1015,11 +1002,11 @@ Para evitar que a Esol pague comissões perpétuas para "contas fantasmas", inat
      * Transcorrido o prazo de 3 anos sem manifestação nem reintegração, o saldo prescreve de pleno direito e é revertido para o fundo de inovação e tecnologia da Esol.
 
 6. **Princípio da Irretroatividade Contratual e Respeito à Temporalidade (Art. 5º, XXXVI da CF/88 & Art. 421 do CCB):**
-   - *Proteção do Ato Jurídico Perfeito:* Quando uma nova minuta contratual é publicada no Esol Legal Vault (ex: `v2.0`), a nova versão **NÃO altera retroativamente os contratos assinados no passado sob a versão anterior (`v1.0`)**. O contrato antigo permanece integralmente protegido pelo Princípio do Ato Jurídico Perfeito (Art. 5º, XXXVI da Constituição Federal).
+   - *Proteção do Ato Jurídico Perfeito:* Quando uma nova minuta contratual é publicada no Governan�a Legal Vault (ex: `v2.0`), a nova versão **NÃO altera retroativamente os contratos assinados no passado sob a versão anterior (`v1.0`)**. O contrato antigo permanece integralmente protegido pelo Princípio do Ato Jurídico Perfeito (Art. 5º, XXXVI da Constituição Federal).
    - *Transição em Três Modos Legais:*
      * **Modo Prospectivo (Novos Cadastros):** A nova minuta `v2.0` passa a ser exigida automaticamente apenas para os novos consultores/clientes que se cadastrarem a partir da data da publicação.
      * **Modo de Renovação Ciclica (Esol Re-Sign):** Quem já possui contrato vigente sob a `v1.0` permanece regido por ela até o término dos seus 12 meses. A atualização para a `v2.0` ocorre voluntariamente no ato da renovação anual.
-     * **Modo Termo Aditivo Regulatório (Mudanças Emergenciais da ANEEL/Governo):** Se houver alteração impositiva de lei federal, o sistema dispara um Termo Aditivo no Esol Sign concedendo um **Prazo de Transição Notificado (30 dias)** para o re-aceite do usuário, garantindo transparência total e ausência de alteração unilateral abusiva.
+     * **Modo Termo Aditivo Regulatório (Mudanças Emergenciais da ANEEL/Governo):** Se houver alteração impositiva de lei federal, o sistema dispara um Termo Aditivo no Motor de Assinaturas concedendo um **Prazo de Transição Notificado (30 dias)** para o re-aceite do usuário, garantindo transparência total e ausência de alteração unilateral abusiva.
 
 ---
 
@@ -1052,7 +1039,7 @@ Esta é a tabela mestra que o banco de dados Supabase utiliza para converter o f
 *   Preço de venda de R$ 100.001,00 a R$ 500.000,00: **4.500 pontos**
 *   Preço de venda acima de R$ 500.001,00: **15.000 pontos**
 
-##### **B. Loja Esol (Kits avulsos, Baterias, EV Chargers - Cat #2)**
+##### **B. LOJA VIRTUAL (Kits avulsos, Baterias, EV Chargers - Cat #2)**
 *   Carrinho de compras até R$ 5.000,00: **50 pontos**
 *   Carrinho de compras de R$ 5.001,00 a R$ 15.000,00: **150 pontos**
 *   Carrinho de compras de R$ 15.001,00 a R$ 50.000,00: **500 pontos**
@@ -1427,7 +1414,7 @@ Este DRE prova a sustentabilidade estrutural do negócio: mesmo pagando comissã
 *   **Agendamento Técnico:** Acompanhamento de vistorias, manutenções corretivas e agendamentos de limpeza.
 *   **Módulo de Telemetria:** Dashboard integrado com inversores físicos para monitorar a geração de energia em tempo real (SaaS de monitoramento).
 
-### Módulo 7: LOJA ESOL (E-Commerce & Montagem de Kits)
+### Módulo 7: LOJA VIRTUAL (E-Commerce & Montagem de Kits)
 *   **Catalogo Solar:** Gerenciamento de combos, painéis, inversores, estruturas, carregadores EV, baterias e sensores inteligentes.
 *   **Checkout Reverso:** Cálculo de preço final do carrinho de compras usando a alíquota individual de comissão da rede (TDTC) e lucro_alvo do SKU configurado pelo administrador.
 
@@ -1450,8 +1437,8 @@ Este DRE prova a sustentabilidade estrutural do negócio: mesmo pagando comissã
 *   **WhatsApp Redirect:** Links parametrizados com dados dinâmicos do lead/proposta para facilitação do contato direto do consultor.
 *   **E-mails Automáticos:** Disparo de notificações e contratos de forma gratuita via Resend ou Brevo.
 
-### Módulo 13: MOTOR DE CONTRATOS (Esol Sign - R$ 0/mês)
-*   **Esol Sign:** Motor próprio de assinatura digital, capturando assinaturas biométricas (selfie com documento de identidade) e dados técnicos do dispositivo (IP, geolocalização e data/hora oficial sincronizada pelo NTP.br).
+### Módulo 13: MOTOR DE CONTRATOS (Motor de Assinaturas - R$ 0/mês)
+*   **Motor de Assinaturas:** Motor próprio de assinatura digital, capturando assinaturas biométricas (selfie com documento de identidade) e dados técnicos do dispositivo (IP, geolocalização e data/hora oficial sincronizada pelo NTP.br).
 *   **Verificação cadastral (KYC):** Validação automatizada de dados em bureaus governamentais para prevenção de fraudes em CPFs/CNPJs.
 
 ### Módulo 14: COCKPIT CONTÁBIL GERENCIAL (Módulo ERP)
@@ -1459,6 +1446,40 @@ Este DRE prova a sustentabilidade estrutural do negócio: mesmo pagando comissã
 *   **Integração Contábil:** Sincronização automatizada com ERP brasileiro (Omie/Bling) para controle de compras, faturamento triangular e eSocial de colaboradores.
 
 ### Módulo 15: ADMINISTRAÇÃO & BACKOFFICE CENTRAL
+
+### Módulo 16: ESOL ACADEMY & SOCIAL FEED
+
+### Módulo 20: MOTOR DE SPLIT DE PAGAMENTOS E BAAS
+
+### Módulo 21: MOTOR FISCAL AUTOMATIZADO E ERP
+
+### Módulo 22: MOTOR LOGÍSTICO E SUPPLY CHAIN
+
+### Módulo 23: COFRE DE DADOS DE MERCADO (Pricing Vault)
+- **Dicionário ANEEL e Fio B:** Tabela centralizada contendo as tarifas (R$/kWh) das 90+ concessionárias brasileiras, além dos percentuais da Lei 14.300 (Fio B). Atualizada anualmente via API/CSV, garantindo que o Motor Reverso nunca calcule uma proposta com tarifas defasadas.
+- **Dicionário Tributário Estadual (SEFAZ):** Parametriza as alíquotas de ICMS, PIS/COFINS por estado, ajustando os cálculos de viabilidade automaticamente dependendo de onde o cliente final reside.
+- **
+- **Sincronização de Gateways (Cron Job):** Robô de retaguarda que atualiza automaticamente as taxas de maquininha via API, mantendo o Dicionário de Adquirência imune a indisponibilidades das empresas financeiras.
+- **Motor de Snapshot & Rollback (Máquina do Tempo):** Sistema de proteção contra falha humana na atualização de dicionários. Antes de qualquer upload de planilha (CSV) sobrescrever as tarifas ou preços de SKUs ativos, o banco de dados gera uma versão "sombra" (Snapshot). O administrador possui um "Botão de Pânico" para dar Rollback instantâneo e reverter o banco para a versão de 1 segundo antes do upload defeituoso.
+- **Catálogo B2B (WEG/Aldo):** Relação de SKUs de painéis e inversores com seus respectivos pesos (kg) e custo de compra bruto. O peso é injetado diretamente na **API de Logística/Frete** (Melhor Envio/Mandaê) no momento do checkout, para que o custo exato do frete seja descontado na DRE do projeto antes de formar a margem da Esol.
+
+- **Rastreamento de Webhooks:** Integração com transportadoras (ex: Mandaê, Jamef) para capturar o código de rastreio e atualizar o status da carga (Kits EPC, Vendas da Loja) em tempo real.
+- **Trava de Engenharia Anti-Prejuízo:** O calendário de instalação (Módulo 10) fica inoperante e bloqueado até que o webhook logístico confirme o status entregue no endereço do cliente, zerando o risco de enviar equipes de montagem para uma casa sem equipamentos.
+- **Detecção de Sinistro Reversa:** Alertas automáticos para o backoffice caso a carga sofra avaria no trajeto, permitindo o acionamento proativo de seguros antes mesmo da reclamação do cliente.
+
+- **Automação Cliente Final:** Quando a venda é concluída ou a fatura de assinatura GD é liquidada no Asaas, aciona a API eNotas/Omie para enviar a NF diretamente ao e-mail do cliente, blindando a Esol de esquecimentos.
+- **Autofaturamento do Consultor (Fim da Burocracia):** Consultores PJ (Empresas) armazenam seu Certificado Digital A1 de forma criptografada na plataforma. Quando solicitam o saque das comissões, a Esol emite automaticamente a NFS-e contra si mesma em nome do consultor, legalizando o trâmite na hora e liberando o PIX.
+- **Cálculo de RPA:** Para Consultores Pessoa Física (CPF), o sistema gera o Recibo de Pagamento Autônomo já deduzindo INSS e IRRF antes do depósito.
+
+- **Faturamento e Webhooks:** Geração de Links de PIX/Boleto e escuta de webhooks do Gateway (Stripe/Asaas) para baixar faturas automaticamente.
+- **Split Nativo em Nuvem:** Fatiamento do PIX no momento do pagamento, enviando as comissões do MMN direto para as subcontas dos consultores e o lucro líquido para a Matriz Esol (Zero Bitributação).
+- **KYC Bancário Integrado:** Bloqueia a abertura da subconta até o consultor ser aprovado na checagem de documentos (PLD).
+
+- **EAD Gamificado:** Trilhas de conhecimento com travamento (Ex: Obriga assistir para vender Turnkey). Progressão atrelada a EcoPontos.
+- **Hierarquia Visual:** Vídeos e lives bloqueados por patente (Efeito Escassez). Consultores juniores enxergam a mentoria de elite com um cadeado (só liberado para "Diamantes").
+- **Mural Corporativo:** Feed central para disparos de avisos da Matriz com Banners e Botões (eliminando grupos de WhatsApp ruidosos).
+- **Cronograma de Eventos:** Agenda nativa para Lives e Reuniões.
+
 *   **Painel Admin:** Gerenciamento master de usuários, parametrização de comissões MMN, reajustes tarifários das concessionárias e conciliação financeira do ledger.
 
 ---
@@ -1476,7 +1497,7 @@ Este DRE prova a sustentabilidade estrutural do negócio: mesmo pagando comissã
 ### 9.3 Consumidor (CDC Art. 49) — Retenção & Cancelamento Inteligente
 *   **Janela de Cancelamento:** Emissão automática de link de cancelamento no painel do cliente apenas nos primeiros 7 dias após a compra (Direito de Arrependimento).
 *   **Fluxo de Retenção:** Ao clicar em cancelar, o sistema redireciona o cliente para um canal de atendimento direto no WhatsApp com um consultor especialista em retenção da Esol.
-*   **Cancelamento Administrativo:** Se a rescisão persistir, o sistema executa o estorno no ledger contábil, debita temporariamente o saldo comissionado dos consultores da rede nos 7 níveis, estorna a NFS-e integrada no ERP e emite o distrato digital em PDF via *Esol Sign*.
+*   **Cancelamento Administrativo:** Se a rescisão persistir, o sistema executa o estorno no ledger contábil, debita temporariamente o saldo comissionado dos consultores da rede nos 7 níveis, estorna a NFS-e integrada no ERP e emite o distrato digital em PDF via *Motor de Assinaturas*.
 
 ### 9.4 LGPD (Lei 13.709/2018)
 *   Criptografia assimétrica de dados pessoais sensíveis (Documentos e Selfie) no banco de dados Supabase via módulo `pgcrypto`.
@@ -1492,7 +1513,7 @@ Este DRE prova a sustentabilidade estrutural do negócio: mesmo pagando comissã
 
 ### 10.1 Infraestrutura de Nuvem (Custo Zero de Início)
 *   **Hosting Front-End:** Cloudflare Pages (deploy contínuo de PWA e telas).
-*   **Edge Functions:** Cloudflare Workers (execução rápida do Motor Reverso e Esol Sign).
+*   **Edge Functions:** Cloudflare Workers (execução rápida do Motor Reverso e Motor de Assinaturas).
 *   **Cofre de Dados:** Banco de dados Supabase (PostgreSQL para dados relacionais, Auth para tokens JWT, Storage de PDFs).
 *   **Armazenamento de Imagens:** Cloudflare R2 (storage de fotos e documentos com 10GB grátis).
 *   **Integração ERP:** APIs RESTful (Bling ou Omie).
@@ -1510,7 +1531,7 @@ erDiagram
     profiles ||--o{ rede_mmn : "alocado na hierarquia"
     profiles ||--o{ clientes : "gerencia leads"
     clientes ||--o{ carteira_energia : "contrata utilidade"
-    carteira_energia ||--o{ assinaturas_esol_sign : "requer assinatura"
+    carteira_energia ||--o{ assinaturas_digitais : "requer assinatura"
     carteira_energia ||--o{ ledger_lancamentos : "gera lancamento"
     ledger_contas ||--o{ ledger_lancamentos : "classifica debitos e creditos"
     distratos_conformidade ||--o{ carteira_energia : "cancela contrato"
@@ -1572,7 +1593,7 @@ Para garantir a confiabilidade matemática das comissões e transações:
 #### 6. Cockpit Jurídico & Governança Esol (Legal Command Center Dashboard)
 Para dar autonomia total aos advogados e administradores no acompanhamento de minutas, contratos e conformidade legal:
 *   **Visão 360° por Setor (4 Abas):** Mapeamento separado para MMN/Corretores, Clientes Finais (GD/EPC), B2B Mercado Livre (MLE) e Operacional/O&M.
-*   **Central de Upload & Editor de Minutas (Esol Legal Vault):** Permite upload de novos modelos PDF/DOCX ou edição em tempo real com tags dinâmicas (`{{NOME_CLIENTE}}`, `{{CPF_CNPJ}}`, `{{VALOR}}`), sem alterar o código do aplicativo.
+*   **Central de Upload & Editor de Minutas (Governan�a Legal Vault):** Permite upload de novos modelos PDF/DOCX ou edição em tempo real com tags dinâmicas (`{{NOME_CLIENTE}}`, `{{CPF_CNPJ}}`, `{{VALOR}}`), sem alterar o código do aplicativo.
 *   **Comparador Visual de Diffs:** Exibe na tela do advogado o comparador de diferenças de texto entre minutas (destacando adições em verde e exclusões em vermelho) antes da publicação.
 *   **Dossiê de Evidências em 1 Clique:** Pesquisa por CPF/CNPJ ou protocolo e gera o pacote zip com o PDF assinado, foto da biometria facial, IP, GPS, Timestamp NTP e extrato do ledger SHA-256 para pronta defesa judicial.
 *   **Gestão Notificatória & Lock Screen:** Monitoramento de contas em prova de vida (Esol Re-Sign), régua de notificações aos 30, 60, 90, 120 e 150 dias e automação de distratos.
@@ -1609,6 +1630,32 @@ Para dar autonomia total aos advogados e administradores no acompanhamento de mi
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+### 12-A.11 ESTRAT�GIA DE REBRANDING E ARQUITETURA AGN�STICA (White-Label Core)
+
+Para garantir que o ecossistema sobreviva a poss�veis mudan�as de marca, identidade visual ou dom�nio (ex: a matriz passar a se chamar "Nova Energia"), o n�cleo do sistema foi desenhado sob o paradigma de **Arquitetura Agn�stica**.
+
+Esta estrat�gia baseia-se em tr�s regras obrigat�rias de *Compliance de C�digo* para todos os desenvolvedores envolvidos:
+
+1.  **Regra de Naming de Banco de Dados:** Nenhuma tabela, coluna, enum, reposit�rio ou m�dulo estrutural pode conter o nome da marca matriz "chumbado" (hardcoded). Exemplo pr�tico aplicado: esol_sign foi refatorado para motor_assinaturas; esol_club foi refatorado para clube_fidelidade.
+2.  **Regra de Identidade Visual (Design Tokens):** Nenhuma cor prim�ria, logotipo ou copyright pode estar no CSS base do frontend. O visual � determinado dinamicamente no carregamento da aplica��o lendo os *Design Tokens* (cor_primaria, logo_url, 
+ome_fantasia) armazenados na tabela 	enants_customizacao (M�dulo 11). Uma mudan�a de marca global � feita alterando 3 linhas no banco de dados.
+3.  **Regra de Migra��o de Dom�nio (Redirecionamento 301):** Se o dom�nio oficial mudar, a engenharia n�o deve derrubar o dom�nio antigo. A Cloudflare (Camada 2) deve aplicar um *Redirecionamento 301 Permanente* do dom�nio velho para o novo, preservando o ranking de SEO do Google. O novo site interceptar� a origem do tr�fego e exibir� um "Modal Informativo de Rebranding" garantindo a confian�a do usu�rio.
+
+---
+
+### 12-A.12 MOTOR DE DOCUMENTOS PREMIUM E PROPOSTAS COMERCIAIS
+
+Todo documento gerado em PDF (Propostas Comerciais, Cota��es A La Carte, Contratos de Ades�o e Ecopontos) deve obedecer ao **Padr�o Visual Maestro** (alt�ssimo luxo e sofistica��o). Arquiteturalmente, isso � resolvido proibindo o uso de geradores est�ticos (como FPDF/Jasper) em favor de uma stack din�mica baseada em Web:
+
+1.  **Modelo Híbrido de Renderização (Visual No-Code Builder):** O sistema utiliza integração com um *Headless PDF Template Engine* (como CraftMyPDF ou DocSpring). Os administradores editam o visual via construtor Drag-and-Drop. O backend despacha o payload via API REST. Como contingência, o sistema mantém um pipeline interno (React-PDF + Tailwind).
+2.  **Inje��o Agn�stica de Design Tokens:** O gerador de PDF faz uma query na tabela 	enants_customizacao e injeta a Logo e as Cores Prim�rias/Secund�rias no cabe�alho e nos componentes do documento em tempo real. O PDF sai sempre atualizado com a marca atual da empresa.
+3.  **Estrutura de Luxo (Wow Factor):** O layout deve conter:
+    *   **Capa Impactante:** Fotos de alta resolu��o de usinas solares cobrindo a capa, com tipografia premium (Inter/Outfit).
+    *   **Bento Grids no Resumo Financeiro:** Payback, ROI e Economia Mensal apresentados em *cards* sombreados.
+    *   **Call-to-Action Digital:** QR Code enorme no final do PDF chamando para a assinatura biom�trica pelo smartphone.
 
 ---
 
@@ -1978,7 +2025,7 @@ O usuário desenha sua assinatura digital na tela e confirma o termo.
     *   *Carimbo de Tempo NTP.br:* Hora oficial sincronizada, imutável contra fraudes de relógio local de dispositivo.
     *   *Geotagging:* Latitude e longitude do momento exato da assinatura.
     *   *Metadados de Rede:* Endereço IP do dispositivo e User Agent da conexão.
-    *   *Criptografia:* O PDF final do contrato recebe um hash criptográfico SHA-256 e assinatura digital da chave Esol, gravados na tabela `assinaturas_esol_sign`.
+    *   *Criptografia:* O PDF final do contrato recebe um hash criptográfico SHA-256 e assinatura digital da chave Esol, gravados na tabela `assinaturas_digitais`.
 
 ---
 
@@ -2217,19 +2264,52 @@ export function BrandKitRoute() {
 
 ---
 
-## 14. PILAR 4: MOTOR DE ASSINATURA AUTOMATIZADA (ESOL SIGN) & LEDGER CRIPTOGRÁFICO CONTÁBIL
+
+### 13.9 Estratégia de Deploy PWA (Progressive Web App) e Modo Offline
+
+Para blindar o ecossistema contra bloqueios da App Store e do Google Play (que frequentemente rejeitam aplicativos de Venda Direta/MMN) e evitar a taxação de 30% em pagamentos in-app, a Esol Energy adota a arquitetura **Progressive Web App (PWA)** Mobile-First.
+
+1. **Manifesto Web (App-Like Experience):**
+   - O PWA mascara o navegador através do manifest.json, rodando em *Standalone Mode* (tela cheia, sem barra de navegação).
+   - Injeta o ícone na Home Screen do smartphone e exibe uma Splash Screen (Loading Screen) idêntica à de aplicativos nativos de banco (ex: Nubank).
+
+2. **Modo Offline (Service Workers):**
+   - Os Service Workers gerenciam o cache de todo o código estático (HTML, CSS, JS e Imagens da Tabela de Produtos).
+   - **Offline Mode:** Se o consultor visitar um cliente na zona rural sem 4G, o app continuará funcionando para preenchimento de propostas e exibição do Simulador Solar. Quando a conexão for restabelecida, ocorre o *Background Sync*, sincronizando os novos leads com o banco central.
+
+3. **Fluidez Nativa (Framer Motion & Haptics):**
+   - O PWA simula o peso de um app nativo. Transições de páginas deslizam a 60 FPS. 
+   - Utilização da *Vibration API (Haptics)* para dar feedback tátil ("tremidinha") ao assinar contratos e concluir transações, gerando peso físico à jornada digital.
+
+## 14. PILAR 4: MOTOR DE ASSINATURA AUTOMATIZADA (Motor de Assinaturas) & LEDGER CRIPTOGRÁFICO CONTÁBIL
 
 
-Para garantir a validade jurídica de contratos a custo zero, a conformidade tributária e a consistência financeira absoluta de comissões, o ecossistema da Esol Energy opera sob duas camadas fundamentais de auditoria: o **Esol Sign** e o **Double-Entry Ledger Criptográfico**.
+Para garantir a validade jurídica de contratos a custo zero, a conformidade tributária e a consistência financeira absoluta de comissões, o ecossistema da Esol Energy opera sob duas camadas fundamentais de auditoria: o **Motor de Assinaturas** e o **Double-Entry Ledger Criptográfico**.
 
 ---
 
-### 14.1 Esol Sign: Arquitetura Jurídica e KYC a Custo Zero
+### 14.1 Motor de Assinaturas: Arquitetura Jurídica e KYC a Custo Zero
 
-O **Esol Sign** é o subsistema encarregado de validar a identidade digital das partes e firmar os contratos (parceria MMN, propostas de GD e distratos) sem depender de gateways pagos de assinatura (ex: DocuSign, Clicksign), amparado legalmente pela **Medida Provisória nº 2.200-2/2001** e pela **Lei nº 14.063/2020** (Assinatura Eletrônica Avançada).
+#### 14.1.1 Term-Sheets Contratuais (Blindagem Legal)
+O Motor de Assinaturas pré-preenche as lacunas dinâmicas (JSON) sobre *Templates Jurídicos* imutáveis, blindando a Esol nas seguintes esferas:
+
+1. **Contrato do Consultor MMN (Anti-CLT e Franquia):**
+   - *Natureza:* Licenciamento de Uso de Software e Parceria Comercial (Lei 13.966/2019).
+   - *Cláusulas de Blindagem:* Declaração expressa de inexistência de subordinação/ponto; remuneração 100% variável (Comissão + Overrides) sem piso; retenção de IRRF/NF na fonte; e **Cláusula Anti-Pirâmide** (proibição de vender "posições" na rede, sob pena de banimento).
+   - *Sucessão:* Transferência hereditária da carteira/ltree mediante alvará judicial.
+
+2. **Termo de Adesão à Geração Distribuída (Lei 14.300/2022):**
+   - *Natureza:* Consórcio/Cooperativa de Consumidores.
+   - *Cláusulas de Blindagem:* Prazo flexível, porém com Aviso Prévio obrigatório de 90 dias para distrato (tempo de realocação da cota). Cancelamento unilateral por inadimplência com corte imediato dos créditos na concessionária.
+
+3. **Contrato de Usinas Turnkey / EPC:**
+   - *Natureza:* Compra e Venda de Equipamentos + Engenharia Mista.
+   - *Cláusulas de Blindagem:* **Triangulação Fiscal (Bitributação Zero)** onde o cliente compra os equipamentos diretamente da fabricante via Faturamento Direto, pagando à Esol apenas a prestação de serviços. **Arrependimento (CDC):** Multa rescisória de 20% após 7 dias (cobrir custos operacionais de projeto).
+
+O **Motor de Assinaturas** é o subsistema encarregado de validar a identidade digital das partes e firmar os contratos (parceria MMN, propostas de GD e distratos) sem depender de gateways pagos de assinatura (ex: DocuSign, Clicksign), amparado legalmente pela **Medida Provisória nº 2.200-2/2001** e pela **Lei nº 14.063/2020** (Assinatura Eletrônica Avançada).
 
 ```
-FLUXO DE SEGURANÇA E EVIDÊNCIAS DO ESOL SIGN:
+FLUXO DE SEGURANÇA E EVIDÊNCIAS DO Motor de Assinaturas:
   [Fatura + Dados do Lead]
              │
              ▼
@@ -2423,7 +2503,7 @@ FLUXO DE TRIGGER DE REVERSÃO DE DISTRATO:
   [Bling/Omie API] ──► Solicita cancelamento da NFS-e junto à prefeitura
              │
              ▼
-  [Esol Sign Engine] ──► Assina eletronicamente o Termo de Distrato
+  [Motor de Assinaturas Engine] ──► Assina eletronicamente o Termo de Distrato
 ```
 
 #### Trigger de Estorno do Saldo MMN dos Consultores
@@ -2492,7 +2572,7 @@ graph TD
     C -->|Recusado| D
     D --> F[Fila de Contato CRM: Prazo de 24h para Ação]
     F -->|Revertido pelo Consultor| E
-    F -->|Expirado ou Confirmado| G[Gera Distrato Eletrônico via Esol Sign]
+    F -->|Expirado ou Confirmado| G[Gera Distrato Eletrônico via Motor de Assinaturas]
     G --> H[Dispara Trigger de Estorno MMN e Ledger Contábil]
     G --> I[Solicita Cancelamento da NFS-e na API do ERP]
 ```
@@ -2953,11 +3033,25 @@ docs/database/
 ├── 03_rede_mmn.sql                    — Rede MMN (ltree), índices de path
 ├── 04_crm_clientes.sql                — CRM, leads, pipeline de vendas, personas (A-J)
 ├── 05_carteira_energia.sql            — Carteira GD/MLE, contratos recorrentes
-├── 06_esol_sign.sql                   — Assinaturas eletrônicas, KYC, minutas jurídicas
+├── 06_motor_assinaturas.sql           — Assinaturas eletrônicas, KYC, minutas jurídicas
 ├── 07_ledger_contabil.sql             — Plano de contas, lançamentos, triggers SHA-256
 ├── 08_distratos_retencao.sql          — Distratos, conformidade, retenção
-├── 09_esol_club_ecopontos.sql         — EcoPoints, resgates, fidelidade
+├── 09_clube_fidelidade.sql            — EcoPoints, resgates, fidelidade
 ├── 10_engenharia_epc.sql              — Engenharia Solar EPC (7 fases + triggers)
+├── 11_pos_vendas_om.sql               — Pós-Venda, O&M, Agendamentos, Avaliações
+├── 12_loja_ecommerce.sql              — Catálogo de Produtos, Pedidos, Itens
+├── 13_comunicacao_notificacoes.sql    — Templates, Fila de Notificações, Gatilhos
+├── 14_developer_api.sql               — API Keys, Webhooks, Edge Functions, Logs
+├── 15_marketing_brand.sql             — DAM, SMM, Artes Consultor, Campanhas
+├── 16_performance_marketing.sql       — UTM, Server-Side CAPI, ROAS, Pixels
+├── 17_security_audit_vault.sql        — Lixeira de Dados, Time Machine (Snapshots)
+├── 18_comunicacao_atendimento.sql     — Tickets, Chat Interno, Ouvidoria, Protocolos
+├── 19_esol_academy.sql                — Universidade EAD, Feed, Manuais de Vendas
+├── 20_banking_split_pagamentos.sql    — BaaS, Split Recebíveis, Gateway (Asaas/Stripe)
+├── 21_motor_fiscal_erp.sql            — Nota Fiscal, Autofaturamento, eNotas/Omie
+├── 22_logistica_supply_chain.sql      — Logística, Tracking Rastreio Kits EPC
+├── 23_motor_dados_referencia.sql      — Tarifas ANEEL, Snapshot/Rollback de Dados
+├── 24_security_rls_policies.sql       — Row Level Security, Prevenção IDOR, MFA AAL2
 └── esol_banco_dados_ddl_completo.sql  — Referência consolidada (NÃO editar diretamente)
 ```
 
@@ -2966,35 +3060,66 @@ docs/database/
 | # | Módulo | Domínio | Tabelas | Enums | Triggers |
 |:---:|:---|:---|:---:|:---:|:---:|
 | 00 | `00_extensions.sql` | Extensões PostgreSQL | — | — | — |
-| 01 | `01_tenants_config.sql` | Tenants, Tributação, Cupons, Combos | 5 | 2 | — |
+| 01 | `01_tenants_config.sql` | Tenants, Tributação, Cupons, Combos | 8 | 4 | — |
 | 02 | `02_identidade_rbac.sql` | Profiles, Roles, RBAC, Cap Table, OPEX | 5 | 4 | — |
 | 03 | `03_rede_mmn.sql` | Rede MMN (ltree hierárquica) | 1 | — | — |
-| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline, Personas | 1 | 2 | — |
+| 04 | `04_crm_clientes.sql` | CRM, Leads, Pipeline, Personas | 3 | 3 | — |
 | 05 | `05_carteira_energia.sql` | Carteira GD/MLE (Recorrência) | 1 | 2 | — |
-| 06 | `06_esol_sign.sql` | Assinaturas, KYC, Minutas Jurídicas | 2 | 2 | — |
+| 06 | `06_motor_assinaturas.sql` | Assinaturas, KYC, Minutas Jurídicas | 2 | 2 | — |
 | 07 | `07_ledger_contabil.sql` | Plano de Contas, Lançamentos, Hash Chain | 2 | 1 | 2 |
 | 08 | `08_distratos_retencao.sql` | Distratos, Conformidade | 1 | — | — |
-| 09 | `09_esol_club_ecopontos.sql` | EcoPoints, Resgates, Fidelidade | 2 | 1 | — |
+| 09 | `09_clube_fidelidade.sql` | EcoPoints, Resgates, Fidelidade | 2 | 1 | — |
 | 10 | `10_engenharia_epc.sql` | EPC Turnkey (7 Fases Completas) | 7 | 9 | 2 |
-| — | **TOTAL** | — | **27** | **22** | **4** |
+| 11 | `11_pos_vendas_om.sql` | Pós-Venda, O&M, Agendamentos, Avaliações | 3 | 3 | — |
+| 12 | `12_loja_ecommerce.sql` | Catálogo de Produtos, Pedidos, Itens | 3 | 2 | — |
+| 13 | `13_comunicacao_notificacoes.sql` | Templates, Fila de Notificações, Gatilhos | 2 | 3 | — |
+| 14 | `14_developer_api.sql` | API Keys, Webhooks, Edge Functions, Logs | 4 | 3 | — |
+| 15 | `15_marketing_brand.sql` | DAM, SMM, Artes Consultor, Campanhas | 4 | 3 | — |
+| 16 | `16_performance_marketing.sql` | UTM, Server-Side CAPI, ROAS, Pixels | 2 | 2 | — |
+| 17 | `17_security_audit_vault.sql` | Lixeira de Dados, Time Machine (Snapshots) | 1 | — | 1 |
+| 18 | `18_comunicacao_atendimento.sql` | Tickets, Chat Interno, Ouvidoria, Protocolos | 8 | 4 | — |
+| 19 | `19_esol_academy.sql` | EAD, Feed, Manuais de Vendas | 4 | — | — |
+| 20 | `20_banking_split_pagamentos.sql` | BaaS, Split Recebíveis, Gateway | 3 | — | — |
+| 21 | `21_motor_fiscal_erp.sql` | Nota Fiscal, Autofaturamento, eNotas/Omie | 2 | — | — |
+| 22 | `22_logistica_supply_chain.sql` | Logística, Tracking Rastreio Kits EPC | 1 | — | — |
+| 23 | `23_motor_dados_referencia.sql` | Tarifas ANEEL, Snapshot/Rollback de Dados | 2 | — | — |
+| 24 | `24_security_rls_policies.sql` | Row Level Security, Prevenção IDOR, MFA AAL2 | — | — | — |
+| — | **TOTAL** | — | **78** | **45** | **5** |
 
 ### 16.4 Grafo de Dependências
 
 ```mermaid
 graph TD
     A["00_extensions<br/>(ltree, pgcrypto)"] --> B["01_tenants_config<br/>(tenants, tributação)"]
-    B --> C["02_identidade_rbac<br/>(profiles, roles, RBAC)"]
+    B --> C["02_identidade_rbac<br/>(profiles, roles, Data Room V2 Sincronizado, Carreiras, Expansão EUA)"]
     C --> D["03_rede_mmn<br/>(MMN ltree)"]
-    C --> E["04_crm_clientes<br/>(clientes, leads)"]
+    C --> E["04_crm_clientes<br/>(Agendador, SLA 30m, Throttling)"]
     E --> F["05_carteira_energia<br/>(GD, MLE)"]
     C --> G["06_esol_sign<br/>(assinaturas, KYC)"]
     B --> H["07_ledger_contabil<br/>(contas, SHA-256)"]
     F --> I["08_distratos_retencao<br/>(distratos)"]
-    E --> J["09_esol_club_ecopontos<br/>(EcoPoints)"]
-    E --> K["10_engenharia_epc<br/>(EPC completo)"]
+    E --> J["09_esol_club_ecopontos<br/>(EcoPoints, Regulamento Indique e Ganhe)"]
+    E --> K["10_engenharia_epc<br/>(EPC, Padrão, O&M)"]
     K -.->|"trigger FK"| H
     K -.->|"trigger FK"| D
+    E --> L["11_pos_vendas_om<br/>(O&M, Agendamentos)"]
+    E --> M["12_loja_ecommerce<br/>(Produtos, Pedidos)"]
+    E --> N["13_comunicacao_notificacoes<br/>(Templates, Fila)"]
+    L -.-> K
+    C --> O["14_developer_api<br/>(API Keys, Webhooks)"]
+    E --> P["15_marketing_brand<br/>(DAM, Mídias)"]
+    F --> Q["16_performance_marketing<br/>(CAPI, Pixels)"]
+    A --> R["17_security_audit_vault<br/>(Snapshots, Auditoria)"]
+    E --> S["18_comunicacao_atendimento<br/>(Tickets, Chat Interno)"]
+    C --> T["19_esol_academy<br/>(EAD, Manuais de Vendas)"]
+    C --> U["20_banking_split_pagamentos<br/>(BaaS, Split Recebíveis)"]
+    U --> V["21_motor_fiscal_erp<br/>(eNotas, RPA)"]
+    K -.-> W["22_logistica_supply_chain<br/>(Tracking Rastreio Kits)"]
+    X["23_motor_dados_referencia<br/>(ANEEL, Snapshot)"] -.-> C
+    C -.-> Y["24_security_rls_policies<br/>(RLS, MFA AAL2, CI/CD)"]
+    Y -. Auditoria .-> Z["Trust Center<br/>(Download SOC 2 PDF)"]
 ```
+
 
 > **Linha sólida (→):** Dependência de FK direta (CREATE TABLE precisa da tabela de destino).
 > **Linha tracejada (-.->):** Dependência de trigger (a tabela referenciada precisa existir para o trigger funcionar, mas não impede a criação da tabela).
@@ -3008,3 +3133,101 @@ graph TD
 5. **Enums existentes:** Para adicionar valores a enums de outro módulo, usar `ALTER TYPE ... ADD VALUE` no módulo que **usa** o novo valor.
 
 ---
+
+
+# ðŸ›¡ï¸ EspecificaÃ§Ã£o TÃ©cnica de SeguranÃ§a (Security by Design)
+**Compliance Alvo:** LGPD (Brasil) e SOC 2 Type II (EUA)
+
+A seguranÃ§a do ecossistema Esol Energy nÃ£o Ã© uma camada sobreposta, mas sim o alicerce fundamental do cÃ³digo. Como uma plataforma que movimenta volumes financeiros elevados (ComissÃµes MMN) e dados sensÃ­veis de milhares de consumidores e empresas, adotamos a premissa de **Zero Trust** (ConfianÃ§a Zero) e **Defense in Depth** (Defesa em Profundidade).
+
+---
+
+## 1. Arquitetura de Dados Segura (LGPD & SOC 2)
+
+O armazenamento e trÃ¢nsito de dados (PII - *Personally Identifiable Information* e SPII - *Sensitive PII*) devem obedecer rigorosamente Ã s matrizes de conformidade internacional.
+
+*   **Criptografia em Repouso (Data at Rest):**
+    *   Todo o banco de dados (Supabase/PostgreSQL) deve operar com criptografia TDE (*Transparent Data Encryption*) utilizando algoritmo **AES-256**.
+    *   Campos altamente sensÃ­veis (ex: CPF/CNPJ, chaves PIX, Dados BancÃ¡rios) devem sofrer criptografia a nÃ­vel de coluna (Column-Level Encryption) via extensÃ£o `pgcrypto` antes de tocarem no disco. O dado bruto nunca pode ser lido em um dump de banco.
+*   **Criptografia em TrÃ¢nsito (Data in Transit):**
+    *   Fim definitivo do trÃ¡fego nÃ£o encriptado. Todas as conexÃµes externas devem exigir **TLS 1.3** (com *downgrade* mÃ¡ximo aceitÃ¡vel para TLS 1.2 sob cifras fortes).
+    *   ComunicaÃ§Ãµes server-to-server (entre APIs B2B de Fornecedores e nosso Ecossistema) devem ser autenticadas via **mTLS** (Mutual TLS).
+*   **Ambientes de HomologaÃ§Ã£o e Testes (Data Masking):**
+    *   **ProibiÃ§Ã£o Absoluta:** Ã‰ estritamente proibido realizar cÃ³pias exatas (clones) do banco de dados de ProduÃ§Ã£o para os ambientes de Staging/QA.
+    *   A esteira de dados deve possuir um script de **ObfuscaÃ§Ã£o e Mascaramento** (Data Anonymization). Onde houver "JoÃ£o da Silva", o banco de homologaÃ§Ã£o receberÃ¡ "User_X891". Onde houver um CPF real, o sistema injetarÃ¡ um CPF sintÃ©tico vÃ¡lido matematicamente, protegendo a empresa contra vazamentos em ambientes de desenvolvimento.
+
+---
+
+## 2. Modelo de AutorizaÃ§Ã£o e SeguranÃ§a de APIs (O CoraÃ§Ã£o do Hub)
+
+Para interligar Parceiros B2B, Consultores e Clientes, o motor de APIs Ã© o maior vetor de ataque. O maior risco de plataformas SaaS Ã© o **BOLA (Broken Object Level Authorization)**, tambÃ©m conhecido como **IDOR**, onde um usuÃ¡rio altera o ID na URL para acessar dados de terceiros.
+
+*   **ErradicaÃ§Ã£o do BOLA/IDOR via RLS (Row Level Security):**
+    *   NÃ£o confiaremos a validaÃ§Ã£o de acesso apenas ao cÃ³digo Frontend ou Backend. A autorizaÃ§Ã£o serÃ¡ ancorada **no nÃºcleo do Banco de Dados** (PostgreSQL RLS).
+    *   Ao fazer uma requisiÃ§Ã£o, a API repassa o Token JWT autenticado para o banco. O banco possui polÃ­ticas (Policies) que dizem: `SELECT * FROM clientes WHERE corretor_id = auth.uid()`.
+    *   Mesmo que um Consultor tente acessar `api/clientes/999` (sendo o cliente 999 de outro consultor), o banco de dados retornarÃ¡ "Vazio", cortando o ataque pela raiz e mitigando a falha humana do programador.
+*   **AutenticaÃ§Ã£o Universal (OAuth 2.0 / OIDC):**
+    *   Acesso humano (Consultores e Clientes) via JWT de curta duraÃ§Ã£o (Short-lived tokens - 15 a 60 minutos) aliado a *Refresh Tokens* rotativos.
+    *   Para Parceiros B2B (M2M - Machine to Machine), a autenticaÃ§Ã£o se darÃ¡ via `Client Credentials Grant` do OAuth 2.0, exigindo rotaÃ§Ã£o de chaves.
+*   **Controle de Acesso Baseado em Escopo (RBAC/ABAC):**
+    *   Toda requisiÃ§Ã£o carrega as `roles` (ex: `admin`, `lider_mmn`, `consultor_n1`). O acesso nÃ£o Ã© baseado apenas em "quem vocÃª Ã©", mas no "contexto" da aÃ§Ã£o (ABAC - Attribute-Based Access Control).
+
+---
+
+## 3. Mecanismos Antifraude e Auditoria para o MMN
+
+Uma rede de Marketing MultinÃ­vel nÃ£o monitorada Ã© um alvo fÃ¡cil para fraudes internas, desvios de comissÃ£o (account takeover) e manipulaÃ§Ã£o de rede. A proteÃ§Ã£o aqui deve ser paranoica.
+
+*   **Obrigatoriedade de MFA (MÃºltiplos Fatores) em Rotas CrÃ­ticas:**
+    *   Embora o login comum possa usar biometria, aÃ§Ãµes de alta criticidade estÃ£o protegidas por *Step-up Authentication*.
+    *   AÃ§Ãµes como: **(1) Alterar Chave PIX, (2) Solicitar Saque de ComissÃµes, (3) Transferir EcoPoints e (4) Aprovar Contratos** exigirÃ£o validaÃ§Ã£o de um Token TOTP (Google Authenticator) ou verificaÃ§Ã£o via Passkeys (WebAuthn).
+*   **Ledger ContÃ¡bil ImutÃ¡vel (PrincÃ­pio AAA):**
+    *   A tabela de comissÃµes e faturamento (`historico_comissoes_mmn` e `ledger_contabil`) nÃ£o pode sofrer `UPDATE` ou `DELETE` comum. 
+    *   Adotaremos um modelo *Append-Only* (apenas inserÃ§Ãµes). Se houver estorno de comissÃ£o, cria-se uma linha negativa, mantendo o rastro histÃ³rico exato.
+    *   **Cryptographic Hashing (Block-chaining lÃ³gico):** Toda transaÃ§Ã£o financeira no banco gravarÃ¡ uma hash SHA-256 baseada na transaÃ§Ã£o anterior. Se um DBA (Administrador de Banco de Dados) mal-intencionado tentar alterar o valor de uma comissÃ£o antiga no banco via SQL, a hash da cadeia serÃ¡ quebrada, disparando um alerta imediato de auditoria SOC 2.
+
+---
+
+## 4. Esteira de Pipeline DevSecOps (CI/CD)
+
+O cÃ³digo sÃ³ serÃ¡ enviado para ProduÃ§Ã£o se sobreviver Ã  esteira de seguranÃ§a automatizada. O "Shift-Left Security" garante que vulnerabilidades sejam mortas antes do deploy.
+
+*   **SAST (Static Application Security Testing):**
+    *   IntegraÃ§Ã£o do **SonarQube** ou **Semgrep** no GitHub Actions. A cada *Pull Request*, o cÃ³digo Ã© escaneado em busca de injeÃ§Ãµes SQL, falhas de lÃ³gica (XSS, CSRF) e mÃ¡s prÃ¡ticas. O PR Ã© bloqueado automaticamente se nÃ£o atingir nota A em seguranÃ§a.
+*   **SCA (Software Composition Analysis):**
+    *   Uso do **Dependabot** ou **Snyk**. Nosso cÃ³digo pode estar perfeito, mas se usarmos uma biblioteca NPM/Python de terceiros que possui uma vulnerabilidade de dia-zero (Zero-day), a plataforma acusa o erro, bloqueia o deploy e sugere a atualizaÃ§Ã£o do pacote imediatamente.
+*   **Secret Detection (Vazamento de Chaves):**
+    *   IntegraÃ§Ã£o do **TruffleHog** ou **GitGuardian**. Nenhum desenvolvedor conseguirÃ¡ dar *commit* acidental com a Chave Mestra da AWS (AWS Access Keys) ou a Service Role Key do Supabase no repositÃ³rio. O commit serÃ¡ abortado na mÃ¡quina local.
+*   **Monitoramento de Nuvem (CSPM):**
+    *   Monitoramento contÃ­nuo das configuraÃ§Ãµes dos Buckets S3 (AWS/Supabase) para garantir que nenhum bucket que guarde documentos de clientes (CNH, Contratos) fique com a flag `public-read` habilitada.
+
+
+
+---
+
+## 🌐 Apêndice: Infraestrutura de Integração, Controle de Versão e Deploy (DevOps Loop)
+**Status:** Configurado & Ativo | **Provedores:** GitHub, Cloudflare, Supabase e Registrador de Domínio (Homehost)
+
+Para assegurar a integridade do código e a sincronia robusta entre diferentes programadores e editores (sejam IDEs locais ou editores no-code de nuvem), mapeamos as diretrizes do fluxo de deploy e versionamento:
+
+### 1. O Loop de Desenvolvimento e Sincronização (Source of Truth)
+```mermaid
+graph LR
+    IDE["IDE Local<br/>(VS Code, Cursor, etc.)"] -->|Push Commits| GitHub[Repositório GitHub / Central]
+    NoCode["Editor Visual / Web<br/>(Lovable ou similar)"] <-->|Sincronia Remota| GitHub
+    GitHub -->|Deploy Automático| Cloudflare[Cloudflare Pages / Frontend Host]
+    GitHub -->|Configura/Migra| Supabase[Supabase / Banco & Auth]
+```
+
+*   **GitHub (Central de Versionamento):** Funciona como a única fonte da verdade (*Single Source of Truth*). Todo código gerado em qualquer editor (seja uma IDE local de desenvolvedor ou um editor no-code conectado) passa obrigatoriamente por ele para controle de versionamento convencional.
+*   **Regra de Ouro do Histórico:** Para manter editores de nuvem sincronizados de forma saudável com o repositório central, é altamente recomendado evitar `git push --force` ou reescrita de histórico em branches de deploy ativo, garantindo estabilidade e integridade da trilha de commits.
+*   **DNS & Domínios (Apontamento de DNS Seguro):**
+    *   O domínio principal da marca, independente de onde foi adquirido (Homehost ou qualquer outro registrador de domínio), tem seus Nameservers (NS) apontados para um proxy moderno de DNS (como Cloudflare).
+    *   Esta configuração garante a delegação segura do tráfego, mitigação contra ataques de negação de serviço (DDoS) e geração de subdomínios automáticos para os inquilinos (Tenants).
+
+### 2. Ordem de Inicialização Física Prática (Bootstrap Sequence)
+Para levantar a infraestrutura do zero sem erros de dependência, a equipe de desenvolvimento deve obedecer à seguinte sequência linear:
+1.  **Passo 1 (GitHub - Ponto Zero):** **Limpar e reutilizar o repositório privado existente** (já conectado ao Lovable). É obrigatório realizar a remoção dos arquivos antigos via commits normais (`git rm`), sem alterar o histórico global (`--force`) para preservar a sincronia. Todos os editores continuam apontados para este repositório.
+2.  **Passo 2 (Supabase - Banco & Autenticação):** Criar o projeto no Supabase, mapear as chaves de API e configurar os provedores de autenticação (OAuth, Magic Link, OTP).
+3.  **Passo 3 (Cloudflare - Deploy & DNS):** Criar o projeto no Cloudflare Pages conectado ao repositório do GitHub para automatizar as compilações (CI/CD) do frontend.
+4.  **Passo 4 (Homehost - DNS Delegation):** Alterar os servidores DNS (Nameservers) no painel do Homehost apontando para as chaves fornecidas pelo Cloudflare. A partir daí, o Cloudflare passa a responder pelo domínio principal e encaminhar o tráfego de APIs para o Supabase.

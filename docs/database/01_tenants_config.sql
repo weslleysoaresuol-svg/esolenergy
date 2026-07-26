@@ -3,7 +3,7 @@
 -- Ecossistema: Esol Energy | Banco: Supabase (PostgreSQL 15+)
 -- Dependências: 00_extensions.sql
 -- Tabelas: tenants, config_tributaria_tenant, config_overhead_dashboard,
---          cupons_promocionais, combos_produtos_esol
+--          cupons_promocionais, combos_produtos
 -- Enums: regime_tributario_enum, cupom_tipo_desconto
 -- ==============================================================================
 
@@ -68,7 +68,7 @@ CREATE TABLE public.cupons_promocionais (
 );
 
 -- Tabela de Configuração de Combos e Venda Casada Transparente (Cross-Selling)
-CREATE TABLE public.combos_produtos_esol (
+CREATE TABLE public.combos_produtos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   nome_combo text NOT NULL, -- Ex: 'Combo Proteção Total', 'Combo Eficiência Corporativa'
@@ -78,3 +78,76 @@ CREATE TABLE public.combos_produtos_esol (
   ativo boolean DEFAULT true NOT NULL,
   created_at timestamptz DEFAULT now()
 );
+
+-- ══════════════════════════════════════════════════════════════
+-- COMMAND CENTER: PARÂMETROS CONFIGURÁVEIS DO NEGÓCIO
+-- ══════════════════════════════════════════════════════════════
+CREATE TABLE public.parametros_negocio (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  
+  chave text NOT NULL,                           -- Ex: 'comissao_n0', 'lucro_alvo', 'overhead'
+  valor numeric(15, 4) NOT NULL,                 -- Ex: 15.00, 20.00, 5.00
+  unidade text DEFAULT '%',                      -- '%', 'BRL', 'pontos'
+  descricao text,                                -- Descrição humana do parâmetro
+  
+  editavel_por text DEFAULT 'super_admin',       -- Qual nível RBAC pode alterar
+  
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  
+  UNIQUE(tenant_id, chave)
+);
+
+-- ══════════════════════════════════════════════════════════════
+-- COMMAND CENTER: FEATURE FLAGS (Liberação Gradual de Módulos)
+-- ══════════════════════════════════════════════════════════════
+CREATE TYPE public.feature_flag_modo AS ENUM ('aberto', 'admin_only', 'desligado');
+CREATE TYPE public.feature_flag_categoria AS ENUM ('blindado', 'condicional', 'livre');
+
+CREATE TABLE public.feature_flags (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  
+  modulo_slug text NOT NULL,                     -- Ex: 'crm', 'mmn', 'esol_club', 'loja'
+  modulo_nome text NOT NULL,                     -- Ex: 'Rede MMN', 'Esol Club'
+  modo public.feature_flag_modo DEFAULT 'desligado',
+  
+  -- Campos de Segurança Legal (Análise de Impacto Aprovada)
+  categoria public.feature_flag_categoria NOT NULL DEFAULT 'livre',
+  blindado boolean DEFAULT false,                -- Se true, toggle desabilitado na UI
+  verificacao_dependencias boolean DEFAULT false, -- Se true, checa registros ativos antes de desligar
+  registros_ativos_count integer DEFAULT 0,      -- Quantidade de registros ativos no módulo
+  mensagem_bloqueio text,                        -- Ex: 'Módulo protegido pela LGPD Art. 46'
+  lei_referencia text,                           -- Ex: 'LGPD Art. 46, CDC Art. 46'
+  
+  icone text,                                    -- Ícone do módulo na UI
+  ordem_exibicao integer DEFAULT 0,              -- Ordem na sidebar
+  
+  ativado_em timestamptz,                        -- Quando foi ligado pela primeira vez
+  ativado_por uuid REFERENCES public.profiles(id),
+  
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  
+  UNIQUE(tenant_id, modulo_slug)
+);
+
+-- ══════════════════════════════════════════════════════════════
+-- COMMAND CENTER: HISTÓRICO DE ALTERAÇÕES DE PARÂMETROS
+-- ══════════════════════════════════════════════════════════════
+CREATE TABLE public.parametros_historico (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
+  
+  chave_parametro text NOT NULL,                 -- Ex: 'comissao_n0'
+  valor_anterior numeric(15, 4),
+  valor_novo numeric(15, 4) NOT NULL,
+  
+  alterado_por uuid REFERENCES public.profiles(id),
+  motivo text,                                   -- Justificativa opcional da alteração
+  
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX idx_parametros_hist_chave ON public.parametros_historico(chave_parametro, created_at);

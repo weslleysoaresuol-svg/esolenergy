@@ -11,13 +11,18 @@ CREATE TABLE public.profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE,
   nome text NOT NULL,
-  cpf_cnpj text NOT NULL,
+  cpf_cnpj_encrypted bytea NOT NULL, -- PII: Criptografia pgcrypto AES-256
   telefone text,
+  meta_pixel_id text,                            -- ID do Pixel do Facebook do Consultor
+  google_tag_id text,                            -- ID do GTM/GA4 do Consultor
+  tiktok_pixel_id text,                          -- ID do Pixel do TikTok do Consultor
+  
   avatar_url text,
   contrato_assinado boolean DEFAULT false,
   onboarding_completo boolean DEFAULT false,
   comissao_percent numeric(5, 2) DEFAULT 8.00, -- Margem individual corretor no Motor 1
-  dados_bancarios jsonb DEFAULT '{}'::jsonb, -- PIX, Banco, Agência, Conta
+  chave_pix_hash bytea, -- SPII: Chave PIX encriptada via pgcrypto
+  dados_bancarios_encrypted bytea, -- SPII: JSON encriptado (AES-256)
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
