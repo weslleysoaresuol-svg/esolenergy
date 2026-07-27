@@ -4,17 +4,12 @@ import {
   Calendar,
   Download,
   FilePlus,
-  ShieldCheck,
-  TrendingUp,
-  Zap,
-  DollarSign,
-  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { DashboardKPICards } from "@/components/admin/DashboardKPICards";
 import { AdminAuditLogFeed } from "@/components/admin/AdminAuditLogFeed";
 
 export function DashboardOverview() {
@@ -70,76 +65,8 @@ export function DashboardOverview() {
           </div>
         </div>
 
-        {/* Placeholder KPI Container (Preenchido no Plano 20B) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="rounded-2xl border-amber-400/30 bg-card/85 shadow-lg backdrop-blur-xl">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-semibold text-muted-foreground uppercase">
-                Faturamento Bruto
-              </CardTitle>
-              <div className="p-2 rounded-xl bg-amber-400/20 text-amber-500 font-bold glow-amber">
-                <DollarSign className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-extrabold text-foreground">R$ 14.850.200,00</div>
-              <p className="text-[10px] text-emerald-500 font-semibold mt-1 flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> +24,8% em relação ao mês anterior
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl border-emerald-500/30 bg-card/85 shadow-lg backdrop-blur-xl">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-semibold text-muted-foreground uppercase">
-                Potência Instalada
-              </CardTitle>
-              <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-500 font-bold glow-emerald">
-                <Zap className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-extrabold text-foreground">18,4 MWp</div>
-              <p className="text-[10px] text-emerald-500 font-semibold mt-1 flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> 1.240 Projetos EPC ativos
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl border-cyan-500/30 bg-card/85 shadow-lg backdrop-blur-xl">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-semibold text-muted-foreground uppercase">
-                Rede MMN Ativa
-              </CardTitle>
-              <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-500 font-bold glow-cyan">
-                <Users className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-extrabold text-foreground">3.490 Consultores</div>
-              <p className="text-[10px] text-emerald-500 font-semibold mt-1 flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> Unilevel em 7 Níveis
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl border-slate-700/80 bg-card/85 shadow-lg backdrop-blur-xl">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-semibold text-muted-foreground uppercase">
-                Status RLS & Ledger
-              </CardTitle>
-              <div className="p-2 rounded-xl bg-slate-800 text-emerald-400 font-bold">
-                <ShieldCheck className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-extrabold text-emerald-400">100% OK</div>
-              <p className="text-[10px] text-muted-foreground mt-1 font-mono">
-                Partida Dobrada Imutável
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Dynamic Neomorphic 3D Tilt KPI Cards */}
+        <DashboardKPICards />
 
         {/* Audit Log Feed Section */}
         <AdminAuditLogFeed />
