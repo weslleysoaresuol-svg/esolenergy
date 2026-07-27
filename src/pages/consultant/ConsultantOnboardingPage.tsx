@@ -2,18 +2,12 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sun,
-  ShieldCheck,
   ArrowRight,
-  CheckCircle2,
   Phone,
-  Mail,
   KeyRound,
-  FileCheck,
-  Sparkles,
-  Zap,
-  ChevronDown,
   RotateCcw,
-  Lock,
+  ShieldCheck,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,13 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
 export function ConsultantOnboardingPage() {
-  const [step, setStep] = React.useState<1 | 2 | 3>(1);
+  const [step, setStep] = React.useState<1 | 2>(1);
   const [contact, setContact] = React.useState("");
   const [otpDigits, setOtpDigits] = React.useState<string[]>(["", "", "", "", "", ""]);
   const [resendTimer, setResendTimer] = React.useState(45);
-  const [acceptedTerms, setAcceptedTerms] = React.useState(false);
-  const [expandedSection, setExpandedSection] = React.useState<string | null>("tax");
-  const [isCompleted, setIsCompleted] = React.useState(false);
+  const [isOtpVerified, setIsOtpVerified] = React.useState(false);
 
   // OTP Timer countdown
   React.useEffect(() => {
@@ -40,7 +32,6 @@ export function ConsultantOnboardingPage() {
 
   const handleOtpChange = (index: number, value: string) => {
     if (value.length > 1) {
-      // Handle paste
       const pasted = value.slice(0, 6).split("");
       const newDigits = [...otpDigits];
       pasted.forEach((char, i) => {
@@ -54,7 +45,6 @@ export function ConsultantOnboardingPage() {
     newDigits[index] = value;
     setOtpDigits(newDigits);
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-input-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -80,23 +70,13 @@ export function ConsultantOnboardingPage() {
     e.preventDefault();
     const fullOtp = otpDigits.join("");
     if (fullOtp.length === 6) {
-      setStep(3);
+      setIsOtpVerified(true);
     }
-  };
-
-  const handleFinishOnboarding = () => {
-    if (acceptedTerms) {
-      setIsCompleted(true);
-    }
-  };
-
-  const toggleSection = (sec: string) => {
-    setExpandedSection(expandedSection === sec ? null : sec);
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4 selection:bg-amber-400 selection:text-slate-950 font-sans">
-      {/* Background Solar Glow Filter */}
+      {/* Solar Ambient Light Glow Filter */}
       <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-sm space-y-6 relative z-10">
@@ -106,34 +86,34 @@ export function ConsultantOnboardingPage() {
             <Sun className="h-6 w-6 animate-spin-slow" />
             <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL ENERGY PWA</span>
           </div>
-          <h1 className="text-xl font-black tracking-tight text-white">Onboarding do Consultor Solar</h1>
-          <p className="text-xs text-slate-400">Plataforma Oficial de Credenciamento MMN</p>
+          <h1 className="text-xl font-black tracking-tight text-white">Autenticação do Consultor</h1>
+          <p className="text-xs text-slate-400">Acesso seguro via validação de PIN OTP</p>
         </div>
 
-        {/* Progress Bar & Percentage */}
-        {!isCompleted && (
+        {/* Step Progress Bar */}
+        {!isOtpVerified && (
           <div className="space-y-1.5">
             <div className="flex justify-between text-[11px] font-mono text-slate-400">
-              <span>Etapa {step} de 3</span>
-              <strong className="text-amber-400">{step === 1 ? "33%" : step === 2 ? "66%" : "100%"} Concluído</strong>
+              <span>Etapa {step} de 2</span>
+              <strong className="text-amber-400">{step === 1 ? "50%" : "100%"} Concluído</strong>
             </div>
             <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-800">
               <motion.div
-                initial={{ width: "33%" }}
-                animate={{ width: step === 1 ? "33%" : step === 2 ? "66%" : "100%" }}
+                initial={{ width: "50%" }}
+                animate={{ width: step === 1 ? "50%" : "100%" }}
                 className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full glow-amber"
               />
             </div>
           </div>
         )}
 
-        {/* Main Step Container */}
+        {/* Main Card */}
         <Card className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur-xl overflow-hidden">
           <CardContent className="p-6">
             <AnimatePresence mode="wait">
-              {!isCompleted ? (
+              {!isOtpVerified ? (
                 <>
-                  {/* Step 1: Identification */}
+                  {/* Step 1: Phone / Email Contact Input */}
                   {step === 1 && (
                     <motion.form
                       key="step1"
@@ -145,8 +125,8 @@ export function ConsultantOnboardingPage() {
                     >
                       <div className="space-y-1 text-center">
                         <Badge variant="sun" className="text-[10px]">PASSO 1: IDENTIFICAÇÃO</Badge>
-                        <h2 className="font-bold text-sm text-white">WhatsApp ou E-mail Principal</h2>
-                        <p className="text-[11px] text-slate-400">Insira seus dados para receber o PIN de segurança</p>
+                        <h2 className="font-bold text-sm text-white">Informe seu WhatsApp ou E-mail</h2>
+                        <p className="text-[11px] text-slate-400">Enviaremos um código PIN de 6 dígitos</p>
                       </div>
 
                       <div className="space-y-2">
@@ -166,15 +146,15 @@ export function ConsultantOnboardingPage() {
                       <Button
                         type="submit"
                         disabled={contact.trim().length < 6}
-                        className="w-full h-11 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber gap-2"
+                        className="w-full h-11 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer"
                       >
-                        <span>Solicitar Código SMS/WhatsApp</span>
+                        <span>Enviar Código PIN</span>
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     </motion.form>
                   )}
 
-                  {/* Step 2: Separate 6-Digit OTP */}
+                  {/* Step 2: 6 Individual OTP Boxes */}
                   {step === 2 && (
                     <motion.form
                       key="step2"
@@ -185,12 +165,12 @@ export function ConsultantOnboardingPage() {
                       className="space-y-4"
                     >
                       <div className="space-y-1 text-center">
-                        <Badge variant="sun" className="text-[10px]">PASSO 2: AUTENTICAÇÃO PIN</Badge>
-                        <h2 className="font-bold text-sm text-white">Digite o Código de 6 Dígitos</h2>
+                        <Badge variant="sun" className="text-[10px]">PASSO 2: CÓDIGO PIN</Badge>
+                        <h2 className="font-bold text-sm text-white">Digite os 6 Dígitos</h2>
                         <p className="text-[11px] text-slate-400">Enviado para: <strong className="text-amber-400 font-mono">{contact}</strong></p>
                       </div>
 
-                      {/* 6 Boxes Grid */}
+                      {/* 6 Input Boxes Grid */}
                       <div className="flex justify-between gap-1.5 py-2">
                         {otpDigits.map((digit, idx) => (
                           <input
@@ -206,7 +186,7 @@ export function ConsultantOnboardingPage() {
                         ))}
                       </div>
 
-                      {/* Timer & Resend */}
+                      {/* Resend Timer */}
                       <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1">
                         <span>
                           {resendTimer > 0 ? (
@@ -228,14 +208,14 @@ export function ConsultantOnboardingPage() {
                           type="button"
                           variant="outline"
                           onClick={() => setStep(1)}
-                          className="h-11 text-xs border-slate-800 rounded-xl"
+                          className="h-11 text-xs border-slate-800 rounded-xl cursor-pointer"
                         >
                           Voltar
                         </Button>
                         <Button
                           type="submit"
                           disabled={otpDigits.join("").length < 6}
-                          className="flex-1 h-11 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber gap-2"
+                          className="flex-1 h-11 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer"
                         >
                           <span>Validar Autenticação</span>
                           <ArrowRight className="h-4 w-4" />
@@ -243,101 +223,26 @@ export function ConsultantOnboardingPage() {
                       </div>
                     </motion.form>
                   )}
-
-                  {/* Step 3: Accordion Terms Acceptance */}
-                  {step === 3 && (
-                    <motion.div
-                      key="step3"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      className="space-y-4"
-                    >
-                      <div className="space-y-1 text-center">
-                        <Badge variant="sun" className="text-[10px]">PASSO 3: TERMOS & CONTRATO</Badge>
-                        <h2 className="font-bold text-sm text-white">Contrato de Credenciamento MMN</h2>
-                        <p className="text-[11px] text-slate-400">Revise as cláusulas operacionais e regulatórias</p>
-                      </div>
-
-                      {/* Expandable Accordion */}
-                      <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-none text-xs">
-                        {/* Section 1: Tax */}
-                        <div className="rounded-xl border border-slate-800 bg-slate-950/60 overflow-hidden">
-                          <button
-                            type="button"
-                            onClick={() => toggleSection("tax")}
-                            className="w-full p-3 text-left font-bold text-white flex items-center justify-between bg-slate-900/50"
-                          >
-                            <span>1. Regime Tributário & Retenções (PJ/PF)</span>
-                            <ChevronDown className={cn("h-4 w-4 text-amber-400 transition-transform", expandedSection === "tax" && "rotate-180")} />
-                          </button>
-                          {expandedSection === "tax" && (
-                            <div className="p-3 text-[11px] text-slate-300 space-y-1 border-t border-slate-800 leading-relaxed font-sans">
-                              <p>Os repasses a consultores PJ (MEI/Simples) ocorrem via auto-faturamento eNotas sem retenção na fonte. Consultores PF têm retenção automática de IRRF e INSS via emissão de RPA.</p>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Section 2: VME Rule */}
-                        <div className="rounded-xl border border-slate-800 bg-slate-950/60 overflow-hidden">
-                          <button
-                            type="button"
-                            onClick={() => toggleSection("vme")}
-                            className="w-full p-3 text-left font-bold text-white flex items-center justify-between bg-slate-900/50"
-                          >
-                            <span>2. Regra VME & Teto de 40% por Linha</span>
-                            <ChevronDown className={cn("h-4 w-4 text-amber-400 transition-transform", expandedSection === "vme" && "rotate-180")} />
-                          </button>
-                          {expandedSection === "vme" && (
-                            <div className="p-3 text-[11px] text-slate-300 space-y-1 border-t border-slate-800 leading-relaxed font-sans">
-                              <p>Para qualificação aos bônus de graduação Unilevel em 7 níveis, o volume máximo aceito de uma única perna é travado em 40% do volume total da equipe.</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Checkbox */}
-                      <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer pt-1">
-                        <input
-                          type="checkbox"
-                          checked={acceptedTerms}
-                          onChange={(e) => setAcceptedTerms(e.target.checked)}
-                          className="rounded bg-slate-950 border-slate-800 text-amber-400 focus:ring-amber-400 h-4 w-4"
-                        />
-                        <span>Declaro que li e aceito o Contrato Esol Energy</span>
-                      </label>
-
-                      <Button
-                        type="button"
-                        disabled={!acceptedTerms}
-                        onClick={handleFinishOnboarding}
-                        className="w-full h-11 text-xs font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 rounded-xl shadow-lg gap-2"
-                      >
-                        <CheckCircle2 className="h-4 w-4" />
-                        <span>Assinar Digitalmente & Finalizar</span>
-                      </Button>
-                    </motion.div>
-                  )}
                 </>
               ) : (
-                /* Completed State */
+                /* OTP Verification Completed */
                 <motion.div
-                  key="completed"
+                  key="verified"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center space-y-4 py-4"
                 >
                   <div className="h-16 w-16 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                    <Sparkles className="h-8 w-8" />
+                    <CheckCircle2 className="h-8 w-8" />
                   </div>
 
                   <div className="space-y-1">
-                    <h2 className="font-bold text-base text-white">Cadastro Aprovado!</h2>
-                    <p className="text-xs text-slate-400">Contrato assinado via Esol Sign com Hash NTP.</p>
+                    <h2 className="font-bold text-base text-white">Identidade Validada!</h2>
+                    <p className="text-xs text-slate-400">PIN OTP de 6 dígitos confirmado com sucesso.</p>
                   </div>
 
-                  <Button variant="sun" className="w-full h-11 text-xs font-bold text-slate-950 rounded-xl shadow-lg glow-amber">
-                    Entrar no App do Consultor PWA
+                  <Button variant="sun" className="w-full h-11 text-xs font-bold text-slate-950 rounded-xl shadow-lg glow-amber cursor-pointer">
+                    Prosseguir para Credenciamento MMN (Plano 26A2)
                   </Button>
                 </motion.div>
               )}
