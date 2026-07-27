@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AdminSidebar, ADMIN_NAV_ITEMS } from "./AdminSidebar";
+import { AdminNotificationCenter } from "./AdminNotificationCenter";
 import { SVGFilters } from "@/components/ui/svg-filters";
 
 export interface AdminLayoutProps {
@@ -15,6 +16,7 @@ export interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [collapsed, setCollapsed] = React.useState(false);
+  const [notifOpen, setNotifOpen] = React.useState(false);
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
 
@@ -60,6 +62,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <Button
               variant="outline"
               size="icon"
+              onClick={() => setNotifOpen(true)}
               className="relative h-9 w-9 rounded-xl border-border/60 hover:bg-accent"
               aria-label="Central de Notificações"
             >
@@ -89,6 +92,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </div>
           </div>
         </header>
+
+        {/* Notification Center Drawer */}
+        <AdminNotificationCenter isOpen={notifOpen} onClose={() => setNotifOpen(false)} />
 
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 scrollbar-none">
