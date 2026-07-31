@@ -34,12 +34,12 @@ serve(async (req) => {
       );
     }
 
-    console.log(`⚙️ Processando escrituração Ledger SHA-256 para Fatura '${fatura_id}'...`);
+    console.log(`⚙️ [ledger-engine] Processando escrituração Ledger SHA-256 para Fatura '${fatura_id}'...`);
 
-    // 1. Buscar a Fatura e Tenant
+    // 1. Buscar a Fatura, Tenant e Status de Liberação do Recurso
     const { data: fatura, error: faturaErr } = await supabase
       .from("banking_faturas")
-      .select("id, tenant_id, cliente_id, valor_total, origem_modulo, origem_id")
+      .select("id, tenant_id, cliente_id, valor_total, origem_modulo, origem_id, tipo_pagamento, recurso_liberado")
       .eq("id", fatura_id)
       .single();
 
@@ -48,6 +48,14 @@ serve(async (req) => {
         JSON.stringify({ error: `Fatura '${fatura_id}' não encontrada.` }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // TRAVA DE SEGURANÇA PLANO 33B: Se for Financiamento Bancário (84x) e o recurso NÃO foi liberado pelo banco
+    const isFinanciamento = fatura.tipo_pagamento === "financiamento";
+    const recursoLiberado = fatura.recurso_liberado === true || !isFinanciamento;
+
+    if (isFinanciamento && !recursoLiberado) {
+      console.warn(`🔒 [ledger-engine] TRAVA ATIVA: Fatura '${fatura_id}' é Financiamento e aguarda repasse do banco parceiro (recurso_liberado = false).`);
     }
 
     // 2. Buscar fatias do Split
@@ -77,7 +85,7 @@ serve(async (req) => {
         .from("ledger_lancamentos")
         .insert({
           tenant_id: fatura.tenant_id,
-          descricao: `Liquidação Fatura ${fatura.id} [${fatura.origem_modulo}]`,
+          descricao: `Liquidação Fatura ${fatura.id} [${fatura.origem_modulo}] ${isFinanciamento ? '(Financiado)' : ''}`,
           conta_debito_id: contaDebito.id,
           conta_credito_id: contaCredito.id,
           valor: fatura.valor_total,
@@ -93,54 +101,41 @@ serve(async (req) => {
       }
     }
 
-    // 4. Atualizar fatias de split para 'repassado'
+    // 4. Atualizar fatias de split respeitando a trava de recurso liberado
     if (splits && splits.length > 0) {
       for (const split of splits) {
+        const novoStatus = recursoLiberado ? "repassado" : "aguardando_liberacao_bancaria";
+
         await supabase
           .from("banking_transacoes_split")
-          .update({ status_repasse: "repassado" })
+          .update({
+            status_split: novoStatus,
+            recurso_liberado: recursoLiberado,
+            status_liberacao: recursoLiberado ? "liberado_para_repasse" : "aguardando_liberacao_bancaria",
+          })
           .eq("id", split.id);
-
-        // Se o split tiver recebedor (consultor MMN), enfileirar notificação
-        if (split.subconta_recebedora_id) {
-          const { data: subconta } = await supabase
-            .from("banking_subcontas")
-            .select("user_id")
-            .eq("id", split.subconta_recebedora_id)
-            .single();
-
-          if (subconta?.user_id) {
-            await supabase.from("fila_notificacoes").insert({
-              tenant_id: fatura.tenant_id,
-              destinatario_id: subconta.user_id,
-              canal: "app_sino",
-              titulo: "Comissão Creditada! 💰",
-              mensagem: `Sua comissão no valor de R$ ${split.valor_fatia} foi repassada com sucesso.`,
-              payload_dados: { fatura_id: fatura.id, split_id: split.id },
-            });
-          }
-        }
       }
     }
-
-    console.log(`✅ Fatura '${fatura_id}' escriturada no Ledger SHA-256 e Splits liberados com sucesso.`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Escrituração Ledger SHA-256 e Payout MMN concluídos",
+        message: recursoLiberado
+          ? "Escrituração Ledger concluída e splits repassados com sucesso."
+          : "Escrituração Ledger realizada. Splits retidos aguardando liberação do recurso pelo banco (Trava 33B ativa).",
         fatura_id: fatura.id,
-        lancamentos: lancamentosInseridos,
-        splits_processados: splits?.length || 0,
+        is_financiamento: isFinanciamento,
+        recurso_liberado: recursoLiberado,
+        lancamentos_ids: lancamentosInseridos,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    console.error("💥 Erro na Edge Function ledger-engine:", errorMessage);
+    console.error("💥 Erro geral na Edge Function ledger-engine:", errorMessage);
 
     return new Response(
-      JSON.stringify({ error: "Erro na escrituração contábil", details: errorMessage }),
+      JSON.stringify({ error: "Erro na escrituração contábil Ledger", details: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
