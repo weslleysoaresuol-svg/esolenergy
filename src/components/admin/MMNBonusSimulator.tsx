@@ -1,170 +1,145 @@
-import * as React from "react";
-import { motion } from "framer-motion";
-import {
-  Calculator,
-  Zap,
-  DollarSign,
-  TrendingUp,
-  Award,
-  ShieldAlert,
-  Percent,
-  Sliders,
-  CheckCircle2,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
+import { Calculator, Award, Users, ShieldCheck, ArrowUpRight, DollarSign, CheckCircle2, AlertTriangle } from 'lucide-react';
 
-export function MMNBonusSimulator() {
-  const [vendasDiretasKwp, setVendasDiretasKwp] = React.useState([45]);
-  const [volumeEquipeKwp, setVolumeEquipeKwp] = React.useState([650]);
-  const [linhasAtivas, setLinhasAtivas] = React.useState([4]);
+export const MMNBonusSimulator: React.FC = () => {
+  const [valVolumeEquipe, setValVolumeEquipe] = useState<number>(1000); // kWp
+  const [valLinhas, setValLinhas] = useState<number>(3);
+  const [ticketMedioSolen, setTicketMedioSolen] = useState<number>(35000); // R$ por usina
+  const [isVmeEnabledRank, setIsVmeEnabledRank] = useState<boolean>(true);
 
-  // Dynamic calculations based on solar pricing rules
-  const valVendasDiretas = vendasDiretasKwp[0];
-  const valVolumeEquipe = volumeEquipeKwp[0];
-  const valLinhas = linhasAtivas[0];
+  // MMN Unilevel Distribution (7 levels)
+  const nivelPercentuais = [0.50, 0.20, 0.10, 0.07, 0.05, 0.04, 0.04];
+  
+  // Total Revenue & Pool Calculation
+  const totalUsinasEst = Math.round(valVolumeEquipe / 10);
+  const faturamentoTotalEst = totalUsinasEst * ticketMedioSolen;
+  const piscinaMmnTotal = faturamentoTotalEst * 0.10; // 10% Pool
 
-  // Average price R$ 4.000 / kWp
-  const faturamentoDireto = valVendasDiretas * 4000;
-  const comissaoDireta = faturamentoDireto * 0.08; // 8% comissão direta
+  // CASH PAYOUT IS 100% FREE OF VME (PLAN 34E)
+  const comissaoPixLivre = piscinaMmnTotal * nivelPercentuais[0];
 
-  const faturamentoEquipe = valVolumeEquipe * 4000;
-  const comissaoUnilevel = faturamentoEquipe * 0.05; // 5% médio nos 7 níveis
-
-  // VME Rule: 40% cap per leg
+  // RANK QUALIFICATION POINTS APPLY 40% VME CAP
   const vmeMaxPorLinha = valVolumeEquipe * 0.4;
-  const vmeWarning = valVolumeEquipe > 500 && valLinhas < 3;
-
-  // Career Bonus & Rank calculation
-  let bonusCarreira = 0;
-  let graduacao = "Consultor Bronze";
-  if (valVolumeEquipe >= 1000 && valLinhas >= 5) {
-    graduacao = "Presidente Black";
-    bonusCarreira = 25000;
-  } else if (valVolumeEquipe >= 500 && valLinhas >= 4) {
-    graduacao = "Diretor Diamante";
-    bonusCarreira = 10000;
-  } else if (valVolumeEquipe >= 200 && valLinhas >= 3) {
-    graduacao = "Gerente Ouro";
-    bonusCarreira = 4000;
-  } else if (valVolumeEquipe >= 50 && valLinhas >= 2) {
-    graduacao = "Supervisor Prata";
-    bonusCarreira = 1500;
-  }
-
-  const poolGlobal = graduacao === "Presidente Black" ? faturamentoEquipe * 0.02 : 0;
-  const ganhosTotais = comissaoDireta + comissaoUnilevel + bonusCarreira + poolGlobal;
-
-  const formatCurrency = (val: number) =>
-    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(val);
+  const volumePernaPrincipalEst = valVolumeEquipe * 0.55; // 55% in dominant leg
+  const pontosValidosRank = Math.min(volumePernaPrincipalEst, vmeMaxPorLinha) + (valVolumeEquipe * 0.45);
+  const isVmeExceededRank = volumePernaPrincipalEst > vmeMaxPorLinha;
 
   return (
-    <Card className="rounded-2xl border border-border/80 bg-card/85 shadow-xl backdrop-blur-xl dark:bg-slate-950/90 dark:border-slate-800">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/50">
-        <div className="space-y-1">
-          <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-amber-500" />
-            <span>Simulador de Bônus MMN & Regras de Trava Unilevel</span>
-          </CardTitle>
-          <CardDescription className="text-xs text-muted-foreground">
-            Cálculo em tempo real de comissões, bônus de carreira e validação da Regra VME (40%)
-          </CardDescription>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            <Calculator className="h-5 w-5 text-amber-400" />
+            Simulador MMN & Carreira V10.0
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Cálculo em tempo real de comissões PIX (100% livres) e validação da Regra VME (40%) para Selos
+          </p>
         </div>
-
-        <Badge variant="sun" className="gap-1 text-[10px]">
-          <Award className="h-3 w-3" />
-          {graduacao.toUpperCase()}
+        <Badge variant="outline" className="text-amber-400 border-amber-400/40 text-xs px-3 py-1">
+          REGRAS V10.0 ATIVAS
         </Badge>
-      </CardHeader>
+      </div>
 
-      <CardContent className="p-4 sm:p-6 space-y-6">
-        {/* Sliders Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-accent/30 p-4 rounded-2xl border border-border/50">
-          {/* Slider 1: Vendas Diretas */}
+      {/* DUAL MODE SUMMARY CARDS (PLAN 34E) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="bg-emerald-950/20 border-emerald-500/30">
+          <CardContent className="p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                <DollarSign className="h-4 w-4" /> COMISSÃO PIX NO NÍVEL 1
+              </span>
+              <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[10px]">
+                100% LIVRE DE VME
+              </Badge>
+            </div>
+            <strong className="text-2xl font-black text-white font-mono block">
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(comissaoPixLivre)}
+            </strong>
+            <p className="text-[11px] text-muted-foreground">
+              Comissão repassada sem qualquer trava ou restrição de perna.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-amber-950/20 border-amber-500/30">
+          <CardContent className="p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                <Award className="h-4 w-4" /> PONTOS VÁLIDOS DE SELO (VME 40%)
+              </span>
+              <Badge variant="outline" className="border-amber-400/40 text-amber-400 text-[10px]">
+                APENAS PARA GRADUAÇÃO
+              </Badge>
+            </div>
+            <strong className="text-2xl font-black text-amber-400 font-mono block">
+              {Math.round(pontosValidosRank).toLocaleString()} PTS VÁLIDOS
+            </strong>
+            <p className="text-[11px] text-muted-foreground">
+              {isVmeExceededRank
+                ? '⚠️ Perna dominante travada no cap de 40% exclusivamente para selos/troféus.'
+                : '✅ Pontuação 100% aproveitada para o próximo selo de carreira.'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* SIMULATOR CONTROLS */}
+      <Card className="bg-slate-900/90 border-slate-800">
+        <CardHeader>
+          <CardTitle className="text-sm text-white">Parâmetros de Simulação de Equipe</CardTitle>
+          <CardDescription className="text-xs">Ajuste o volume instalado (kWp) e o número de linhas ativas</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-foreground">Vendas Diretas (kWp)</span>
-              <span className="font-mono font-bold text-amber-500">{valVendasDiretas} kWp</span>
+            <div className="flex justify-between text-xs font-mono">
+              <span className="text-slate-400">Volume Total da Rede (kWp):</span>
+              <span className="text-amber-400 font-bold">{valVolumeEquipe} kWp</span>
             </div>
             <Slider
-              value={vendasDiretasKwp}
-              onValueChange={setVendasDiretasKwp}
-              min={0}
-              max={300}
-              step={5}
+              value={[valVolumeEquipe]}
+              min={100}
+              max={5000}
+              step={50}
+              onValueChange={(val) => setValVolumeEquipe(val[0])}
             />
-            <p className="text-[10px] text-muted-foreground">Faturamento Direto: {formatCurrency(faturamentoDireto)}</p>
           </div>
 
-          {/* Slider 2: Volume da Equipe */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-foreground">Volume da Equipe (kWp)</span>
-              <span className="font-mono font-bold text-emerald-500">{valVolumeEquipe} kWp</span>
+            <div className="flex justify-between text-xs font-mono">
+              <span className="text-slate-400">Linhas Diretas Ativas (Pernas):</span>
+              <span className="text-cyan-400 font-bold">{valLinhas} Pernas</span>
             </div>
             <Slider
-              value={volumeEquipeKwp}
-              onValueChange={setVolumeEquipeKwp}
-              min={0}
-              max={2000}
-              step={20}
-            />
-            <p className="text-[10px] text-muted-foreground">Teto VME (40%/Linha): {valVolumeEquipe * 0.4} kWp</p>
-          </div>
-
-          {/* Slider 3: Linhas Ativas */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-foreground">Linhas de Frente Ativas</span>
-              <span className="font-mono font-bold text-cyan-500">{valLinhas} Linhas</span>
-            </div>
-            <Slider
-              value={linhasAtivas}
-              onValueChange={setLinhasAtivas}
+              value={[valLinhas]}
               min={1}
               max={10}
               step={1}
+              onValueChange={(val) => setValLinhas(val[0])}
             />
-            <p className="text-[10px] text-muted-foreground">Requisito para graduação</p>
-          </div>
-        </div>
-
-        {/* VME Warning Notice */}
-        {vmeWarning && (
-          <div className="p-3 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-400 text-xs flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4 shrink-0" />
-            <span>
-              <strong>Alerta de Trava VME:</strong> Volume concentrado em poucas linhas! Abra mais linhas ativas para qualificar a graduação.
-            </span>
-          </div>
-        )}
-
-        {/* Output Earnings Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-          <div className="p-3.5 rounded-xl border border-border/60 bg-background/50 space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-muted-foreground block">Comissão Direta (8%)</span>
-            <strong className="text-lg font-bold font-mono text-foreground">{formatCurrency(comissaoDireta)}</strong>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-border/60 bg-background/50 space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-muted-foreground block">Unilevel 7 Níveis (5%)</span>
-            <strong className="text-lg font-bold font-mono text-emerald-500">{formatCurrency(comissaoUnilevel)}</strong>
+          {/* Breakdown Table */}
+          <div className="space-y-2 pt-2 border-t border-slate-800">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Projeção da Piscina MMN (10% das Vendas)</h4>
+            <div className="space-y-1 text-xs font-mono">
+              {nivelPercentuais.map((pct, idx) => (
+                <div key={idx} className="flex justify-between p-2 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                  <span className="text-slate-400">Nível {idx + 1} ({pct * 100}% da Piscina):</span>
+                  <span className="text-emerald-400 font-bold">
+                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(piscinaMmnTotal * pct)}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-
-          <div className="p-3.5 rounded-xl border border-border/60 bg-background/50 space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-muted-foreground block">Bônus de Carreira</span>
-            <strong className="text-lg font-bold font-mono text-cyan-500">{formatCurrency(bonusCarreira)}</strong>
-          </div>
-
-          <div className="p-3.5 rounded-xl border border-amber-400/40 bg-amber-400/10 shadow-lg glow-amber/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold text-amber-500 block">Ganhos Totais Estimados</span>
-            <strong className="text-xl font-extrabold font-mono text-amber-400">{formatCurrency(ganhosTotais)}</strong>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
-}
+};
