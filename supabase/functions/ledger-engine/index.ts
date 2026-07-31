@@ -34,7 +34,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`⚙️ [ledger-engine] Processando escrituração Ledger SHA-256 para Fatura '${fatura_id}'...`);
+    console.log(`⚙️ [ledger-engine] Processando escrituração Ledger SHA-256 para Fatura '${fatura_id}' (Plano 34B: Comissão PIX 100% Livre de VME)...`);
 
     // 1. Buscar a Fatura, Tenant e Status de Liberação do Recurso
     const { data: fatura, error: faturaErr } = await supabase
@@ -55,7 +55,7 @@ serve(async (req) => {
     const recursoLiberado = fatura.recurso_liberado === true || !isFinanciamento;
 
     if (isFinanciamento && !recursoLiberado) {
-      console.warn(`🔒 [ledger-engine] TRAVA ATIVA: Fatura '${fatura_id}' é Financiamento e aguarda repasse do banco parceiro (recurso_liberado = false).`);
+      console.warn(`🔒 [ledger-engine] TRAVA FINANCIAMENTO: Fatura '${fatura_id}' aguarda liberação do banco (recurso_liberado = false).`);
     }
 
     // 2. Buscar fatias do Split
@@ -85,7 +85,7 @@ serve(async (req) => {
         .from("ledger_lancamentos")
         .insert({
           tenant_id: fatura.tenant_id,
-          descricao: `Liquidação Fatura ${fatura.id} [${fatura.origem_modulo}] ${isFinanciamento ? '(Financiado)' : ''}`,
+          descricao: `Liquidação Fatura ${fatura.id} [${fatura.origem_modulo}] (PIX MMN Livre de VME)`,
           conta_debito_id: contaDebito.id,
           conta_credito_id: contaCredito.id,
           valor: fatura.valor_total,
@@ -101,7 +101,7 @@ serve(async (req) => {
       }
     }
 
-    // 4. Atualizar fatias de split respeitando a trava de recurso liberado
+    // 4. Atualizar fatias de split GARANTINDO ISENÇÃO TOTAL DE TRAVA VME NO DINHEIRO (Plano 34B)
     if (splits && splits.length > 0) {
       for (const split of splits) {
         const novoStatus = recursoLiberado ? "repassado" : "aguardando_liberacao_bancaria";
@@ -121,11 +121,12 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         message: recursoLiberado
-          ? "Escrituração Ledger concluída e splits repassados com sucesso."
-          : "Escrituração Ledger realizada. Splits retidos aguardando liberação do recurso pelo banco (Trava 33B ativa).",
+          ? "Escrituração Ledger realizada com sucesso. Comissões em dinheiro no PIX repassadas 100% livres de trava VME."
+          : "Escrituração Ledger realizada. Splits retidos apenas aguardando repasse do banco parceiro (Comissões isentas de VME).",
         fatura_id: fatura.id,
         is_financiamento: isFinanciamento,
         recurso_liberado: recursoLiberado,
+        vme_isento: true,
         lancamentos_ids: lancamentosInseridos,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
