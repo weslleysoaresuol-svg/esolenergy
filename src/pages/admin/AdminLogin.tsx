@@ -38,7 +38,7 @@ export function AdminLogin() {
       }
 
       if (data.session) {
-        navigate(from, { replace: true });
+        navigate({ to: from as any, replace: true });
       }
     } catch (err: any) {
       console.error("Erro no login admin:", err);
