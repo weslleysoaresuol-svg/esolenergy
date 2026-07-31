@@ -53,8 +53,8 @@ export function AdminCloudflareAccountSetup() {
     },
     {
       stepNumber: 3,
-      title: "Domínio HomeHost & SSL Strict",
-      subtitle: "esolenergy.com.br & www.esolenergy.com.br",
+      title: "Domínios Nacionais (.com.br)",
+      subtitle: "Root, WWW, App, Admin, API & EAD",
       status: currentStep === 3 ? "active" : "pending",
     },
   ];
@@ -84,10 +84,10 @@ export function AdminCloudflareAccountSetup() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
             <Cloud className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">CLOUDFLARE EDGE MANAGER</span>
+            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">CLOUDFLARE EDGE MANAGER (BRASIL .COM.BR)</span>
           </div>
           <h1 className="text-2xl font-black tracking-tight text-white">Setup de Infraestrutura Cloudflare</h1>
-          <p className="text-xs text-slate-400">Conexão de Conta, Deploy Pages & Vinculação de Domínios Soberanos</p>
+          <p className="text-xs text-slate-400">Conexão de Conta, Deploy Pages & Suíte de Domínios Nacionais (.com.br)</p>
         </div>
 
         {/* Wizard Steps Stepper */}
@@ -232,47 +232,53 @@ export function AdminCloudflareAccountSetup() {
               </div>
             )}
 
-            {/* Step 3: Custom Domains (Apex, WWW, App) */}
+            {/* Step 3: Brazilian .com.br Subdomains Suite */}
             {currentStep === 3 && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <h3 className="font-bold text-xs text-white font-mono uppercase tracking-wider flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-cyan-400" /> Vinculação de Domínios Soberanos HomeHost
+                    <Globe className="h-4 w-4 text-cyan-400" /> Suíte de Domínios Nacionais (.com.br)
                   </h3>
                   <Badge variant="emerald" className="text-[9px]">ETAPA 3/3 — CONCLUÍDO</Badge>
                 </div>
 
-                <div className="space-y-2.5 font-mono text-xs">
-                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Domínio Raiz (Apex):</span>
-                      <Badge variant="emerald" className="text-[8px]">PROXIED 🟠</Badge>
-                    </div>
-                    <strong className="text-amber-400 text-xs block">esolenergy.com.br</strong>
+                <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+                  <div className="p-2.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-0.5">
+                    <span className="text-[9px] text-slate-400">Website Raiz:</span>
+                    <strong className="text-amber-400 text-[11px] block truncate">esolenergy.com.br</strong>
                   </div>
 
-                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Subdomínio WWW:</span>
-                      <Badge variant="emerald" className="text-[8px]">PROXIED 🟠</Badge>
-                    </div>
-                    <strong className="text-cyan-400 text-xs block">www.esolenergy.com.br</strong>
+                  <div className="p-2.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-0.5">
+                    <span className="text-[9px] text-slate-400">Subdomínio WWW:</span>
+                    <strong className="text-cyan-400 text-[11px] block truncate">www.esolenergy.com.br</strong>
                   </div>
 
-                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Subdomínio do App:</span>
-                      <Badge variant="emerald" className="text-[8px]">PROXIED 🟠</Badge>
-                    </div>
-                    <strong className="text-emerald-400 text-xs block">app.esolenergy.com.br</strong>
+                  <div className="p-2.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-0.5">
+                    <span className="text-[9px] text-slate-400">App Consultor PWA:</span>
+                    <strong className="text-emerald-400 text-[11px] block truncate">app.esolenergy.com.br</strong>
+                  </div>
+
+                  <div className="p-2.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-0.5">
+                    <span className="text-[9px] text-slate-400">Portal Admin:</span>
+                    <strong className="text-amber-400 text-[11px] block truncate">admin.esolenergy.com.br</strong>
+                  </div>
+
+                  <div className="p-2.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-0.5">
+                    <span className="text-[9px] text-slate-400">Developer API:</span>
+                    <strong className="text-cyan-400 text-[11px] block truncate">api.esolenergy.com.br</strong>
+                  </div>
+
+                  <div className="p-2.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-0.5">
+                    <span className="text-[9px] text-slate-400">EAD Academy:</span>
+                    <strong className="text-emerald-400 text-[11px] block truncate">ead.esolenergy.com.br</strong>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-1">
                   <CheckCircle2 className="h-6 w-6 text-emerald-400 mx-auto" />
-                  <h4 className="font-bold text-xs text-white">Domínios & WWW 100% Homologados!</h4>
+                  <h4 className="font-bold text-xs text-white">Suíte .com.br 100% Homologada no Brasil!</h4>
                   <p className="text-[10px] text-slate-300">
-                    Sua plataforma e o redirecionamento WWW estão totalmente ativos no Cloudflare Pages!
+                    Todos os 6 subdomínios nacionais estão ativos na borda do Cloudflare com SSL 256-bit.
                   </p>
                 </div>
               </div>

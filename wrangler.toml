@@ -5,10 +5,13 @@ pages_build_output_dir = "./dist"
 [site]
 bucket = "./dist"
 
-# Configuração de Domínios Customizados Cloudflare Pages:
-# - esolenergy.com.br (Apex Root)
-# - www.esolenergy.com.br (WWW Redirect Subdomain)
-# - app.esolenergy.com.br (PWA Application Subdomain)
+# Mapeamento Oficial de Domínios .com.br (Brasil):
+# - esolenergy.com.br (Website Institucional / Apex Root)
+# - www.esolenergy.com.br (Redirecionamento WWW)
+# - app.esolenergy.com.br (Aplicativo do Consultor PWA Mobile)
+# - admin.esolenergy.com.br (Portal Administrativo & Cockpits)
+# - api.esolenergy.com.br (Developer Hub & Webhooks REST API)
+# - ead.esolenergy.com.br (EAD Esol Academy)
 
 [[headers]]
 for = "/*"
