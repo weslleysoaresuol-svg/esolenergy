@@ -1,15 +1,19 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 import {
   Sun,
   ArrowRight,
   Phone,
-  KeyRound,
   RotateCcw,
-  ShieldCheck,
   CheckCircle2,
+  PlayCircle,
+  Sparkles,
+  Calculator,
+  FileSpreadsheet,
+  Send,
+  X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -21,6 +25,7 @@ export function ConsultantOnboardingPage() {
   const [otpDigits, setOtpDigits] = React.useState<string[]>(["", "", "", "", "", ""]);
   const [resendTimer, setResendTimer] = React.useState(45);
   const [isOtpVerified, setIsOtpVerified] = React.useState(false);
+  const [isVideoOpen, setIsVideoOpen] = React.useState(false);
 
   // OTP Timer countdown
   React.useEffect(() => {
@@ -90,6 +95,29 @@ export function ConsultantOnboardingPage() {
           <p className="text-xs text-slate-400">Acesso seguro via validação de PIN OTP</p>
         </div>
 
+        {/* FAST-START VIDEO WIDGET (PLAN 33C) */}
+        <div className="p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/30 backdrop-blur-xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="h-10 w-10 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold shrink-0 glow-amber">
+              <PlayCircle className="h-6 w-6" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
+                <Sparkles className="h-3 w-3" /> Guia Rápido de Ativação
+              </span>
+              <span className="text-[10px] text-slate-300">Como fazer sua 1ª venda em 3 passos (3 min)</span>
+            </div>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => setIsVideoOpen(true)}
+            className="h-8 text-[10px] font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl px-3 shrink-0 cursor-pointer"
+          >
+            Assistir
+          </Button>
+        </div>
+
         {/* Step Progress Bar */}
         {!isOtpVerified && (
           <div className="space-y-1.5">
@@ -124,7 +152,7 @@ export function ConsultantOnboardingPage() {
                       className="space-y-4"
                     >
                       <div className="space-y-1 text-center">
-                        <Badge variant="sun" className="text-[10px]">PASSO 1: IDENTIFICAÇÃO</Badge>
+                        <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-400">PASSO 1: IDENTIFICAÇÃO</Badge>
                         <h2 className="font-bold text-sm text-white">Informe seu WhatsApp ou E-mail</h2>
                         <p className="text-[11px] text-slate-400">Enviaremos um código PIN de 6 dígitos</p>
                       </div>
@@ -165,12 +193,11 @@ export function ConsultantOnboardingPage() {
                       className="space-y-4"
                     >
                       <div className="space-y-1 text-center">
-                        <Badge variant="sun" className="text-[10px]">PASSO 2: CÓDIGO PIN</Badge>
-                        <h2 className="font-bold text-sm text-white">Digite os 6 Dígitos</h2>
-                        <p className="text-[11px] text-slate-400">Enviado para: <strong className="text-amber-400 font-mono">{contact}</strong></p>
+                        <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-400">PASSO 2: CONFIRMAÇÃO</Badge>
+                        <h2 className="font-bold text-sm text-white">Digite o PIN enviado</h2>
+                        <p className="text-[11px] text-slate-400">Enviado para: <strong className="text-amber-400">{contact}</strong></p>
                       </div>
 
-                      {/* 6 Input Boxes Grid */}
                       <div className="flex justify-between gap-1.5 py-2">
                         {otpDigits.map((digit, idx) => (
                           <input
@@ -241,15 +268,94 @@ export function ConsultantOnboardingPage() {
                     <p className="text-xs text-slate-400">PIN OTP de 6 dígitos confirmado com sucesso.</p>
                   </div>
 
-                  <Button variant="sun" className="w-full h-11 text-xs font-bold text-slate-950 rounded-xl shadow-lg glow-amber cursor-pointer">
-                    Prosseguir para Credenciamento MMN (Plano 26A2)
-                  </Button>
+                  {/* 3 STEPS CARDS SUMMARY */}
+                  <div className="grid grid-cols-3 gap-2 text-left pt-2">
+                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <Calculator className="h-4 w-4 text-amber-400" />
+                      <span className="text-[10px] font-bold text-white block">1. Simular</span>
+                      <span className="text-[9px] text-slate-400 block leading-tight">Conta em 30s</span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <FileSpreadsheet className="h-4 w-4 text-cyan-400" />
+                      <span className="text-[10px] font-bold text-white block">2. Proposta</span>
+                      <span className="text-[9px] text-slate-400 block leading-tight">Com a sua Marca</span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <Send className="h-4 w-4 text-emerald-400" />
+                      <span className="text-[10px] font-bold text-white block">3. Vender</span>
+                      <span className="text-[9px] text-slate-400 block leading-tight">Fechar pelo Whats</span>
+                    </div>
+                  </div>
+
+                  <Link to="/consultant/simulator">
+                    <Button className="w-full h-11 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber cursor-pointer mt-2">
+                      Iniciar 1ª Simulação Solar Agora
+                    </Button>
+                  </Link>
                 </motion.div>
               )}
             </AnimatePresence>
           </CardContent>
         </Card>
       </div>
+
+      {/* FAST-START VIDEO MODAL (PLAN 33C) */}
+      <AnimatePresence>
+        {isVideoOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-2xl relative"
+            >
+              <button
+                type="button"
+                onClick={() => setIsVideoOpen(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                <PlayCircle className="h-5 w-5 text-amber-400" />
+                <h3 className="font-bold text-sm text-white">Como fazer sua 1ª venda em 3 passos</h3>
+              </div>
+
+              {/* Video Player Simulator Screen */}
+              <div className="relative aspect-video rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden flex flex-col items-center justify-center gap-2 group">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                <PlayCircle className="h-12 w-12 text-amber-400 group-hover:scale-110 transition-transform relative z-10 glow-amber" />
+                <span className="text-xs font-bold text-white relative z-10">Assistir Treinamento Rápido (3:00)</span>
+                <span className="text-[10px] text-slate-400 relative z-10">Aprenda a simular, gerar proposta e fechar no WhatsApp</span>
+              </div>
+
+              <div className="space-y-2 text-xs text-slate-300">
+                <div className="flex items-center gap-2">
+                  <span className="h-5 w-5 rounded-full bg-amber-400/20 text-amber-400 font-bold flex items-center justify-center text-[10px]">1</span>
+                  <span><strong>Simule em 30s:</strong> Digite o consumo do cliente e veja a economia em 25 anos.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-5 w-5 rounded-full bg-cyan-400/20 text-cyan-400 font-bold flex items-center justify-center text-[10px]">2</span>
+                  <span><strong>Personalize:</strong> Aplique seu Co-Branding e selecione o kit de painéis Tier 1.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-5 w-5 rounded-full bg-emerald-400/20 text-emerald-400 font-bold flex items-center justify-center text-[10px]">3</span>
+                  <span><strong>Feche o Negócio:</strong> Envie no WhatsApp e receba notificação de leitura.</span>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                onClick={() => setIsVideoOpen(false)}
+                className="w-full h-10 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber cursor-pointer"
+              >
+                Entendi, Quero Começar!
+              </Button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
