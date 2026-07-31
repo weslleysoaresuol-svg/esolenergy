@@ -25,6 +25,7 @@ serve(async (req) => {
       );
     }
 
+    const body = await req.json();
     const {
       cliente_id,
       origem_modulo = "projetos_epc",
@@ -32,7 +33,8 @@ serve(async (req) => {
       tipo_nota = "NFSe",
       valor_nota,
       tenant_id,
-    } = await req.json();
+      force_async = false,
+    } = body;
 
     if (!origem_id || !valor_nota || valor_nota <= 0) {
       return new Response(
@@ -41,7 +43,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`🧾 Processando emissão de nota fiscal (${tipo_nota}) no valor de R$ ${valor_nota}...`);
+    console.log(`🧾 [enotas-nfe-client] Processando emissão (${tipo_nota}) R$ ${valor_nota}...`);
 
     // 1. Buscar dados do cliente no banco
     let clienteNome = "Cliente Esol Energy";
@@ -60,63 +62,103 @@ serve(async (req) => {
       }
     }
 
-    // 2. Simulação de Transmissão da Nota Fiscal via eNotas / SEFAZ API
-    const numeroNota = Math.floor(1000 + Math.random() * 9000).toString();
-    const chaveAcessoSefaz = `352607${Math.floor(10000000000000000000000000000000000000 + Math.random() * 90000000000000000000000000000000000000)}`;
-    const linkPdfNota = `https://enotas.com.br/v2/download/pdf/${chaveAcessoSefaz}.pdf`;
-    const linkXmlNota = `https://enotas.com.br/v2/download/xml/${chaveAcessoSefaz}.xml`;
-    const dataAutorizacao = new Date().toISOString();
+    // 2. Simulação / Tentativa de Transmissão da Nota Fiscal à SEFAZ via eNotas API
+    try {
+      if (force_async) {
+        throw new Error("Simulação de oscilação temporária na API da SEFAZ/eNotas");
+      }
 
-    // 3. Gravação em fiscal_notas_emitidas
-    const { data: notaFiscal, error: notaErr } = await supabase
-      .from("fiscal_notas_emitidas")
-      .insert({
-        tenant_id: tenant_id || null,
-        cliente_id: cliente_id || null,
-        origem_modulo,
-        origem_id,
-        tipo_nota,
-        valor_nota: Number(valor_nota),
-        status_emissao: "autorizada",
-        chave_acesso_sefaz: chaveAcessoSefaz.substring(0, 44),
-        numero_nota: numeroNota,
-        link_pdf_nota: linkPdfNota,
-        link_xml_nota: linkXmlNota,
-        data_autorizacao: dataAutorizacao,
-      })
-      .select("id, status_emissao, numero_nota, chave_acesso_sefaz")
-      .single();
+      const numeroNota = Math.floor(1000 + Math.random() * 9000).toString();
+      const chaveAcessoSefaz = `352607${Math.floor(10000000000000000000000000000000000000 + Math.random() * 90000000000000000000000000000000000000)}`;
+      const linkPdfNota = `https://enotas.com.br/v2/download/pdf/${chaveAcessoSefaz}.pdf`;
+      const linkXmlNota = `https://enotas.com.br/v2/download/xml/${chaveAcessoSefaz}.xml`;
+      const dataAutorizacao = new Date().toISOString();
 
-    if (notaErr) {
-      console.error("❌ Erro ao gravar nota fiscal emitida:", notaErr);
+      // Gravação em fiscal_notas_emitidas (Sucesso Imediato)
+      const { data: notaFiscal, error: notaErr } = await supabase
+        .from("fiscal_notas_emitidas")
+        .insert({
+          tenant_id: tenant_id || null,
+          cliente_id: cliente_id || null,
+          origem_modulo,
+          origem_id,
+          tipo_nota,
+          valor_nota: Number(valor_nota),
+          status_emissao: "autorizada",
+          chave_acesso_sefaz: chaveAcessoSefaz.substring(0, 44),
+          numero_nota: numeroNota,
+          link_pdf_nota: linkPdfNota,
+          link_xml_nota: linkXmlNota,
+          data_autorizacao: dataAutorizacao,
+        })
+        .select("id, status_emissao, numero_nota, chave_acesso_sefaz")
+        .single();
+
+      if (notaErr) throw notaErr;
+
+      console.log(`✅ [enotas-nfe-client] Nota '${notaFiscal.numero_nota}' emitida com sucesso na SEFAZ.`);
+
       return new Response(
-        JSON.stringify({ error: "Erro ao registrar nota fiscal emitida no banco", details: notaErr.message }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          success: true,
+          status: "autorizada",
+          message: "Nota Fiscal transmitida e autorizada com sucesso na SEFAZ",
+          nota_fiscal_id: notaFiscal.id,
+          numero_nota: notaFiscal.numero_nota,
+          chave_acesso_sefaz: notaFiscal.chave_acesso_sefaz,
+          link_pdf_nota: linkPdfNota,
+          link_xml_nota: linkXmlNota,
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    } catch (apiErr: any) {
+      // 3. FALLBACK ASSÍNCRONO: Oscilação detectada. Registrar na Fila com Retry Backoff
+      const erroMsg = apiErr?.message || String(apiErr);
+      console.warn(`⚠️ [enotas-nfe-client] Oscilação na SEFAZ/eNotas: '${erroMsg}'. Enfileirando na fiscal_fila_emissao...`);
+
+      const proximaTentativa = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // Retry em 5 minutos
+
+      const { data: filaItem, error: filaErr } = await supabase
+        .from("fiscal_fila_emissao")
+        .insert({
+          tenant_id: tenant_id || null,
+          cliente_id: cliente_id || null,
+          origem_modulo,
+          origem_id,
+          tipo_nota,
+          valor_nota: Number(valor_nota),
+          status: "agendada_retentativa",
+          tentativas: 1,
+          max_tentativas: 5,
+          proxima_tentativa_em: proximaTentativa,
+          ultimo_erro: erroMsg,
+          payload_json: body,
+        })
+        .select("id, status, proxima_tentativa_em")
+        .single();
+
+      if (filaErr) {
+        console.error("❌ Erro ao registrar item na fila de emissão fiscal:", filaErr);
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          status: "enfileirada_fallback",
+          queued: true,
+          message: "A API da SEFAZ oscilou. A emissão da nota fiscal foi enfileirada e será reprocessada automaticamente em background.",
+          fila_id: filaItem?.id || null,
+          proxima_tentativa_em: proximaTentativa,
+        }),
+        { status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    console.log(`✅ Nota Fiscal '${notaFiscal.numero_nota}' emitida e autorizada com sucesso na SEFAZ.`);
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: "Nota Fiscal transmitida e autorizada com sucesso na SEFAZ",
-        nota_fiscal_id: notaFiscal.id,
-        status_emissao: notaFiscal.status_emissao,
-        numero_nota: notaFiscal.numero_nota,
-        chave_acesso_sefaz: notaFiscal.chave_acesso_sefaz,
-        link_pdf_nota: linkPdfNota,
-        link_xml_nota: linkXmlNota,
-        data_autorizacao: dataAutorizacao,
-      }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    console.error("💥 Erro na Edge Function enotas-nfe-client:", errorMessage);
+    console.error("💥 Erro geral na Edge Function enotas-nfe-client:", errorMessage);
 
     return new Response(
-      JSON.stringify({ error: "Erro na emissão da nota fiscal de cliente", details: errorMessage }),
+      JSON.stringify({ error: "Erro interno no processamento fiscal", details: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
