@@ -13,6 +13,8 @@ import {
   AlertCircle,
   Sun,
   CheckCircle2,
+  DollarSign,
+  Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,7 +28,7 @@ export interface CareerProgressData {
   targetPoints: number;
   activeLinesCount: number;
   targetActiveLines: number;
-  maxLegPercentage: number; // VME %
+  maxLegPercentage: number; // VME % for career rank qualification
   isVmeCompliant: boolean;
   rewardCashBonus: number;
 }
@@ -38,7 +40,7 @@ const MOCK_CAREER_DATA: CareerProgressData = {
   targetPoints: 12000,
   activeLinesCount: 3,
   targetActiveLines: 4,
-  maxLegPercentage: 35, // 35% is within 40% VME cap
+  maxLegPercentage: 35, // 35% is within 40% VME cap for rank
   isVmeCompliant: true,
   rewardCashBonus: 5000.0,
 };
@@ -66,13 +68,28 @@ export function ConsultantCareerGoalWidget() {
           <p className="text-xs text-slate-400">Plano de Carreira Unilevel 7 Níveis</p>
         </div>
 
+        {/* DUAL BANNER NOTICE (PLAN 34C) */}
+        <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px] gap-1">
+              <DollarSign className="h-3 w-3" /> COMISSÃO PIX 100% LIVRE
+            </Badge>
+            <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-400 gap-1">
+              <ShieldCheck className="h-3 w-3" /> VME 40% (SÓ SELOS)
+            </Badge>
+          </div>
+          <p className="text-[10px] text-slate-400 leading-relaxed">
+            Sua comissão em dinheiro nos 7 níveis é transferida <strong>100% sem nenhuma trava VME</strong>. O limite de 40% por perna aplica-se <em>exclusivamente</em> para o acúmulo de pontos de graduação de selos, troféus e EcoPoints.
+          </p>
+        </div>
+
         {/* Main Card Container */}
         <Card className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur-xl overflow-hidden">
           <CardContent className="p-6 space-y-5">
             {/* Header Rank Transition Banner */}
             <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-slate-950 to-slate-900 border border-amber-400/30 space-y-2 text-center">
               <Badge variant="sun" className="text-[10px]">
-                METAS DO MÊS
+                METAS DE SELO DE CARREIRA
               </Badge>
               <div className="flex items-center justify-center gap-2">
                 <span className="text-xs font-bold text-slate-400">{data.currentRank}</span>
@@ -85,7 +102,7 @@ export function ConsultantCareerGoalWidget() {
             <div className="space-y-2">
               <div className="flex justify-between items-baseline text-xs font-mono">
                 <span className="text-slate-400 flex items-center gap-1">
-                  <Zap className="h-3.5 w-3.5 text-amber-400" /> Pontos da Equipe
+                  <Zap className="h-3.5 w-3.5 text-amber-400" /> Pontos Válidos VME
                 </span>
                 <span className="text-white font-bold">
                   {data.currentPoints.toLocaleString()} / {data.targetPoints.toLocaleString()} PTS ({pointsPercentage}%)
@@ -118,7 +135,7 @@ export function ConsultantCareerGoalWidget() {
               {/* VME Cap Status */}
               <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
                 <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
-                  <ShieldCheck className="h-3 w-3 text-emerald-400" /> Regra VME (40%)
+                  <ShieldCheck className="h-3 w-3 text-emerald-400" /> Teto VME Selos (40%)
                 </span>
                 <strong className="text-sm font-bold text-emerald-400 font-mono block">
                   {data.maxLegPercentage}% Perna Máx
@@ -136,14 +153,9 @@ export function ConsultantCareerGoalWidget() {
                 {formatCurrency(data.rewardCashBonus)} no PIX
               </strong>
               <p className="text-[10px] text-slate-400">
-                + Troféu de Liderança MMN + Viagem de Incentivo
+                + Troféu de Liderança MMN + Viagem de Incentivo EcoPoints
               </p>
             </div>
-
-            <Button variant="sun" className="w-full h-11 text-xs font-bold text-slate-950 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer">
-              <span>Ver Estrutura de Linhas na Árvore MMN</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
           </CardContent>
         </Card>
       </div>
