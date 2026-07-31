@@ -666,7 +666,7 @@ function AgendaComercial() {
             </p>
             <p>
               Para ativar o agendamento real integrado ao banco de dados em produção, realize o <strong>commit</strong> e o <strong>push</strong> da migração SQL 
-              (<code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">supabase/migrations/20260702203000_agenda_reunioes.sql</code>) no seu repositório Git conectado à Lovable.
+              (<code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">supabase/migrations/20260702203000_agenda_reunioes.sql</code>) no seu repositório Git e execute as migrações no Supabase.
             </p>
             <div className="bg-amber-100/40 p-2.5 rounded-xl text-[10px] text-amber-800 border border-amber-200/50">
               * Nota: Enquanto a sincronização não ocorre, você pode gerenciar, cadastrar janelas e agendar compromissos localmente neste navegador de forma experimental.
