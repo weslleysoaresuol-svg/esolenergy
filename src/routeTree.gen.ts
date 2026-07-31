@@ -11,14 +11,32 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SucessoOrcamentoRouteImport } from './routes/sucesso-orcamento'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ConsultantRouteImport } from './routes/consultant'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as PropostaCodigoRouteImport } from './routes/proposta.$codigo'
 import { Route as FinanciamentoCodigoRouteImport } from './routes/financiamento.$codigo'
 import { Route as CotacaoCodigoRouteImport } from './routes/cotacao.$codigo'
 import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
+import { Route as ConsultantWalletRouteImport } from './routes/consultant.wallet'
+import { Route as ConsultantTermsRouteImport } from './routes/consultant.terms'
+import { Route as ConsultantSolarVsMlRouteImport } from './routes/consultant.solar-vs-ml'
+import { Route as ConsultantSimulatorRouteImport } from './routes/consultant.simulator'
+import { Route as ConsultantReferralRouteImport } from './routes/consultant.referral'
+import { Route as ConsultantProposalRouteImport } from './routes/consultant.proposal'
+import { Route as ConsultantProjectsRouteImport } from './routes/consultant.projects'
+import { Route as ConsultantPaybackRouteImport } from './routes/consultant.payback'
+import { Route as ConsultantOnboardingRouteImport } from './routes/consultant.onboarding'
+import { Route as ConsultantNetworkRouteImport } from './routes/consultant.network'
+import { Route as ConsultantKycRouteImport } from './routes/consultant.kyc'
+import { Route as ConsultantEcopointsRouteImport } from './routes/consultant.ecopoints'
+import { Route as ConsultantDownlinesRouteImport } from './routes/consultant.downlines'
+import { Route as ConsultantContractRouteImport } from './routes/consultant.contract'
+import { Route as ConsultantCareerRouteImport } from './routes/consultant.career'
+import { Route as ConsultantAcademyRouteImport } from './routes/consultant.academy'
 import { Route as BlogComoFuncionaAEnergiaSolarRouteImport } from './routes/blog.como-funciona-a-energia-solar'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
@@ -35,10 +53,36 @@ import { Route as AppCorretoresRouteImport } from './routes/app.corretores'
 import { Route as AppContratoRouteImport } from './routes/app.contrato'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
 import { Route as AppAgendaRouteImport } from './routes/app.agenda'
+import { Route as AdminWafRouteImport } from './routes/admin.waf'
+import { Route as AdminSolarEpcRouteImport } from './routes/admin.solar-epc'
+import { Route as AdminSecurityRouteImport } from './routes/admin.security'
+import { Route as AdminOverheadRouteImport } from './routes/admin.overhead'
+import { Route as AdminMmnTreeRouteImport } from './routes/admin.mmn-tree'
+import { Route as AdminGoLiveRouteImport } from './routes/admin.go-live'
+import { Route as AdminE2eSalesRouteImport } from './routes/admin.e2e-sales'
+import { Route as AdminE2eRunnerRouteImport } from './routes/admin.e2e-runner'
+import { Route as AdminE2eDetailsRouteImport } from './routes/admin.e2e-details'
+import { Route as AdminDreRouteImport } from './routes/admin.dre'
+import { Route as AdminDataRoomRouteImport } from './routes/admin.data-room'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminCloudflareRouteImport } from './routes/admin.cloudflare'
 import { Route as AppPropostasIndexRouteImport } from './routes/app.propostas.index'
 import { Route as AppPedidosIndexRouteImport } from './routes/app.pedidos.index'
 import { Route as AppFinanciamentosIndexRouteImport } from './routes/app.financiamentos.index'
 import { Route as AppCotacoesIndexRouteImport } from './routes/app.cotacoes.index'
+import { Route as ConsultantWalletWithdrawRouteImport } from './routes/consultant.wallet.withdraw'
+import { Route as ConsultantWalletStatementRouteImport } from './routes/consultant.wallet.statement'
+import { Route as ConsultantWalletMfaRouteImport } from './routes/consultant.wallet.mfa'
+import { Route as ConsultantSimulatorResultRouteImport } from './routes/consultant.simulator.result'
+import { Route as ConsultantProposalShareRouteImport } from './routes/consultant.proposal.share'
+import { Route as ConsultantProposalCobrandingRouteImport } from './routes/consultant.proposal.cobranding'
+import { Route as ConsultantProposalAnalyticsRouteImport } from './routes/consultant.proposal.analytics'
+import { Route as ConsultantNetworkLegsRouteImport } from './routes/consultant.network.legs'
+import { Route as ConsultantKycFacialRouteImport } from './routes/consultant.kyc.facial'
+import { Route as ConsultantEcopointsRankRouteImport } from './routes/consultant.ecopoints.rank'
+import { Route as ConsultantAcademyVideoRouteImport } from './routes/consultant.academy.video'
+import { Route as ConsultantAcademyQuizRouteImport } from './routes/consultant.academy.quiz'
+import { Route as ConsultantAcademyCertificateRouteImport } from './routes/consultant.academy.certificate'
 import { Route as AppPropostasNovaRouteImport } from './routes/app.propostas.nova'
 import { Route as AppPropostasIdRouteImport } from './routes/app.propostas.$id'
 import { Route as AppPedidosIdRouteImport } from './routes/app.pedidos.$id'
@@ -58,6 +102,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConsultantRoute = ConsultantRouteImport.update({
+  id: '/consultant',
+  path: '/consultant',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -66,6 +115,11 @@ const AuthRoute = AuthRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -97,6 +151,86 @@ const ConviteTokenRoute = ConviteTokenRouteImport.update({
   id: '/convite/$token',
   path: '/convite/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ConsultantWalletRoute = ConsultantWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantTermsRoute = ConsultantTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantSolarVsMlRoute = ConsultantSolarVsMlRouteImport.update({
+  id: '/solar-vs-ml',
+  path: '/solar-vs-ml',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantSimulatorRoute = ConsultantSimulatorRouteImport.update({
+  id: '/simulator',
+  path: '/simulator',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantReferralRoute = ConsultantReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantProposalRoute = ConsultantProposalRouteImport.update({
+  id: '/proposal',
+  path: '/proposal',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantProjectsRoute = ConsultantProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantPaybackRoute = ConsultantPaybackRouteImport.update({
+  id: '/payback',
+  path: '/payback',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantOnboardingRoute = ConsultantOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantNetworkRoute = ConsultantNetworkRouteImport.update({
+  id: '/network',
+  path: '/network',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantKycRoute = ConsultantKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantEcopointsRoute = ConsultantEcopointsRouteImport.update({
+  id: '/ecopoints',
+  path: '/ecopoints',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantDownlinesRoute = ConsultantDownlinesRouteImport.update({
+  id: '/downlines',
+  path: '/downlines',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantContractRoute = ConsultantContractRouteImport.update({
+  id: '/contract',
+  path: '/contract',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantCareerRoute = ConsultantCareerRouteImport.update({
+  id: '/career',
+  path: '/career',
+  getParentRoute: () => ConsultantRoute,
+} as any)
+const ConsultantAcademyRoute = ConsultantAcademyRouteImport.update({
+  id: '/academy',
+  path: '/academy',
+  getParentRoute: () => ConsultantRoute,
 } as any)
 const BlogComoFuncionaAEnergiaSolarRoute =
   BlogComoFuncionaAEnergiaSolarRouteImport.update({
@@ -179,6 +313,71 @@ const AppAgendaRoute = AppAgendaRouteImport.update({
   path: '/agenda',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminWafRoute = AdminWafRouteImport.update({
+  id: '/waf',
+  path: '/waf',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSolarEpcRoute = AdminSolarEpcRouteImport.update({
+  id: '/solar-epc',
+  path: '/solar-epc',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSecurityRoute = AdminSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOverheadRoute = AdminOverheadRouteImport.update({
+  id: '/overhead',
+  path: '/overhead',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMmnTreeRoute = AdminMmnTreeRouteImport.update({
+  id: '/mmn-tree',
+  path: '/mmn-tree',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGoLiveRoute = AdminGoLiveRouteImport.update({
+  id: '/go-live',
+  path: '/go-live',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminE2eSalesRoute = AdminE2eSalesRouteImport.update({
+  id: '/e2e-sales',
+  path: '/e2e-sales',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminE2eRunnerRoute = AdminE2eRunnerRouteImport.update({
+  id: '/e2e-runner',
+  path: '/e2e-runner',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminE2eDetailsRoute = AdminE2eDetailsRouteImport.update({
+  id: '/e2e-details',
+  path: '/e2e-details',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDreRoute = AdminDreRouteImport.update({
+  id: '/dre',
+  path: '/dre',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDataRoomRoute = AdminDataRoomRouteImport.update({
+  id: '/data-room',
+  path: '/data-room',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCloudflareRoute = AdminCloudflareRouteImport.update({
+  id: '/cloudflare',
+  path: '/cloudflare',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AppPropostasIndexRoute = AppPropostasIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -199,6 +398,77 @@ const AppCotacoesIndexRoute = AppCotacoesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppCotacoesRoute,
 } as any)
+const ConsultantWalletWithdrawRoute =
+  ConsultantWalletWithdrawRouteImport.update({
+    id: '/withdraw',
+    path: '/withdraw',
+    getParentRoute: () => ConsultantWalletRoute,
+  } as any)
+const ConsultantWalletStatementRoute =
+  ConsultantWalletStatementRouteImport.update({
+    id: '/statement',
+    path: '/statement',
+    getParentRoute: () => ConsultantWalletRoute,
+  } as any)
+const ConsultantWalletMfaRoute = ConsultantWalletMfaRouteImport.update({
+  id: '/mfa',
+  path: '/mfa',
+  getParentRoute: () => ConsultantWalletRoute,
+} as any)
+const ConsultantSimulatorResultRoute =
+  ConsultantSimulatorResultRouteImport.update({
+    id: '/result',
+    path: '/result',
+    getParentRoute: () => ConsultantSimulatorRoute,
+  } as any)
+const ConsultantProposalShareRoute = ConsultantProposalShareRouteImport.update({
+  id: '/share',
+  path: '/share',
+  getParentRoute: () => ConsultantProposalRoute,
+} as any)
+const ConsultantProposalCobrandingRoute =
+  ConsultantProposalCobrandingRouteImport.update({
+    id: '/cobranding',
+    path: '/cobranding',
+    getParentRoute: () => ConsultantProposalRoute,
+  } as any)
+const ConsultantProposalAnalyticsRoute =
+  ConsultantProposalAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => ConsultantProposalRoute,
+  } as any)
+const ConsultantNetworkLegsRoute = ConsultantNetworkLegsRouteImport.update({
+  id: '/legs',
+  path: '/legs',
+  getParentRoute: () => ConsultantNetworkRoute,
+} as any)
+const ConsultantKycFacialRoute = ConsultantKycFacialRouteImport.update({
+  id: '/facial',
+  path: '/facial',
+  getParentRoute: () => ConsultantKycRoute,
+} as any)
+const ConsultantEcopointsRankRoute = ConsultantEcopointsRankRouteImport.update({
+  id: '/rank',
+  path: '/rank',
+  getParentRoute: () => ConsultantEcopointsRoute,
+} as any)
+const ConsultantAcademyVideoRoute = ConsultantAcademyVideoRouteImport.update({
+  id: '/video',
+  path: '/video',
+  getParentRoute: () => ConsultantAcademyRoute,
+} as any)
+const ConsultantAcademyQuizRoute = ConsultantAcademyQuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => ConsultantAcademyRoute,
+} as any)
+const ConsultantAcademyCertificateRoute =
+  ConsultantAcademyCertificateRouteImport.update({
+    id: '/certificate',
+    path: '/certificate',
+    getParentRoute: () => ConsultantAcademyRoute,
+  } as any)
 const AppPropostasNovaRoute = AppPropostasNovaRouteImport.update({
   id: '/nova',
   path: '/nova',
@@ -242,10 +512,25 @@ const AppClienteIdRoute = AppClienteIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/cloudflare': typeof AdminCloudflareRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/data-room': typeof AdminDataRoomRoute
+  '/admin/dre': typeof AdminDreRoute
+  '/admin/e2e-details': typeof AdminE2eDetailsRoute
+  '/admin/e2e-runner': typeof AdminE2eRunnerRoute
+  '/admin/e2e-sales': typeof AdminE2eSalesRoute
+  '/admin/go-live': typeof AdminGoLiveRoute
+  '/admin/mmn-tree': typeof AdminMmnTreeRoute
+  '/admin/overhead': typeof AdminOverheadRoute
+  '/admin/security': typeof AdminSecurityRoute
+  '/admin/solar-epc': typeof AdminSolarEpcRoute
+  '/admin/waf': typeof AdminWafRoute
   '/app/agenda': typeof AppAgendaRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
@@ -262,6 +547,22 @@ export interface FileRoutesByFullPath {
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRouteWithChildren
   '/blog/como-funciona-a-energia-solar': typeof BlogComoFuncionaAEnergiaSolarRoute
+  '/consultant/academy': typeof ConsultantAcademyRouteWithChildren
+  '/consultant/career': typeof ConsultantCareerRoute
+  '/consultant/contract': typeof ConsultantContractRoute
+  '/consultant/downlines': typeof ConsultantDownlinesRoute
+  '/consultant/ecopoints': typeof ConsultantEcopointsRouteWithChildren
+  '/consultant/kyc': typeof ConsultantKycRouteWithChildren
+  '/consultant/network': typeof ConsultantNetworkRouteWithChildren
+  '/consultant/onboarding': typeof ConsultantOnboardingRoute
+  '/consultant/payback': typeof ConsultantPaybackRoute
+  '/consultant/projects': typeof ConsultantProjectsRoute
+  '/consultant/proposal': typeof ConsultantProposalRouteWithChildren
+  '/consultant/referral': typeof ConsultantReferralRoute
+  '/consultant/simulator': typeof ConsultantSimulatorRouteWithChildren
+  '/consultant/solar-vs-ml': typeof ConsultantSolarVsMlRoute
+  '/consultant/terms': typeof ConsultantTermsRoute
+  '/consultant/wallet': typeof ConsultantWalletRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
   '/cotacao/$codigo': typeof CotacaoCodigoRoute
   '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
@@ -275,6 +576,19 @@ export interface FileRoutesByFullPath {
   '/app/pedidos/$id': typeof AppPedidosIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/consultant/academy/certificate': typeof ConsultantAcademyCertificateRoute
+  '/consultant/academy/quiz': typeof ConsultantAcademyQuizRoute
+  '/consultant/academy/video': typeof ConsultantAcademyVideoRoute
+  '/consultant/ecopoints/rank': typeof ConsultantEcopointsRankRoute
+  '/consultant/kyc/facial': typeof ConsultantKycFacialRoute
+  '/consultant/network/legs': typeof ConsultantNetworkLegsRoute
+  '/consultant/proposal/analytics': typeof ConsultantProposalAnalyticsRoute
+  '/consultant/proposal/cobranding': typeof ConsultantProposalCobrandingRoute
+  '/consultant/proposal/share': typeof ConsultantProposalShareRoute
+  '/consultant/simulator/result': typeof ConsultantSimulatorResultRoute
+  '/consultant/wallet/mfa': typeof ConsultantWalletMfaRoute
+  '/consultant/wallet/statement': typeof ConsultantWalletStatementRoute
+  '/consultant/wallet/withdraw': typeof ConsultantWalletWithdrawRoute
   '/app/cotacoes/': typeof AppCotacoesIndexRoute
   '/app/financiamentos/': typeof AppFinanciamentosIndexRoute
   '/app/pedidos/': typeof AppPedidosIndexRoute
@@ -282,9 +596,24 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/cloudflare': typeof AdminCloudflareRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/data-room': typeof AdminDataRoomRoute
+  '/admin/dre': typeof AdminDreRoute
+  '/admin/e2e-details': typeof AdminE2eDetailsRoute
+  '/admin/e2e-runner': typeof AdminE2eRunnerRoute
+  '/admin/e2e-sales': typeof AdminE2eSalesRoute
+  '/admin/go-live': typeof AdminGoLiveRoute
+  '/admin/mmn-tree': typeof AdminMmnTreeRoute
+  '/admin/overhead': typeof AdminOverheadRoute
+  '/admin/security': typeof AdminSecurityRoute
+  '/admin/solar-epc': typeof AdminSolarEpcRoute
+  '/admin/waf': typeof AdminWafRoute
   '/app/agenda': typeof AppAgendaRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
@@ -297,6 +626,22 @@ export interface FileRoutesByTo {
   '/app/parametros': typeof AppParametrosRoute
   '/app/perfil': typeof AppPerfilRoute
   '/blog/como-funciona-a-energia-solar': typeof BlogComoFuncionaAEnergiaSolarRoute
+  '/consultant/academy': typeof ConsultantAcademyRouteWithChildren
+  '/consultant/career': typeof ConsultantCareerRoute
+  '/consultant/contract': typeof ConsultantContractRoute
+  '/consultant/downlines': typeof ConsultantDownlinesRoute
+  '/consultant/ecopoints': typeof ConsultantEcopointsRouteWithChildren
+  '/consultant/kyc': typeof ConsultantKycRouteWithChildren
+  '/consultant/network': typeof ConsultantNetworkRouteWithChildren
+  '/consultant/onboarding': typeof ConsultantOnboardingRoute
+  '/consultant/payback': typeof ConsultantPaybackRoute
+  '/consultant/projects': typeof ConsultantProjectsRoute
+  '/consultant/proposal': typeof ConsultantProposalRouteWithChildren
+  '/consultant/referral': typeof ConsultantReferralRoute
+  '/consultant/simulator': typeof ConsultantSimulatorRouteWithChildren
+  '/consultant/solar-vs-ml': typeof ConsultantSolarVsMlRoute
+  '/consultant/terms': typeof ConsultantTermsRoute
+  '/consultant/wallet': typeof ConsultantWalletRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
   '/cotacao/$codigo': typeof CotacaoCodigoRoute
   '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
@@ -310,6 +655,19 @@ export interface FileRoutesByTo {
   '/app/pedidos/$id': typeof AppPedidosIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/consultant/academy/certificate': typeof ConsultantAcademyCertificateRoute
+  '/consultant/academy/quiz': typeof ConsultantAcademyQuizRoute
+  '/consultant/academy/video': typeof ConsultantAcademyVideoRoute
+  '/consultant/ecopoints/rank': typeof ConsultantEcopointsRankRoute
+  '/consultant/kyc/facial': typeof ConsultantKycFacialRoute
+  '/consultant/network/legs': typeof ConsultantNetworkLegsRoute
+  '/consultant/proposal/analytics': typeof ConsultantProposalAnalyticsRoute
+  '/consultant/proposal/cobranding': typeof ConsultantProposalCobrandingRoute
+  '/consultant/proposal/share': typeof ConsultantProposalShareRoute
+  '/consultant/simulator/result': typeof ConsultantSimulatorResultRoute
+  '/consultant/wallet/mfa': typeof ConsultantWalletMfaRoute
+  '/consultant/wallet/statement': typeof ConsultantWalletStatementRoute
+  '/consultant/wallet/withdraw': typeof ConsultantWalletWithdrawRoute
   '/app/cotacoes': typeof AppCotacoesIndexRoute
   '/app/financiamentos': typeof AppFinanciamentosIndexRoute
   '/app/pedidos': typeof AppPedidosIndexRoute
@@ -318,10 +676,25 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/cloudflare': typeof AdminCloudflareRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/data-room': typeof AdminDataRoomRoute
+  '/admin/dre': typeof AdminDreRoute
+  '/admin/e2e-details': typeof AdminE2eDetailsRoute
+  '/admin/e2e-runner': typeof AdminE2eRunnerRoute
+  '/admin/e2e-sales': typeof AdminE2eSalesRoute
+  '/admin/go-live': typeof AdminGoLiveRoute
+  '/admin/mmn-tree': typeof AdminMmnTreeRoute
+  '/admin/overhead': typeof AdminOverheadRoute
+  '/admin/security': typeof AdminSecurityRoute
+  '/admin/solar-epc': typeof AdminSolarEpcRoute
+  '/admin/waf': typeof AdminWafRoute
   '/app/agenda': typeof AppAgendaRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/contrato': typeof AppContratoRouteWithChildren
@@ -338,6 +711,22 @@ export interface FileRoutesById {
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRouteWithChildren
   '/blog/como-funciona-a-energia-solar': typeof BlogComoFuncionaAEnergiaSolarRoute
+  '/consultant/academy': typeof ConsultantAcademyRouteWithChildren
+  '/consultant/career': typeof ConsultantCareerRoute
+  '/consultant/contract': typeof ConsultantContractRoute
+  '/consultant/downlines': typeof ConsultantDownlinesRoute
+  '/consultant/ecopoints': typeof ConsultantEcopointsRouteWithChildren
+  '/consultant/kyc': typeof ConsultantKycRouteWithChildren
+  '/consultant/network': typeof ConsultantNetworkRouteWithChildren
+  '/consultant/onboarding': typeof ConsultantOnboardingRoute
+  '/consultant/payback': typeof ConsultantPaybackRoute
+  '/consultant/projects': typeof ConsultantProjectsRoute
+  '/consultant/proposal': typeof ConsultantProposalRouteWithChildren
+  '/consultant/referral': typeof ConsultantReferralRoute
+  '/consultant/simulator': typeof ConsultantSimulatorRouteWithChildren
+  '/consultant/solar-vs-ml': typeof ConsultantSolarVsMlRoute
+  '/consultant/terms': typeof ConsultantTermsRoute
+  '/consultant/wallet': typeof ConsultantWalletRouteWithChildren
   '/convite/$token': typeof ConviteTokenRoute
   '/cotacao/$codigo': typeof CotacaoCodigoRoute
   '/financiamento/$codigo': typeof FinanciamentoCodigoRoute
@@ -351,6 +740,19 @@ export interface FileRoutesById {
   '/app/pedidos/$id': typeof AppPedidosIdRoute
   '/app/propostas/$id': typeof AppPropostasIdRoute
   '/app/propostas/nova': typeof AppPropostasNovaRoute
+  '/consultant/academy/certificate': typeof ConsultantAcademyCertificateRoute
+  '/consultant/academy/quiz': typeof ConsultantAcademyQuizRoute
+  '/consultant/academy/video': typeof ConsultantAcademyVideoRoute
+  '/consultant/ecopoints/rank': typeof ConsultantEcopointsRankRoute
+  '/consultant/kyc/facial': typeof ConsultantKycFacialRoute
+  '/consultant/network/legs': typeof ConsultantNetworkLegsRoute
+  '/consultant/proposal/analytics': typeof ConsultantProposalAnalyticsRoute
+  '/consultant/proposal/cobranding': typeof ConsultantProposalCobrandingRoute
+  '/consultant/proposal/share': typeof ConsultantProposalShareRoute
+  '/consultant/simulator/result': typeof ConsultantSimulatorResultRoute
+  '/consultant/wallet/mfa': typeof ConsultantWalletMfaRoute
+  '/consultant/wallet/statement': typeof ConsultantWalletStatementRoute
+  '/consultant/wallet/withdraw': typeof ConsultantWalletWithdrawRoute
   '/app/cotacoes/': typeof AppCotacoesIndexRoute
   '/app/financiamentos/': typeof AppFinanciamentosIndexRoute
   '/app/pedidos/': typeof AppPedidosIndexRoute
@@ -360,10 +762,25 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/app'
     | '/auth'
+    | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/cloudflare'
+    | '/admin/dashboard'
+    | '/admin/data-room'
+    | '/admin/dre'
+    | '/admin/e2e-details'
+    | '/admin/e2e-runner'
+    | '/admin/e2e-sales'
+    | '/admin/go-live'
+    | '/admin/mmn-tree'
+    | '/admin/overhead'
+    | '/admin/security'
+    | '/admin/solar-epc'
+    | '/admin/waf'
     | '/app/agenda'
     | '/app/clientes'
     | '/app/contrato'
@@ -380,6 +797,22 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/propostas'
     | '/blog/como-funciona-a-energia-solar'
+    | '/consultant/academy'
+    | '/consultant/career'
+    | '/consultant/contract'
+    | '/consultant/downlines'
+    | '/consultant/ecopoints'
+    | '/consultant/kyc'
+    | '/consultant/network'
+    | '/consultant/onboarding'
+    | '/consultant/payback'
+    | '/consultant/projects'
+    | '/consultant/proposal'
+    | '/consultant/referral'
+    | '/consultant/simulator'
+    | '/consultant/solar-vs-ml'
+    | '/consultant/terms'
+    | '/consultant/wallet'
     | '/convite/$token'
     | '/cotacao/$codigo'
     | '/financiamento/$codigo'
@@ -393,6 +826,19 @@ export interface FileRouteTypes {
     | '/app/pedidos/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/consultant/academy/certificate'
+    | '/consultant/academy/quiz'
+    | '/consultant/academy/video'
+    | '/consultant/ecopoints/rank'
+    | '/consultant/kyc/facial'
+    | '/consultant/network/legs'
+    | '/consultant/proposal/analytics'
+    | '/consultant/proposal/cobranding'
+    | '/consultant/proposal/share'
+    | '/consultant/simulator/result'
+    | '/consultant/wallet/mfa'
+    | '/consultant/wallet/statement'
+    | '/consultant/wallet/withdraw'
     | '/app/cotacoes/'
     | '/app/financiamentos/'
     | '/app/pedidos/'
@@ -400,9 +846,24 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/auth'
+    | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/cloudflare'
+    | '/admin/dashboard'
+    | '/admin/data-room'
+    | '/admin/dre'
+    | '/admin/e2e-details'
+    | '/admin/e2e-runner'
+    | '/admin/e2e-sales'
+    | '/admin/go-live'
+    | '/admin/mmn-tree'
+    | '/admin/overhead'
+    | '/admin/security'
+    | '/admin/solar-epc'
+    | '/admin/waf'
     | '/app/agenda'
     | '/app/clientes'
     | '/app/contrato'
@@ -415,6 +876,22 @@ export interface FileRouteTypes {
     | '/app/parametros'
     | '/app/perfil'
     | '/blog/como-funciona-a-energia-solar'
+    | '/consultant/academy'
+    | '/consultant/career'
+    | '/consultant/contract'
+    | '/consultant/downlines'
+    | '/consultant/ecopoints'
+    | '/consultant/kyc'
+    | '/consultant/network'
+    | '/consultant/onboarding'
+    | '/consultant/payback'
+    | '/consultant/projects'
+    | '/consultant/proposal'
+    | '/consultant/referral'
+    | '/consultant/simulator'
+    | '/consultant/solar-vs-ml'
+    | '/consultant/terms'
+    | '/consultant/wallet'
     | '/convite/$token'
     | '/cotacao/$codigo'
     | '/financiamento/$codigo'
@@ -428,6 +905,19 @@ export interface FileRouteTypes {
     | '/app/pedidos/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/consultant/academy/certificate'
+    | '/consultant/academy/quiz'
+    | '/consultant/academy/video'
+    | '/consultant/ecopoints/rank'
+    | '/consultant/kyc/facial'
+    | '/consultant/network/legs'
+    | '/consultant/proposal/analytics'
+    | '/consultant/proposal/cobranding'
+    | '/consultant/proposal/share'
+    | '/consultant/simulator/result'
+    | '/consultant/wallet/mfa'
+    | '/consultant/wallet/statement'
+    | '/consultant/wallet/withdraw'
     | '/app/cotacoes'
     | '/app/financiamentos'
     | '/app/pedidos'
@@ -435,10 +925,25 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/app'
     | '/auth'
+    | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/cloudflare'
+    | '/admin/dashboard'
+    | '/admin/data-room'
+    | '/admin/dre'
+    | '/admin/e2e-details'
+    | '/admin/e2e-runner'
+    | '/admin/e2e-sales'
+    | '/admin/go-live'
+    | '/admin/mmn-tree'
+    | '/admin/overhead'
+    | '/admin/security'
+    | '/admin/solar-epc'
+    | '/admin/waf'
     | '/app/agenda'
     | '/app/clientes'
     | '/app/contrato'
@@ -455,6 +960,22 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/propostas'
     | '/blog/como-funciona-a-energia-solar'
+    | '/consultant/academy'
+    | '/consultant/career'
+    | '/consultant/contract'
+    | '/consultant/downlines'
+    | '/consultant/ecopoints'
+    | '/consultant/kyc'
+    | '/consultant/network'
+    | '/consultant/onboarding'
+    | '/consultant/payback'
+    | '/consultant/projects'
+    | '/consultant/proposal'
+    | '/consultant/referral'
+    | '/consultant/simulator'
+    | '/consultant/solar-vs-ml'
+    | '/consultant/terms'
+    | '/consultant/wallet'
     | '/convite/$token'
     | '/cotacao/$codigo'
     | '/financiamento/$codigo'
@@ -468,6 +989,19 @@ export interface FileRouteTypes {
     | '/app/pedidos/$id'
     | '/app/propostas/$id'
     | '/app/propostas/nova'
+    | '/consultant/academy/certificate'
+    | '/consultant/academy/quiz'
+    | '/consultant/academy/video'
+    | '/consultant/ecopoints/rank'
+    | '/consultant/kyc/facial'
+    | '/consultant/network/legs'
+    | '/consultant/proposal/analytics'
+    | '/consultant/proposal/cobranding'
+    | '/consultant/proposal/share'
+    | '/consultant/simulator/result'
+    | '/consultant/wallet/mfa'
+    | '/consultant/wallet/statement'
+    | '/consultant/wallet/withdraw'
     | '/app/cotacoes/'
     | '/app/financiamentos/'
     | '/app/pedidos/'
@@ -476,8 +1010,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ConsultantRoute: typeof ConsultantRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SucessoOrcamentoRoute: typeof SucessoOrcamentoRoute
   BlogComoFuncionaAEnergiaSolarRoute: typeof BlogComoFuncionaAEnergiaSolarRoute
@@ -503,6 +1039,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/consultant': {
+      id: '/consultant'
+      path: '/consultant'
+      fullPath: '/consultant'
+      preLoaderRoute: typeof ConsultantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -515,6 +1058,13 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -558,6 +1108,118 @@ declare module '@tanstack/react-router' {
       fullPath: '/convite/$token'
       preLoaderRoute: typeof ConviteTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/consultant/wallet': {
+      id: '/consultant/wallet'
+      path: '/wallet'
+      fullPath: '/consultant/wallet'
+      preLoaderRoute: typeof ConsultantWalletRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/terms': {
+      id: '/consultant/terms'
+      path: '/terms'
+      fullPath: '/consultant/terms'
+      preLoaderRoute: typeof ConsultantTermsRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/solar-vs-ml': {
+      id: '/consultant/solar-vs-ml'
+      path: '/solar-vs-ml'
+      fullPath: '/consultant/solar-vs-ml'
+      preLoaderRoute: typeof ConsultantSolarVsMlRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/simulator': {
+      id: '/consultant/simulator'
+      path: '/simulator'
+      fullPath: '/consultant/simulator'
+      preLoaderRoute: typeof ConsultantSimulatorRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/referral': {
+      id: '/consultant/referral'
+      path: '/referral'
+      fullPath: '/consultant/referral'
+      preLoaderRoute: typeof ConsultantReferralRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/proposal': {
+      id: '/consultant/proposal'
+      path: '/proposal'
+      fullPath: '/consultant/proposal'
+      preLoaderRoute: typeof ConsultantProposalRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/projects': {
+      id: '/consultant/projects'
+      path: '/projects'
+      fullPath: '/consultant/projects'
+      preLoaderRoute: typeof ConsultantProjectsRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/payback': {
+      id: '/consultant/payback'
+      path: '/payback'
+      fullPath: '/consultant/payback'
+      preLoaderRoute: typeof ConsultantPaybackRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/onboarding': {
+      id: '/consultant/onboarding'
+      path: '/onboarding'
+      fullPath: '/consultant/onboarding'
+      preLoaderRoute: typeof ConsultantOnboardingRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/network': {
+      id: '/consultant/network'
+      path: '/network'
+      fullPath: '/consultant/network'
+      preLoaderRoute: typeof ConsultantNetworkRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/kyc': {
+      id: '/consultant/kyc'
+      path: '/kyc'
+      fullPath: '/consultant/kyc'
+      preLoaderRoute: typeof ConsultantKycRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/ecopoints': {
+      id: '/consultant/ecopoints'
+      path: '/ecopoints'
+      fullPath: '/consultant/ecopoints'
+      preLoaderRoute: typeof ConsultantEcopointsRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/downlines': {
+      id: '/consultant/downlines'
+      path: '/downlines'
+      fullPath: '/consultant/downlines'
+      preLoaderRoute: typeof ConsultantDownlinesRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/contract': {
+      id: '/consultant/contract'
+      path: '/contract'
+      fullPath: '/consultant/contract'
+      preLoaderRoute: typeof ConsultantContractRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/career': {
+      id: '/consultant/career'
+      path: '/career'
+      fullPath: '/consultant/career'
+      preLoaderRoute: typeof ConsultantCareerRouteImport
+      parentRoute: typeof ConsultantRoute
+    }
+    '/consultant/academy': {
+      id: '/consultant/academy'
+      path: '/academy'
+      fullPath: '/consultant/academy'
+      preLoaderRoute: typeof ConsultantAcademyRouteImport
+      parentRoute: typeof ConsultantRoute
     }
     '/blog/como-funciona-a-energia-solar': {
       id: '/blog/como-funciona-a-energia-solar'
@@ -671,6 +1333,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAgendaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin/waf': {
+      id: '/admin/waf'
+      path: '/waf'
+      fullPath: '/admin/waf'
+      preLoaderRoute: typeof AdminWafRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/solar-epc': {
+      id: '/admin/solar-epc'
+      path: '/solar-epc'
+      fullPath: '/admin/solar-epc'
+      preLoaderRoute: typeof AdminSolarEpcRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/security': {
+      id: '/admin/security'
+      path: '/security'
+      fullPath: '/admin/security'
+      preLoaderRoute: typeof AdminSecurityRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/overhead': {
+      id: '/admin/overhead'
+      path: '/overhead'
+      fullPath: '/admin/overhead'
+      preLoaderRoute: typeof AdminOverheadRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/mmn-tree': {
+      id: '/admin/mmn-tree'
+      path: '/mmn-tree'
+      fullPath: '/admin/mmn-tree'
+      preLoaderRoute: typeof AdminMmnTreeRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/go-live': {
+      id: '/admin/go-live'
+      path: '/go-live'
+      fullPath: '/admin/go-live'
+      preLoaderRoute: typeof AdminGoLiveRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/e2e-sales': {
+      id: '/admin/e2e-sales'
+      path: '/e2e-sales'
+      fullPath: '/admin/e2e-sales'
+      preLoaderRoute: typeof AdminE2eSalesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/e2e-runner': {
+      id: '/admin/e2e-runner'
+      path: '/e2e-runner'
+      fullPath: '/admin/e2e-runner'
+      preLoaderRoute: typeof AdminE2eRunnerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/e2e-details': {
+      id: '/admin/e2e-details'
+      path: '/e2e-details'
+      fullPath: '/admin/e2e-details'
+      preLoaderRoute: typeof AdminE2eDetailsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dre': {
+      id: '/admin/dre'
+      path: '/dre'
+      fullPath: '/admin/dre'
+      preLoaderRoute: typeof AdminDreRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/data-room': {
+      id: '/admin/data-room'
+      path: '/data-room'
+      fullPath: '/admin/data-room'
+      preLoaderRoute: typeof AdminDataRoomRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/cloudflare': {
+      id: '/admin/cloudflare'
+      path: '/cloudflare'
+      fullPath: '/admin/cloudflare'
+      preLoaderRoute: typeof AdminCloudflareRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/app/propostas/': {
       id: '/app/propostas/'
       path: '/'
@@ -698,6 +1451,97 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/cotacoes/'
       preLoaderRoute: typeof AppCotacoesIndexRouteImport
       parentRoute: typeof AppCotacoesRoute
+    }
+    '/consultant/wallet/withdraw': {
+      id: '/consultant/wallet/withdraw'
+      path: '/withdraw'
+      fullPath: '/consultant/wallet/withdraw'
+      preLoaderRoute: typeof ConsultantWalletWithdrawRouteImport
+      parentRoute: typeof ConsultantWalletRoute
+    }
+    '/consultant/wallet/statement': {
+      id: '/consultant/wallet/statement'
+      path: '/statement'
+      fullPath: '/consultant/wallet/statement'
+      preLoaderRoute: typeof ConsultantWalletStatementRouteImport
+      parentRoute: typeof ConsultantWalletRoute
+    }
+    '/consultant/wallet/mfa': {
+      id: '/consultant/wallet/mfa'
+      path: '/mfa'
+      fullPath: '/consultant/wallet/mfa'
+      preLoaderRoute: typeof ConsultantWalletMfaRouteImport
+      parentRoute: typeof ConsultantWalletRoute
+    }
+    '/consultant/simulator/result': {
+      id: '/consultant/simulator/result'
+      path: '/result'
+      fullPath: '/consultant/simulator/result'
+      preLoaderRoute: typeof ConsultantSimulatorResultRouteImport
+      parentRoute: typeof ConsultantSimulatorRoute
+    }
+    '/consultant/proposal/share': {
+      id: '/consultant/proposal/share'
+      path: '/share'
+      fullPath: '/consultant/proposal/share'
+      preLoaderRoute: typeof ConsultantProposalShareRouteImport
+      parentRoute: typeof ConsultantProposalRoute
+    }
+    '/consultant/proposal/cobranding': {
+      id: '/consultant/proposal/cobranding'
+      path: '/cobranding'
+      fullPath: '/consultant/proposal/cobranding'
+      preLoaderRoute: typeof ConsultantProposalCobrandingRouteImport
+      parentRoute: typeof ConsultantProposalRoute
+    }
+    '/consultant/proposal/analytics': {
+      id: '/consultant/proposal/analytics'
+      path: '/analytics'
+      fullPath: '/consultant/proposal/analytics'
+      preLoaderRoute: typeof ConsultantProposalAnalyticsRouteImport
+      parentRoute: typeof ConsultantProposalRoute
+    }
+    '/consultant/network/legs': {
+      id: '/consultant/network/legs'
+      path: '/legs'
+      fullPath: '/consultant/network/legs'
+      preLoaderRoute: typeof ConsultantNetworkLegsRouteImport
+      parentRoute: typeof ConsultantNetworkRoute
+    }
+    '/consultant/kyc/facial': {
+      id: '/consultant/kyc/facial'
+      path: '/facial'
+      fullPath: '/consultant/kyc/facial'
+      preLoaderRoute: typeof ConsultantKycFacialRouteImport
+      parentRoute: typeof ConsultantKycRoute
+    }
+    '/consultant/ecopoints/rank': {
+      id: '/consultant/ecopoints/rank'
+      path: '/rank'
+      fullPath: '/consultant/ecopoints/rank'
+      preLoaderRoute: typeof ConsultantEcopointsRankRouteImport
+      parentRoute: typeof ConsultantEcopointsRoute
+    }
+    '/consultant/academy/video': {
+      id: '/consultant/academy/video'
+      path: '/video'
+      fullPath: '/consultant/academy/video'
+      preLoaderRoute: typeof ConsultantAcademyVideoRouteImport
+      parentRoute: typeof ConsultantAcademyRoute
+    }
+    '/consultant/academy/quiz': {
+      id: '/consultant/academy/quiz'
+      path: '/quiz'
+      fullPath: '/consultant/academy/quiz'
+      preLoaderRoute: typeof ConsultantAcademyQuizRouteImport
+      parentRoute: typeof ConsultantAcademyRoute
+    }
+    '/consultant/academy/certificate': {
+      id: '/consultant/academy/certificate'
+      path: '/certificate'
+      fullPath: '/consultant/academy/certificate'
+      preLoaderRoute: typeof ConsultantAcademyCertificateRouteImport
+      parentRoute: typeof ConsultantAcademyRoute
     }
     '/app/propostas/nova': {
       id: '/app/propostas/nova'
@@ -757,6 +1601,40 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminCloudflareRoute: typeof AdminCloudflareRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDataRoomRoute: typeof AdminDataRoomRoute
+  AdminDreRoute: typeof AdminDreRoute
+  AdminE2eDetailsRoute: typeof AdminE2eDetailsRoute
+  AdminE2eRunnerRoute: typeof AdminE2eRunnerRoute
+  AdminE2eSalesRoute: typeof AdminE2eSalesRoute
+  AdminGoLiveRoute: typeof AdminGoLiveRoute
+  AdminMmnTreeRoute: typeof AdminMmnTreeRoute
+  AdminOverheadRoute: typeof AdminOverheadRoute
+  AdminSecurityRoute: typeof AdminSecurityRoute
+  AdminSolarEpcRoute: typeof AdminSolarEpcRoute
+  AdminWafRoute: typeof AdminWafRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCloudflareRoute: AdminCloudflareRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminDataRoomRoute: AdminDataRoomRoute,
+  AdminDreRoute: AdminDreRoute,
+  AdminE2eDetailsRoute: AdminE2eDetailsRoute,
+  AdminE2eRunnerRoute: AdminE2eRunnerRoute,
+  AdminE2eSalesRoute: AdminE2eSalesRoute,
+  AdminGoLiveRoute: AdminGoLiveRoute,
+  AdminMmnTreeRoute: AdminMmnTreeRoute,
+  AdminOverheadRoute: AdminOverheadRoute,
+  AdminSecurityRoute: AdminSecurityRoute,
+  AdminSolarEpcRoute: AdminSolarEpcRoute,
+  AdminWafRoute: AdminWafRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppContratoRouteChildren {
   AppContratoIdRoute: typeof AppContratoIdRoute
@@ -871,10 +1749,144 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ConsultantAcademyRouteChildren {
+  ConsultantAcademyCertificateRoute: typeof ConsultantAcademyCertificateRoute
+  ConsultantAcademyQuizRoute: typeof ConsultantAcademyQuizRoute
+  ConsultantAcademyVideoRoute: typeof ConsultantAcademyVideoRoute
+}
+
+const ConsultantAcademyRouteChildren: ConsultantAcademyRouteChildren = {
+  ConsultantAcademyCertificateRoute: ConsultantAcademyCertificateRoute,
+  ConsultantAcademyQuizRoute: ConsultantAcademyQuizRoute,
+  ConsultantAcademyVideoRoute: ConsultantAcademyVideoRoute,
+}
+
+const ConsultantAcademyRouteWithChildren =
+  ConsultantAcademyRoute._addFileChildren(ConsultantAcademyRouteChildren)
+
+interface ConsultantEcopointsRouteChildren {
+  ConsultantEcopointsRankRoute: typeof ConsultantEcopointsRankRoute
+}
+
+const ConsultantEcopointsRouteChildren: ConsultantEcopointsRouteChildren = {
+  ConsultantEcopointsRankRoute: ConsultantEcopointsRankRoute,
+}
+
+const ConsultantEcopointsRouteWithChildren =
+  ConsultantEcopointsRoute._addFileChildren(ConsultantEcopointsRouteChildren)
+
+interface ConsultantKycRouteChildren {
+  ConsultantKycFacialRoute: typeof ConsultantKycFacialRoute
+}
+
+const ConsultantKycRouteChildren: ConsultantKycRouteChildren = {
+  ConsultantKycFacialRoute: ConsultantKycFacialRoute,
+}
+
+const ConsultantKycRouteWithChildren = ConsultantKycRoute._addFileChildren(
+  ConsultantKycRouteChildren,
+)
+
+interface ConsultantNetworkRouteChildren {
+  ConsultantNetworkLegsRoute: typeof ConsultantNetworkLegsRoute
+}
+
+const ConsultantNetworkRouteChildren: ConsultantNetworkRouteChildren = {
+  ConsultantNetworkLegsRoute: ConsultantNetworkLegsRoute,
+}
+
+const ConsultantNetworkRouteWithChildren =
+  ConsultantNetworkRoute._addFileChildren(ConsultantNetworkRouteChildren)
+
+interface ConsultantProposalRouteChildren {
+  ConsultantProposalAnalyticsRoute: typeof ConsultantProposalAnalyticsRoute
+  ConsultantProposalCobrandingRoute: typeof ConsultantProposalCobrandingRoute
+  ConsultantProposalShareRoute: typeof ConsultantProposalShareRoute
+}
+
+const ConsultantProposalRouteChildren: ConsultantProposalRouteChildren = {
+  ConsultantProposalAnalyticsRoute: ConsultantProposalAnalyticsRoute,
+  ConsultantProposalCobrandingRoute: ConsultantProposalCobrandingRoute,
+  ConsultantProposalShareRoute: ConsultantProposalShareRoute,
+}
+
+const ConsultantProposalRouteWithChildren =
+  ConsultantProposalRoute._addFileChildren(ConsultantProposalRouteChildren)
+
+interface ConsultantSimulatorRouteChildren {
+  ConsultantSimulatorResultRoute: typeof ConsultantSimulatorResultRoute
+}
+
+const ConsultantSimulatorRouteChildren: ConsultantSimulatorRouteChildren = {
+  ConsultantSimulatorResultRoute: ConsultantSimulatorResultRoute,
+}
+
+const ConsultantSimulatorRouteWithChildren =
+  ConsultantSimulatorRoute._addFileChildren(ConsultantSimulatorRouteChildren)
+
+interface ConsultantWalletRouteChildren {
+  ConsultantWalletMfaRoute: typeof ConsultantWalletMfaRoute
+  ConsultantWalletStatementRoute: typeof ConsultantWalletStatementRoute
+  ConsultantWalletWithdrawRoute: typeof ConsultantWalletWithdrawRoute
+}
+
+const ConsultantWalletRouteChildren: ConsultantWalletRouteChildren = {
+  ConsultantWalletMfaRoute: ConsultantWalletMfaRoute,
+  ConsultantWalletStatementRoute: ConsultantWalletStatementRoute,
+  ConsultantWalletWithdrawRoute: ConsultantWalletWithdrawRoute,
+}
+
+const ConsultantWalletRouteWithChildren =
+  ConsultantWalletRoute._addFileChildren(ConsultantWalletRouteChildren)
+
+interface ConsultantRouteChildren {
+  ConsultantAcademyRoute: typeof ConsultantAcademyRouteWithChildren
+  ConsultantCareerRoute: typeof ConsultantCareerRoute
+  ConsultantContractRoute: typeof ConsultantContractRoute
+  ConsultantDownlinesRoute: typeof ConsultantDownlinesRoute
+  ConsultantEcopointsRoute: typeof ConsultantEcopointsRouteWithChildren
+  ConsultantKycRoute: typeof ConsultantKycRouteWithChildren
+  ConsultantNetworkRoute: typeof ConsultantNetworkRouteWithChildren
+  ConsultantOnboardingRoute: typeof ConsultantOnboardingRoute
+  ConsultantPaybackRoute: typeof ConsultantPaybackRoute
+  ConsultantProjectsRoute: typeof ConsultantProjectsRoute
+  ConsultantProposalRoute: typeof ConsultantProposalRouteWithChildren
+  ConsultantReferralRoute: typeof ConsultantReferralRoute
+  ConsultantSimulatorRoute: typeof ConsultantSimulatorRouteWithChildren
+  ConsultantSolarVsMlRoute: typeof ConsultantSolarVsMlRoute
+  ConsultantTermsRoute: typeof ConsultantTermsRoute
+  ConsultantWalletRoute: typeof ConsultantWalletRouteWithChildren
+}
+
+const ConsultantRouteChildren: ConsultantRouteChildren = {
+  ConsultantAcademyRoute: ConsultantAcademyRouteWithChildren,
+  ConsultantCareerRoute: ConsultantCareerRoute,
+  ConsultantContractRoute: ConsultantContractRoute,
+  ConsultantDownlinesRoute: ConsultantDownlinesRoute,
+  ConsultantEcopointsRoute: ConsultantEcopointsRouteWithChildren,
+  ConsultantKycRoute: ConsultantKycRouteWithChildren,
+  ConsultantNetworkRoute: ConsultantNetworkRouteWithChildren,
+  ConsultantOnboardingRoute: ConsultantOnboardingRoute,
+  ConsultantPaybackRoute: ConsultantPaybackRoute,
+  ConsultantProjectsRoute: ConsultantProjectsRoute,
+  ConsultantProposalRoute: ConsultantProposalRouteWithChildren,
+  ConsultantReferralRoute: ConsultantReferralRoute,
+  ConsultantSimulatorRoute: ConsultantSimulatorRouteWithChildren,
+  ConsultantSolarVsMlRoute: ConsultantSolarVsMlRoute,
+  ConsultantTermsRoute: ConsultantTermsRoute,
+  ConsultantWalletRoute: ConsultantWalletRouteWithChildren,
+}
+
+const ConsultantRouteWithChildren = ConsultantRoute._addFileChildren(
+  ConsultantRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  ConsultantRoute: ConsultantRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SucessoOrcamentoRoute: SucessoOrcamentoRoute,
   BlogComoFuncionaAEnergiaSolarRoute: BlogComoFuncionaAEnergiaSolarRoute,

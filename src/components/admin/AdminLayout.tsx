@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLocation } from "react-router-dom";
+import { useRouterState } from "@tanstack/react-router";
 import { Bell, Moon, Sun, Search, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -17,11 +17,11 @@ export interface AdminLayoutProps {
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [collapsed, setCollapsed] = React.useState(false);
   const [notifOpen, setNotifOpen] = React.useState(false);
-  const location = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggleTheme } = useTheme();
 
   // Active page title from route
-  const currentNav = ADMIN_NAV_ITEMS.find((item) => item.href === location.pathname);
+  const currentNav = ADMIN_NAV_ITEMS.find((item) => item.href === pathname);
   const pageTitle = currentNav ? currentNav.title : "Painel Administrativo";
 
   return (

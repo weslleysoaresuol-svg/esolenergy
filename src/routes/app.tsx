@@ -11,6 +11,7 @@ import {
   CheckCircle2, Clock, AlertTriangle, Target, Calendar, Moon, BookOpen
 } from "lucide-react";
 import logo from "@/assets/esol-logo.svg";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app")({
   head: () => ({ meta: [{ title: "Painel — ESOL Energy" }] }),

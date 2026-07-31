@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { SunMedium, Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,9 +18,9 @@ export function AdminLogin() {
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useRouterState({ select: (s) => s.location });
 
-  const from = location.state?.from?.pathname || "/admin";
+  const from = (location.state as any)?.from?.pathname || "/admin";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

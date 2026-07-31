@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -51,32 +51,27 @@ export interface AdminSidebarProps {
 }
 
 export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps) {
-  const location = useLocation();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <aside
       className={cn(
-        "relative flex flex-col h-screen border-r border-border/60 bg-card/85 backdrop-blur-xl transition-all duration-300 z-40 dark:bg-slate-950/90 dark:border-slate-800/80",
-        collapsed ? "w-20" : "w-64"
+        "h-screen bg-card/80 backdrop-blur-xl border-r border-border/60 flex flex-col transition-all duration-300 z-40 dark:bg-slate-950/90 dark:border-slate-800/80",
+        collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Brand Header */}
-      <div className="flex items-center justify-between h-16 px-4 border-b border-border/50">
-        <Link to="/admin" className="flex items-center gap-3 overflow-hidden">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md glow-amber">
-            <SunMedium className="h-6 w-6 stroke-[2.5]" />
+      <div className="h-16 px-4 flex items-center justify-between border-b border-border/60">
+        <Link to="/admin" className="flex items-center gap-3 group overflow-hidden">
+          <div className="h-9 w-9 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform glow-amber">
+            <SunMedium className="h-5 w-5 text-amber-400" />
           </div>
           {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              className="flex flex-col"
-            >
-              <span className="font-extrabold text-base tracking-wider text-foreground">
-                ESOL <span className="text-amber-500 font-normal">ENERGY</span>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col">
+              <span className="font-bold text-sm tracking-tight text-foreground flex items-center gap-1">
+                ESOL <span className="text-amber-400">ADMIN</span>
               </span>
-              <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+              <span className="text-[10px] text-muted-foreground tracking-widest uppercase">
                 Admin Control Hub
               </span>
             </motion.div>
@@ -97,7 +92,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
       {/* Navigation List */}
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-none">
         {ADMIN_NAV_ITEMS.map((item) => {
-          const isActive = location.pathname === item.href;
+          const isActive = pathname === item.href;
           const Icon = item.icon;
 
           return (

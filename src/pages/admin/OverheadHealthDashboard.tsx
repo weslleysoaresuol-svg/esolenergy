@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  PieChart,
   PieChart as PieIcon,
   Pie,
   Cell,

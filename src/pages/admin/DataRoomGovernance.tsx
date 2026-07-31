@@ -289,6 +289,3 @@ export function DataRoomGovernance() {
     </AdminLayout>
   );
 }
-```
-
-Let's write `src/pages/admin/DataRoomGovernance.tsx`.    call:default_api:write_to_file{CodeContent:

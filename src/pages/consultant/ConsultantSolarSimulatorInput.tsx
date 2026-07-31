@@ -24,7 +24,7 @@ export function ConsultantSolarSimulatorInput() {
   const [kwhValue, setKwhValue] = React.useState<number>(850);
   const [billValue, setBillValue] = React.useState<number>(850.0);
   const [utility, setUtility] = React.useState<string>("CPFL Paulista");
-  const [phaseType, setPhaseType] = React.useState<"mono" | "bi" | "tri">("bifasico");
+  const [phaseType, setPhaseType] = React.useState<"mono" | "bi" | "tri">("bi");
   const [hasScannedBill, setHasScannedBill] = React.useState<boolean>(false);
 
   const handleScanBill = () => {

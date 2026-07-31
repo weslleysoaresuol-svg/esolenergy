@@ -135,6 +135,3 @@ export function DREFinanceiroPage() {
     </AdminLayout>
   );
 }
-```
-
-Let's write `src/pages/admin/DREFinanceiroPage.tsx`.HINSTANCE    call:default_api:write_to_file{CodeContent:

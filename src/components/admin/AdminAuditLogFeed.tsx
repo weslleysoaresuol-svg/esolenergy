@@ -232,6 +232,3 @@ export function AdminAuditLogFeed() {
     </Card>
   );
 }
-```
-
-Let's write `src/components/admin/AdminAuditLogFeed.tsx`.HINSTANCE    call:default_api:write_to_file{CodeContent:

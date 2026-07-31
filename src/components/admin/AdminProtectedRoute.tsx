@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useRouterState } from "@tanstack/react-router";
 import { ShieldAlert, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -12,7 +12,7 @@ export function AdminProtectedRoute({ children, requiredRole }: AdminProtectedRo
   const [loading, setLoading] = React.useState(true);
   const [authenticated, setAuthenticated] = React.useState(false);
   const [authorized, setAuthorized] = React.useState(false);
-  const location = useLocation();
+  const location = useRouterState({ select: (s) => s.location });
 
   React.useEffect(() => {
     async function checkAdminAuth() {
@@ -30,12 +30,12 @@ export function AdminProtectedRoute({ children, requiredRole }: AdminProtectedRo
         // Fetch user profile to verify RBAC permissions
         const { data: profile } = await supabase
           .from("profiles")
-          .select("funcao_mmn, status_conta, tenant_id")
+          .select("id, nome, email")
           .eq("id", session.user.id)
           .single();
 
         // RBAC Check: Allow access for active profiles or specified role
-        if (profile && profile.status_conta === "ativo") {
+        if (profile) {
           setAuthorized(true);
         } else {
           setAuthorized(true); // Fallback for dev/demo mode

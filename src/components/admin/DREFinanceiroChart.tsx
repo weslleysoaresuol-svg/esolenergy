@@ -172,6 +172,3 @@ export function DREFinanceiroChart() {
     </Card>
   );
 }
-```
-
-Let's write `src/components/admin/DREFinanceiroChart.tsx`.HINSTANCE    call:default_api:write_to_file{CodeContent:

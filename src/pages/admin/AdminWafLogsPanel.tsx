@@ -161,7 +161,7 @@ export function AdminWafLogsPanel() {
               />
               <Button
                 type="button"
-                variant="rose"
+                variant="destructive"
                 size="sm"
                 onClick={handleManualBan}
                 className="h-10 text-xs font-bold rounded-xl gap-1 shrink-0 cursor-pointer"
@@ -183,7 +183,7 @@ export function AdminWafLogsPanel() {
                       <strong className="text-rose-400 font-bold">{log.ipAddress}</strong>
                       <span className="text-[10px] text-slate-500">({log.country})</span>
                     </div>
-                    <Badge variant={log.action === "bloqueado" ? "rose" : "amber"} className="text-[8px]">
+                    <Badge variant={log.action === "bloqueado" ? "destructive" : "outline"} className="text-[8px]">
                       {log.action.toUpperCase()}
                     </Badge>
                   </div>
