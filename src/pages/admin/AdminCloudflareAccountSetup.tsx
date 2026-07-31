@@ -53,8 +53,8 @@ export function AdminCloudflareAccountSetup() {
     },
     {
       stepNumber: 3,
-      title: "Domínio Lovable & SSL Strict",
-      subtitle: "CNAME app.esolenergy.com.br ➔ Lovable",
+      title: "Domínio HomeHost & SSL Strict",
+      subtitle: "esolenergy.com.br & www.esolenergy.com.br",
       status: currentStep === 3 ? "active" : "pending",
     },
   ];
@@ -87,7 +87,7 @@ export function AdminCloudflareAccountSetup() {
             <span className="font-extrabold text-sm tracking-wider uppercase font-mono">CLOUDFLARE EDGE MANAGER</span>
           </div>
           <h1 className="text-2xl font-black tracking-tight text-white">Setup de Infraestrutura Cloudflare</h1>
-          <p className="text-xs text-slate-400">Conexão de Conta, Deploy Pages & Vinculação de Domínios Lovable</p>
+          <p className="text-xs text-slate-400">Conexão de Conta, Deploy Pages & Vinculação de Domínios Soberanos</p>
         </div>
 
         {/* Wizard Steps Stepper */}
@@ -232,45 +232,47 @@ export function AdminCloudflareAccountSetup() {
               </div>
             )}
 
-            {/* Step 3: Lovable Custom Domain */}
+            {/* Step 3: Custom Domains (Apex, WWW, App) */}
             {currentStep === 3 && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <h3 className="font-bold text-xs text-white font-mono uppercase tracking-wider flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-cyan-400" /> Vinculação do Domínio Lovable
+                    <Globe className="h-4 w-4 text-cyan-400" /> Vinculação de Domínios Soberanos HomeHost
                   </h3>
                   <Badge variant="emerald" className="text-[9px]">ETAPA 3/3 — CONCLUÍDO</Badge>
                 </div>
 
                 <div className="space-y-2.5 font-mono text-xs">
-                  <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">CNAME Apontamento:</span>
+                      <span className="text-slate-400">Domínio Raiz (Apex):</span>
                       <Badge variant="emerald" className="text-[8px]">PROXIED 🟠</Badge>
                     </div>
-                    <strong className="text-amber-400 text-xs block">app.esolenergy.com.br ➔ esolenergy.lovable.app</strong>
+                    <strong className="text-amber-400 text-xs block">esolenergy.com.br</strong>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Criptografia SSL/TLS:</span>
-                      <strong className="text-emerald-400">Full (Strict) 256-bit</strong>
+                      <span className="text-slate-400">Subdomínio WWW:</span>
+                      <Badge variant="emerald" className="text-[8px]">PROXIED 🟠</Badge>
                     </div>
+                    <strong className="text-cyan-400 text-xs block">www.esolenergy.com.br</strong>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Cloudflare Turnstile Bot Guard:</span>
-                      <strong className="text-cyan-400">Ativo no Onboarding</strong>
+                      <span className="text-slate-400">Subdomínio do App:</span>
+                      <Badge variant="emerald" className="text-[8px]">PROXIED 🟠</Badge>
                     </div>
+                    <strong className="text-emerald-400 text-xs block">app.esolenergy.com.br</strong>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-1">
                   <CheckCircle2 className="h-6 w-6 text-emerald-400 mx-auto" />
-                  <h4 className="font-bold text-xs text-white">Domínios & Cloudflare 100% Homologados!</h4>
+                  <h4 className="font-bold text-xs text-white">Domínios & WWW 100% Homologados!</h4>
                   <p className="text-[10px] text-slate-300">
-                    Sua aplicação está rodando sob a CDN global do Cloudflare e vinculada ao Lovable.
+                    Sua plataforma e o redirecionamento WWW estão totalmente ativos no Cloudflare Pages!
                   </p>
                 </div>
               </div>

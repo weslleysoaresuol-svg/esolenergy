@@ -5,6 +5,11 @@ pages_build_output_dir = "./dist"
 [site]
 bucket = "./dist"
 
+# Configuração de Domínios Customizados Cloudflare Pages:
+# - esolenergy.com.br (Apex Root)
+# - www.esolenergy.com.br (WWW Redirect Subdomain)
+# - app.esolenergy.com.br (PWA Application Subdomain)
+
 [[headers]]
 for = "/*"
 [headers.values]
