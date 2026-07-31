@@ -1023,9 +1023,9 @@ Para manter a conformidade jurídica total do ecossistema e evitar riscos de pas
 
 ---
 
-#### 2. Regra de Mérito Direto (Exclusividade Pessoal)
-*   **Origem dos pontos:** Os pontos de qualificação acumulados vêm **exclusivamente das Vendas Diretas Pessoais** realizadas pelo próprio consultor. Não há soma de pontos vindos de indicações ou pernas descendentes (MMN) para fins de selos ou rankings.
-*   **Ausência de VME:** Por ser um modelo baseado 100% no mérito e esforço de vendas diretas do próprio consultor, não existe aplicação de trava VME (Volume Máximo por Equipe) para acúmulo de pontos. O parceiro é livre e qualifica-se de acordo com o seu próprio faturamento de vendas diretas pessoais.
+#### 2. Regra de Harmonização de Carreira MMN & Separação VME (V10.0)
+*   **Comissões em Dinheiro (PIX nos 7 Níveis):** 100% isentas de trava VME. Toda venda realizada pela rede nos Níveis 1 a 7 é repassada para a carteira PIX do consultor sem qualquer retenção ou limite por perna.
+*   **Graduação de Selos & Prêmios EcoPoints (VME 40%):** Para o acúmulo de pontos de graduação nos selos de carreira (*Bronze, Prata, Ouro, Safira, Diamante, Presidencial*), troféus e viagens de incentivo, aplica-se a função PostgreSQL `validar_qualificacao_vme_carreira()`, onde no máximo **40% da pontuação necessária** pode advir de uma única perna direta da rede. Isso premia a liderança real e o desenvolvimento de equipes paralelas sem afetar o caixa do consultor.
 
 ---
 
@@ -1178,8 +1178,8 @@ graph TD
 *   **Seu Ranking Mensal (Visível no App) zera no 1º dia de cada mês!** Isso gera a necessidade de vendas constantes todo mês.
 *   **O Ranking Anual e Permanente (Ocultos no App):** Acumulam seus pontos pessoais ao longo do ano civil e de forma perpétua, respectivamente, para qualificações e premiações especiais promovidas pela diretoria.
 
-##### **C. Sem Travas Complexas (Transparência Total)**
-Diferente dos planos antigos do mercado que usavam travas complexas de equipe (VME), o programa Esol é **100% focado no seu mérito pessoal**. Subir no ranking de selos depende exclusivamente da sua produção direta. A sua rede MMN serve para lhe gerar renda passiva recorrente em dinheiro em até 7 níveis, sem qualquer interferência na pontuação dos seus selos.
+##### **C. Modelo Harmonizado V10.0 (Transparência Total)**
+Todas as comissões em dinheiro via PIX nos 7 níveis são **100% livres de trava VME**. O teto de 40% VME aplica-se exclusivamente para a contagem de pontos de avanço nos selos de carreira e prêmios EcoPoints, garantindo que o consultor receba todo o seu dinheiro sem travas enquanto desenvolve equipes equilibradas para o topo da carreira.
 
 ##### **D. Como resgatar o prêmio?**
 1.  **Atingiu a meta de qualificação:** O aplicativo exibirá um confete digital e uma notificação de conquista.
