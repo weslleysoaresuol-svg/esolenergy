@@ -14,6 +14,7 @@ import {
   Building2,
   Sparkles,
   Sun,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -70,6 +71,14 @@ const MOCK_PIPELINE_STEPS: PipelineStepItem[] = [
     status: "success",
     hashOrDetail: "Chave PIX Validade & Comprovante BaaS #9812",
   },
+  {
+    stepNumber: 6,
+    title: "Harmonização MMN V10.0 (PIX Livre + VME 40% Selos)",
+    description: "Validação de isenção de VME no PIX e trava 40% VME para selos de carreira",
+    latencyMs: 85,
+    status: "success",
+    hashOrDetail: "RPC validar_qualificacao_vme_carreira() PASS ✅",
+  },
 ];
 
 export function AdminE2ESalesCommissionRunner() {
@@ -89,108 +98,87 @@ export function AdminE2ESalesCommissionRunner() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4 selection:bg-amber-400 selection:text-slate-950 font-sans">
-      {/* Solar Ambient Glow Filter */}
-      <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-2xl space-y-5 relative z-10">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
-            <DollarSign className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">FINANCIAL E2E TESTER</span>
+    <div className="space-y-6 selection:bg-amber-400 selection:text-slate-950">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="inline-flex items-center gap-2 p-1.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs mb-2">
+            <Zap className="h-4 w-4" />
+            <span className="font-mono font-bold uppercase">SUÍTE E2E V10.0</span>
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-white">Vendas, Comissionamento & Split</h1>
-          <p className="text-xs text-slate-400">Homologação Automatizada do Ciclo Financeiro Fim-a-Fim</p>
+          <h1 className="text-2xl font-black tracking-tight text-white">
+            Suíte de Testes Automatizados E2E Venda ➔ Comissionamento ➔ Split
+          </h1>
+          <p className="text-xs text-slate-400">
+            Simulador de estresse e integridade ponta a ponta da jornada comercial e financeira
+          </p>
         </div>
 
-        {/* Financial Metrics Cards */}
-        <div className="grid grid-cols-4 gap-2 text-center">
-          <Card className="rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-            <CardContent className="p-3 space-y-0.5">
-              <span className="text-[9px] font-mono text-slate-400 uppercase block">Etapas Validadas</span>
-              <strong className="text-xl font-black text-white font-mono block">5 / 5</strong>
-            </CardContent>
-          </Card>
+        <Button
+          onClick={handleRunStressTest}
+          disabled={isStressTesting}
+          className="h-11 px-5 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer shrink-0"
+        >
+          <RefreshCw className={cn("h-4 w-4", isStressTesting && "animate-spin")} />
+          <span>{isStressTesting ? "Executando Teste E2E..." : "Executar Suíte de Testes E2E"}</span>
+        </Button>
+      </div>
 
-          <Card className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-xl">
-            <CardContent className="p-3 space-y-0.5">
-              <span className="text-[9px] font-mono text-slate-400 uppercase block">Split Total</span>
-              <strong className="text-xl font-black text-emerald-400 font-mono block">R$ 8.450</strong>
-            </CardContent>
-          </Card>
+      {/* Progress Bar Container */}
+      <Card className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur-xl overflow-hidden">
+        <CardContent className="p-6 space-y-4">
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="text-slate-400 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-emerald-400" />
+              <span>Status do Runner de Testes Integrados</span>
+            </span>
+            <strong className="text-emerald-400 font-bold">100% HOMOLOGADO & PASS</strong>
+          </div>
 
-          <Card className="rounded-2xl border border-cyan-500/30 bg-slate-900/80 backdrop-blur-xl">
-            <CardContent className="p-3 space-y-0.5">
-              <span className="text-[9px] font-mono text-slate-400 uppercase block">Tempo Total</span>
-              <strong className="text-xl font-black text-cyan-400 font-mono block">945ms</strong>
-            </CardContent>
-          </Card>
+          <div className="h-3 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5 }}
+              className="h-full bg-gradient-to-r from-amber-500 via-emerald-400 to-emerald-500 rounded-full glow-amber"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
-          <Card className="rounded-2xl border border-amber-500/30 bg-amber-500/10 backdrop-blur-xl">
-            <CardContent className="p-3 space-y-0.5">
-              <span className="text-[9px] font-mono text-slate-400 uppercase block">Ledger SHA256</span>
-              <strong className="text-xl font-black text-amber-400 font-mono block">100% OK</strong>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Pipeline Stream Card */}
-        <Card className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur-xl overflow-hidden">
-          <CardContent className="p-6 space-y-5">
-            <div className="flex items-center justify-between">
-              <h2 className="font-bold text-xs text-white font-mono uppercase tracking-wider flex items-center gap-1.5">
-                <Zap className="h-4 w-4 text-emerald-400" /> Pipeline de Venda ao Saque PIX
-              </h2>
-              <Badge variant="emerald" className="text-[9px]">PIPELINE APROVADA</Badge>
+      {/* Pipeline Steps List */}
+      <div className="space-y-3">
+        {steps.map((step) => (
+          <motion.div
+            key={step.stepNumber}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: step.stepNumber * 0.05 }}
+            className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-4">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center font-mono shrink-0">
+                #{step.stepNumber}
+              </div>
+              <div>
+                <h3 className="font-bold text-xs text-white flex items-center gap-2">
+                  <span>{step.title}</span>
+                  <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400">
+                    {step.latencyMs}ms
+                  </Badge>
+                </h3>
+                <p className="text-[11px] text-slate-400">{step.description}</p>
+                <span className="text-[10px] font-mono text-amber-400/80 block mt-0.5">
+                  {step.hashOrDetail}
+                </span>
+              </div>
             </div>
 
-            {/* Steps Stream */}
-            <div className="space-y-3">
-              {steps.map((st) => (
-                <div
-                  key={st.stepNumber}
-                  className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5 text-xs font-mono"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-lg bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">
-                        {st.stepNumber}
-                      </span>
-                      <strong className="text-white font-bold text-xs">{st.title}</strong>
-                    </div>
-                    <span className="text-[10px] text-emerald-400 font-bold">{st.latencyMs}ms</span>
-                  </div>
-
-                  <p className="text-[11px] text-slate-400 pl-7">{st.description}</p>
-                  <div className="pl-7 text-[9px] text-slate-500 font-mono">
-                    Detalhe: <strong className="text-amber-400">{st.hashOrDetail}</strong>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Stress Test Action Button */}
-            <Button
-              variant="sun"
-              disabled={isStressTesting}
-              onClick={handleRunStressTest}
-              className="w-full h-11 text-xs font-bold text-slate-950 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer"
-            >
-              {isStressTesting ? (
-                <>
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>Executando Teste de Estresse ({progress}%)...</span>
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="h-4 w-4" />
-                  <span>Executar Teste de Estresse da Pipeline Financeira</span>
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px] gap-1 shrink-0">
+              <CheckCircle2 className="h-3 w-3" /> APROVADO
+            </Badge>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

@@ -96,13 +96,14 @@ export function ConsultantTermsAcceptance() {
                       >
                         <span className="flex items-center gap-2">
                           <ShieldCheck className="h-4 w-4 text-amber-400" />
-                          <span>2. Qualificação MMN & Trava VME (40%)</span>
+                          <span>2. Qualificação MMN & Trava VME (40% Apenas para Selos)</span>
                         </span>
                         <ChevronDown className={cn("h-4 w-4 text-amber-400 transition-transform", expandedSection === "vme" && "rotate-180")} />
                       </button>
                       {expandedSection === "vme" && (
                         <div className="p-3.5 text-[11px] text-slate-300 space-y-2 border-t border-slate-800/80 leading-relaxed font-sans bg-slate-950/80">
-                          <p>• <strong>Regra de Linha Máxima (VME)</strong>: Para evitar concentração e premiar a liderança real, no máximo 40% dos pontos de graduação podem advir de uma única perna direta da rede 7 níveis.</p>
+                          <p>• <strong>Comissão PIX 100% Livre</strong>: Todas as suas comissões em dinheiro geradas na rede de 7 níveis são repassadas sem qualquer trava ou retenção VME.</p>
+                          <p>• <strong>Regra de Teto para Selos (VME 40%)</strong>: Para premiações, troféus e avanço nos selos de carreira (Bronze, Prata, Ouro, Safira, Diamante), no máximo 40% dos pontos necessários podem vir de uma única perna direta.</p>
                         </div>
                       )}
                     </div>
