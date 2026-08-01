@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { EsolLogoNegative } from "@/components/brand/EsolLogoNegative";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 import installerImg from "@/assets/installer-solar-premium.png";
 import heroSolarImg from "@/assets/hero-solar-premium.png";
 import trustSealsImg from "@/assets/trust-seals-solar.png";
@@ -599,7 +600,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
             style={{ scaleX: readingScaleX }}
           />
           <div className="bg-white/95 px-4 py-2 rounded-xl flex items-center justify-center border border-white/20 shadow-sm transition-all duration-300 hover:scale-[1.02]">
-            <img src={logo} alt="ESOL Energy" className="h-12 w-auto object-contain" />
+            <EsolLogoPrimary width={160} height={40} showTagline={false} />
           </div>
           <div className="text-right hidden md:block">
             <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Estudo Técnico-Comercial</div>
@@ -623,7 +624,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
           {/* Header de Marca (versão print) */}
           <div className="flex justify-between items-center w-full print:flex">
             <div className="bg-white/95 px-5 py-2.5 rounded-2xl shadow-lg border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-[1.03]">
-              <img src={logo} alt="ESOL Energy" className="h-16 w-auto object-contain" />
+              <EsolLogoPrimary width={200} height={48} showTagline={false} />
             </div>
             <div className="text-right">
               <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">Estudo Técnico-Comercial</span>
@@ -1474,7 +1475,7 @@ export function PropostaView({ proposta: p, parceiro, cliente, publico, onAceita
       <footer className="bg-black py-12 px-6 text-center text-xs text-white/40 border-t border-white/5">
         {/* Logo na cápsula branca — nunca usar brightness-0 invert */}
         <div className="inline-flex items-center justify-center bg-white/95 px-6 py-3 rounded-2xl shadow-lg border border-white/20 mx-auto mb-4">
-          <img src={logo} alt="ESOL Energy" className="h-12 w-auto object-contain" />
+          <EsolLogoPrimary width={180} height={45} showTagline={false} />
         </div>
         <div className="font-medium">ESOL Energy · CNPJ 60.129.009/0001-29</div>
         <div className="text-white/30 mt-1.5 flex items-center justify-center gap-1.5">
