@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SVGFilters } from "@/components/ui/svg-filters";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export function AdminLogin() {
   const [email, setEmail] = React.useState("");
@@ -63,12 +64,10 @@ export function AdminLogin() {
         className="w-full max-w-md z-10"
       >
         <Card className="rounded-2xl border border-amber-400/30 bg-card/90 shadow-2xl backdrop-blur-2xl dark:bg-slate-950/90 dark:border-slate-800">
-          <CardHeader className="space-y-3 text-center pb-6 border-b border-border/50">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400 text-slate-950 font-bold shadow-lg glow-amber">
-              <SunMedium className="h-8 w-8 stroke-[2.5]" />
-            </div>
+          <CardHeader className="space-y-3 text-center pb-6 border-b border-border/50 flex flex-col items-center">
+            <EsolLogoPrimary width={220} height={55} showTagline={false} />
 
-            <div className="space-y-1">
+            <div className="space-y-1 mt-2">
               <CardTitle className="text-xl font-extrabold tracking-tight text-foreground">
                 Portal Administrativo ESOL
               </CardTitle>
