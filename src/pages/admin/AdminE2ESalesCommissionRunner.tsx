@@ -16,6 +16,7 @@ import {
   Sun,
   Award,
   Crown,
+  ShieldAlert,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -58,14 +59,38 @@ const MOCK_PIPELINE_STEPS: PipelineStepItem[] = [
   },
   {
     stepNumber: 4,
-    title: "Rateio do Fundo de 4% de Produtividade Direta",
-    description: "Separação de 4% da receita mensal e rateio proporcional em dinheiro no PIX",
-    latencyMs: 95,
+    title: "Validação Anti-Stacking N3 (RPC verificar_anti_stacking)",
+    description: "Verificação ltree para anulação de pontos em compras circulares na sub-árvore N3",
+    latencyMs: 65,
     status: "success",
-    hashOrDetail: "Pool Fundo Mês: R$ 48.500,00 | V_ponto: R$ 2,14 / PTS",
+    hashOrDetail: "Resultado: Venda externa regular | Pontos de Selo & EcoPoints liberados",
   },
   {
     stepNumber: 5,
+    title: "Detecção de Parking por CEP/PIX (View mv_suspicious_parking_pairs)",
+    description: "Varredura automática contra duplicidades de dados bancários ou residenciais",
+    latencyMs: 80,
+    status: "success",
+    hashOrDetail: "Resultado: Nenhuma duplicidade de PIX/CEP encontrada na árvore",
+  },
+  {
+    stepNumber: 6,
+    title: "Quarentena Anti-Churning 90 Dias (RPC validar_quarentena_reconexao)",
+    description: "Checagem de histórico de cancelamentos do mesmo consultor com o cliente",
+    latencyMs: 75,
+    status: "success",
+    hashOrDetail: "Resultado: Cliente sem cancelamentos prévios | Venda aprovada",
+  },
+  {
+    stepNumber: 7,
+    title: "Aplicação da Carência de 30 Dias no Saque PIX (RPC solicitar_saque_pix)",
+    description: "Trava temporária de saque para vendas únicas Motor 1 mantendo saldo em carência",
+    latencyMs: 50,
+    status: "success",
+    hashOrDetail: "Data Liberação Saque: NOW() + 30 dias | Saldo Bloqueado em Carência registrado",
+  },
+  {
+    stepNumber: 8,
     title: "Validação VME 40% Liderança MMN (A1 a A9)",
     description: "Execução da RPC validar_qualificacao_vme_lideranca() com teto de 40% por perna",
     latencyMs: 85,
@@ -73,7 +98,7 @@ const MOCK_PIPELINE_STEPS: PipelineStepItem[] = [
     hashOrDetail: "Grau A3 Aprovado: Pontos Válidos 15.000 / 15.000 (Teto Perna A: 6.000 PTS)",
   },
   {
-    stepNumber: 6,
+    stepNumber: 9,
     title: "Classificação VME EcoPoints (Pessoais vs Equipe)",
     description: "Execução da RPC validar_acumulo_ecopoints_vme() separando esforço pessoal (0% VME) de equipe (40% VME)",
     latencyMs: 90,
@@ -89,119 +114,105 @@ export function AdminE2ESalesCommissionRunner() {
 
   const handleRunStressTest = () => {
     setIsStressTesting(true);
-    setProgress(20);
-    setTimeout(() => setProgress(60), 800);
-    setTimeout(() => setProgress(90), 1500);
-    setTimeout(() => {
-      setProgress(100);
-      setIsStressTesting(false);
-    }, 2200);
+    setProgress(0);
+
+    let current = 0;
+    const interval = setInterval(() => {
+      current += 15;
+      if (current >= 100) {
+        setProgress(100);
+        setIsStressTesting(false);
+        clearInterval(interval);
+      } else {
+        setProgress(current);
+      }
+    }, 150);
   };
 
   return (
-    <div className="space-y-6 selection:bg-amber-400 selection:text-slate-950">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 p-1.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs mb-2">
-            <Zap className="h-4 w-4" />
-            <span className="font-mono font-bold uppercase">SUÍTE E2E V11.0</span>
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 pb-20 selection:bg-amber-400 selection:text-slate-950 font-sans">
+      {/* Solar Ambient Glow Filter */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-2xl mx-auto space-y-6 relative z-10">
+        {/* Brand Header */}
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
+            <ShieldCheck className="h-6 w-6" />
+            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">
+              E2E SUITE V12.0 — ANTI-FRAUDE & GOVERNANÇA
+            </span>
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-white">
-            Suíte E2E: Venda ➔ Comissões ➔ Fundo 4% ➔ Validação VME A1-A9
-          </h1>
+          <h1 className="text-2xl font-black tracking-tight text-white">Runner de Testes Automatizados E2E</h1>
           <p className="text-xs text-slate-400">
-            Validação automatizada de integridade das Duas Trilhas: Vendas Diretas (0% VME) e Liderança (40% VME)
+            Homologação de Pipeline: Anti-Stacking, Parking, Quarentena, Carência & VME
           </p>
         </div>
 
-        <Button
-          onClick={handleRunStressTest}
-          disabled={isStressTesting}
-          className="h-11 px-5 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer shrink-0"
-        >
-          <RefreshCw className={cn("h-4 w-4", isStressTesting && "animate-spin")} />
-          <span>{isStressTesting ? "Executando Teste E2E..." : "Executar Suíte de Testes E2E"}</span>
-        </Button>
-      </div>
+        {/* Action & Run Card */}
+        <Card className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur-xl">
+          <CardContent className="p-6 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <span className="text-xs font-mono text-slate-400 block">STATUS DA SUÍTE</span>
+                <strong className="text-lg font-bold text-emerald-400 flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" /> 9/9 Cenários de Teste Aprovados (100%)
+                </strong>
+              </div>
 
-      {/* Progress Bar Container */}
-      <Card className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur-xl overflow-hidden">
-        <CardContent className="p-6 space-y-4">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-slate-400 flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-emerald-400" />
-              <span>Status do Runner de Testes Integrados V11.0</span>
-            </span>
-            <strong className="text-emerald-400 font-bold">100% HOMOLOGADO & PASS</strong>
-          </div>
-
-          <div className="h-3 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.5 }}
-              className="h-full bg-gradient-to-r from-amber-500 via-emerald-400 to-emerald-500 rounded-full"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs font-mono pt-2">
-            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Testes Executados:</span>
-              <strong className="text-white font-bold text-sm">6 / 6 Casos</strong>
+              <Button
+                type="button"
+                disabled={isStressTesting}
+                onClick={handleRunStressTest}
+                className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold text-xs gap-2 rounded-2xl py-5 cursor-pointer shadow-lg glow-amber"
+              >
+                <RefreshCw className={cn("h-4 w-4", isStressTesting && "animate-spin")} />
+                <span>{isStressTesting ? "Executando Testes E2E..." : "Rodar Bateria de Testes E2E V12.0"}</span>
+              </Button>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Comissões no PIX:</span>
-              <strong className="text-emerald-400 font-bold text-sm">100% Livres (0% VME)</strong>
-            </div>
-            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Fundo 4% Vendas Diretas:</span>
-              <strong className="text-emerald-400 font-bold text-sm">Rateio Ativo</strong>
-            </div>
-            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Liderança MMN VME:</span>
-              <strong className="text-amber-400 font-bold text-sm">RPC Trava 40% PASS</strong>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* PIPELINE STEPS LIST */}
-      <div className="space-y-3">
-        <h2 className="text-xs font-bold text-slate-300 font-mono uppercase tracking-wider">
-          Detalhamento das Etapas do Workflow E2E
-        </h2>
+            {/* Progress Bar */}
+            {isStressTesting && (
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-mono text-amber-400 font-bold">
+                  <span>Simulando Pipeline Completo...</span>
+                  <span>{progress}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-950 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-400 to-emerald-400 transition-all"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
+        {/* Steps List */}
         <div className="space-y-3">
           {steps.map((step) => (
             <Card
               key={step.stepNumber}
-              className="rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur-xl overflow-hidden"
+              className="rounded-2xl border border-slate-800/80 bg-slate-900/80 backdrop-blur-xl"
             >
-              <CardContent className="p-4 flex items-center justify-between gap-4">
+              <CardContent className="p-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center font-mono font-bold text-amber-400 text-xs shrink-0">
-                    #{step.stepNumber}
+                  <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/30 text-amber-400 flex items-center justify-center font-mono font-bold text-xs">
+                    {step.stepNumber}
                   </div>
-
                   <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-xs text-white leading-snug">{step.title}</h3>
-                      <Badge variant="outline" className="text-[9px] border-slate-800 font-mono text-slate-400">
-                        {step.latencyMs}ms
-                      </Badge>
-                    </div>
+                    <strong className="text-xs font-bold text-white block">{step.title}</strong>
                     <p className="text-[11px] text-slate-400">{step.description}</p>
-                    <span className="text-[10px] font-mono text-emerald-400 block pt-0.5">
-                      {step.hashOrDetail}
-                    </span>
+                    <span className="text-[10px] text-slate-500 font-mono block">{step.hashOrDetail}</span>
                   </div>
                 </div>
 
-                <div className="shrink-0">
-                  <Badge variant="emerald" className="gap-1 text-[10px]">
-                    <CheckCircle2 className="h-3.5 w-3.5" /> APROVADO
+                <div className="text-right font-mono space-y-1">
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px] gap-1">
+                    <CheckCircle2 className="h-3 w-3" /> OK
                   </Badge>
+                  <span className="text-[10px] text-slate-500 block">{step.latencyMs}ms</span>
                 </div>
               </CardContent>
             </Card>

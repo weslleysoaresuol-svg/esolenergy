@@ -9,6 +9,8 @@ import {
   Lock,
   ArrowRight,
   Sun,
+  Scale,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,8 +44,8 @@ export function ConsultantTermsAcceptance() {
             <Sun className="h-6 w-6 animate-spin-slow" />
             <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL ENERGY PWA</span>
           </div>
-          <h1 className="text-xl font-black tracking-tight text-white">Credenciamento MMN</h1>
-          <p className="text-xs text-slate-400">Contrato de Prestação de Serviços Comerciais</p>
+          <h1 className="text-xl font-black tracking-tight text-white">Credenciamento de Vendas Diretas</h1>
+          <p className="text-xs text-slate-400">Programa de Vendas Diretas com Bônus de Liderança V12.0</p>
         </div>
 
         {/* Main Card Container */}
@@ -59,8 +61,8 @@ export function ConsultantTermsAcceptance() {
                   className="space-y-4"
                 >
                   <div className="space-y-1 text-center">
-                    <Badge variant="sun" className="text-[10px]">CONTRATO DE ADESÃO</Badge>
-                    <h2 className="font-bold text-sm text-white">Cláusulas de Credenciamento</h2>
+                    <Badge variant="sun" className="text-[10px]">CONTRATO DE ADESÃO COMERCIAL</Badge>
+                    <h2 className="font-bold text-sm text-white">Cláusulas de Credenciamento & Compliance</h2>
                     <p className="text-[11px] text-slate-400">Clique para expandir e ler cada acórdão legal</p>
                   </div>
 
@@ -87,7 +89,7 @@ export function ConsultantTermsAcceptance() {
                       )}
                     </div>
 
-                    {/* Section 2: MMN & VME Cap */}
+                    {/* Section 2: Vendas Diretas & Bônus de Liderança (Plano 36K) */}
                     <div className="rounded-2xl border border-slate-800 bg-slate-950/60 overflow-hidden transition-all">
                       <button
                         type="button"
@@ -95,15 +97,16 @@ export function ConsultantTermsAcceptance() {
                         className="w-full p-3.5 text-left font-bold text-xs text-white flex items-center justify-between bg-slate-900/40 hover:bg-slate-900/70"
                       >
                         <span className="flex items-center gap-2">
-                          <ShieldCheck className="h-4 w-4 text-amber-400" />
-                          <span>2. Qualificação MMN & Trava VME (40% Apenas para Selos)</span>
+                          <Scale className="h-4 w-4 text-amber-400" />
+                          <span>2. Qualificação por Vendas Reais & Trava VME 40%</span>
                         </span>
                         <ChevronDown className={cn("h-4 w-4 text-amber-400 transition-transform", expandedSection === "vme" && "rotate-180")} />
                       </button>
                       {expandedSection === "vme" && (
                         <div className="p-3.5 text-[11px] text-slate-300 space-y-2 border-t border-slate-800/80 leading-relaxed font-sans bg-slate-950/80">
-                          <p>• <strong>Comissão PIX 100% Livre</strong>: Todas as suas comissões em dinheiro geradas na rede de 7 níveis são repassadas sem qualquer trava ou retenção VME.</p>
-                          <p>• <strong>Regra de Teto para Selos (VME 40%)</strong>: Para premiações, troféus e avanço nos selos de carreira (Bronze, Prata, Ouro, Safira, Diamante), no máximo 40% dos pontos necessários podem vir de uma única perna direta.</p>
+                          <p>• <strong>Qualificação por Vendas Efetivas</strong>: A qualificação para Graus de Liderança (A1 a A9) e prêmios é baseada exclusivamente no volume de vendas realizadas a consumidores finais, e não no mero recrutamento.</p>
+                          <p>• <strong>Comissão PIX 100% Livre</strong>: Suas comissões financeiras geradas em 7 níveis são repassadas sem qualquer retenção VME.</p>
+                          <p>• <strong>Governança de Sócios</strong>: Sócios-administradores da Esol Energy são terminantemente proibidos de participar como consultores credenciados na rede comercial.</p>
                         </div>
                       )}
                     </div>
@@ -140,48 +143,46 @@ export function ConsultantTermsAcceptance() {
                     </p>
                   </div>
 
-                  {/* Checkbox Agreement */}
-                  <label className="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer pt-1">
+                  {/* Acceptance Checkbox */}
+                  <label className="flex items-start gap-2.5 cursor-pointer p-1">
                     <input
                       type="checkbox"
                       checked={acceptedTerms}
                       onChange={(e) => setAcceptedTerms(e.target.checked)}
-                      className="rounded bg-slate-950 border-slate-800 text-amber-400 focus:ring-amber-400 h-4 w-4 shrink-0"
+                      className="mt-0.5 rounded border-slate-700 bg-slate-950 text-amber-400 focus:ring-amber-400"
                     />
-                    <span>Li e aceito os termos do Contrato de Consultoria Esol Energy</span>
+                    <span className="text-[11px] text-slate-300 leading-snug">
+                      Li e concordo com o <strong>Programa de Vendas Diretas com Bônus de Liderança V12.0</strong> e autorizo a assinatura digital Esol Sign.
+                    </span>
                   </label>
 
                   <Button
                     type="button"
                     disabled={!acceptedTerms}
                     onClick={handleSignContract}
-                    className="w-full h-11 text-xs font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 rounded-xl shadow-lg gap-2 cursor-pointer"
+                    className="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold text-xs gap-2 rounded-2xl py-5 shadow-lg glow-amber cursor-pointer"
                   >
-                    <CheckCircle2 className="h-4 w-4" />
-                    <span>Assinar Digitalmente & Finalizar</span>
+                    <span>Assinar Contrato de Credenciamento</span>
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                 </motion.div>
               ) : (
-                /* Contract Signed Success State */
                 <motion.div
                   key="signed-success"
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-center space-y-4 py-4"
+                  className="text-center py-6 space-y-4"
                 >
-                  <div className="h-16 w-16 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                    <Sparkles className="h-8 w-8" />
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto shadow-lg glow-emerald">
+                    <CheckCircle2 className="h-8 w-8" />
                   </div>
-
                   <div className="space-y-1">
-                    <h2 className="font-bold text-base text-white">Credenciamento Concluído!</h2>
-                    <p className="text-xs text-slate-400">Contrato assinado via Esol Sign ICP-Brasil com Hash SHA-256.</p>
+                    <h3 className="font-bold text-white text-base">Contrato Assinado com Sucesso!</h3>
+                    <p className="text-xs text-slate-400">Credenciamento de Vendas Diretas V12.0 ativo.</p>
                   </div>
-
-                  <Button variant="sun" className="w-full h-11 text-xs font-bold text-slate-950 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer">
-                    <span>Prosseguir para EAD Esol Academy (Plano 26B1)</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
+                    DOCUMENTO AUTENTICADO NO GOVERNANCE VAULT
+                  </Badge>
                 </motion.div>
               )}
             </AnimatePresence>
