@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export interface DREDataPoint {
   mes: string;
@@ -46,11 +47,14 @@ export function DREFinanceiroChart() {
     <Card className="rounded-2xl border border-border/80 bg-card/85 shadow-xl backdrop-blur-xl dark:bg-slate-950/90 dark:border-slate-800">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/50">
         <div className="space-y-1">
-          <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
-            <span>Evolução Contábil & Demonstração de Resultados (DRE)</span>
+          <div className="flex items-center gap-3">
+            <EsolLogoPrimary width={140} height={35} showTagline={false} />
             <Badge variant="emerald" className="text-[10px]">
               MARGEM PISO 20% ATIVA
             </Badge>
+          </div>
+          <CardTitle className="text-base font-bold text-foreground mt-1">
+            Evolução Contábil & Demonstração de Resultados (DRE)
           </CardTitle>
           <CardDescription className="text-xs text-muted-foreground">
             Curvas gradientes de receita bruta, impostos eNotas, comissões MMN e lucro líquido
