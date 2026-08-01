@@ -66,6 +66,7 @@ import { Route as AdminDreRouteImport } from './routes/admin.dre'
 import { Route as AdminDataRoomRouteImport } from './routes/admin.data-room'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminCloudflareRouteImport } from './routes/admin.cloudflare'
+import { Route as AdminBrandKitRouteImport } from './routes/admin.brand-kit'
 import { Route as AppPropostasIndexRouteImport } from './routes/app.propostas.index'
 import { Route as AppPedidosIndexRouteImport } from './routes/app.pedidos.index'
 import { Route as AppFinanciamentosIndexRouteImport } from './routes/app.financiamentos.index'
@@ -378,6 +379,11 @@ const AdminCloudflareRoute = AdminCloudflareRouteImport.update({
   path: '/cloudflare',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBrandKitRoute = AdminBrandKitRouteImport.update({
+  id: '/brand-kit',
+  path: '/brand-kit',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AppPropostasIndexRoute = AppPropostasIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -518,6 +524,7 @@ export interface FileRoutesByFullPath {
   '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/brand-kit': typeof AdminBrandKitRoute
   '/admin/cloudflare': typeof AdminCloudflareRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-room': typeof AdminDataRoomRoute
@@ -601,6 +608,7 @@ export interface FileRoutesByTo {
   '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/brand-kit': typeof AdminBrandKitRoute
   '/admin/cloudflare': typeof AdminCloudflareRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-room': typeof AdminDataRoomRoute
@@ -682,6 +690,7 @@ export interface FileRoutesById {
   '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/brand-kit': typeof AdminBrandKitRoute
   '/admin/cloudflare': typeof AdminCloudflareRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-room': typeof AdminDataRoomRoute
@@ -768,6 +777,7 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/brand-kit'
     | '/admin/cloudflare'
     | '/admin/dashboard'
     | '/admin/data-room'
@@ -851,6 +861,7 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/brand-kit'
     | '/admin/cloudflare'
     | '/admin/dashboard'
     | '/admin/data-room'
@@ -931,6 +942,7 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/brand-kit'
     | '/admin/cloudflare'
     | '/admin/dashboard'
     | '/admin/data-room'
@@ -1424,6 +1436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCloudflareRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/brand-kit': {
+      id: '/admin/brand-kit'
+      path: '/brand-kit'
+      fullPath: '/admin/brand-kit'
+      preLoaderRoute: typeof AdminBrandKitRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/app/propostas/': {
       id: '/app/propostas/'
       path: '/'
@@ -1603,6 +1622,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBrandKitRoute: typeof AdminBrandKitRoute
   AdminCloudflareRoute: typeof AdminCloudflareRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDataRoomRoute: typeof AdminDataRoomRoute
@@ -1619,6 +1639,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBrandKitRoute: AdminBrandKitRoute,
   AdminCloudflareRoute: AdminCloudflareRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDataRoomRoute: AdminDataRoomRoute,
