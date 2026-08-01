@@ -12,6 +12,8 @@ import {
   ChevronRight,
   Sun,
   ShieldCheck,
+  Users,
+  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,42 +23,57 @@ import { Card, CardContent } from "@/components/ui/card";
 export interface EcoPointsTransaction {
   id: string;
   description: string;
-  category: "venda" | "ead" | "desafio" | "resgate";
+  category: "venda_direta" | "ead" | "nps" | "equipe";
   points: number;
   type: "in" | "out";
   date: string;
+  isVmeExempt: boolean;
 }
 
 const MOCK_ECOPOINTS_HISTORY: EcoPointsTransaction[] = [
   {
     id: "pts-101",
-    description: "Venda EPC Sistema Solar 42kWp",
-    category: "venda",
+    description: "Venda Direta EPC Sistema 42kWp",
+    category: "venda_direta",
     points: 850,
     type: "in",
     date: "26/07/2026",
+    isVmeExempt: true,
   },
   {
     id: "pts-102",
     description: "Conclusão Curso ANEEL Lei 14.300",
     category: "ead",
-    points: 400,
+    points: 500,
     type: "in",
     date: "24/07/2026",
+    isVmeExempt: true,
   },
   {
     id: "pts-103",
-    description: "Desafio Semanal: 3 Propostas Enviadas",
-    category: "desafio",
+    description: "Avaliação NPS 5 Estrelas Cliente Solar",
+    category: "nps",
     points: 200,
     type: "in",
     date: "20/07/2026",
+    isVmeExempt: true,
+  },
+  {
+    id: "pts-104",
+    description: "Volume de Vendas da Equipe MMN (Cap VME 40%)",
+    category: "equipe",
+    points: 1200,
+    type: "in",
+    date: "18/07/2026",
+    isVmeExempt: false,
   },
 ];
 
 export function ConsultantEcoPointsBalance() {
   const history = MOCK_ECOPOINTS_HISTORY;
-  const totalBalance = 1450;
+  const personalBalance = 1550; // 100% Livre VME
+  const teamBalance = 1200; // VME 40% Aplicado
+  const totalBalance = personalBalance + teamBalance;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4 selection:bg-amber-400 selection:text-slate-950 font-sans">
@@ -68,10 +85,10 @@ export function ConsultantEcoPointsBalance() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
             <Award className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL ECOPOINTS HUB</span>
+            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL ECOPOINTS HUB V11.0</span>
           </div>
           <h1 className="text-xl font-black tracking-tight text-white">Saldo de EcoPoints</h1>
-          <p className="text-xs text-slate-400">Programa Oficial de Fidelidade & Gamificação</p>
+          <p className="text-xs text-slate-400">Moeda Digital de Gamificação & Prêmios</p>
         </div>
 
         {/* Main Card Container */}
@@ -80,40 +97,54 @@ export function ConsultantEcoPointsBalance() {
             {/* Total Balance Card */}
             <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-500/20 via-slate-950 to-slate-900 border border-amber-400/40 text-center space-y-1 relative">
               <Badge variant="sun" className="text-[10px]">
-                SALDO TOTAL ACUMULADO
+                SALDO TOTAL PARA RESGATE
               </Badge>
               <strong className="text-3xl font-black text-amber-400 block font-mono tracking-tight glow-amber">
                 {totalBalance.toLocaleString()} PTS
               </strong>
-              <span className="text-[10px] text-slate-400 block font-mono">Equivalente a R$ 1.450 em Vouchers</span>
+              <span className="text-[10px] text-slate-400 block font-mono">Pronto para troca por iPads, Drones e Viagens</span>
             </div>
 
-            {/* Points Breakdown Categories Grid */}
-            <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="p-2.5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <Zap className="h-4 w-4 text-amber-400 mx-auto" />
-                <span className="text-[9px] font-mono text-slate-400 block">Vendas</span>
-                <strong className="text-xs font-bold text-white font-mono">+850</strong>
+            {/* Points Origin Breakdown Grid (PLAN 35D) */}
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* Personal Points (0% VME) */}
+              <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
+                    <Zap className="h-3 w-3 text-emerald-400" /> Pessoais
+                  </span>
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[8px]">
+                    0% VME
+                  </Badge>
+                </div>
+                <strong className="text-sm font-bold text-emerald-400 font-mono block">
+                  +{personalBalance.toLocaleString()} PTS
+                </strong>
+                <span className="text-[9px] text-slate-500 block font-mono">Vendas + EAD + NPS</span>
               </div>
 
-              <div className="p-2.5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <GraduationCap className="h-4 w-4 text-purple-400 mx-auto" />
-                <span className="text-[9px] font-mono text-slate-400 block">EAD</span>
-                <strong className="text-xs font-bold text-white font-mono">+400</strong>
-              </div>
-
-              <div className="p-2.5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <Sparkles className="h-4 w-4 text-emerald-400 mx-auto" />
-                <span className="text-[9px] font-mono text-slate-400 block">Desafios</span>
-                <strong className="text-xs font-bold text-white font-mono">+200</strong>
+              {/* Team Points (40% VME) */}
+              <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
+                    <Users className="h-3 w-3 text-amber-400" /> Equipe MMN
+                  </span>
+                  <Badge variant="outline" className="text-[8px] border-amber-400/40 text-amber-400">
+                    VME 40%
+                  </Badge>
+                </div>
+                <strong className="text-sm font-bold text-amber-400 font-mono block">
+                  +{teamBalance.toLocaleString()} PTS
+                </strong>
+                <span className="text-[9px] text-slate-500 block font-mono">Volume 7 Níveis</span>
               </div>
             </div>
 
             {/* Transaction History List */}
             <div className="space-y-2 pt-1">
               <h3 className="font-bold text-xs text-slate-300 flex items-center justify-between">
-                <span>Histórico de Pontos</span>
-                <span className="text-[10px] font-mono text-slate-500">3 Movimentações</span>
+                <span>Histórico de Extrato</span>
+                <span className="text-[10px] font-mono text-slate-500">{history.length} Lançamentos</span>
               </h3>
 
               <div className="space-y-2">
@@ -130,7 +161,19 @@ export function ConsultantEcoPointsBalance() {
                         <span className="font-bold text-white text-[11px] block truncate max-w-[160px]">
                           {tx.description}
                         </span>
-                        <span className="text-[9px] font-mono text-slate-400">{tx.date}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[9px] font-mono text-slate-400">{tx.date}</span>
+                          <span
+                            className={cn(
+                              "text-[8px] font-mono px-1 rounded",
+                              tx.isVmeExempt
+                                ? "bg-emerald-500/20 text-emerald-400"
+                                : "bg-amber-500/20 text-amber-400"
+                            )}
+                          >
+                            {tx.isVmeExempt ? "LIVRE VME" : "CAP VME 40%"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -141,11 +184,6 @@ export function ConsultantEcoPointsBalance() {
                 ))}
               </div>
             </div>
-
-            <Button variant="sun" className="w-full h-11 text-xs font-bold text-slate-950 rounded-xl shadow-lg glow-amber gap-2 cursor-pointer">
-              <Gift className="h-4 w-4" />
-              <span>Resgatar Prêmios no Rank (Plano 27A2b)</span>
-            </Button>
           </CardContent>
         </Card>
       </div>
