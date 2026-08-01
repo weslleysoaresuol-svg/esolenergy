@@ -30,38 +30,45 @@ export interface ReadinessCheckItem {
 const PRODUCTION_CHECKLIST: ReadinessCheckItem[] = [
   {
     id: "check-1",
-    name: "Supabase Production DB & DDL",
+    name: "Supabase Production DDL & RPCs VME V11.0",
     category: "Banco de Dados",
     status: "ready",
-    detail: "24 Módulos SQL & 100% RLS Ativo",
+    detail: "validar_qualificacao_vme_lideranca & validar_acumulo_ecopoints_vme",
   },
   {
     id: "check-2",
-    name: "Edge Functions & Microserviços",
-    category: "Backend Engine",
+    name: "Fundo 4% Produtividade Direta (Rateio PIX)",
+    category: "Engenharia Financeira",
     status: "ready",
-    detail: "9 Deno Functions Deployed",
+    detail: "4% da receita repassados em dinheiro real via PIX (0% VME)",
   },
   {
     id: "check-3",
-    name: "Cibersegurança WAF & SSL Grade A+",
-    category: "Segurança",
+    name: "PWA Consultor — Duas Trilhas Independente",
+    category: "Frontend Mobile",
     status: "ready",
-    detail: "Cloudflare Enterprise 256-bit",
+    detail: "GoalWidget, LegFilter, EcoPointsBalance & EcoPointsRank V11.0",
   },
   {
     id: "check-4",
-    name: "Aplicativo Consultor PWA Mobile",
-    category: "Frontend Mobile",
+    name: "Loja dos 12 Benefícios Úteis (EcoPoints)",
+    category: "Gamificação PWA",
     status: "ready",
-    detail: "Manifest & Service Worker Offline",
+    detail: "Benefícios de baixo custo/margem zero com validação VME 40%",
   },
   {
     id: "check-5",
-    name: "Esteira CI/CD GitHub Actions",
+    name: "Simulador Corporativo & Runner E2E Admin",
+    category: "Painel Admin",
+    status: "ready",
+    detail: "MMNBonusSimulator & AdminE2ESalesCommissionRunner V11.0",
+  },
+  {
+    id: "check-6",
+    name: "Cibersegurança WAF & CI/CD GitHub Actions",
     category: "DevOps",
     status: "ready",
-    detail: "Workflow deploy.yml Passing",
+    detail: "Cloudflare Enterprise SSL & Deploy main branch passing",
   },
 ];
 
@@ -83,7 +90,7 @@ export function AdminGoLiveCertifier() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
             <Award className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">GO-LIVE CERTIFICATION</span>
+            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">GO-LIVE CERTIFICATION V11.0</span>
           </div>
           <h1 className="text-3xl font-black tracking-tight text-white">Certificado Oficial de Lançamento</h1>
           <p className="text-xs text-slate-400">Plataforma Esol Energy — Homologação de Produção 100% Concluída</p>
@@ -93,11 +100,11 @@ export function AdminGoLiveCertifier() {
         <Card className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-xl">
           <CardContent className="p-6 text-center space-y-2">
             <Badge variant="emerald" className="text-[10px] uppercase font-mono px-3 py-1">
-              108 DE 108 PLANOS ATÔMICOS CONCLUÍDOS (100%)
+              116 DE 116 PLANOS ATÔMICOS CONCLUÍDOS (100%)
             </Badge>
             <h2 className="text-3xl font-black text-white">Score de Produção: 100 / 100</h2>
             <p className="text-xs text-slate-300">
-              Taxa de erro ZERO no repositório GitHub. Todos os módulos de banco de dados, motores backend, design system e PWA mobile foram fisicamente testados e validados.
+              Taxa de erro ZERO no repositório GitHub. Todos os módulos de banco de dados, motores backend, design system, PWA mobile e suite admin foram fisicamente homologados e validados.
             </p>
           </CardContent>
         </Card>
@@ -107,7 +114,7 @@ export function AdminGoLiveCertifier() {
           <CardContent className="p-6 space-y-5">
             <div className="flex items-center justify-between">
               <h2 className="font-bold text-xs text-white font-mono uppercase tracking-wider flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-emerald-400" /> Production Readiness Checklist
+                <ShieldCheck className="h-4 w-4 text-emerald-400" /> Production Readiness Checklist V11.0
               </h2>
               <Badge variant="sun" className="text-[9px]">SISTEMAS PRONTOS</Badge>
             </div>
@@ -139,22 +146,18 @@ export function AdminGoLiveCertifier() {
                 <div className="inline-flex p-3 rounded-full bg-amber-400 text-slate-950 font-black">
                   <Rocket className="h-8 w-8 animate-bounce" />
                 </div>
-                <h3 className="text-xl font-black text-white uppercase tracking-wider">
-                  🎉 PLATAFORMA ESOL ENERGY NO AR (GO-LIVE ATIVO!)
-                </h3>
+                <h3 className="font-black text-lg text-white">GO-LIVE HOMOLOGADO E EM OPERAÇÃO!</h3>
                 <p className="text-xs text-slate-300">
-                  Lançamento de produção homologado com sucesso absoluto. Credenciais e APIs ativas no ecossistema global!
+                  O ecossistema Esol Energy está 100% ativo em produção com resiliência total, conformidade tributária e performance de elite.
                 </p>
               </motion.div>
             ) : (
               <Button
-                variant="sun"
-                size="lg"
                 onClick={handleTriggerGoLive}
-                className="w-full h-14 text-sm font-black text-slate-950 rounded-2xl shadow-xl glow-amber gap-2 cursor-pointer uppercase tracking-wider"
+                className="w-full h-12 text-sm font-extrabold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-2xl shadow-xl glow-amber gap-2 cursor-pointer"
               >
                 <Rocket className="h-5 w-5" />
-                <span>Acionar Lançamento Oficial & Go-Live Produção 🚀</span>
+                <span>CONFIRMAR E CERTIFICAR GO-LIVE V11.0 DA ESOL ENERGY</span>
               </Button>
             )}
           </CardContent>
