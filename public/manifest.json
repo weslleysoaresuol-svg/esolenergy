@@ -1,15 +1,21 @@
 {
-  "name": "Esol Energy - Plataforma Solar & MMN",
+  "name": "Esol Energy — Plataforma Solar & Liberdade Financeira",
   "short_name": "Esol Energy",
-  "description": "Plataforma Solar, Mercado Livre de Energia e Gestão MMN",
+  "description": "Deixe o sol trabalhar por você. Soluções em Energia Solar, Mercado Livre de Energia e Programa de Vendas Diretas.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "any",
-  "theme_color": "#0b1329",
-  "background_color": "#030712",
+  "orientation": "portrait",
+  "theme_color": "#020617",
+  "background_color": "#020617",
   "categories": ["business", "finance", "utilities"],
   "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/favicon.png",
       "sizes": "192x192",
@@ -21,6 +27,20 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Simulador Solar",
+      "short_name": "Simulador",
+      "description": "Simule sua economia com energia solar",
+      "url": "/#simulador"
+    },
+    {
+      "name": "PWA do Consultor",
+      "short_name": "Consultor",
+      "description": "Painel de Vendas Diretas e Rede",
+      "url": "/app"
     }
   ]
 }
