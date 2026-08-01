@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export interface ReadinessCheckItem {
   id: string;
@@ -76,7 +77,14 @@ const PRODUCTION_CHECKLIST: ReadinessCheckItem[] = [
     name: "Bateria de 9 Cenários E2E Automatizados",
     category: "Qualidade & QA",
     status: "ready",
-    detail: "AdminE2ESalesCommissionRunner V12.0 com 100% de taxa de sucesso",
+    detail: "AdminE2ESalesCommissionRunner V13.2 com 100% de taxa de sucesso",
+  },
+  {
+    id: "check-8",
+    name: "Identidade Visual & Suíte de 7 Logos Vetoriais SVG (V13.2)",
+    category: "Branding & UX",
+    status: "ready",
+    detail: "Logo Primária, Empilhada, Glifo eS, Negative, Monocromática, CyberTech & FaviconMicro com brandConfig.ts",
   },
 ];
 
@@ -95,16 +103,11 @@ export function AdminGoLiveCertifier() {
 
       <div className="w-full max-w-2xl space-y-5 relative z-10">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
-            <Award className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">
-              GO-LIVE CERTIFICATION V12.0
-            </span>
-          </div>
-          <h1 className="text-3xl font-black tracking-tight text-white">Certificado Oficial de Lançamento</h1>
+        <div className="text-center space-y-2 flex flex-col items-center">
+          <EsolLogoPrimary width={240} height={60} showTagline={false} />
+          <h1 className="text-3xl font-black tracking-tight text-white mt-1">Certificado Oficial de Lançamento</h1>
           <p className="text-xs text-slate-400">
-            Plataforma Esol Energy — Blindagem Anti-Fraude, Escalabilidade & Governança 100% Homologadas
+            Plataforma Esol Energy — Identidade Visual V13.2, Anti-Fraude & Governança 100% Homologadas
           </p>
         </div>
 
@@ -113,11 +116,11 @@ export function AdminGoLiveCertifier() {
           <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
             <div className="space-y-1">
               <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
-                PLATAFORMA 100% PRONTA PARA PRODUÇÃO REAL
+                PLATAFORMA V13.2 100% PRONTA PARA PRODUÇÃO REAL
               </Badge>
               <h2 className="text-xl font-black text-white">Score de Homologação: 100 / 100</h2>
               <p className="text-xs text-slate-300">
-                137 Planos Atômicos executados e aprovados nos 11 Ciclos de Engenharia.
+                162 Planos Atômicos executados e aprovados nos 12 Ciclos de Engenharia V13.2.
               </p>
             </div>
 
@@ -133,7 +136,7 @@ export function AdminGoLiveCertifier() {
               )}
             >
               <Rocket className={cn("h-5 w-5", isGoLiveTriggered && "animate-bounce")} />
-              <span>{isGoLiveTriggered ? "PRODUÇÃO CERTIFICADA V12.0!" : "Certificar Go-Live Definitivo"}</span>
+              <span>{isGoLiveTriggered ? "PRODUÇÃO CERTIFICADA V13.2!" : "Certificar Go-Live Definitivo"}</span>
             </Button>
           </CardContent>
         </Card>
