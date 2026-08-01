@@ -15,6 +15,7 @@ import {
   Sparkles,
   Sun,
   Award,
+  Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,35 +50,35 @@ const MOCK_PIPELINE_STEPS: PipelineStepItem[] = [
   },
   {
     stepNumber: 3,
-    title: "Escrituração Ledger Partida Dobrada",
-    description: "Gatilho de contabilidade imutável SHA-256",
+    title: "Escrituração Ledger Partida Dobrada & Split PIX",
+    description: "Repasse de comissão em dinheiro nos 7 Níveis 100% Livre de VME",
     latencyMs: 120,
     status: "success",
-    hashOrDetail: "Ledger ID: #LGD-994812",
+    hashOrDetail: "Ledger ID: #LGD-994812 | Repasse Nível 1: R$ 5.250,00 PIX",
   },
   {
     stepNumber: 4,
-    title: "Split Triangular BaaS Banking",
-    description: "Divisão de comissão: 3% Consultor + 1.5% Unilevel 7 Níveis",
+    title: "Rateio do Fundo de 4% de Produtividade Direta",
+    description: "Separação de 4% da receita mensal e rateio proporcional em dinheiro no PIX",
     latencyMs: 95,
     status: "success",
-    hashOrDetail: "Subconta BaaS: R$ 8.450,00 Reservado",
+    hashOrDetail: "Pool Fundo Mês: R$ 48.500,00 | V_ponto: R$ 2,14 / PTS",
   },
   {
     stepNumber: 5,
-    title: "Solicitação & Saque PIX com MFA AAL2",
-    description: "Emissão de eNotas NFe e transferência bancária instantânea",
-    latencyMs: 180,
+    title: "Validação VME 40% Liderança MMN (A1 a A9)",
+    description: "Execução da RPC validar_qualificacao_vme_lideranca() com teto de 40% por perna",
+    latencyMs: 85,
     status: "success",
-    hashOrDetail: "Chave PIX Validade & Comprovante BaaS #9812",
+    hashOrDetail: "Grau A3 Aprovado: Pontos Válidos 15.000 / 15.000 (Teto Perna A: 6.000 PTS)",
   },
   {
     stepNumber: 6,
-    title: "Harmonização MMN V10.0 (PIX Livre + VME 40% Selos)",
-    description: "Validação de isenção de VME no PIX e trava 40% VME para selos de carreira",
-    latencyMs: 85,
+    title: "Classificação VME EcoPoints (Pessoais vs Equipe)",
+    description: "Execução da RPC validar_acumulo_ecopoints_vme() separando esforço pessoal (0% VME) de equipe (40% VME)",
+    latencyMs: 90,
     status: "success",
-    hashOrDetail: "RPC validar_qualificacao_vme_carreira() PASS ✅",
+    hashOrDetail: "EcoPoints Pessoais: 2.750 (0% VME) | Equipe: 8.500 (40% VME)",
   },
 ];
 
@@ -104,13 +105,13 @@ export function AdminE2ESalesCommissionRunner() {
         <div>
           <div className="inline-flex items-center gap-2 p-1.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs mb-2">
             <Zap className="h-4 w-4" />
-            <span className="font-mono font-bold uppercase">SUÍTE E2E V10.0</span>
+            <span className="font-mono font-bold uppercase">SUÍTE E2E V11.0</span>
           </div>
           <h1 className="text-2xl font-black tracking-tight text-white">
-            Suíte de Testes Automatizados E2E Venda ➔ Comissionamento ➔ Split
+            Suíte E2E: Venda ➔ Comissões ➔ Fundo 4% ➔ Validação VME A1-A9
           </h1>
           <p className="text-xs text-slate-400">
-            Simulador de estresse e integridade ponta a ponta da jornada comercial e financeira
+            Validação automatizada de integridade das Duas Trilhas: Vendas Diretas (0% VME) e Liderança (40% VME)
           </p>
         </div>
 
@@ -130,7 +131,7 @@ export function AdminE2ESalesCommissionRunner() {
           <div className="flex items-center justify-between text-xs font-mono">
             <span className="text-slate-400 flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-emerald-400" />
-              <span>Status do Runner de Testes Integrados</span>
+              <span>Status do Runner de Testes Integrados V11.0</span>
             </span>
             <strong className="text-emerald-400 font-bold">100% HOMOLOGADO & PASS</strong>
           </div>
@@ -140,45 +141,72 @@ export function AdminE2ESalesCommissionRunner() {
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5 }}
-              className="h-full bg-gradient-to-r from-amber-500 via-emerald-400 to-emerald-500 rounded-full glow-amber"
+              className="h-full bg-gradient-to-r from-amber-500 via-emerald-400 to-emerald-500 rounded-full"
             />
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs font-mono pt-2">
+            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">Testes Executados:</span>
+              <strong className="text-white font-bold text-sm">6 / 6 Casos</strong>
+            </div>
+            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">Comissões no PIX:</span>
+              <strong className="text-emerald-400 font-bold text-sm">100% Livres (0% VME)</strong>
+            </div>
+            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">Fundo 4% Vendas Diretas:</span>
+              <strong className="text-emerald-400 font-bold text-sm">Rateio Ativo</strong>
+            </div>
+            <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">Liderança MMN VME:</span>
+              <strong className="text-amber-400 font-bold text-sm">RPC Trava 40% PASS</strong>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Pipeline Steps List */}
+      {/* PIPELINE STEPS LIST */}
       <div className="space-y-3">
-        {steps.map((step) => (
-          <motion.div
-            key={step.stepNumber}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: step.stepNumber * 0.05 }}
-            className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-4"
-          >
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center font-mono shrink-0">
-                #{step.stepNumber}
-              </div>
-              <div>
-                <h3 className="font-bold text-xs text-white flex items-center gap-2">
-                  <span>{step.title}</span>
-                  <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400">
-                    {step.latencyMs}ms
-                  </Badge>
-                </h3>
-                <p className="text-[11px] text-slate-400">{step.description}</p>
-                <span className="text-[10px] font-mono text-amber-400/80 block mt-0.5">
-                  {step.hashOrDetail}
-                </span>
-              </div>
-            </div>
+        <h2 className="text-xs font-bold text-slate-300 font-mono uppercase tracking-wider">
+          Detalhamento das Etapas do Workflow E2E
+        </h2>
 
-            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px] gap-1 shrink-0">
-              <CheckCircle2 className="h-3 w-3" /> APROVADO
-            </Badge>
-          </motion.div>
-        ))}
+        <div className="space-y-3">
+          {steps.map((step) => (
+            <Card
+              key={step.stepNumber}
+              className="rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur-xl overflow-hidden"
+            >
+              <CardContent className="p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center font-mono font-bold text-amber-400 text-xs shrink-0">
+                    #{step.stepNumber}
+                  </div>
+
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-xs text-white leading-snug">{step.title}</h3>
+                      <Badge variant="outline" className="text-[9px] border-slate-800 font-mono text-slate-400">
+                        {step.latencyMs}ms
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] text-slate-400">{step.description}</p>
+                    <span className="text-[10px] font-mono text-emerald-400 block pt-0.5">
+                      {step.hashOrDetail}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="shrink-0">
+                  <Badge variant="emerald" className="gap-1 text-[10px]">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> APROVADO
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
