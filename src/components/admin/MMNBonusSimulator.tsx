@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Calculator, Award, Users, ShieldCheck, ArrowUpRight, DollarSign, CheckCircle2, AlertTriangle, Crown, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export const MMNBonusSimulator: React.FC = () => {
   // Direct Sales Pool (4% Revenue Share)
