@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import logo from "@/assets/esol-logo.svg";
-import logoNegative from "@/assets/esol-logo-negative.svg";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
+import { EsolLogoNegative } from "@/components/brand/EsolLogoNegative";
 import portfolioResidential from "@/assets/portfolio-residential.jpg";
 import portfolioCommercial from "@/assets/portfolio-commercial.jpg";
 import portfolioIndustrial from "@/assets/portfolio-industrial.jpg";
@@ -211,7 +211,7 @@ function Nav({ onOpenTracking }: { onOpenTracking: () => void }) {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 sm:h-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <a href="#top" className="flex items-center gap-3 min-w-0">
-          <img src={logo} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto shrink-0" width={137} height={60} />
+          <EsolLogoPrimary width={200} height={50} showTagline={false} />
         </a>
         <div className="hidden xl:flex items-center gap-8 text-sm font-medium text-navy/75 absolute left-1/2 -translate-x-1/2">
           <a href="#simulador" className="hover:text-sun-deep transition-colors">Simulador</a>
@@ -1318,7 +1318,7 @@ function Footer() {
     <footer className="bg-navy-deep text-white">
       <div className="mx-auto max-w-7xl px-6 py-10 sm:py-12 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
-          <img src={logoNegative} alt="ESOL Energy — Deixe o sol trabalhar por você" className="h-12 sm:h-14 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" />
+          <EsolLogoNegative width={240} height={60} showTagline={true} />
           <p className="mt-5 max-w-sm text-white/80 text-sm leading-relaxed">
             Engenharia solar fotovoltaica de alta performance. Deixe o sol trabalhar por você.
           </p>
