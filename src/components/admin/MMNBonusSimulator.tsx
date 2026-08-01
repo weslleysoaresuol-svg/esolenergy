@@ -4,30 +4,36 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
-import { Calculator, Award, Users, ShieldCheck, ArrowUpRight, DollarSign, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Calculator, Award, Users, ShieldCheck, ArrowUpRight, DollarSign, CheckCircle2, AlertTriangle, Crown, Zap } from 'lucide-react';
 
 export const MMNBonusSimulator: React.FC = () => {
-  const [valVolumeEquipe, setValVolumeEquipe] = useState<number>(1000); // kWp
-  const [valLinhas, setValLinhas] = useState<number>(3);
-  const [ticketMedioSolen, setTicketMedioSolen] = useState<number>(35000); // R$ por usina
-  const [isVmeEnabledRank, setIsVmeEnabledRank] = useState<boolean>(true);
+  // Direct Sales Pool (4% Revenue Share)
+  const [receitaIntermediacaoMes, setReceitaIntermediacaoMes] = useState<number>(1200000); // R$ 1.2M
+  const [somaPontosAtivosVendas, setSomaPontosAtivosVendas] = useState<number>(24000); // PTS
+  const [pontosConsultorSimulado, setPontosConsultorSimulado] = useState<number>(850); // PTS
 
-  // MMN Unilevel Distribution (7 levels)
-  const nivelPercentuais = [0.50, 0.20, 0.10, 0.07, 0.05, 0.04, 0.04];
-  
-  // Total Revenue & Pool Calculation
-  const totalUsinasEst = Math.round(valVolumeEquipe / 10);
-  const faturamentoTotalEst = totalUsinasEst * ticketMedioSolen;
-  const piscinaMmnTotal = faturamentoTotalEst * 0.10; // 10% Pool
+  // Network Leadership (A1-A9) & VME 40%
+  const [pernaAVolume, setPernaAVolume] = useState<number>(18000); // PTS
+  const [pernaBVolume, setPernaBVolume] = useState<number>(8000);  // PTS
+  const [pernaCVolume, setPernaCVolume] = useState<number>(6000);  // PTS
 
-  // CASH PAYOUT IS 100% FREE OF VME (PLAN 34E)
-  const comissaoPixLivre = piscinaMmnTotal * nivelPercentuais[0];
+  // Calculations: 4% Direct Sales Pool
+  const fundoProdutividadeQuatroPct = receitaIntermediacaoMes * 0.04;
+  const valorUnitarioPonto = somaPontosAtivosVendas > 0 ? fundoProdutividadeQuatroPct / somaPontosAtivosVendas : 0;
+  const repasseBonesProdutividadeConsultor = pontosConsultorSimulado * valorUnitarioPonto;
 
-  // RANK QUALIFICATION POINTS APPLY 40% VME CAP
-  const vmeMaxPorLinha = valVolumeEquipe * 0.4;
-  const volumePernaPrincipalEst = valVolumeEquipe * 0.55; // 55% in dominant leg
-  const pontosValidosRank = Math.min(volumePernaPrincipalEst, vmeMaxPorLinha) + (valVolumeEquipe * 0.45);
-  const isVmeExceededRank = volumePernaPrincipalEst > vmeMaxPorLinha;
+  // Calculations: Leadership VME 40%
+  const volumeTotalEquipe = pernaAVolume + pernaBVolume + pernaCVolume;
+  const pontosNecessariosA3 = 15000;
+  const tetoVmePorPerna = pontosNecessariosA3 * 0.40; // 40% of 15.000 = 6.000 pts max per leg
+
+  const pernaAAproveitada = Math.min(pernaAVolume, tetoVmePorPerna);
+  const pernaBAproveitada = Math.min(pernaBVolume, tetoVmePorPerna);
+  const pernaCAproveitada = Math.min(pernaCVolume, tetoVmePorPerna);
+
+  const pontosValidosVmeLideranca = pernaAAproveitada + pernaBAproveitada + pernaCAproveitada;
+  const isQualificadoA3 = pontosValidosVmeLideranca >= pontosNecessariosA3;
+  const isPernaADominanteExcedida = pernaAVolume > tetoVmePorPerna;
 
   return (
     <div className="space-y-6">
@@ -35,107 +41,172 @@ export const MMNBonusSimulator: React.FC = () => {
         <div>
           <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
             <Calculator className="h-5 w-5 text-amber-400" />
-            Simulador MMN & Carreira V10.0
+            Simulador Corporativo MMN & Validador VME V11.0
           </h2>
           <p className="text-xs text-muted-foreground">
-            Cálculo em tempo real de comissões PIX (100% livres) e validação da Regra VME (40%) para Selos
+            Rateio do Fundo de 4% de Produtividade Direta (0% VME) e Validador VME 40% para Liderança A1-A9
           </p>
         </div>
         <Badge variant="outline" className="text-amber-400 border-amber-400/40 text-xs px-3 py-1">
-          REGRAS V10.0 ATIVAS
+          ARQUITETURA V11.0 ATIVA
         </Badge>
       </div>
 
-      {/* DUAL MODE SUMMARY CARDS (PLAN 34E) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-emerald-950/20 border-emerald-500/30">
-          <CardContent className="p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                <DollarSign className="h-4 w-4" /> COMISSÃO PIX NO NÍVEL 1
-              </span>
-              <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[10px]">
-                100% LIVRE DE VME
-              </Badge>
-            </div>
-            <strong className="text-2xl font-black text-white font-mono block">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(comissaoPixLivre)}
-            </strong>
-            <p className="text-[11px] text-muted-foreground">
-              Comissão repassada sem qualquer trava ou restrição de perna.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-amber-950/20 border-amber-500/30">
-          <CardContent className="p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-                <Award className="h-4 w-4" /> PONTOS VÁLIDOS DE SELO (VME 40%)
-              </span>
-              <Badge variant="outline" className="border-amber-400/40 text-amber-400 text-[10px]">
-                APENAS PARA GRADUAÇÃO
-              </Badge>
-            </div>
-            <strong className="text-2xl font-black text-amber-400 font-mono block">
-              {Math.round(pontosValidosRank).toLocaleString()} PTS VÁLIDOS
-            </strong>
-            <p className="text-[11px] text-muted-foreground">
-              {isVmeExceededRank
-                ? '⚠️ Perna dominante travada no cap de 40% exclusivamente para selos/troféus.'
-                : '✅ Pontuação 100% aproveitada para o próximo selo de carreira.'}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* SIMULATOR CONTROLS */}
+      {/* TRACK 1: POOL 4% DE PRODUTIVIDADE DIRETA */}
       <Card className="bg-slate-900/90 border-slate-800">
         <CardHeader>
-          <CardTitle className="text-sm text-white">Parâmetros de Simulação de Equipe</CardTitle>
-          <CardDescription className="text-xs">Ajuste o volume instalado (kWp) e o número de linhas ativas</CardDescription>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-emerald-400" />
+              <CardTitle className="text-sm text-white">Rateio dos 4% da Receita de Produtividade Direta (0% VME)</CardTitle>
+            </div>
+            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
+              0% TRAVA VME
+            </Badge>
+          </div>
+          <CardDescription className="text-xs">
+            A Esol reserva 4% da receita mensal e distribui via PIX aos melhores vendedores diretos de forma proporcional
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-400">Volume Total da Rede (kWp):</span>
-              <span className="text-amber-400 font-bold">{valVolumeEquipe} kWp</span>
+        <CardContent className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono text-slate-400">Receita Intermediação Mês (R$):</span>
+              <Input
+                type="number"
+                value={receitaIntermediacaoMes}
+                onChange={(e) => setReceitaIntermediacaoMes(Number(e.target.value))}
+                className="bg-slate-950 border-slate-800 text-white font-mono text-xs"
+              />
             </div>
-            <Slider
-              value={[valVolumeEquipe]}
-              min={100}
-              max={5000}
-              step={50}
-              onValueChange={(val) => setValVolumeEquipe(val[0])}
-            />
+
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono text-slate-400">Soma de Pontos Ativos no Mês:</span>
+              <Input
+                type="number"
+                value={somaPontosAtivosVendas}
+                onChange={(e) => setSomaPontosAtivosVendas(Number(e.target.value))}
+                className="bg-slate-950 border-slate-800 text-white font-mono text-xs"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono text-slate-400">Pontos do Consultor Simulado:</span>
+              <Input
+                type="number"
+                value={pontosConsultorSimulado}
+                onChange={(e) => setPontosConsultorSimulado(Number(e.target.value))}
+                className="bg-slate-950 border-slate-800 text-amber-400 font-mono text-xs font-bold"
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-400">Linhas Diretas Ativas (Pernas):</span>
-              <span className="text-cyan-400 font-bold">{valLinhas} Pernas</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono">
+            <div>
+              <span className="text-slate-400 block">Fundo 4% Separado:</span>
+              <strong className="text-white text-sm">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(fundoProdutividadeQuatroPct)}
+              </strong>
             </div>
-            <Slider
-              value={[valLinhas]}
-              min={1}
-              max={10}
-              step={1}
-              onValueChange={(val) => setValLinhas(val[0])}
-            />
+
+            <div>
+              <span className="text-slate-400 block">Valor Unitário do Ponto:</span>
+              <strong className="text-amber-400 text-sm">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valorUnitarioPonto)} / PTS
+              </strong>
+            </div>
+
+            <div>
+              <span className="text-slate-400 block">Bônus PIX p/ Consultor:</span>
+              <strong className="text-emerald-400 text-sm font-extrabold">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(repasseBonesProdutividadeConsultor)}
+              </strong>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* TRACK 2: LIDERANÇA MMN A1-A9 E VALIDAÇÃO VME 40% */}
+      <Card className="bg-slate-900/90 border-slate-800">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-amber-400" />
+              <CardTitle className="text-sm text-white">Validador de Liderança MMN A1-A9 (Trava VME 40%)</CardTitle>
+            </div>
+            <Badge variant="outline" className="border-amber-400/40 text-amber-400 text-[10px]">
+              VME 40% APLICADO
+            </Badge>
+          </div>
+          <CardDescription className="text-xs">
+            Testa a qualificação do Grau A3 (Mentor de Alta Performance - 15.000 PTS) com teto VME por perna (6.000 PTS)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono text-slate-400">Perna A (Volume Dominante):</span>
+              <Input
+                type="number"
+                value={pernaAVolume}
+                onChange={(e) => setPernaAVolume(Number(e.target.value))}
+                className="bg-slate-950 border-slate-800 text-amber-400 font-mono text-xs font-bold"
+              />
+              <span className="text-[10px] text-slate-500 font-mono">
+                Aproveitados: {pernaAAproveitada.toLocaleString()} PTS {isPernaADominanteExcedida && '(Cap 40% Excedido)'}
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono text-slate-400">Perna B (Volume Paralelo 1):</span>
+              <Input
+                type="number"
+                value={pernaBVolume}
+                onChange={(e) => setPernaBVolume(Number(e.target.value))}
+                className="bg-slate-950 border-slate-800 text-white font-mono text-xs"
+              />
+              <span className="text-[10px] text-slate-500 font-mono">
+                Aproveitados: {pernaBAproveitada.toLocaleString()} PTS
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono text-slate-400">Perna C (Volume Paralelo 2):</span>
+              <Input
+                type="number"
+                value={pernaCVolume}
+                onChange={(e) => setPernaCVolume(Number(e.target.value))}
+                className="bg-slate-950 border-slate-800 text-white font-mono text-xs"
+              />
+              <span className="text-[10px] text-slate-500 font-mono">
+                Aproveitados: {pernaCAproveitada.toLocaleString()} PTS
+              </span>
+            </div>
           </div>
 
-          {/* Breakdown Table */}
-          <div className="space-y-2 pt-2 border-t border-slate-800">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Projeção da Piscina MMN (10% das Vendas)</h4>
-            <div className="space-y-1 text-xs font-mono">
-              {nivelPercentuais.map((pct, idx) => (
-                <div key={idx} className="flex justify-between p-2 rounded-lg bg-slate-950/60 border border-slate-800/50">
-                  <span className="text-slate-400">Nível {idx + 1} ({pct * 100}% da Piscina):</span>
-                  <span className="text-emerald-400 font-bold">
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(piscinaMmnTotal * pct)}
-                  </span>
-                </div>
-              ))}
+          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-mono text-xs">
+                <ShieldCheck className={cn("h-4 w-4", isQualificadoA3 ? "text-emerald-400" : "text-amber-400")} />
+                <span className="text-slate-300">Status de Qualificação no Grau A3:</span>
+              </div>
+              <Badge className={cn(isQualificadoA3 ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40" : "bg-amber-500/20 text-amber-400 border-amber-500/40")}>
+                {isQualificadoA3 ? "QUALIFICADO A3" : "PENDENTE EQUILÍBRIO"}
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
+              <div>
+                <span className="text-slate-500 block">Volume Bruto Equipe:</span>
+                <strong className="text-white text-sm">{volumeTotalEquipe.toLocaleString()} PTS</strong>
+              </div>
+
+              <div>
+                <span className="text-slate-500 block">Pontos Válidos VME (40% Cap):</span>
+                <strong className={cn("text-sm font-bold", isQualificadoA3 ? "text-emerald-400" : "text-amber-400")}>
+                  {pontosValidosVmeLideranca.toLocaleString()} / 15.000 PTS
+                </strong>
+              </div>
             </div>
           </div>
         </CardContent>
