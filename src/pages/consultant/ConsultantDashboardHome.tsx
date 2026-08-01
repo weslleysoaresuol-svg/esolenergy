@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EsolBrandmarkGliph } from "@/components/brand/EsolBrandmarkGliph";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export function ConsultantDashboardHome() {
   const formatCurrency = (val: number) =>
@@ -32,6 +34,14 @@ export function ConsultantDashboardHome() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-64 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-md mx-auto space-y-5 relative z-10">
+        {/* Brand Header */}
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <EsolLogoPrimary width={150} height={38} showTagline={false} />
+          <span className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            PWA Vendas Diretas
+          </span>
+        </div>
+
         {/* User Profile & Rank Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
