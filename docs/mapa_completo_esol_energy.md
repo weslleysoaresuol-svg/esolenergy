@@ -1,4 +1,4 @@
-# 🗺️ Mapa Completo do Ecossistema Esol Energy (v10 — Definitivo com Recorrência e Resiliência B2B/B2C)
+# 🗺️ Mapa Completo do Ecossistema Esol Energy (v11 — Definitivo com Soberania de Vendas, Liderança MMN A1-A9 & EcoPoints)
 
 > Documento oficial de engenharia, arquitetura de negócios, conformidade legal, engenharia financeira e especificação técnica do ecossistema Esol Energy.
 > Este documento é o mapa de construção unificado e serve como referência absoluta para todas as implementações de código.
@@ -1178,13 +1178,110 @@ graph TD
 *   **Seu Ranking Mensal (Visível no App) zera no 1º dia de cada mês!** Isso gera a necessidade de vendas constantes todo mês.
 *   **O Ranking Anual e Permanente (Ocultos no App):** Acumulam seus pontos pessoais ao longo do ano civil e de forma perpétua, respectivamente, para qualificações e premiações especiais promovidas pela diretoria.
 
-##### **C. Modelo Harmonizado V10.0 (Transparência Total)**
-Todas as comissões em dinheiro via PIX nos 7 níveis são **100% livres de trava VME**. O teto de 40% VME aplica-se exclusivamente para a contagem de pontos de avanço nos selos de carreira e prêmios EcoPoints, garantindo que o consultor receba todo o seu dinheiro sem travas enquanto desenvolve equipes equilibradas para o topo da carreira.
+##### **C. Modelo Harmonizado V11.0 (Transparência Total com Duas Trilhas)**
+Todas as comissões em dinheiro via PIX nos 7 níveis são **100% livres de trava VME (0% VME — 100% Mérito Próprio)**. O teto de 40% VME aplica-se exclusivamente para:
+- **Avanço de Graus de Liderança de Rede MMN (A1 a A9):** A qualificação por pontos de equipe é validada pela RPC `validar_qualificacao_vme_lideranca()`, onde no máximo 40% da pontuação exigida pode vir de uma única perna descendente.
+- **Acúmulo de EcoPoints de Equipe:** A acumulação de pontos de equipe para resgate na Loja de Benefícios é validada pela RPC `validar_acumulo_ecopoints_vme()`, separando EcoPoints Pessoais (0% VME) de EcoPoints de Equipe (40% VME).
+
+Isso garante que o consultor receba todo o seu dinheiro em comissões sem travas, enquanto desenvolve equipes equilibradas e diversificadas para avançar no topo da carreira e acumular benefícios de gamificação.
 
 ##### **D. Como resgatar o prêmio?**
 1.  **Atingiu a meta de qualificação:** O aplicativo exibirá um confete digital e uma notificação de conquista.
 2.  **Validação de Adimplência:** O sistema do backoffice verifica se as vendas que geraram os pontos estão ativas e com a primeira fatura paga.
 3.  **Resgate:** Você clica em "Solicitar Resgate" diretamente no painel e escolhe receber o item físico quitado ou o bônus correspondente.
+
+---
+
+#### 7. Trilha de Liderança de Rede MMN (Graus A1 a A9) — V11.0
+
+Paralelamente aos 21 Selos de Vendas Diretas (L1 a L21), a plataforma oferece uma **segunda trilha de evolução independente** focada em **construção e gestão de equipes de vendas** — os **Graus de Liderança de Rede MMN (A1 a A9)**. Enquanto os Selos premiam o esforço pessoal de vendas diretas (0% VME), os Graus de Liderança premiam a capacidade do consultor de **formar, treinar e expandir pernas produtivas na árvore MMN**.
+
+##### **Regra Central de Qualificação: Trava VME 40% por Perna**
+Para evitar que um líder se qualifique apoiando-se exclusivamente em 1 perna forte (um único downline produtivo), aplica-se a **Validação de Volume Máximo por Estrutura (VME) de 40%**: no máximo 40% da pontuação total exigida para cada Grau pode ser contabilizada a partir de uma única perna direta da rede. Isso força a construção equilibrada e diversificada da organização.
+
+**RPC PostgreSQL:** `validar_qualificacao_vme_lideranca(p_profile_id UUID, p_pontos_necessarios INT, p_vme_limite NUMERIC DEFAULT 40.0)` → Retorna `aprovado BOOLEAN`, `pontos_validos INT`, `perna_maior_nome TEXT`, `perna_maior_pontos INT`, `teto_permitido INT`.
+
+##### **Tabela de Qualificação dos 9 Graus de Liderança**
+
+| Grau | Titulação Oficial de Excelência | Pontos Mín. de Equipe | Pernas Ativas Mín. | Trava VME |
+| :---: | :--- | :---: | :---: | :---: |
+| **A1** | ⚡ **Conectador Solar** | 5.000 | 2 | 40% |
+| **A2** | 🔗 **Articulador de Rede** | 15.000 | 3 | 40% |
+| **A3** | 🌐 **Construtor de Comunidade** | 35.000 | 4 | 40% |
+| **A4** | 🛡️ **Guardião de Equipe** | 75.000 | 5 | 40% |
+| **A5** | 🏛️ **Arquiteto de Rede** | 150.000 | 6 | 40% |
+| **A6** | 🌟 **Estrategista Solar** | 300.000 | 7 | 40% |
+| **A7** | 🔱 **Embaixador de Expansão** | 600.000 | 8 | 40% |
+| **A8** | 👑 **Mestre de Legado Solar** | 1.200.000 | 9 | 40% |
+| **A9** | 💎 **Conselheiro Supremo de Legado** | 2.500.000 | 10 | 40% |
+
+**Tabela SQL:** `public.mmn_lideranca_rede` (campos: `grau`, `titulo_excelencia`, `pontos_equipe_minimos`, `pernas_ativas_minimas`, `vme_limite_percentual`).
+
+---
+
+#### 8. EcoPoints — Sistema de Gamificação & Loja de Benefícios Úteis (V11.0)
+
+O **EcoPoints** é o mecanismo de gamificação interna do aplicativo do consultor. São pontos virtuais acumulados automaticamente a cada venda realizada (pessoal ou de equipe), que podem ser trocados por **benefícios úteis de baixo custo / custo marginal zero** na Loja do PWA. Os EcoPoints **NÃO são dinheiro** — são uma moeda de engajamento que desbloqueia vantagens operacionais e de marca.
+
+##### **Conversão e Validade**
+- **Taxa de Conversão:** 100 EcoPoints = R$ 1,00 em benefícios digitais.
+- **Validade:** Expiram em 31/12 do ano vigente (ciclo anual de resgate). Saldo não resgatado é zerado automaticamente.
+
+##### **Classificação VME dos EcoPoints**
+- **EcoPoints Pessoais (0% VME — 100% Livres):** Acumulados por vendas diretas pessoais do consultor. Sem nenhuma trava ou restrição.
+- **EcoPoints de Equipe (40% VME):** Acumulados por vendas realizadas pela equipe subordinada na árvore MMN. Validados pela RPC `validar_acumulo_ecopoints_vme()`, onde no máximo 40% dos pontos de equipe podem vir de uma única perna direta.
+
+**RPC PostgreSQL:** `validar_acumulo_ecopoints_vme(p_profile_id UUID, p_pontos_pessoais INT, p_pontos_equipe_brutos INT, p_vme_limite NUMERIC DEFAULT 40.0)` → Retorna `pontos_pessoais_validos INT`, `pontos_equipe_validos INT`, `total_ecopoints INT`.
+
+##### **Os 12 Benefícios Úteis de Baixo Custo / Custo Marginal Zero (Organizados em 4 Categorias)**
+
+###### **Categoria A — CAMPO (Ferramentas de Trabalho do Dia-a-Dia)**
+| # | Benefício | Custo EP | Descrição |
+| :---: | :--- | :---: | :--- |
+| 1 | 🚗 Voucher Combustível / Uber (R$ 50) | 5.000 EP | Vale para deslocamento até leads e obras |
+| 2 | 🛣️ Tag de Pedágio Mensal (Sem Parar) | 3.000 EP | Crédito no app Sem Parar para rotas de visita |
+| 3 | 📱 Chip 5G 10GB Dados (30 dias) | 2.000 EP | Chip de dados para trabalho de campo sem Wi-Fi |
+
+###### **Categoria B — KIT MARCA (Identidade Visual & Pertencimento)**
+| # | Benefício | Custo EP | Descrição |
+| :---: | :--- | :---: | :--- |
+| 4 | 👕 Kit Marca (Polo + Boné + Mochila Esol) | 8.000 EP | Kit completo de identidade visual da marca |
+| 5 | 📒 Planner Executivo Anual Esol | 4.000 EP | Agenda premium com logomarca para reuniões |
+| 6 | 🔧 Cupom Hardware Store (R$ 100) | 10.000 EP | Crédito em lojas de ferramentas para campo |
+
+###### **Categoria C — ALAVANCAGEM (Ferramentas de Produtividade Digital)**
+| # | Benefício | Custo EP | Descrição |
+| :---: | :--- | :---: | :--- |
+| 7 | 💳 Cartão NFC Digital Premium | 6.000 EP | Cartão inteligente para networking em eventos |
+| 8 | 📍 Destaque de Leads no Mapa (30 dias) | 7.000 EP | Selo de prioridade no mapa de leads próximos |
+| 9 | 🏗️ Curso B2B de Usinas Solares | 15.000 EP | Acesso ao módulo avançado da Esol Academy |
+
+###### **Categoria D — CAPACITAÇÃO VIP (Exclusividade & Networking)**
+| # | Benefício | Custo EP | Descrição |
+| :---: | :--- | :---: | :--- |
+| 10 | 🎓 Mentoria C-Level 1h (Diretoria Esol) | 20.000 EP | Sessão individual com diretor da Esol |
+| 11 | 🏟️ Ingresso Convenção Nacional VIP | 25.000 EP | Acesso premium à convenção anual da rede |
+| 12 | 🌍 Programa de Intercâmbio Técnico | 50.000 EP | Visita técnica a usinas ou fábricas nacionais |
+
+**Tabela SQL:** `public.mmn_selos_vendedores` (contém os dados de classificação dos 21 Selos nos 7 Grupos com 0% VME).
+
+---
+
+#### 9. Componentes PWA do Consultor & Painel Admin — Implementados no CICLO 10 (V11.0)
+
+A tabela a seguir consolida todos os componentes de interface (React/TypeScript) criados e atualizados no CICLO 10 para suportar a arquitetura V11.0 de Duas Trilhas:
+
+| Componente | Caminho no Projeto | Função |
+| :--- | :--- | :--- |
+| **ConsultantCareerGoalWidget** | `src/pages/consultant/ConsultantCareerGoalWidget.tsx` | Widget dual em abas: Aba Vendas Diretas (L1-L21 / 0% VME) vs Aba Liderança (A1-A9 / 40% VME) |
+| **ConsultantNetworkLegFilter** | `src/pages/consultant/ConsultantNetworkLegFilter.tsx` | Monitor de pernas de equipe focado nos Graus A1-A9 com selo visual de Alerta de Teto VME 40% por perna |
+| **ConsultantEcoPointsBalance** | `src/pages/consultant/ConsultantEcoPointsBalance.tsx` | Saldo consolidado discriminando EcoPoints Pessoais (0% VME) vs EcoPoints de Equipe (40% VME) |
+| **ConsultantEcoPointsRank** | `src/pages/consultant/ConsultantEcoPointsRank.tsx` | Card do Pool de 4% de Produtividade Direta (PIX) + Loja dos 12 Benefícios em 4 abas com modal de resgate |
+| **MMNBonusSimulator** | `src/components/admin/MMNBonusSimulator.tsx` | Simulador corporativo admin do Fundo de 4% e validador VME 40% para Graus A1-A9 |
+| **AdminE2ESalesCommissionRunner** | `src/pages/admin/AdminE2ESalesCommissionRunner.tsx` | Suíte automatizada de testes E2E validando os 6 cenários de comissões e qualificação |
+| **AdminGoLiveCertifier** | `src/pages/admin/AdminGoLiveCertifier.tsx` | Certificador oficial de Go-Live V11.0 com score de 100/100 |
+
+**Migração SQL associada:** `supabase/migrations/20260726000029_28_selos_grupos_lideranca.sql`
 
 ---
 
