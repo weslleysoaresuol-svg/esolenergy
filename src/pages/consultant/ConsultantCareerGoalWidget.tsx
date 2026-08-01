@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EsolBrandmarkGliph } from "@/components/brand/EsolBrandmarkGliph";
 
 export interface SalesSealData {
   groupName: string; // 'TERRA', 'ÁGUA', 'AR', 'FOGO', 'ASTROS', 'FENÔMENOS', 'CONQUISTADORES'
@@ -83,8 +84,9 @@ export function ConsultantCareerGoalWidget() {
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
-            <Crown className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL CAREER GOAL V11.0</span>
+            <EsolBrandmarkGliph size={28} badgeColor="amber" />
+            <Crown className="h-5 w-5" />
+            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL CAREER GOAL</span>
           </div>
           <h1 className="text-xl font-black tracking-tight text-white">Central de Qualificação & Carreira</h1>
           <p className="text-xs text-slate-400">Trilha Dual: Vendas Diretas Pessoais vs Liderança MMN</p>
