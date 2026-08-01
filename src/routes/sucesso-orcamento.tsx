@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, MessageCircle, ArrowLeft, Sun, ShieldCheck, Sparkles, Clock, Calendar, Check, Loader2 } from "lucide-react";
-import logo from "@/assets/esol-logo.svg";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -278,7 +278,7 @@ function SucessoOrcamento() {
       {/* Header com Logotipo */}
       <header className="relative z-10 w-full max-w-6xl mx-auto px-6 py-4 flex justify-center sm:justify-start items-center">
         <Link to="/" className="transition hover:opacity-90">
-          <img src={logo} alt="ESOL Energy" className="h-12 sm:h-14 w-auto" />
+          <EsolLogoPrimary width={220} height={55} showTagline={false} />
         </Link>
       </header>
 
