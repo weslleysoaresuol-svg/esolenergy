@@ -1,4 +1,4 @@
-# 🗺️ Mapa Completo do Ecossistema Esol Energy (v12 — Definitivo com Blindagem Anti-Fraude, Escalabilidade & Governança)
+# 🗺️ Mapa Completo do Ecossistema Esol Energy (v13 — Definitivo com Arquitetura de Branding Global, Logo Suite SVG & Design System EnergTech Enterprise)
 
 > Documento oficial de engenharia, arquitetura de negócios, conformidade legal, engenharia financeira e especificação técnica do ecossistema Esol Energy.
 > Este documento é o mapa de construção unificado e serve como referência absoluta para todas as implementações de código.
@@ -1317,6 +1317,55 @@ Com base na **Auditoria Crítica Exaustiva do MMN V11.0** (12 dimensões de risc
 | **36L** | `mapa_completo` + `AdminE2ESalesCommissionRunner.tsx` + `AdminGoLiveCertifier.tsx` | **Go-Live V12.0:** Documentação, 4 novos cenários E2E (anti-stacking, quarentena, carência, parking) e certificação final. |
 
 ---
+
+#### 11. Arquitetura de Branding Global, Logo Suite SVG & Design System EnergTech Enterprise — CICLO 12 (V13.0)
+
+O **CICLO 12** estabelece a identidade de marca corporativa de padrão internacional da Esol Energy, no nível das maiores EnergTechs mundiais (Tesla Energy, Enphase, SolarEdge e Octopus Energy). O ciclo engloba 32 planos atômicos divididos em 5 sub-ciclos:
+
+##### **Sub-Ciclo 12A — IDENTIDADE DE MARCA & LOGO SUITE VETORIAL (Planos 37A a 37G)**
+- **37A:** Componente React SVG `<EsolLogoPrimary.tsx>` em `src/components/brand/` (Assinatura primária horizontal com lettering exclusivo e glifo solar em SVG nativo responsivo).
+- **37B:** Componente React SVG `<EsolLogoNegative.tsx>` em `src/components/brand/` (Assinatura em vetor para fundos escuros e Dark Mode Absoluto com iluminação HSL).
+- **37C:** Componente React SVG `<EsolBrandmarkGliph.tsx>` em `src/components/brand/` (Glifo solar isolado com corte de raio quântico para favicons, PWA app icons e avatares).
+- **37D:** Componente React SVG `<EsolLogoMonochrome.tsx>` em `src/components/brand/` (Assinatura vetorial monocromática pura para gravações a laser e documentos fiscais).
+- **37E:** Componente React SVG `<EsolLogoCyberTech.tsx>` em `src/components/brand/` (Logo animada em Framer Motion com feixes de iluminação solar e pulsação de fótons).
+- **37F:** Suíte de Favicons e Web Manifest Assets em `public/` (`favicon.svg`, `favicon.png`, `manifest.json` com marca V13.0).
+- **37G:** Módulo de Configuração de Marca (`src/config/brandConfig.ts`) contendo a matriz oficial de slogans, paleta HSL e regras de aplicação.
+
+##### **Sub-Ciclo 12B — REFORMA VISUAL DA LANDING PAGE & MARCOMM (Planos 37H a 37N)**
+- **37H:** Header Global & Navegação na Landing Page (`src/routes/index.tsx` & `src/routes/__root.tsx`) com nova logo SVG e slogan primário.
+- **37I:** Hero Section da Landing Page com slogan primário *"A Revolução da Sua Soberania Energética"*, efeito glassmorphism e iluminação quântica.
+- **37J:** Seção de Recursos & Soluções com slogans segmentados (B2C Residencial: *"Transforme a Luz do Sol em Liberdade Financeira"*, B2B Empresarial: *"Inteligência Energética de Alta Performance"*).
+- **37K:** Simulador Solar da Landing Page atualizado com tokens EnergTech V13.0.
+- **37L:** Depoimentos, Certificações de Confiança e Parceiros no Rodapé.
+- **37M:** Página de Confirmação de Orçamento (`src/routes/sucesso-orcamento.tsx`).
+- **37N:** Visualizador de Proposta Comercial (`src/routes/proposta.$codigo.tsx`).
+
+##### **Sub-Ciclo 12C — REFORMA VISUAL DO PWA DO CONSULTOR (Planos 37O a 37U)**
+- **37O:** Header do PWA do Consultor (`ConsultantDashboardHome.tsx`) com nova logo e slogan de vendas diretas (*"Conectando Pessoas. Multiplicando Conquistas."*).
+- **37P:** Onboarding do Consultor (`ConsultantOnboardingPage.tsx`) com vídeo de treinamento e marca V13.0.
+- **37Q:** Termos de Credenciamento (`ConsultantTermsAcceptance.tsx`) com cabeçalho oficial Esol Sign.
+- **37R:** Widget Dual de Carreira (`ConsultantCareerGoalWidget.tsx`) com insígnias EnergTech renovadas.
+- **37S:** Monitor de Pernas de Equipe (`ConsultantNetworkLegFilter.tsx`) com tags de marca V13.0.
+- **37T:** Saldo & Extrato de EcoPoints (`ConsultantEcoPointsBalance.tsx`) com marca d'água vetorial.
+- **37U:** Loja dos 12 Benefícios (`ConsultantEcoPointsRank.tsx`) com cartões promocionais renovados.
+
+##### **Sub-Ciclo 12D — REFORMA VISUAL DO PAINEL ADMINISTRATIVO & GOVERNANÇA (Planos 37V a 37Z)**
+- **37V:** Sidebar Administrativa (`src/components/admin/AdminSidebar.tsx`) com nova logo CyberTech.
+- **37W:** Header do Layout Admin (`src/components/admin/AdminLayout.tsx`).
+- **37X:** Data Room & Governança (`src/pages/admin/DataRoomGovernance.tsx`).
+- **37Y:** Overhead Health Dashboard (`src/pages/admin/OverheadHealthDashboard.tsx`).
+- **37Z:** Simulador Corporativo Admin (`src/components/admin/MMNBonusSimulator.tsx`).
+
+##### **Sub-Ciclo 12E — FERRAMENTAS DE BRANDING & CERTIFICAÇÃO (Planos 38A a 38F)**
+- **38A:** Termômetro de Margem Admin (`src/components/admin/AdminMarginCompressionThermometer.tsx`).
+- **38B:** Gestor de Custo Real EcoPoints (`src/components/admin/AdminEcoPointsCostManager.tsx`).
+- **38C:** Feed RBAC de Auditoria (`src/components/admin/AdminAuditLogFeed.tsx`).
+- **38D:** Suíte de Testes Automatizados E2E (`src/pages/admin/AdminE2ESalesCommissionRunner.tsx`).
+- **38E:** Certificador Oficial de Go-Live V13.0 (`src/pages/admin/AdminGoLiveCertifier.tsx`).
+- **38F:** Atualização da Documentação Mestre (`esol_master_construction_plan.md` & `mapa_completo_esol_energy.md` para V13.0).
+
+---
+
 
 
 ## 6. SIMULAÇÃO FINANCEIRA CONSOLIDADA
