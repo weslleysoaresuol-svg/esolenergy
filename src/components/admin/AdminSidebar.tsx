@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { EsolBrandmarkGliph } from "@/components/brand/EsolBrandmarkGliph";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export interface NavItem {
   title: string;
@@ -43,6 +45,7 @@ export const ADMIN_NAV_ITEMS: NavItem[] = [
   { title: "Pós-Vendas & O&M", href: "/admin/om", icon: Wrench },
   { title: "CRM & Leads Routing", href: "/admin/crm", icon: Users2 },
   { title: "Control Center Flags", href: "/admin/feature-flags", icon: SlidersHorizontal },
+  { title: "Brand Kit & Design System", href: "/admin/brand-kit", icon: SunMedium },
 ];
 
 export interface AdminSidebarProps {
@@ -63,18 +66,10 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
       {/* Brand Header */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-border/60">
         <Link to="/admin" className="flex items-center gap-3 group overflow-hidden">
-          <div className="h-9 w-9 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform glow-amber">
-            <SunMedium className="h-5 w-5 text-amber-400" />
-          </div>
-          {!collapsed && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col">
-              <span className="font-bold text-sm tracking-tight text-foreground flex items-center gap-1">
-                ESOL <span className="text-amber-400">ADMIN</span>
-              </span>
-              <span className="text-[10px] text-muted-foreground tracking-widest uppercase">
-                Admin Control Hub
-              </span>
-            </motion.div>
+          {collapsed ? (
+            <EsolBrandmarkGliph size={36} badgeColor="amber" />
+          ) : (
+            <EsolLogoPrimary width={160} height={40} showTagline={false} />
           )}
         </Link>
 
