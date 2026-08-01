@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EsolBrandmarkGliph } from "@/components/brand/EsolBrandmarkGliph";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export interface CertificateData {
   consultantName: string;
@@ -50,12 +52,9 @@ export function ConsultantAcademyCertificateModal() {
 
       <div className="w-full max-w-sm space-y-5 relative z-10">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
-            <Award className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL ACADEMY CERTIFICATE</span>
-          </div>
-          <h1 className="text-xl font-black tracking-tight text-white">Certificado de Conclusão</h1>
+        <div className="text-center space-y-2 flex flex-col items-center">
+          <EsolLogoPrimary width={180} height={45} showTagline={false} />
+          <h1 className="text-xl font-black tracking-tight text-white mt-1">Certificado de Conclusão</h1>
           <p className="text-xs text-slate-400">Chancela Oficial de Capacitação Comercial</p>
         </div>
 
@@ -65,9 +64,9 @@ export function ConsultantAcademyCertificateModal() {
           <div className="absolute inset-2 border border-amber-400/30 rounded-2xl pointer-events-none" />
 
           <CardContent className="p-6 space-y-5 text-center relative z-10">
-            {/* Watermark Sun Logo */}
-            <div className="mx-auto h-14 w-14 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shadow-lg glow-amber">
-              <Sun className="h-8 w-8 animate-spin-slow" />
+            {/* Watermark Monogram Gliph eS */}
+            <div className="flex justify-center">
+              <EsolBrandmarkGliph size={56} badgeColor="amber" />
             </div>
 
             <div className="space-y-1">
