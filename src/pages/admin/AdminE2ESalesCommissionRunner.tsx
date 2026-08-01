@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export interface PipelineStepItem {
   stepNumber: number;
@@ -105,6 +106,14 @@ const MOCK_PIPELINE_STEPS: PipelineStepItem[] = [
     status: "success",
     hashOrDetail: "EcoPoints Pessoais: 2.750 (0% VME) | Equipe: 8.500 (40% VME)",
   },
+  {
+    stepNumber: 10,
+    title: "Validação de Identidade Visual & Suíte de Logos V13.2",
+    description: "Verificação da Suíte de 7 Logos SVG, brandConfig.ts, favicon.svg e integridade visual HSL",
+    latencyMs: 35,
+    status: "success",
+    hashOrDetail: "Homologado 100%: 7 Componentes React SVG + Manual Markdown V13.2",
+  },
 ];
 
 export function AdminE2ESalesCommissionRunner() {
@@ -136,17 +145,10 @@ export function AdminE2ESalesCommissionRunner() {
 
       <div className="max-w-2xl mx-auto space-y-6 relative z-10">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
-            <ShieldCheck className="h-6 w-6" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">
-              E2E SUITE V12.0 — ANTI-FRAUDE & GOVERNANÇA
-            </span>
-          </div>
-          <h1 className="text-2xl font-black tracking-tight text-white">Runner de Testes Automatizados E2E</h1>
-          <p className="text-xs text-slate-400">
-            Homologação de Pipeline: Anti-Stacking, Parking, Quarentena, Carência & VME
-          </p>
+        <div className="text-center space-y-2 flex flex-col items-center">
+          <EsolLogoPrimary width={200} height={50} showTagline={false} />
+          <h1 className="text-xl font-black tracking-tight text-white mt-1">Executor E2E de Vendas, Comissões & Marca V13.2</h1>
+          <p className="text-xs text-slate-400">Validação End-to-End da Trilha Completa com Validador de Identidade Visual</p>
         </div>
 
         {/* Action & Run Card */}
