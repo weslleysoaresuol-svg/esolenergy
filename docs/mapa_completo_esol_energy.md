@@ -1,4 +1,4 @@
-# 🗺️ Mapa Completo do Ecossistema Esol Energy (v11 — Definitivo com Soberania de Vendas, Liderança MMN A1-A9 & EcoPoints)
+# 🗺️ Mapa Completo do Ecossistema Esol Energy (v12 — Definitivo com Blindagem Anti-Fraude, Escalabilidade & Governança)
 
 > Documento oficial de engenharia, arquitetura de negócios, conformidade legal, engenharia financeira e especificação técnica do ecossistema Esol Energy.
 > Este documento é o mapa de construção unificado e serve como referência absoluta para todas as implementações de código.
@@ -1285,6 +1285,38 @@ A tabela a seguir consolida todos os componentes de interface (React/TypeScript)
 
 ---
 
+#### 10. Blindagem Anti-Fraude, Escalabilidade & Governança — CICLO 11 (V12.0)
+
+Com base na **Auditoria Crítica Exaustiva do MMN V11.0** (12 dimensões de risco, score geral 8.2/10), o CICLO 11 implementa 12 planos atômicos de blindagem organizados em 3 sub-ciclos:
+
+##### **Sub-Ciclo 11A — ANTI-FRAUDE DE REDE (Prioridade Alta 🔴)**
+
+| Plano | Implementação | Descrição |
+| :---: | :--- | :--- |
+| **36A** | `20260801000030_29_anti_stacking.sql` | **Regra Anti-Stacking:** Função PostgreSQL `verificar_anti_stacking()` que cruza `buyer_profile_id` com `path_mmn` (ltree) do vendedor. Se o comprador for ascendente/descendente até N3 do vendedor, pontos de selo e EcoPoints são anulados (venda e comissão ocorrem normalmente). |
+| **36B** | `20260801000031_30_anti_parking_detection.sql` | **Detector de Parking:** View materializada `mv_suspicious_parking_pairs` que identifica consultores na mesma sub-árvore com mesmo CEP, chave PIX, agência/conta ou telefone. Gera alertas em `audit_fraud_alerts`. |
+| **36C** | `20260801000032_31_quarentena_reconexao.sql` | **Quarentena 90 dias:** Trigger `trg_quarentena_reconexao` que bloqueia reconexão de cliente recorrente (GD/MLE) pelo mesmo consultor dentro de 90 dias após cancelamento. |
+
+##### **Sub-Ciclo 11B — PROTEÇÃO FINANCEIRA & ESCALABILIDADE (Prioridade Média 🟡)**
+
+| Plano | Implementação | Descrição |
+| :---: | :--- | :--- |
+| **36D** | `20260801000033_32_carencia_saque.sql` | **Carência de 30 dias:** Campo `data_liberacao_saque` no `historico_comissoes_epc` com `created_at + 30 days` para Motor 1. Motor 2 libera imediatamente. |
+| **36E** | `AdminMarginCompressionThermometer.tsx` | **Termômetro de Margem:** Widget admin que exibe margem realizada vs piso de 20%. Alerta amarelo < 22%, vermelho < 20%. |
+| **36F** | `20260801000034_33_batch_overrides.sql` | **Batch Processing:** Tabela `overrides_batch_queue` com particionamento mensal e `pg_cron` para processamento noturno de overrides N1-N7 em escala 100k+. Índice GiST no `path_mmn`. |
+
+##### **Sub-Ciclo 11C — GOVERNANÇA, UX & COMPLIANCE (Prioridade Média-Baixa 🟡🟢)**
+
+| Plano | Implementação | Descrição |
+| :---: | :--- | :--- |
+| **36G** | `ConsultantNetworkTree.tsx` | **Visibilidade limitada:** Árvore MMN visível até 3 níveis (5 para A3+, completa para Super Admin). RPC `obter_arvore_limitada()`. |
+| **36H** | `AdminEcoPointsCostManager.tsx` | **Custo real EcoPoints:** Tabela editável dos 12 benefícios com custo real vs valor EP. Alerta se custo_real > valor_ep. |
+| **36I** | `ConsultantCareerGoalWidget.tsx` + `MMNNetworkTreePage.tsx` | **Status Ativo/Inativo:** Campo `selo_status` com trigger `trg_selo_atividade` (inativo se 0 vendas em 6 meses). Badge visual "Ativo ☀️" vs "Inativo 🌑". |
+| **36J** | `AdminAuditLogFeed.tsx` + RLS | **RBAC Ledger:** Nível 5 read-only no `points_ledger`. Ajuste manual exige co-aprovação do Nível 3 com justificativa no `audit_log`. |
+| **36K** | `ConsultantTermsAcceptance.tsx` + Templates | **Terminologia regulatória:** Substituição de "MMN" por "Programa de Vendas Diretas com Bônus de Liderança". Cláusula de qualificação por vendas. Política anti-sócio na árvore. |
+| **36L** | `mapa_completo` + `AdminE2ESalesCommissionRunner.tsx` + `AdminGoLiveCertifier.tsx` | **Go-Live V12.0:** Documentação, 4 novos cenários E2E (anti-stacking, quarentena, carência, parking) e certificação final. |
+
+---
 
 
 ## 6. SIMULAÇÃO FINANCEIRA CONSOLIDADA
