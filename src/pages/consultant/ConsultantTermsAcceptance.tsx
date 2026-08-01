@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export function ConsultantTermsAcceptance() {
   const [expandedSection, setExpandedSection] = React.useState<string | null>("tax");
@@ -39,13 +40,10 @@ export function ConsultantTermsAcceptance() {
 
       <div className="w-full max-w-sm space-y-6 relative z-10">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 p-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
-            <Sun className="h-6 w-6 animate-spin-slow" />
-            <span className="font-extrabold text-sm tracking-wider uppercase font-mono">ESOL ENERGY PWA</span>
-          </div>
-          <h1 className="text-xl font-black tracking-tight text-white">Credenciamento de Vendas Diretas</h1>
-          <p className="text-xs text-slate-400">Programa de Vendas Diretas com Bônus de Liderança V12.0</p>
+        <div className="text-center space-y-2 flex flex-col items-center">
+          <EsolLogoPrimary width={200} height={50} showTagline={false} />
+          <h1 className="text-xl font-black tracking-tight text-white mt-1">Credenciamento de Vendas Diretas</h1>
+          <p className="text-xs text-slate-400">Programa de Vendas Diretas com Bônus de Liderança V13.2</p>
         </div>
 
         {/* Main Card Container */}
