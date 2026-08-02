@@ -12,31 +12,7 @@ import logoNegative from "@/assets/esol-logo-negative.svg";
 import heroHouse from "@/assets/hero-house.jpg";
 
 export const Route = createFileRoute("/auth")({
-  loader: async () => {
-    if (typeof window === "undefined") {
-      try {
-        const fs = await import("fs");
-        const path = await import("path");
-        
-        const sourceLogo = path.join(process.cwd(), "public", "brand-kit", "2. Imagens-PNG", "esol-logo-horizontal.png");
-        const destLogo = path.join(process.cwd(), "src", "assets", "esol-logo.png");
-        if (fs.existsSync(sourceLogo)) {
-          fs.copyFileSync(sourceLogo, destLogo);
-          console.log("⚡ [ESOL SSR] Logo copiada com sucesso!");
-        }
-
-        const sourceFav = path.join(process.cwd(), "public", "brand-kit", "2. Imagens-PNG", "esol-logo-brandmark.png");
-        const destFav = path.join(process.cwd(), "public", "favicon.png");
-        if (fs.existsSync(sourceFav)) {
-          fs.copyFileSync(sourceFav, destFav);
-          console.log("⚡ [ESOL SSR] Favicon copiado com sucesso!");
-        }
-      } catch (e) {
-        console.error("❌ [ESOL SSR] Erro na cópia de mídias:", e);
-      }
-    }
-    return {};
-  },
+  loader: async () => ({}),
   head: () => ({ meta: [{ title: "Acesso — ESOL Energy" }] }),
   component: AuthPage,
 });

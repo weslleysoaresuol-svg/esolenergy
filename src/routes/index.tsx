@@ -23,31 +23,7 @@ const FAQ_ITEMS = [
 ];
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
-    if (typeof window === "undefined") {
-      try {
-        const fs = await import("fs");
-        const path = await import("path");
-        
-        const sourceLogo = path.join(process.cwd(), "public", "brand-kit", "2. Imagens-PNG", "esol-logo-horizontal.png");
-        const destLogo = path.join(process.cwd(), "src", "assets", "esol-logo.png");
-        if (fs.existsSync(sourceLogo)) {
-          fs.copyFileSync(sourceLogo, destLogo);
-          console.log("⚡ [ESOL SSR Index] Logo copiada com sucesso!");
-        }
-
-        const sourceFav = path.join(process.cwd(), "public", "brand-kit", "2. Imagens-PNG", "esol-logo-brandmark.png");
-        const destFav = path.join(process.cwd(), "public", "favicon.png");
-        if (fs.existsSync(sourceFav)) {
-          fs.copyFileSync(sourceFav, destFav);
-          console.log("⚡ [ESOL SSR Index] Favicon copiado com sucesso!");
-        }
-      } catch (e) {
-        console.error("❌ [ESOL SSR Index] Erro ao copiar:", e);
-      }
-    }
-    return {};
-  },
+  loader: async () => ({}),
   head: () => ({
     meta: [
       { title: "ESOL Energy — Reduza sua conta de luz em até 95% com energia solar" },
