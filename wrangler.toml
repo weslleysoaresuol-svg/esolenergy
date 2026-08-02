@@ -2,9 +2,6 @@ name = "esolenergy-pwa"
 compatibility_date = "2026-07-30"
 pages_build_output_dir = "./dist"
 
-[site]
-bucket = "./dist"
-
 # Mapeamento Oficial de Domínios .com.br (Brasil):
 # - esolenergy.com.br (Website Institucional / Apex Root)
 # - www.esolenergy.com.br (Redirecionamento WWW)
