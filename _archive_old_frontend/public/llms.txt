@@ -1,9 +1,0 @@
-# ESOL Energy
-
-> Engenharia solar fotovoltaica com simulador inteligente: calcule sua economia em 30 segundos e receba uma proposta gratuita para sistemas residenciais, comerciais, industriais e rurais.
-
-A ESOL Energy é referência em energia solar no Brasil, oferecendo projeto, homologação, instalação e financiamento facilitado de sistemas fotovoltaicos premium.
-
-## Pages
-
-- [Home](/): Simulador de economia, portfólio de projetos e formulário para receber uma proposta gratuita.
