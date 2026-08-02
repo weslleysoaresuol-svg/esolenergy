@@ -1,4 +1,4 @@
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -55,9 +55,7 @@ copyEsolAssets();
 
 export default defineConfig({
   plugins: [
-    tanstackStart({
-      server: { entry: "server" },
-    }),
+    TanStackRouterVite(),
     react(),
     tailwindcss(),
     tsconfigPaths(),
@@ -71,6 +69,10 @@ export default defineConfig({
       },
     },
   ],
+  build: {
+    outDir: "dist/client",
+    emptyOutDir: true,
+  },
   resolve: {
     dedupe: ["react", "react-dom", "@tanstack/react-router"],
   },
