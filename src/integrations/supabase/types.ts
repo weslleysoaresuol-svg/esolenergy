@@ -35,6 +35,93 @@ export type Database = {
         }
         Relationships: []
       }
+      banking_faturas: {
+        Row: {
+          id: string
+          cliente_id: string | null
+          contrato_id: string | null
+          valor_fatura: number
+          pagamento_liquidado: boolean
+          liquidado_em: string | null
+          gateway_tx_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          cliente_id?: string | null
+          contrato_id?: string | null
+          valor_fatura: number
+          pagamento_liquidado?: boolean
+          liquidado_em?: string | null
+          gateway_tx_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          cliente_id?: string | null
+          contrato_id?: string | null
+          valor_fatura?: number
+          pagamento_liquidado?: boolean
+          liquidado_em?: string | null
+          gateway_tx_id?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      ledger_lancamentos: {
+        Row: {
+          id: string
+          fatura_id: string | null
+          valor: number
+          tipo: string
+          hash_sha256: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          fatura_id?: string | null
+          valor: number
+          tipo: string
+          hash_sha256: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          fatura_id?: string | null
+          valor?: number
+          tipo?: string
+          hash_sha256?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      overrides_batch_queue: {
+        Row: {
+          id: string
+          node_path: string
+          override_pct: number
+          status: string
+          created_at: string
+          processed_at: string | null
+        }
+        Insert: {
+          id?: string
+          node_path: string
+          override_pct: number
+          status?: string
+          created_at?: string
+          processed_at?: string | null
+        }
+        Update: {
+          id?: string
+          node_path?: string
+          override_pct?: number
+          status?: string
+          created_at?: string
+          processed_at?: string | null
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           area_telhado: number | null
@@ -1300,6 +1387,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      confirmar_liquidacao_pagamento: {
+        Args: { p_fatura_id: string; p_gateway_tx_id?: string; p_valor_pago?: number }
+        Returns: Json
+      }
       consume_invite: { Args: { _token: string }; Returns: boolean }
       get_cotacao_publica: { Args: { _codigo: string }; Returns: Json }
       get_financiamento_publico: { Args: { _codigo: string }; Returns: Json }
@@ -1316,6 +1407,14 @@ export type Database = {
       proposta_registrar_evento: {
         Args: { _codigo: string; _ip?: string; _tipo: string; _ua?: string }
         Returns: undefined
+      }
+      reconciliar_gateway_ledger: {
+        Args: { p_dias_janela?: number }
+        Returns: Json
+      }
+      reverter_comissoes_inadimplencia: {
+        Args: { p_fatura_id: string; p_motivo?: string }
+        Returns: Json
       }
       validate_invite: {
         Args: { _token: string }

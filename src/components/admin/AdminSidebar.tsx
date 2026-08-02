@@ -33,19 +33,22 @@ export interface NavItem {
 
 export const ADMIN_NAV_ITEMS: NavItem[] = [
   { title: "Visão Geral", href: "/admin", icon: LayoutDashboard },
+  { title: "Segurança Financeira & Caixa", href: "/admin/cash-safety", icon: ShieldCheck, badge: "V14.0" },
   { title: "DRE Financeiro", href: "/admin/dre", icon: TrendingUp },
   { title: "Overhead & OPEX", href: "/admin/overhead", icon: PieChart },
-  { title: "Data Room Governança", href: "/admin/dataroom", icon: ShieldCheck },
+  { title: "Data Room Governança", href: "/admin/data-room", icon: ShieldCheck },
   { title: "Expansão Global", href: "/admin/expansion", icon: Globe2 },
   { title: "Ledger Contábil", href: "/admin/ledger", icon: BookOpenCheck },
   { title: "BaaS Banking & PIX", href: "/admin/banking", icon: Landmark },
   { title: "Auditoria Fiscal eNotas", href: "/admin/fiscal", icon: FileCheck2 },
   { title: "Auto-Faturamento & RPA", href: "/admin/partner-tax", icon: Receipt },
-  { title: "Engenharia EPC & Logística", href: "/admin/epc", icon: Truck },
+  { title: "Engenharia EPC & Logística", href: "/admin/solar-epc", icon: Truck },
   { title: "Pós-Vendas & O&M", href: "/admin/om", icon: Wrench },
   { title: "CRM & Leads Routing", href: "/admin/crm", icon: Users2 },
+  { title: "Rede MMN & Unilevel", href: "/admin/mmn-tree", icon: Users2 },
   { title: "Control Center Flags", href: "/admin/feature-flags", icon: SlidersHorizontal },
   { title: "Brand Kit & Design System", href: "/admin/brand-kit", icon: SunMedium },
+  { title: "Certificação Go-Live", href: "/admin/go-live", icon: ShieldCheck, badge: "V15.0" },
 ];
 
 export interface AdminSidebarProps {

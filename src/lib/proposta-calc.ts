@@ -307,7 +307,11 @@ export function calcularPrecoMinimo(
   p: Parametros
 ): { preco_minimo: number; breakdown: BreakdownCustos } {
   const d = PARAMETROS_DEFAULT;
-  const lucro_alvo = p.lucro_alvo_pct ?? d.lucro_alvo_pct;
+  // 🔒 TRAVA DE MARGEM PISO 20.0% INVIOLÁVEL (DIRETRIZ SOBERANA DA PRESIDÊNCIA V14.0):
+  // Nenhuma proposta comercial pode ter margem líquida alvo inferior a 20.0% (0.20).
+  const MARGEM_PISO_MINIMA = 0.20;
+  const lucro_alvo_raw = p.lucro_alvo_pct ?? d.lucro_alvo_pct;
+  const lucro_alvo = Math.max(MARGEM_PISO_MINIMA, lucro_alvo_raw);
   const comissao_pct = ehAdmin ? 0 : comissaoParceiroPct;
 
   // Custos fixos conhecidos

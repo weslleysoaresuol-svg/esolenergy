@@ -60,11 +60,11 @@ const MOCK_NOTIFICATIONS: NotificationItem[] = [
 ];
 
 export interface AdminNotificationCenterProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export function AdminNotificationCenter({ isOpen, onClose }: AdminNotificationCenterProps) {
+export function AdminNotificationCenter({ isOpen = true, onClose = () => {} }: AdminNotificationCenterProps) {
   const [notifications, setNotifications] = React.useState<NotificationItem[]>(MOCK_NOTIFICATIONS);
   const [activeTab, setActiveTab] = React.useState<"todas" | "financeiro" | "engenharia" | "seguranca">("todas");
 

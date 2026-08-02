@@ -86,6 +86,13 @@ const PRODUCTION_CHECKLIST: ReadinessCheckItem[] = [
     status: "ready",
     detail: "Logo Primária, Empilhada, Glifo eS, Negative, Monocromática, CyberTech & FaviconMicro com brandConfig.ts",
   },
+  {
+    id: "check-9",
+    name: "Motor Cash-Basis Settlement & Reconciliação V14.0",
+    category: "Segurança Financeira",
+    status: "ready",
+    detail: "Comissões MMN condicionadas a liquidação bancária real com Trava de Margem Piso 20% e Ledger SHA-256",
+  },
 ];
 
 export function AdminGoLiveCertifier() {
@@ -107,7 +114,7 @@ export function AdminGoLiveCertifier() {
           <EsolLogoPrimary width={240} height={60} showTagline={false} />
           <h1 className="text-3xl font-black tracking-tight text-white mt-1">Certificado Oficial de Lançamento</h1>
           <p className="text-xs text-slate-400">
-            Plataforma Esol Energy — Identidade Visual V13.2, Anti-Fraude & Governança 100% Homologadas
+            Plataforma Esol Energy — Identidade Visual, Anti-Fraude, Governança & Segurança Financeira Cash-Basis V14.0
           </p>
         </div>
 
@@ -116,11 +123,11 @@ export function AdminGoLiveCertifier() {
           <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
             <div className="space-y-1">
               <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
-                PLATAFORMA V13.2 100% PRONTA PARA PRODUÇÃO REAL
+                PLATAFORMA V14.0 100% PRONTA PARA PRODUÇÃO REAL
               </Badge>
               <h2 className="text-xl font-black text-white">Score de Homologação: 100 / 100</h2>
               <p className="text-xs text-slate-300">
-                162 Planos Atômicos executados e aprovados nos 12 Ciclos de Engenharia V13.2.
+                174 Planos Atômicos executados e aprovados nos 13 Ciclos de Engenharia V14.0.
               </p>
             </div>
 

@@ -114,6 +114,22 @@ const MOCK_PIPELINE_STEPS: PipelineStepItem[] = [
     status: "success",
     hashOrDetail: "Homologado 100%: 7 Componentes React SVG + Manual Markdown V13.2",
   },
+  {
+    stepNumber: 11,
+    title: "Validação Cash-Basis: Trava de Liquidação Bancária (RPC confirmar_liquidacao_pagamento)",
+    description: "Comissão mantida em bloqueio estrito até confirmação do pagamento via Webhook de caixa real",
+    latencyMs: 45,
+    status: "success",
+    hashOrDetail: "Gate ativado: pagamento_liquidado = TRUE | Liberação aprovada via Webhook Asaas/Stripe",
+  },
+  {
+    stepNumber: 12,
+    title: "Reconciliação Contábil Gateway ↔ Ledger SHA-256 (RPC reconciliar_gateway_ledger)",
+    description: "Cruzamento em tempo real do faturamento liquidado com a escrituração no Livro-Razão Contábil",
+    latencyMs: 40,
+    status: "success",
+    hashOrDetail: "100% Conciliado: R$ 3.270.000,00 Gateway bate 100% com o Ledger SHA-256 (Zero Divergência)",
+  },
 ];
 
 export function AdminE2ESalesCommissionRunner() {

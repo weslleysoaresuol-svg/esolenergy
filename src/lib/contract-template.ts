@@ -3,7 +3,7 @@
 // LGPD (Lei 13.709/2018), Lei 9.427/96 e Lei 14.300/2022 (geração distribuída),
 // Lei 10.848/2004 e Resoluções ANEEL aplicáveis ao mercado livre de energia.
 
-export const CONTRATO_VERSAO = "1.0.0";
+export const CONTRATO_VERSAO = "15.0.0";
 
 export const EMPRESA = {
   razao: "ESOL ENERGY",
@@ -12,7 +12,7 @@ export const EMPRESA = {
 
 export function gerarContrato(parceiro: { nome: string; cpf: string }) {
   const data = new Date().toLocaleDateString("pt-BR");
-  return `CONTRATO DE PARCERIA COMERCIAL PARA CAPTAÇÃO E INDICAÇÃO DE CLIENTES — CONSULTORIA EM ENERGIA
+  return `CONTRATO DE PARCERIA COMERCIAL PARA CAPTAÇÃO E INDICAÇÃO DE CLIENTES — CONSULTORIA EM ENERGIA (VERSÃO V15.0 CASH-BASIS)
 
 Pelo presente instrumento particular, de um lado:
 
@@ -47,14 +47,15 @@ CLÁUSULA 4ª — DAS OBRIGAÇÕES DA EMPRESA
 4.1. São obrigações da EMPRESA:
 a) Disponibilizar ao PARCEIRO o portal, materiais institucionais, treinamentos e suporte comercial necessários à execução do objeto;
 b) Avaliar os leads encaminhados, conduzir a negociação técnica e comercial e formalizar contratos diretamente com os clientes;
-c) Pagar a remuneração devida ao PARCEIRO, conforme tabela de comissionamento, política comercial ou aditivo específico vigente, a ser comunicado por escrito;
+c) Pagar a remuneração devida ao PARCEIRO, estritamente sob a política CASH-BASIS, conforme tabela de comissionamento vigente;
 d) Manter confidencialidade sobre dados pessoais do PARCEIRO, observando a LGPD.
 
-CLÁUSULA 5ª — DA REMUNERAÇÃO
-5.1. A remuneração do PARCEIRO pelas indicações que resultarem em contratos efetivamente assinados e adimplidos pelos clientes finais será definida em tabela de comissionamento, política comercial vigente ou aditivo específico, comunicado por escrito pela EMPRESA.
-5.2. A remuneração somente será devida sobre negócios que atendam, cumulativamente, aos seguintes critérios: (i) lead cadastrado pelo PARCEIRO no portal antes de qualquer contato anterior do cliente com a EMPRESA; (ii) contrato assinado entre o cliente e a EMPRESA; (iii) cumprimento das obrigações financeiras pelo cliente.
-5.3. Em caso de cancelamento, distrato ou inadimplemento pelo cliente, a EMPRESA poderá realizar o estorno proporcional da comissão paga, mediante prévia comunicação.
-5.4. O PARCEIRO é o único responsável pelo recolhimento dos tributos e encargos incidentes sobre sua remuneração.
+CLÁUSULA 5ª — DA REMUNERAÇÃO CASH-BASIS, QUARENTENA E MARGEM PISO INVIOLÁVEL
+5.1. REGIME CASH-BASIS: A remuneração do PARCEIRO e os bônus da rede MMN/Unilevel serão liquidados EXCLUSIVAMENTE após a efetiva compensação financeira do pagamento do cliente final no gateway BaaS da EMPRESA e confirmação no Ledger Contábil SHA-256.
+5.2. CARÊNCIA DE 30 DIAS: Novos PARCEIROS cadastrados possuem carência de 30 (trinta) dias corridos a contar da data de aceite deste contrato para solicitação de saques de remuneração no ecossistema BaaS Banking.
+5.3. QUARENTENA DE INADIMPLÊNCIA (180 DIAS): Em caso de atraso, cancelamento, distrato, estorno ou inadimplemento pelo cliente final, o PARCEIRO e sua respectiva linha ascendente (uplines) entram em quarentena preventiva por 180 (cento e oitenta) dias, ficando a EMPRESA expressamente autorizada a efetuar o estorno ou compensação automática dos valores correspondentes nos saldos futuros.
+5.4. REGRA ANTI-STACKING: É vedada a sobreposição simultânea de comissões diretas com bônus de incentivo ou pools de premiação fora da matriz unilevel oficial, garantindo o teto financeiro de distribuição por transação.
+5.5. MARGEM PISO INVIOLÁVEL DE 20%: Em nenhuma hipótese qualquer desconto comercial ou comissionamento concedido poderá comprimir a margem de resultado da EMPRESA abaixo de 20% (vinte por cento) sobre o valor total do contrato, sendo o valor da proposta automaticamente reajustado pelo algoritmo da plataforma caso a margem piso seja atingida.
 
 CLÁUSULA 6ª — DA CONFIDENCIALIDADE E LGPD
 6.1. Todas as informações trocadas em razão deste contrato são consideradas confidenciais e não poderão ser divulgadas a terceiros, sob pena de responsabilização civil e criminal, inclusive nos termos do artigo 154 do Código Penal e dos artigos 186 e 927 do Código Civil.

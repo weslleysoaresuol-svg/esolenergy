@@ -56,17 +56,26 @@ import { Route as AppAgendaRouteImport } from './routes/app.agenda'
 import { Route as AdminWafRouteImport } from './routes/admin.waf'
 import { Route as AdminSolarEpcRouteImport } from './routes/admin.solar-epc'
 import { Route as AdminSecurityRouteImport } from './routes/admin.security'
+import { Route as AdminPartnerTaxRouteImport } from './routes/admin.partner-tax'
 import { Route as AdminOverheadRouteImport } from './routes/admin.overhead'
+import { Route as AdminOmRouteImport } from './routes/admin.om'
 import { Route as AdminMmnTreeRouteImport } from './routes/admin.mmn-tree'
+import { Route as AdminLedgerRouteImport } from './routes/admin.ledger'
 import { Route as AdminGoLiveRouteImport } from './routes/admin.go-live'
+import { Route as AdminFiscalRouteImport } from './routes/admin.fiscal'
+import { Route as AdminFeatureFlagsRouteImport } from './routes/admin.feature-flags'
+import { Route as AdminExpansionRouteImport } from './routes/admin.expansion'
 import { Route as AdminE2eSalesRouteImport } from './routes/admin.e2e-sales'
 import { Route as AdminE2eRunnerRouteImport } from './routes/admin.e2e-runner'
 import { Route as AdminE2eDetailsRouteImport } from './routes/admin.e2e-details'
 import { Route as AdminDreRouteImport } from './routes/admin.dre'
 import { Route as AdminDataRoomRouteImport } from './routes/admin.data-room'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminCloudflareRouteImport } from './routes/admin.cloudflare'
+import { Route as AdminCashSafetyRouteImport } from './routes/admin.cash-safety'
 import { Route as AdminBrandKitRouteImport } from './routes/admin.brand-kit'
+import { Route as AdminBankingRouteImport } from './routes/admin.banking'
 import { Route as AppPropostasIndexRouteImport } from './routes/app.propostas.index'
 import { Route as AppPedidosIndexRouteImport } from './routes/app.pedidos.index'
 import { Route as AppFinanciamentosIndexRouteImport } from './routes/app.financiamentos.index'
@@ -329,9 +338,19 @@ const AdminSecurityRoute = AdminSecurityRouteImport.update({
   path: '/security',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPartnerTaxRoute = AdminPartnerTaxRouteImport.update({
+  id: '/partner-tax',
+  path: '/partner-tax',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminOverheadRoute = AdminOverheadRouteImport.update({
   id: '/overhead',
   path: '/overhead',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOmRoute = AdminOmRouteImport.update({
+  id: '/om',
+  path: '/om',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminMmnTreeRoute = AdminMmnTreeRouteImport.update({
@@ -339,9 +358,29 @@ const AdminMmnTreeRoute = AdminMmnTreeRouteImport.update({
   path: '/mmn-tree',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLedgerRoute = AdminLedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGoLiveRoute = AdminGoLiveRouteImport.update({
   id: '/go-live',
   path: '/go-live',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFiscalRoute = AdminFiscalRouteImport.update({
+  id: '/fiscal',
+  path: '/fiscal',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFeatureFlagsRoute = AdminFeatureFlagsRouteImport.update({
+  id: '/feature-flags',
+  path: '/feature-flags',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExpansionRoute = AdminExpansionRouteImport.update({
+  id: '/expansion',
+  path: '/expansion',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminE2eSalesRoute = AdminE2eSalesRouteImport.update({
@@ -374,14 +413,29 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCrmRoute = AdminCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCloudflareRoute = AdminCloudflareRouteImport.update({
   id: '/cloudflare',
   path: '/cloudflare',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCashSafetyRoute = AdminCashSafetyRouteImport.update({
+  id: '/cash-safety',
+  path: '/cash-safety',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminBrandKitRoute = AdminBrandKitRouteImport.update({
   id: '/brand-kit',
   path: '/brand-kit',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBankingRoute = AdminBankingRouteImport.update({
+  id: '/banking',
+  path: '/banking',
   getParentRoute: () => AdminRoute,
 } as any)
 const AppPropostasIndexRoute = AppPropostasIndexRouteImport.update({
@@ -524,17 +578,26 @@ export interface FileRoutesByFullPath {
   '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/banking': typeof AdminBankingRoute
   '/admin/brand-kit': typeof AdminBrandKitRoute
+  '/admin/cash-safety': typeof AdminCashSafetyRoute
   '/admin/cloudflare': typeof AdminCloudflareRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-room': typeof AdminDataRoomRoute
   '/admin/dre': typeof AdminDreRoute
   '/admin/e2e-details': typeof AdminE2eDetailsRoute
   '/admin/e2e-runner': typeof AdminE2eRunnerRoute
   '/admin/e2e-sales': typeof AdminE2eSalesRoute
+  '/admin/expansion': typeof AdminExpansionRoute
+  '/admin/feature-flags': typeof AdminFeatureFlagsRoute
+  '/admin/fiscal': typeof AdminFiscalRoute
   '/admin/go-live': typeof AdminGoLiveRoute
+  '/admin/ledger': typeof AdminLedgerRoute
   '/admin/mmn-tree': typeof AdminMmnTreeRoute
+  '/admin/om': typeof AdminOmRoute
   '/admin/overhead': typeof AdminOverheadRoute
+  '/admin/partner-tax': typeof AdminPartnerTaxRoute
   '/admin/security': typeof AdminSecurityRoute
   '/admin/solar-epc': typeof AdminSolarEpcRoute
   '/admin/waf': typeof AdminWafRoute
@@ -608,17 +671,26 @@ export interface FileRoutesByTo {
   '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/banking': typeof AdminBankingRoute
   '/admin/brand-kit': typeof AdminBrandKitRoute
+  '/admin/cash-safety': typeof AdminCashSafetyRoute
   '/admin/cloudflare': typeof AdminCloudflareRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-room': typeof AdminDataRoomRoute
   '/admin/dre': typeof AdminDreRoute
   '/admin/e2e-details': typeof AdminE2eDetailsRoute
   '/admin/e2e-runner': typeof AdminE2eRunnerRoute
   '/admin/e2e-sales': typeof AdminE2eSalesRoute
+  '/admin/expansion': typeof AdminExpansionRoute
+  '/admin/feature-flags': typeof AdminFeatureFlagsRoute
+  '/admin/fiscal': typeof AdminFiscalRoute
   '/admin/go-live': typeof AdminGoLiveRoute
+  '/admin/ledger': typeof AdminLedgerRoute
   '/admin/mmn-tree': typeof AdminMmnTreeRoute
+  '/admin/om': typeof AdminOmRoute
   '/admin/overhead': typeof AdminOverheadRoute
+  '/admin/partner-tax': typeof AdminPartnerTaxRoute
   '/admin/security': typeof AdminSecurityRoute
   '/admin/solar-epc': typeof AdminSolarEpcRoute
   '/admin/waf': typeof AdminWafRoute
@@ -690,17 +762,26 @@ export interface FileRoutesById {
   '/consultant': typeof ConsultantRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sucesso-orcamento': typeof SucessoOrcamentoRoute
+  '/admin/banking': typeof AdminBankingRoute
   '/admin/brand-kit': typeof AdminBrandKitRoute
+  '/admin/cash-safety': typeof AdminCashSafetyRoute
   '/admin/cloudflare': typeof AdminCloudflareRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-room': typeof AdminDataRoomRoute
   '/admin/dre': typeof AdminDreRoute
   '/admin/e2e-details': typeof AdminE2eDetailsRoute
   '/admin/e2e-runner': typeof AdminE2eRunnerRoute
   '/admin/e2e-sales': typeof AdminE2eSalesRoute
+  '/admin/expansion': typeof AdminExpansionRoute
+  '/admin/feature-flags': typeof AdminFeatureFlagsRoute
+  '/admin/fiscal': typeof AdminFiscalRoute
   '/admin/go-live': typeof AdminGoLiveRoute
+  '/admin/ledger': typeof AdminLedgerRoute
   '/admin/mmn-tree': typeof AdminMmnTreeRoute
+  '/admin/om': typeof AdminOmRoute
   '/admin/overhead': typeof AdminOverheadRoute
+  '/admin/partner-tax': typeof AdminPartnerTaxRoute
   '/admin/security': typeof AdminSecurityRoute
   '/admin/solar-epc': typeof AdminSolarEpcRoute
   '/admin/waf': typeof AdminWafRoute
@@ -777,17 +858,26 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/banking'
     | '/admin/brand-kit'
+    | '/admin/cash-safety'
     | '/admin/cloudflare'
+    | '/admin/crm'
     | '/admin/dashboard'
     | '/admin/data-room'
     | '/admin/dre'
     | '/admin/e2e-details'
     | '/admin/e2e-runner'
     | '/admin/e2e-sales'
+    | '/admin/expansion'
+    | '/admin/feature-flags'
+    | '/admin/fiscal'
     | '/admin/go-live'
+    | '/admin/ledger'
     | '/admin/mmn-tree'
+    | '/admin/om'
     | '/admin/overhead'
+    | '/admin/partner-tax'
     | '/admin/security'
     | '/admin/solar-epc'
     | '/admin/waf'
@@ -861,17 +951,26 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/banking'
     | '/admin/brand-kit'
+    | '/admin/cash-safety'
     | '/admin/cloudflare'
+    | '/admin/crm'
     | '/admin/dashboard'
     | '/admin/data-room'
     | '/admin/dre'
     | '/admin/e2e-details'
     | '/admin/e2e-runner'
     | '/admin/e2e-sales'
+    | '/admin/expansion'
+    | '/admin/feature-flags'
+    | '/admin/fiscal'
     | '/admin/go-live'
+    | '/admin/ledger'
     | '/admin/mmn-tree'
+    | '/admin/om'
     | '/admin/overhead'
+    | '/admin/partner-tax'
     | '/admin/security'
     | '/admin/solar-epc'
     | '/admin/waf'
@@ -942,17 +1041,26 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/sitemap.xml'
     | '/sucesso-orcamento'
+    | '/admin/banking'
     | '/admin/brand-kit'
+    | '/admin/cash-safety'
     | '/admin/cloudflare'
+    | '/admin/crm'
     | '/admin/dashboard'
     | '/admin/data-room'
     | '/admin/dre'
     | '/admin/e2e-details'
     | '/admin/e2e-runner'
     | '/admin/e2e-sales'
+    | '/admin/expansion'
+    | '/admin/feature-flags'
+    | '/admin/fiscal'
     | '/admin/go-live'
+    | '/admin/ledger'
     | '/admin/mmn-tree'
+    | '/admin/om'
     | '/admin/overhead'
+    | '/admin/partner-tax'
     | '/admin/security'
     | '/admin/solar-epc'
     | '/admin/waf'
@@ -1366,11 +1474,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSecurityRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/partner-tax': {
+      id: '/admin/partner-tax'
+      path: '/partner-tax'
+      fullPath: '/admin/partner-tax'
+      preLoaderRoute: typeof AdminPartnerTaxRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/overhead': {
       id: '/admin/overhead'
       path: '/overhead'
       fullPath: '/admin/overhead'
       preLoaderRoute: typeof AdminOverheadRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/om': {
+      id: '/admin/om'
+      path: '/om'
+      fullPath: '/admin/om'
+      preLoaderRoute: typeof AdminOmRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/mmn-tree': {
@@ -1380,11 +1502,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMmnTreeRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ledger': {
+      id: '/admin/ledger'
+      path: '/ledger'
+      fullPath: '/admin/ledger'
+      preLoaderRoute: typeof AdminLedgerRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/go-live': {
       id: '/admin/go-live'
       path: '/go-live'
       fullPath: '/admin/go-live'
       preLoaderRoute: typeof AdminGoLiveRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/fiscal': {
+      id: '/admin/fiscal'
+      path: '/fiscal'
+      fullPath: '/admin/fiscal'
+      preLoaderRoute: typeof AdminFiscalRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/feature-flags': {
+      id: '/admin/feature-flags'
+      path: '/feature-flags'
+      fullPath: '/admin/feature-flags'
+      preLoaderRoute: typeof AdminFeatureFlagsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/expansion': {
+      id: '/admin/expansion'
+      path: '/expansion'
+      fullPath: '/admin/expansion'
+      preLoaderRoute: typeof AdminExpansionRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/e2e-sales': {
@@ -1429,6 +1579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/crm': {
+      id: '/admin/crm'
+      path: '/crm'
+      fullPath: '/admin/crm'
+      preLoaderRoute: typeof AdminCrmRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/cloudflare': {
       id: '/admin/cloudflare'
       path: '/cloudflare'
@@ -1436,11 +1593,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCloudflareRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/cash-safety': {
+      id: '/admin/cash-safety'
+      path: '/cash-safety'
+      fullPath: '/admin/cash-safety'
+      preLoaderRoute: typeof AdminCashSafetyRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/brand-kit': {
       id: '/admin/brand-kit'
       path: '/brand-kit'
       fullPath: '/admin/brand-kit'
       preLoaderRoute: typeof AdminBrandKitRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/banking': {
+      id: '/admin/banking'
+      path: '/banking'
+      fullPath: '/admin/banking'
+      preLoaderRoute: typeof AdminBankingRouteImport
       parentRoute: typeof AdminRoute
     }
     '/app/propostas/': {
@@ -1622,34 +1793,52 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBankingRoute: typeof AdminBankingRoute
   AdminBrandKitRoute: typeof AdminBrandKitRoute
+  AdminCashSafetyRoute: typeof AdminCashSafetyRoute
   AdminCloudflareRoute: typeof AdminCloudflareRoute
+  AdminCrmRoute: typeof AdminCrmRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDataRoomRoute: typeof AdminDataRoomRoute
   AdminDreRoute: typeof AdminDreRoute
   AdminE2eDetailsRoute: typeof AdminE2eDetailsRoute
   AdminE2eRunnerRoute: typeof AdminE2eRunnerRoute
   AdminE2eSalesRoute: typeof AdminE2eSalesRoute
+  AdminExpansionRoute: typeof AdminExpansionRoute
+  AdminFeatureFlagsRoute: typeof AdminFeatureFlagsRoute
+  AdminFiscalRoute: typeof AdminFiscalRoute
   AdminGoLiveRoute: typeof AdminGoLiveRoute
+  AdminLedgerRoute: typeof AdminLedgerRoute
   AdminMmnTreeRoute: typeof AdminMmnTreeRoute
+  AdminOmRoute: typeof AdminOmRoute
   AdminOverheadRoute: typeof AdminOverheadRoute
+  AdminPartnerTaxRoute: typeof AdminPartnerTaxRoute
   AdminSecurityRoute: typeof AdminSecurityRoute
   AdminSolarEpcRoute: typeof AdminSolarEpcRoute
   AdminWafRoute: typeof AdminWafRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBankingRoute: AdminBankingRoute,
   AdminBrandKitRoute: AdminBrandKitRoute,
+  AdminCashSafetyRoute: AdminCashSafetyRoute,
   AdminCloudflareRoute: AdminCloudflareRoute,
+  AdminCrmRoute: AdminCrmRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDataRoomRoute: AdminDataRoomRoute,
   AdminDreRoute: AdminDreRoute,
   AdminE2eDetailsRoute: AdminE2eDetailsRoute,
   AdminE2eRunnerRoute: AdminE2eRunnerRoute,
   AdminE2eSalesRoute: AdminE2eSalesRoute,
+  AdminExpansionRoute: AdminExpansionRoute,
+  AdminFeatureFlagsRoute: AdminFeatureFlagsRoute,
+  AdminFiscalRoute: AdminFiscalRoute,
   AdminGoLiveRoute: AdminGoLiveRoute,
+  AdminLedgerRoute: AdminLedgerRoute,
   AdminMmnTreeRoute: AdminMmnTreeRoute,
+  AdminOmRoute: AdminOmRoute,
   AdminOverheadRoute: AdminOverheadRoute,
+  AdminPartnerTaxRoute: AdminPartnerTaxRoute,
   AdminSecurityRoute: AdminSecurityRoute,
   AdminSolarEpcRoute: AdminSolarEpcRoute,
   AdminWafRoute: AdminWafRoute,
