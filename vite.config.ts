@@ -74,6 +74,11 @@ export default defineConfig({
     emptyOutDir: true,
   },
   resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "async_hooks": path.resolve(__dirname, "./src/lib/stubs/async_hooks.ts"),
+      "node:async_hooks": path.resolve(__dirname, "./src/lib/stubs/async_hooks.ts"),
+    },
     dedupe: ["react", "react-dom", "@tanstack/react-router"],
   },
   server: {
