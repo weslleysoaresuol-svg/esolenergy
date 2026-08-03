@@ -72,6 +72,17 @@ export default defineConfig({
   build: {
     outDir: "dist/client",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react")) return "vendor";
+            if (id.includes("lucide-react")) return "lucide";
+            if (id.includes("@tanstack")) return "tanstack";
+          }
+        },
+      },
+    },
   },
   resolve: {
     alias: {

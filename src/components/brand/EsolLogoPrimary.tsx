@@ -13,35 +13,36 @@ export interface EsolLogoPrimaryProps extends React.SVGProps<SVGSVGElement> {
  *
  * Conceito Homologado: Opção 3 ("eSOL energy") Dual-Tone Eco-Tech.
  * - `e`: Eco Green (#10B981) — Transição Energética & Sustentabilidade ESG.
- * - `SOL`: Corporate Navy (#0A2540 no light mode, #F8FAFC no dark mode) — Solidez Institucional.
+ * - `SOL`: Corporate Navy (#0A2540 no light mode, #F8FAFC no dark mode).
  * - `energy`: Solar Amber (#F59E0B) — Geração Fotovoltaica & Retorno Financeiro.
  * - Tagline: "Deixe o sol trabalhar por você" (opcional).
  */
 export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
-  width = 280,
-  height = 70,
+  width = 240,
+  height,
   variant = 'auto',
-  showTagline = true,
+  showTagline = false,
   className = '',
   ...props
 }) => {
-  // Cores da paleta homologada V13.2
   const greenColor = '#10B981'; // Eco Green
   const amberColor = '#F59E0B'; // Solar Amber
   const greyColor = '#94A3B8';  // Subtext Slate-400
 
-  // Tratamento de variante light / dark / auto (via CSS dark class ou prop)
   const getSolColor = () => {
     if (variant === 'dark') return '#F8FAFC';
     if (variant === 'light') return '#0A2540';
-    return 'currentColor'; // no auto, adapta ao text-color do pai (com fallbacks)
+    return 'currentColor';
   };
+
+  const computedHeight = height || (showTagline ? 65 : 44);
+  const viewBox = showTagline ? "0 0 310 75" : "0 0 290 50";
 
   return (
     <svg
       width={width}
-      height={height}
-      viewBox="0 0 320 80"
+      height={computedHeight}
+      viewBox={viewBox}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`select-none transition-colors duration-300 ${className}`}
@@ -49,16 +50,15 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
       role="img"
       {...props}
     >
-      {/* Grupo da Wordmark "eSOL energy" */}
-      <g transform="translate(10, 10)">
+      <g transform="translate(5, 5)">
         {/* Letra 'e' (Eco Green #10B981) */}
         <text
           x="0"
-          y="42"
+          y="38"
           fill={greenColor}
-          fontFamily="Space Grotesk, Inter, system-ui, sans-serif"
+          fontFamily="Sora, Space Grotesk, Inter, system-ui, sans-serif"
           fontWeight="800"
-          fontSize="44"
+          fontSize="40"
           letterSpacing="-1"
         >
           e
@@ -66,12 +66,12 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
 
         {/* Palavra 'SOL' (Corporate Navy #0A2540 / Dark White #F8FAFC) */}
         <text
-          x="28"
-          y="42"
+          x="26"
+          y="38"
           fill={getSolColor()}
-          fontFamily="Space Grotesk, Inter, system-ui, sans-serif"
+          fontFamily="Sora, Space Grotesk, Inter, system-ui, sans-serif"
           fontWeight="800"
-          fontSize="44"
+          fontSize="40"
           className="dark:fill-slate-50 fill-slate-900"
           letterSpacing="-0.5"
         >
@@ -80,12 +80,12 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
 
         {/* Palavra 'energy' (Solar Amber #F59E0B) */}
         <text
-          x="128"
-          y="42"
+          x="118"
+          y="38"
           fill={amberColor}
-          fontFamily="Space Grotesk, Inter, system-ui, sans-serif"
+          fontFamily="Sora, Space Grotesk, Inter, system-ui, sans-serif"
           fontWeight="700"
-          fontSize="44"
+          fontSize="40"
           letterSpacing="0"
         >
           energy
@@ -95,11 +95,11 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
         {showTagline && (
           <text
             x="2"
-            y="62"
+            y="58"
             fill={greyColor}
             fontFamily="Inter, system-ui, sans-serif"
             fontWeight="500"
-            fontSize="12.5"
+            fontSize="12"
             letterSpacing="0.2"
             opacity="0.9"
           >

@@ -53,11 +53,11 @@ export function AdminProtectedRoute({ children, requiredRole }: AdminProtectedRo
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground space-y-4">
-        <div className="p-4 rounded-2xl bg-card/85 border border-border/60 shadow-xl backdrop-blur-xl flex flex-col items-center gap-3 dark:bg-slate-950/90">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-400 glow-amber" />
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Verificando Credenciais RBAC...
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white space-y-4">
+        <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-xl flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Verificando Matriz RBAC (7 Níveis)...
           </p>
         </div>
       </div>
@@ -65,17 +65,17 @@ export function AdminProtectedRoute({ children, requiredRole }: AdminProtectedRo
   }
 
   if (!authenticated) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/auth" replace />;
   }
 
   if (!authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="max-w-md w-full p-8 rounded-2xl border border-rose-500/40 bg-rose-500/10 backdrop-blur-xl text-center space-y-4 shadow-2xl">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-950">
+        <div className="max-w-md w-full p-8 rounded-2xl border border-rose-500/30 bg-rose-500/10 backdrop-blur-xl text-center space-y-4 shadow-2xl">
           <ShieldAlert className="h-12 w-12 text-rose-500 mx-auto" />
-          <h2 className="text-lg font-bold text-foreground">Acesso Não Autorizado</h2>
-          <p className="text-xs text-muted-foreground">
-            Sua conta não possui nível de permissão suficiente para acessar este cockpit administrativo.
+          <h2 className="text-lg font-bold text-white">Acesso Não Autorizado (RBAC)</h2>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Sua conta não possui nivel de permissão suficiente para acessar este cockpit de governança.
           </p>
         </div>
       </div>

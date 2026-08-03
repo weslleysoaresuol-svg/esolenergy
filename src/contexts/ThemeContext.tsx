@@ -14,7 +14,7 @@ const LOCAL_STORAGE_KEY = "esol-theme";
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode; defaultTheme?: Theme }> = ({
   children,
-  defaultTheme = "system",
+  defaultTheme = "dark",
 }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== "undefined") {

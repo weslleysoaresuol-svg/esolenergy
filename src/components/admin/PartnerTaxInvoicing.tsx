@@ -22,7 +22,7 @@ export interface PartnerTaxInvoiceRecord {
   id: string;
   consultor: string;
   doc: string;
-  regime: "PJ_MEI" | "PJ_Simples" | "PF_RPA";
+  regime: "PJ_MEI" | "PJ_Simples" | "PF_RPA" | "PJ_LucroPresumido" | "PJ_LucroReal";
   valorBruto: number;
   inssRetido: number;
   irrfRetido: number;

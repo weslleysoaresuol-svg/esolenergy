@@ -9,6 +9,8 @@ import { EsolLogoNegative } from '@/components/brand/EsolLogoNegative';
 import { EsolLogoMonochrome } from '@/components/brand/EsolLogoMonochrome';
 import { EsolLogoCyberTech } from '@/components/brand/EsolLogoCyberTech';
 import { EsolFaviconMicro } from '@/components/brand/EsolFaviconMicro';
+import { SeloVerdeEsol } from '@/components/brand/SeloVerdeEsol';
+import { EsolEnergyLiveBadge } from '@/components/brand/EsolEnergyLiveBadge';
 
 /**
  * `<AdminBrandKitShowcase />` — Componente Interativo do Brand Kit no Painel Admin (V13.2)
