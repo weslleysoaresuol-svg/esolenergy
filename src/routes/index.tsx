@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { EsolSolarCanvas } from "@/components/brand/EsolSolarCanvas";
 import { EsolPublicNavbar } from "@/components/brand/EsolPublicNavbar";
-import { EsolSunsHero } from "@/components/brand/EsolSunsHero";
-import { EsolSimuladorCockpit } from "@/components/brand/EsolSimuladorCockpit";
-import { EsolSunsProductShowcase } from "@/components/brand/EsolSunsProductShowcase";
-import { EsolSunsBenefitsAccordion } from "@/components/brand/EsolSunsBenefitsAccordion";
-import { EsolCompetitorComparison } from "@/components/brand/EsolCompetitorComparison";
+import { EsolFreshHero } from "@/components/brand/EsolFreshHero";
+import { EsolComparisonCards } from "@/components/brand/EsolComparisonCards";
+import { EsolFreshSimulator } from "@/components/brand/EsolFreshSimulator";
+import { EsolHowItWorks } from "@/components/brand/EsolHowItWorks";
 import { EsolUserProfilesShowcase } from "@/components/brand/EsolUserProfilesShowcase";
+import { EsolCompetitorComparison } from "@/components/brand/EsolCompetitorComparison";
+import { EsolFAQSection } from "@/components/brand/EsolFAQSection";
 import { EsolProjectStatusTracker } from "@/components/brand/EsolProjectStatusTracker";
 import { EsolPublicFooter } from "@/components/brand/EsolPublicFooter";
 
@@ -27,39 +27,39 @@ function IndexLandingPage() {
 
   return (
     <div className="relative min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950 overflow-x-hidden">
-      {/* 0. Canvas Fotônico Interativo de Fundo */}
-      <EsolSolarCanvas />
-
-      {/* 1. Header & Navbar Executiva */}
+      {/* 1. Header Executiva Clean */}
       <EsolPublicNavbar />
 
-      <main className="relative z-10 space-y-24 pb-20">
-        {/* 2. Hero Section Cinemático estilo SUNS Energy */}
-        <EsolSunsHero onSimulateClick={scrollToSimulador} onWhatsAppClick={openWhatsApp} />
+      <main className="space-y-16 pb-20">
+        {/* 2. Hero Section Aspiracional Clean */}
+        <EsolFreshHero onSimulateClick={scrollToSimulador} onWhatsAppClick={openWhatsApp} />
+
+        {/* 3. Comparativo "Antes e Depois" (Concessionária vs. ESOL) */}
+        <EsolComparisonCards />
 
         {/* Container Central com Largura Máxima */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-28">
-          {/* 3. Cockpit do Simulador Fintech 3-em-1 (Encaixe Perfeito na Narrativa) */}
-          <EsolSimuladorCockpit />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-24">
+          {/* 4. Simulador Solar 3-em-1 Fintech Clean */}
+          <EsolFreshSimulator />
 
-          {/* 4. Vitrine Full-Bleed de Produtos Tier-1 (Estilo SUNS Hardware Showcase) */}
-          <EsolSunsProductShowcase />
+          {/* 5. Como Funciona em 4 Passos Simples */}
+          <EsolHowItWorks />
 
-          {/* 5. Seção de Benefícios Accordion (Estilo SUNS Benefits) */}
-          <EsolSunsBenefitsAccordion />
-
-          {/* 6. Matriz Comparativa SaaS de Superioridade vs. Concessionárias */}
-          <EsolCompetitorComparison />
-
-          {/* 7. Central dos 6 Perfis de Atuação ESOL */}
+          {/* 6. Central dos 6 Perfis de Atuação ESOL */}
           <EsolUserProfilesShowcase />
 
-          {/* 8. Portal de Transparência e Rastreamento de Usina por CPF/CNPJ */}
+          {/* 7. Quadro Comparativo de Superioridade vs. Concessionárias */}
+          <EsolCompetitorComparison />
+
+          {/* 8. Perguntas Frequentes (FAQ) */}
+          <EsolFAQSection />
+
+          {/* 9. Portal de Rastreamento de Usinas por CPF/CNPJ */}
           <EsolProjectStatusTracker />
         </div>
       </main>
 
-      {/* 9. Rodapé Corporativo Internacional */}
+      {/* 10. Rodapé Corporativo Internacional */}
       <EsolPublicFooter />
     </div>
   );
