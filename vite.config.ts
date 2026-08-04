@@ -55,7 +55,7 @@ copyEsolAssets();
 
 export default defineConfig({
   plugins: [
-    TanStackRouterVite(),
+    TanStackRouterVite({ target: 'react' }),
     react(),
     tailwindcss(),
     tsconfigPaths(),
@@ -69,9 +69,6 @@ export default defineConfig({
       },
     },
   ],
-  optimizeDeps: {
-    exclude: ["@tanstack/react-start", "@tanstack/start-server-core"],
-  },
   build: {
     outDir: "dist/client",
     emptyOutDir: true,
@@ -92,6 +89,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "async_hooks": path.resolve(__dirname, "./src/lib/stubs/async_hooks.ts"),
       "node:async_hooks": path.resolve(__dirname, "./src/lib/stubs/async_hooks.ts"),
+      "@tanstack/react-start": path.resolve(__dirname, "./src/lib/stubs/tanstack_start.ts"),
+      "@tanstack/react-start/server": path.resolve(__dirname, "./src/lib/stubs/tanstack_start.ts"),
+      "#tanstack-router-entry": path.resolve(__dirname, "./src/lib/stubs/tanstack_entry.ts"),
+      "#tanstack-start-entry": path.resolve(__dirname, "./src/lib/stubs/tanstack_entry.ts"),
+      "tanstack-start-manifest:v": path.resolve(__dirname, "./src/lib/stubs/tanstack_entry.ts"),
     },
     dedupe: ["react", "react-dom", "@tanstack/react-router"],
   },

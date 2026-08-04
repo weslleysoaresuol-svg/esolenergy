@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DollarSign, Landmark, TrendingUp, TrendingDown, Users, Percent, CreditCard, PlusCircle, Check, Key, Settings, RefreshCw, ExternalLink, QrCode, Copy } from "lucide-react";
 import { BRL } from "@/lib/proposta-calc";
 import { toast } from "sonner";
-import { useServerFn } from "@tanstack/react-start";
+import { useServerFn } from "@/lib/stubs/tanstack_start";
 import { criarCobrancaServerFn, estornarCobrancaServerFn } from "@/lib/payments.functions";
 
 export const Route = createFileRoute("/app/financeiro")({

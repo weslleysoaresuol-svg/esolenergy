@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn } from "@/lib/stubs/tanstack_start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   DistributorAdapterFactory,

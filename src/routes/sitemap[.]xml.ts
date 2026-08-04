@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import type {} from "@tanstack/react-start";
+// Sitemap XML Handler
 
 const BASE_URL = "https://esolenergy.com.br";
 
