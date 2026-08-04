@@ -30,9 +30,8 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
   const greyColor = '#94A3B8';  // Subtext Slate-400
 
   const getSolColor = () => {
-    if (variant === 'dark') return '#F8FAFC';
     if (variant === 'light') return '#0A2540';
-    return 'currentColor';
+    return '#F8FAFC'; // Sempre branco reluzente em fundos escuros
   };
 
   const computedHeight = height || (showTagline ? 65 : 44);
@@ -64,7 +63,7 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
           e
         </text>
 
-        {/* Palavra 'SOL' (Corporate Navy #0A2540 / Dark White #F8FAFC) */}
+        {/* Palavra 'SOL' (Branco Reluzente #F8FAFC) */}
         <text
           x="26"
           y="38"
@@ -72,7 +71,6 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
           fontFamily="Sora, Space Grotesk, Inter, system-ui, sans-serif"
           fontWeight="800"
           fontSize="40"
-          className="dark:fill-slate-50 fill-slate-900"
           letterSpacing="-0.5"
         >
           SOL
