@@ -69,6 +69,9 @@ export default defineConfig({
       },
     },
   ],
+  optimizeDeps: {
+    exclude: ["@tanstack/react-start", "@tanstack/start-server-core"],
+  },
   build: {
     outDir: "dist/client",
     emptyOutDir: true,
