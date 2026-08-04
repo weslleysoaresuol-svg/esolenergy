@@ -58,8 +58,10 @@
   --color-paper: var(--paper);
   --color-ink: var(--ink);
 
-  --font-display: "Sora", "Space Grotesk", "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Font Families */
+  --font-display: 'Space Grotesk', 'Outfit', system-ui, sans-serif;
+  --font-heading: 'Outfit', 'Sora', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 
   --shadow-glow: 0 30px 80px -20px rgba(245, 158, 11, 0.35);
   --shadow-emerald: 0 20px 50px -15px rgba(16, 185, 129, 0.4);

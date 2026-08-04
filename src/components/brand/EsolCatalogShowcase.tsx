@@ -8,97 +8,85 @@ export interface EsolCatalogShowcaseProps {
 
 /**
  * `<EsolCatalogShowcase />` — Vitrine de Equipamentos Fotovoltaicos Tier-1 (V13.2)
- * Apresentação de hardware com estético de luxo, bordas neon e certificação ANEEL.
+ * Apresentação de hardware com fotografia real em 8K, bordas neon e certificação ANEEL.
  */
 export const EsolCatalogShowcase: React.FC<EsolCatalogShowcaseProps> = ({ className = '' }) => {
-  const categories: Array<{ slug: CategorySlug; title: string; desc: string; tag: string; color: string }> = [
+  const hardwareItems = [
     {
-      slug: 'modulos-fotovoltaicos',
       title: 'Módulos N-Type TOPCon',
       desc: 'Painéis bifaciais Glass-Glass de alta eficiência com até 700W e 25 anos de garantia.',
       tag: 'Tier-1 Canadian / Jinko',
-      color: 'amber',
+      image: '/images/esol-topcon-panel.png',
+      badgeColor: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
     },
     {
-      slug: 'inversores-string',
       title: 'Inversores String Híbridos',
       desc: 'Inversores senoidais de alta frequência preparados para armazenamento de baterias.',
       tag: 'Deye / Sungrow / Weg',
-      color: 'cyan',
+      image: '/images/esol-hybrid-inverter.png',
+      badgeColor: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10',
     },
     {
-      slug: 'microinversores',
-      title: 'Microinversores MLPE',
-      desc: 'Otimização nível módulo com monitoramento individual por placa e máxima segurança.',
-      tag: 'APsystems / Hoymiles',
-      color: 'emerald',
-    },
-    {
-      slug: 'baterias-storage',
       title: 'Baterias de Lítio (BESS)',
       desc: 'Sistemas de armazenamento LFP para backup de emergência residencial e comercial.',
       tag: 'BYD / Deye Lithium',
-      color: 'amber',
-    },
-    {
-      slug: 'carregadores-ev',
-      title: 'Carregadores Veículos Elétricos',
-      desc: 'Estações de recarga rápida Wallbox AC/DC integradas à geração solar.',
-      tag: 'Esol EV Mobility',
-      color: 'cyan',
-    },
-    {
-      slug: 'iot-telemetria',
-      title: 'IoT & Dataloggers 5G',
-      desc: 'Telemetria SaaS em tempo real conectada ao aplicativo e inteligência ESOL.',
-      tag: 'Telemetria SaaS 24/7',
-      color: 'emerald',
+      image: '/images/esol-bess-battery.png',
+      badgeColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
     },
   ];
 
   return (
-    <div className={`p-8 rounded-3xl bg-slate-950 border border-slate-800 text-white space-y-8 shadow-2xl ${className}`} id="produtos">
+    <div className={`p-8 md:p-12 rounded-3xl bg-slate-950 border border-slate-800 text-white space-y-10 shadow-2xl ${className}`} id="produtos">
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto space-y-2">
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-extrabold uppercase tracking-widest">
-          <Sparkles className="size-3.5" /> HARDWARE HOMOLOGADO ANEEL
+      <div className="text-center max-w-3xl mx-auto space-y-3">
+        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-black uppercase tracking-widest">
+          <Sparkles className="size-3.5" /> HARDWARE FOTOVOLTAICO HOMOLOGADO ANEEL
         </span>
-        <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
+        <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
           Equipamentos Solar de Classe Mundial
         </h2>
-        <p className="text-xs sm:text-sm text-slate-400 font-medium">
+        <p className="font-body text-sm sm:text-base text-slate-400 font-medium">
           Componentes Tier-1 rigorosamente testados e certificados para garantir máxima geração por 25 anos.
         </p>
       </div>
 
-      {/* Grid de Categorias com Bordas Neon */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((cat, idx) => (
+      {/* Grid de Hardware com Fotografia 8K */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {hardwareItems.map((item, idx) => (
           <div
             key={idx}
-            className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/50 backdrop-blur-xl transition-all duration-300 group space-y-4 shadow-xl hover:scale-[1.01]"
+            className="rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/50 backdrop-blur-xl transition-all duration-500 group overflow-hidden space-y-5 shadow-2xl hover:scale-[1.02] flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between">
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 group-hover:border-amber-500/30 transition-colors">
-                <EsolCategoryIcon category={cat.slug} size={28} />
+            {/* Foto Real de Alta Definição */}
+            <div className="relative h-56 w-full overflow-hidden bg-slate-950">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 opacity-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+              <div className="absolute top-4 left-4">
+                <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold border backdrop-blur-md ${item.badgeColor}`}>
+                  {item.tag}
+                </span>
               </div>
-              <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-slate-950 text-amber-400 border border-amber-500/20">
-                {cat.tag}
-              </span>
             </div>
 
-            <div>
-              <h3 className="text-lg font-black text-white group-hover:text-amber-400 transition-colors">
-                {cat.title}
-              </h3>
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed font-normal">{cat.desc}</p>
-            </div>
+            {/* Conteúdo de Texto do Card */}
+            <div className="p-6 pt-0 space-y-3 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 className="font-display text-xl font-black text-white group-hover:text-amber-400 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="font-body text-xs text-slate-300 mt-2 leading-relaxed font-normal">{item.desc}</p>
+              </div>
 
-            <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-              <span className="flex items-center gap-1 text-emerald-400">
-                <CheckCircle className="size-3.5" /> Certificação ISO 9001
-              </span>
-              <span>Garantia 25A</span>
+              <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-semibold">
+                <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                  <CheckCircle className="size-4" /> Certificação ISO 9001
+                </span>
+                <span className="font-mono text-slate-400">Garantia 25A</span>
+              </div>
             </div>
           </div>
         ))}
