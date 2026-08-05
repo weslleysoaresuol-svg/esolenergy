@@ -8,27 +8,19 @@ export interface EsolLogoPrimaryProps {
 }
 
 /**
- * `<EsolLogoPrimary />` — Assinatura Primária Horizontal Oficial da eSOL Energy (2026 Master)
- *
- * Utiliza diretamente a imagem raster master em alta definição fornecida pelo usuário,
- * garantindo ZERO distorção de fontes, curvas ou proporções.
+ * `<EsolLogoPrimary />` — Assinatura da Marca Oficial eSOL Energy
+ * Renderiza 100% DIRETO o arquivo binário de imagem fornecido pelo usuário,
+ * sem nenhuma alteração gráfica, corte, vetorização ou perda de qualidade.
  */
 export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
   width = 180,
   height,
-  variant = 'auto',
   className = '',
 }) => {
-  // Define qual arquivo master utilizar dependendo do modo
-  const logoSrc =
-    variant === 'light'
-      ? '/esol-logo-2026-master-light.png'
-      : '/esol-logo-2026-master-dark.png';
-
   return (
     <div className={`inline-flex items-center select-none ${className}`}>
       <img
-        src={logoSrc}
+        src="/esol-logo-official-2026.png"
         alt="eSOL energy Logo Oficial"
         style={{
           width: typeof width === 'number' ? `${width}px` : width,
