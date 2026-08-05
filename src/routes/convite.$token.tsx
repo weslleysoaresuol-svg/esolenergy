@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { CheckCircle2, Clock, FileSignature, UserPlus } from "lucide-react";
-import logo from "@/assets/esol-logo.svg";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 export const Route = createFileRoute("/convite/$token")({
   head: () => ({
@@ -265,7 +265,9 @@ function InvitePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-navy via-navy-deep to-navy flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 text-center">
-          <img src={logo} alt="ESOL" className="h-20 w-auto mx-auto mb-4" />
+          <Link to="/" className="mb-6 block">
+            <EsolLogoPrimary width={180} />
+          </Link>
           <h1 className="text-xl font-bold text-navy mb-2">Convite indisponível</h1>
           <p className="text-sm text-muted-foreground mb-6">{state.reason}</p>
           <p className="text-xs text-muted-foreground">Solicite um novo link ao administrador da ESOL Energy.</p>

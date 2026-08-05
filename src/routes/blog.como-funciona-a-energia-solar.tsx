@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Sun, Zap, Battery, Home, Leaf, DollarSign, ArrowRight, BookOpen, Clock, Calendar, Check } from "lucide-react";
-import logo from "@/assets/esol-logo.svg";
-import logoNegative from "@/assets/esol-logo-negative.svg";
+import { EsolLogoPrimary } from "@/components/brand/EsolLogoPrimary";
 
 const TITLE = "Como funciona a energia solar? Guia completo (2026) — ESOL Energy";
 const DESCRIPTION =
