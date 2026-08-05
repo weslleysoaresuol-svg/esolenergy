@@ -8,19 +8,28 @@ export interface EsolLogoPrimaryProps {
 }
 
 /**
- * `<EsolLogoPrimary />` — Assinatura da Marca Oficial eSOL Energy
- * Renderiza 100% DIRETO o arquivo binário de imagem fornecido pelo usuário,
- * sem nenhuma alteração gráfica, corte, vetorização ou perda de qualidade.
+ * `<EsolLogoPrimary />` — Assinatura Oficial eSOL Energy (V15.0 Alta Definição 4K)
+ *
+ * Renderiza em 4K cristalino com fundo transparente:
+ * - `e`: Verde Esmeralda (#22C55E)
+ * - `SOL`: Âmbar Solar Dourado (#F59E0B)
+ * - `energy`: Dark Navy (#1E293B) no modo claro e Branco Puríssimo (#FFFFFF) no modo escuro.
  */
 export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
   width = 180,
   height,
+  variant = 'auto',
   className = '',
 }) => {
+  const logoSrc =
+    variant === 'dark'
+      ? '/esol-logo-dark-2026.png'
+      : '/esol-logo-official-2026.png';
+
   return (
     <div className={`inline-flex items-center select-none ${className}`}>
       <img
-        src="/esol-logo-official-2026.png"
+        src={logoSrc}
         alt="eSOL energy Logo Oficial"
         style={{
           width: typeof width === 'number' ? `${width}px` : width,
