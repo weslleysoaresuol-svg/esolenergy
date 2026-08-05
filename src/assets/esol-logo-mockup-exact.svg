@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="100%" height="100%">
+  <defs>
+    <!-- Gradiente Verde Emerald para a letra 'e' -->
+    <linearGradient id="emeraldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+
+    <!-- Gradiente Solar Amber para a palavra 'energy' -->
+    <linearGradient id="solarAmberGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+
+    <!-- Filtro de Glow Solar Suave -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .brand-e {
+      font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 72px;
+      font-weight: 800;
+      fill: url(#emeraldGradient);
+    }
+    .brand-sol {
+      font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      fill: #FFFFFF;
+      letter-spacing: -1px;
+    }
+    .brand-energy {
+      font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      fill: url(#solarAmberGradient);
+      letter-spacing: 6px;
+    }
+  </style>
+
+  <!-- Grupo eSOL -->
+  <g transform="translate(10, 70)">
+    <text class="brand-e" x="0" y="0">e</text>
+    <text class="brand-sol" x="42" y="0">SOL</text>
+  </g>
+
+  <!-- Palavra energy abaixo de SOL -->
+  <g transform="translate(54, 104)">
+    <text class="brand-energy" x="0" y="0">energy</text>
+  </g>
+</svg>

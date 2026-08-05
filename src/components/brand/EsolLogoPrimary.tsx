@@ -53,11 +53,11 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
         {/* Letra 'e' (Eco Green #10B981) */}
         <text
           x="0"
-          y="38"
+          y="34"
           fill={greenColor}
-          fontFamily="Sora, Space Grotesk, Inter, system-ui, sans-serif"
+          fontFamily="Plus Jakarta Sans, Sora, Inter, system-ui, sans-serif"
           fontWeight="800"
-          fontSize="40"
+          fontSize="36"
           letterSpacing="-1"
         >
           e
@@ -65,26 +65,26 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
 
         {/* Palavra 'SOL' (Branco Reluzente #F8FAFC) */}
         <text
-          x="26"
-          y="38"
+          x="22"
+          y="34"
           fill={getSolColor()}
-          fontFamily="Sora, Space Grotesk, Inter, system-ui, sans-serif"
-          fontWeight="800"
-          fontSize="40"
+          fontFamily="Plus Jakarta Sans, Sora, Inter, system-ui, sans-serif"
+          fontWeight="900"
+          fontSize="36"
           letterSpacing="-0.5"
         >
           SOL
         </text>
 
-        {/* Palavra 'energy' (Solar Amber #F59E0B) */}
+        {/* Palavra 'energy' (Solar Amber #F59E0B) posicionada exatamente como no mockup */}
         <text
-          x="118"
-          y="38"
+          x="28"
+          y="48"
           fill={amberColor}
-          fontFamily="Sora, Space Grotesk, Inter, system-ui, sans-serif"
+          fontFamily="Plus Jakarta Sans, Sora, Inter, system-ui, sans-serif"
           fontWeight="700"
-          fontSize="40"
-          letterSpacing="0"
+          fontSize="14"
+          letterSpacing="3"
         >
           energy
         </text>

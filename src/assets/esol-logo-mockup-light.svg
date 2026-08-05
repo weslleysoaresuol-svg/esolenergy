@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="emeraldGradientLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+
+    <linearGradient id="solarAmberGradientLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .brand-e-light {
+      font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 72px;
+      font-weight: 800;
+      fill: url(#emeraldGradientLight);
+    }
+    .brand-sol-light {
+      font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      fill: #0F172A;
+      letter-spacing: -1px;
+    }
+    .brand-energy-light {
+      font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      fill: url(#solarAmberGradientLight);
+      letter-spacing: 6px;
+    }
+  </style>
+
+  <g transform="translate(10, 70)">
+    <text class="brand-e-light" x="0" y="0">e</text>
+    <text class="brand-sol-light" x="42" y="0">SOL</text>
+  </g>
+
+  <g transform="translate(54, 104)">
+    <text class="brand-energy-light" x="0" y="0">energy</text>
+  </g>
+</svg>
