@@ -1,43 +1,27 @@
 import React from 'react';
+import { EsolOfficialBrandSymbol } from '@/components/brand/EsolOfficialBrandSymbol';
 
 export interface EsolLogoPrimaryProps {
   width?: number | string;
   height?: number | string;
-  variant?: 'light' | 'dark' | 'auto';
+  variant?: 'light' | 'dark' | 'mono-white' | 'mono-dark' | 'auto';
   className?: string;
 }
 
 /**
- * `<EsolLogoPrimary />` — Assinatura Oficial eSOL Energy (V15.0 Alta Definição 4K)
+ * `<EsolLogoPrimary />` — Assinatura Primária Horizontal Oficial da eSOL Energy
  *
- * Renderiza em 4K cristalino com fundo transparente:
- * - `e`: Verde Esmeralda (#22C55E)
- * - `SOL`: Âmbar Solar Dourado (#F59E0B)
- * - `energy`: Dark Navy (#1E293B) no modo claro e Branco Puríssimo (#FFFFFF) no modo escuro.
+ * Fidelidade 100% Homologada ao formato, tipografia e posições da logo oficial.
  */
 export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
-  width = 180,
-  height,
+  width = 240,
+  height = 75,
   variant = 'auto',
   className = '',
 }) => {
-  const logoSrc =
-    variant === 'dark'
-      ? '/esol-logo-dark-2026.png'
-      : '/esol-logo-official-2026.png';
-
   return (
     <div className={`inline-flex items-center select-none ${className}`}>
-      <img
-        src={logoSrc}
-        alt="eSOL energy Logo Oficial"
-        style={{
-          width: typeof width === 'number' ? `${width}px` : width,
-          height: height ? (typeof height === 'number' ? `${height}px` : height) : 'auto',
-          objectFit: 'contain',
-        }}
-        className="transition-opacity duration-300 hover:opacity-95"
-      />
+      <EsolOfficialBrandSymbol width={width} height={height} variant={variant} />
     </div>
   );
 };
