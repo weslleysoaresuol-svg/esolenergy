@@ -25,13 +25,13 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
   className = '',
   ...props
 }) => {
-  const greenColor = '#10B981'; // Eco Green
-  const amberColor = '#F59E0B'; // Solar Amber
+  const greenColor = '#22C55E'; // Eco Green
+  const amberColor = '#F59E0B'; // Solar Amber Golden
   const greyColor = '#94A3B8';  // Subtext Slate-400
 
-  const getSolColor = () => {
-    if (variant === 'light') return '#0A2540';
-    return '#F8FAFC'; // Sempre branco reluzente em fundos escuros
+  const getEnergyColor = () => {
+    if (variant === 'light') return '#1E293B'; // Dark Slate Navy no fundo claro
+    return '#F8FAFC'; // Branco reluzente no fundo escuro
   };
 
   const computedHeight = height || (showTagline ? 65 : 44);
@@ -50,7 +50,7 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
       {...props}
     >
       <g transform="translate(5, 5)">
-        {/* Letra 'e' (Eco Green #10B981) */}
+        {/* Letra 'e' (Eco Green #22C55E) */}
         <text
           x="0"
           y="34"
@@ -63,11 +63,11 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
           e
         </text>
 
-        {/* Palavra 'SOL' (Branco Reluzente #F8FAFC) */}
+        {/* Palavra 'SOL' (Solar Amber Dourado #F59E0B) */}
         <text
           x="22"
           y="34"
-          fill={getSolColor()}
+          fill={amberColor}
           fontFamily="Plus Jakarta Sans, Sora, Inter, system-ui, sans-serif"
           fontWeight="900"
           fontSize="36"
@@ -76,15 +76,15 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
           SOL
         </text>
 
-        {/* Palavra 'energy' (Solar Amber #F59E0B) posicionada exatamente como no mockup */}
+        {/* Palavra 'energy' (Dark Slate #1E293B no light, Branco no dark) */}
         <text
           x="28"
           y="48"
-          fill={amberColor}
+          fill={getEnergyColor()}
           fontFamily="Plus Jakarta Sans, Sora, Inter, system-ui, sans-serif"
-          fontWeight="700"
-          fontSize="14"
-          letterSpacing="3"
+          fontWeight="800"
+          fontSize="15"
+          letterSpacing="2.5"
         >
           energy
         </text>
@@ -93,11 +93,11 @@ export const EsolLogoPrimary: React.FC<EsolLogoPrimaryProps> = ({
         {showTagline && (
           <text
             x="2"
-            y="58"
+            y="64"
             fill={greyColor}
             fontFamily="Inter, system-ui, sans-serif"
             fontWeight="500"
-            fontSize="12"
+            fontSize="11"
             letterSpacing="0.2"
             opacity="0.9"
           >
