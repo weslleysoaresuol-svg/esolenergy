@@ -36,7 +36,7 @@ export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = 
         </Link>
 
         {/* Links de Navegação Desktop */}
-        <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-300">
+        <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-300">
           {navLinks.map((lnk, idx) => (
             <a
               key={idx}
@@ -46,14 +46,6 @@ export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = 
               {lnk.label}
             </a>
           ))}
-
-          <Link
-            to="/app/marca"
-            className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <Palette className="size-3.5" />
-            <span>Central de Brand</span>
-          </Link>
         </nav>
 
         {/* CTAs & Switcher de Tema */}
@@ -108,14 +100,6 @@ export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = 
                 {lnk.label}
               </a>
             ))}
-            <Link
-              to="/app/marca"
-              onClick={() => setMobileOpen(false)}
-              className="py-2 border-b border-slate-900 text-emerald-400 font-bold flex items-center gap-2"
-            >
-              <Palette className="size-4" />
-              <span>Central de Brand</span>
-            </Link>
           </div>
 
           <div className="flex flex-col gap-2 pt-2">

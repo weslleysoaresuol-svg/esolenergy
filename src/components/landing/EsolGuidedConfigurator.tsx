@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calculator, ArrowRight, ArrowLeft, CheckCircle2, MessageCircle, DollarSign, Sparkles, Building, Zap, Sun } from 'lucide-react';
+import { Calculator, ArrowRight, ArrowLeft, CheckCircle2, MessageCircle, DollarSign, Sparkles, Building, Zap, Sun, Award } from 'lucide-react';
+import { SeloVerdeEsol } from '@/components/brand/SeloVerdeEsol';
 
 export interface EsolGuidedConfiguratorProps {
   className?: string;
@@ -8,18 +9,36 @@ export interface EsolGuidedConfiguratorProps {
 
 export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ className = '' }) => {
   const [step, setStep] = useState<number>(1);
+  const [contaMensalInput, setContaMensalInput] = useState<string>('1500');
   const [contaMensal, setContaMensal] = useState<number>(1500);
-  const [tipoImovel, setTipoImovel] = useState<'residencial' | 'comercial' | 'agro'>('residencial');
+  const [modalidade, setModalidade] = useState<'turnkey' | 'assinatura' | 'mle'>('turnkey');
 
-  // Cálculos financeiros
-  const economiaMensal = contaMensal * 0.92;
+  const handleInputChange = (val: string) => {
+    setContaMensalInput(val);
+    const num = parseFloat(val.replace(/\D/g, ''));
+    if (!isNaN(num) && num > 0) {
+      setContaMensal(num);
+    }
+  };
+
+  const handleSliderChange = (num: number) => {
+    setContaMensal(num);
+    setContaMensalInput(num.toString());
+  };
+
+  // Cálculos financeiros de alta precisão baseados na modalidade escolhida
+  const percEconomia = modalidade === 'turnkey' ? 0.92 : modalidade === 'assinatura' ? 0.18 : 0.32;
+  const economiaMensal = contaMensal * percEconomia;
   const economiaAnual = economiaMensal * 12;
-  const economia25Anos = economiaAnual * 25;
-  const paybackAnos = 3.2;
+  const economia25Anos = modalidade === 'turnkey' ? economiaAnual * 25 : economiaAnual * 5;
+  const paybackMeses = modalidade === 'turnkey' ? 36 : 0;
 
   const handleWhatsApp = () => {
+    const nomeModalidade =
+      modalidade === 'turnkey' ? 'Usina Própria (Turnkey)' : modalidade === 'assinatura' ? 'Energia por Assinatura (GD)' : 'Mercado Livre ANEEL (ACL)';
+
     const msg = encodeURIComponent(
-      `Olá! Configurei minha usina solar no site da ESOL Energy:\n- Conta Mensal: R$ ${contaMensal.toLocaleString('pt-BR')}\n- Categoria: ${tipoImovel.toUpperCase()}\n- Economia Estimada em 25 anos: R$ ${economia25Anos.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}\nGostaria de solicitar meu estudo gratuito com um engenheiro.`
+      `Olá! Fiz uma simulação no site da ESOL Energy:\n- Conta Mensal Atual: R$ ${contaMensal.toLocaleString('pt-BR')}\n- Modalidade Escolhida: ${nomeModalidade}\n- Economia Estimada: R$ ${economiaAnual.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}/ano\nGostaria de receber meu estudo gratuito com um engenheiro.`
     );
     window.open(`https://wa.me/5531999999999?text=${msg}`, '_blank');
   };
@@ -32,13 +51,13 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
         <div className="text-center space-y-3">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">
             <Calculator className="size-4 text-emerald-400" />
-            <span>Configurador Solar Guiado em 3 Passos</span>
+            <span>Simulador Solar Guiado em 3 Passos</span>
           </span>
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">
             Calcule o Retorno do Seu Investimento
           </h2>
           <p className="text-slate-400 text-sm md:text-base">
-            Simule instantaneamente o tamanho da sua usina e quanto dinheiro você vai economizar nos próximos 25 anos.
+            Digite o valor da sua conta de luz ou arraste a barra para comparar instantaneamente as 3 modalidades ESOL.
           </p>
         </div>
 
@@ -63,7 +82,7 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
         <div className="p-8 md:p-12 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-8">
           <AnimatePresence mode="wait">
             
-            {/* PASSO 1: VALOR DA CONTA MENSAL */}
+            {/* PASSO 1: DIGITAÇÃO DIRETA OU SLIDER DO VALOR MENSAL */}
             {step === 1 && (
               <motion.div
                 key="step1"
@@ -73,15 +92,25 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                 className="space-y-6 text-center"
               >
                 <h3 className="text-xl md:text-2xl font-bold text-white">
-                  Qual é o valor médio da sua conta de luz mensal?
+                  Digite ou selecione o valor médio da sua conta de luz mensal:
                 </h3>
 
-                <div className="py-4 max-w-md mx-auto">
-                  <div className="text-4xl md:text-5xl font-black text-amber-400 font-mono py-4 px-6 rounded-2xl bg-slate-950 border border-amber-500/30 inline-block shadow-inner">
-                    R$ {contaMensal.toLocaleString('pt-BR')}
+                {/* Campo de Digitação Direta R$ */}
+                <div className="py-2 max-w-md mx-auto">
+                  <div className="relative flex items-center justify-center">
+                    <span className="absolute left-6 text-2xl md:text-3xl font-black text-amber-400 font-mono">R$</span>
+                    <input
+                      type="text"
+                      value={contaMensalInput}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      placeholder="1500"
+                      className="w-full text-center text-4xl md:text-5xl font-black text-amber-400 font-mono py-4 pl-16 pr-6 rounded-2xl bg-slate-950 border border-amber-500/40 focus:outline-none focus:border-amber-400 transition-all shadow-inner"
+                    />
                   </div>
+                  <span className="text-[11px] text-slate-400 block mt-2">Você pode digitar o valor exato no campo acima.</span>
                 </div>
 
+                {/* Range Slider de Apoio */}
                 <div className="max-w-md mx-auto space-y-2">
                   <input
                     type="range"
@@ -89,7 +118,7 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                     max="50000"
                     step="250"
                     value={contaMensal}
-                    onChange={(e) => setContaMensal(Number(e.target.value))}
+                    onChange={(e) => handleSliderChange(Number(e.target.value))}
                     className="w-full h-3 rounded-xl appearance-none cursor-pointer bg-slate-950 accent-emerald-400 focus:outline-none"
                   />
                   <div className="flex justify-between text-xs text-slate-500 font-mono">
@@ -104,14 +133,14 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                     onClick={() => setStep(2)}
                     className="px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm transition-all shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)] cursor-pointer inline-flex items-center gap-2"
                   >
-                    <span>Avançar para Categoria</span>
+                    <span>Avançar para Escolha da Modalidade</span>
                     <ArrowRight className="size-4" />
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* PASSO 2: CATEGORIA DE IMÓVEL */}
+            {/* PASSO 2: ESCOLHA ENTRE AS 3 MODALIDADES ESOL */}
             {step === 2 && (
               <motion.div
                 key="step2"
@@ -121,35 +150,66 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                 className="space-y-6 text-center"
               >
                 <h3 className="text-xl md:text-2xl font-bold text-white">
-                  Selecione o perfil da sua propriedade:
+                  Escolha a modalidade de energia solar desejada:
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto pt-2">
-                  {[
-                    { id: 'residencial', label: 'Residencial', desc: 'Casas & Condomínios', icon: Sun },
-                    { id: 'comercial', label: 'Comercial', desc: 'Lojas & Galpões', icon: Building },
-                    { id: 'agro', label: 'Agronegócio', desc: 'Fazendas & Irrigação', icon: Zap },
-                  ].map((item) => {
-                    const Icon = item.icon;
-                    const isSelected = tipoImovel === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => setTipoImovel(item.id as any)}
-                        className={`p-6 rounded-2xl border text-center space-y-3 cursor-pointer transition-all ${
-                          isSelected
-                            ? 'bg-slate-950 border-emerald-500 shadow-[0_0_25px_-5px_rgba(16,185,129,0.4)]'
-                            : 'bg-slate-950/40 border-slate-800 hover:border-slate-700'
-                        }`}
-                      >
-                        <div className={`size-12 mx-auto rounded-xl flex items-center justify-center ${isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-900 text-slate-400'}`}>
-                          <Icon className="size-6" />
-                        </div>
-                        <div className="font-bold text-white text-base">{item.label}</div>
-                        <div className="text-xs text-slate-400">{item.desc}</div>
-                      </button>
-                    );
-                  })}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left pt-2">
+                  {/* Modalidade 1: Turnkey Usina Própria */}
+                  <div
+                    onClick={() => setModalidade('turnkey')}
+                    className={`p-6 rounded-2xl border transition-all cursor-pointer space-y-3 ${
+                      modalidade === 'turnkey'
+                        ? 'bg-slate-950 border-amber-500/80 shadow-[0_0_25px_-5px_rgba(245,158,11,0.4)]'
+                        : 'bg-slate-950/40 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                        Usina Própria (92%)
+                      </span>
+                      <Sun className="size-5 text-amber-400" />
+                    </div>
+                    <div className="font-bold text-white text-base">1. Usina Fotovoltaica</div>
+                    <p className="text-xs text-slate-400">Instalação física no seu telhado/terreno com módulos Tier-1.</p>
+                  </div>
+
+                  {/* Modalidade 2: Energia por Assinatura */}
+                  <div
+                    onClick={() => setModalidade('assinatura')}
+                    className={`p-6 rounded-2xl border transition-all cursor-pointer space-y-3 ${
+                      modalidade === 'assinatura'
+                        ? 'bg-slate-950 border-emerald-500/80 shadow-[0_0_25px_-5px_rgba(16,185,129,0.4)]'
+                        : 'bg-slate-950/40 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        Sem Obras (18%)
+                      </span>
+                      <Zap className="size-5 text-emerald-400" />
+                    </div>
+                    <div className="font-bold text-white text-base">2. Energia por Assinatura</div>
+                    <p className="text-xs text-slate-400">Desconto direto na fatura sem precisar instalar equipamentos.</p>
+                  </div>
+
+                  {/* Modalidade 3: Mercado Livre ANEEL */}
+                  <div
+                    onClick={() => setModalidade('mle')}
+                    className={`p-6 rounded-2xl border transition-all cursor-pointer space-y-3 ${
+                      modalidade === 'mle'
+                        ? 'bg-slate-950 border-cyan-500/80 shadow-[0_0_25px_-5px_rgba(6,182,212,0.4)]'
+                        : 'bg-slate-950/40 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                        Empresas (32%)
+                      </span>
+                      <Building className="size-5 text-cyan-400" />
+                    </div>
+                    <div className="font-bold text-white text-base">3. Mercado Livre ANEEL</div>
+                    <p className="text-xs text-slate-400">Migração para o mercado livre para médias e grandes indústrias.</p>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-center gap-4 pt-4">
@@ -165,14 +225,14 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                     onClick={() => setStep(3)}
                     className="px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm transition-all shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)] cursor-pointer inline-flex items-center gap-2"
                   >
-                    <span>Ver Resultado Completo</span>
+                    <span>Calcular Economia Estimada</span>
                     <ArrowRight className="size-4" />
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* PASSO 3: RESULTADO FINAL & PROPOSTA */}
+            {/* PASSO 3: RESULTADO DA ECONOMIA ESTIMADA */}
             {step === 3 && (
               <motion.div
                 key="step3"
@@ -181,8 +241,11 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6 text-center"
               >
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase">
-                  <CheckCircle2 className="size-4" /> Simulação Concluída com Sucesso
+                <div className="flex items-center justify-center gap-2">
+                  <SeloVerdeEsol size="sm" />
+                  <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
+                    Simulação Concluída • {modalidade.toUpperCase()}
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto pt-2">
@@ -194,15 +257,17 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="text-xs text-slate-400 font-bold uppercase">Economia em 25 Anos</div>
+                    <div className="text-xs text-slate-400 font-bold uppercase">Economia Acumulada</div>
                     <div className="text-2xl font-black text-amber-400 font-mono">
                       R$ {economia25Anos.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
                     </div>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="text-xs text-slate-400 font-bold uppercase">Payback Estimado</div>
-                    <div className="text-2xl font-black text-white font-mono">~{paybackAnos} Anos</div>
+                    <div className="text-xs text-slate-400 font-bold uppercase">Payback Médio</div>
+                    <div className="text-2xl font-black text-white font-mono">
+                      {paybackMeses > 0 ? `~${(paybackMeses / 12).toFixed(1)} Anos` : 'Imediato'}
+                    </div>
                   </div>
                 </div>
 
@@ -212,7 +277,7 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                     className="px-6 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm cursor-pointer inline-flex items-center gap-2"
                   >
                     <ArrowLeft className="size-4" />
-                    <span>Ajustar Dados</span>
+                    <span>Mudar Modalidade</span>
                   </button>
 
                   <button
@@ -220,7 +285,7 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                     className="px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 font-black text-sm shadow-[0_0_30px_-5px_rgba(16,185,129,0.6)] cursor-pointer inline-flex items-center gap-3 hover:scale-105 transition-all"
                   >
                     <MessageCircle className="size-5" />
-                    <span>Solicitar Estudo Gratuito CREA no WhatsApp</span>
+                    <span>Solicitar Estudo Gratuito no WhatsApp</span>
                   </button>
                 </div>
               </motion.div>

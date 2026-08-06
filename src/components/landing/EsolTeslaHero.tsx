@@ -34,16 +34,17 @@ export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
   return (
     <section className={`relative min-h-[90vh] flex flex-col justify-between bg-[#0F172A] text-white overflow-hidden ${className}`}>
       
-      {/* Imagem Arquitetônica Full-Bleed de Fundo com Gradient Masking */}
+      {/* Imagem Arquitetônica Full-Bleed de Fundo com Fade Concentrado no Lado Esquerdo */}
       <div className="absolute inset-0 z-0">
         <img
           src="/assets/hero-solar-premium-DbbfHtsS.png"
           alt="Usina Solar Residencial de Alto Padrão"
-          className="w-full h-full object-cover object-center opacity-40 mix-blend-luminosity scale-105 transform transition-transform duration-10000 hover:scale-100"
+          className="w-full h-full object-cover object-right opacity-90 brightness-105 contrast-105 transform transition-transform duration-10000 hover:scale-105"
         />
-        {/* Gradients de Vinheta Tesla */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/50 to-transparent" />
+        {/* Degradê Concentrado no Lado Esquerdo para legibilidade do texto */}
+        <div className="absolute inset-y-0 left-0 w-full lg:w-3/5 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/90 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0F172A] to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0F172A]/80 to-transparent" />
       </div>
 
       {/* Camada de Granulação Noise Tátil */}

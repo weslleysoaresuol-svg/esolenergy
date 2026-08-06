@@ -1,5 +1,5 @@
 import React from 'react';
-import { EsolLogoPrimary } from '@/components/brand/EsolLogoPrimary';
+import { EsolOfficialBrandSymbol } from '@/components/brand/EsolOfficialBrandSymbol';
 import { SeloVerdeEsol } from '@/components/brand/SeloVerdeEsol';
 import { ShieldCheck, Mail, Phone, MapPin, Lock, FileText } from 'lucide-react';
 
@@ -8,17 +8,17 @@ export interface EsolPublicFooterProps {
 }
 
 /**
- * `<EsolPublicFooter />` — Rodapé Corporativo de Alto Padrão (V13.2)
+ * `<EsolPublicFooter />` — Rodapé Corporativo de Alto Padrão (V15.0)
  */
 export const EsolPublicFooter: React.FC<EsolPublicFooterProps> = ({ className = '' }) => {
   return (
-    <footer className={`bg-slate-950 text-white border-t border-slate-800 pt-16 pb-12 ${className}`}>
+    <footer className={`bg-[#0F172A] text-white border-t border-slate-800 pt-16 pb-12 ${className}`}>
       <div className="max-w-7xl mx-auto px-6 space-y-12">
         {/* Grid Principal */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Coluna 1 & 2: Branding & Sede */}
           <div className="lg:col-span-2 space-y-4">
-            <EsolLogoPrimary width={220} variant="dark" />
+            <EsolOfficialBrandSymbol width={220} />
             <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
               Soluções inteligentes em engenharia solar fotovoltaica, geração distribuída por assinatura e Mercado Livre de Energia ANEEL.
             </p>
