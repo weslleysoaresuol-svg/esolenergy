@@ -8,11 +8,12 @@ export interface EsolOfficialBrandSymbolProps {
 }
 
 /**
- * `<EsolOfficialBrandSymbol />` — Assinatura Autoral Ultra-Minimalista (esol energy) REFINADA.
+ * `<EsolOfficialBrandSymbol />` — Assinatura Autoral Ultra-Minimalista (esol energy) HARMONIZADA.
  *
- * Refinamento Tipográfico Suíço de Precisão Cirúrgica:
- * A curva inferior da letra 's' flui no mesmo eixo óptico horizontal (baseline)
- * encontrando com perfeição matemática o início da letra 'o'.
+ * Resolução Matemática Definitiva:
+ * Todas as letras da palavra 'esol' foram desenhadas como caminhos vetoriais Bezier puros (<path d="..." />)
+ * em um sistema de coordenadas unificado. A saída da letra 's' se funde continuamente e sem interrupções
+ * com a entrada da letra 'o' em uma curva óptica perfeita.
  */
 export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = ({
   width = 220,
@@ -37,7 +38,7 @@ export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = (
       }}
     >
       <svg
-        viewBox="0 0 340 110"
+        viewBox="0 0 340 100"
         width="100%"
         height="100%"
         xmlns="http://www.w3.org/2000/svg"
@@ -47,62 +48,58 @@ export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = (
       >
         <defs>
           <style>{`
-            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap');
-            .esol-text-main {
-              font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-              font-weight: 800;
-              font-size: 72px;
-              letter-spacing: -2.5px;
-            }
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap');
             .esol-text-sub {
               font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
               font-weight: 700;
-              font-size: 32px;
+              font-size: 30px;
               letter-spacing: -0.5px;
             }
           `}</style>
 
-          <linearGradient id="esolRefinedWaveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="esolUnifiedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor={greenVoltColor} />
             <stop offset="100%" stopColor={solarGoldColor} />
           </linearGradient>
         </defs>
 
-        <g className="esol-all-lowercase-refined">
-          <g transform="translate(6, 0)">
-            {/* 'e' */}
-            <text x="0" y="68" fill={greenVoltColor} className="esol-text-main">
-              e
-            </text>
+        <g className="esol-unified-vector-wordmark" transform="translate(4, 4)">
+          {/* WORDMARK 'esol' EM VETORES PUROS UNIFICADOS */}
+          <g transform="translate(0, 0)">
+            {/* Letra 'e' - Vetor Esmeralda */}
+            <path
+              d="M 32 36 C 32 20 20 14 10 24 C 0 34 2 54 18 56 C 28 57 33 50 34 44 L 10 44 C 10 34 22 24 32 36 Z"
+              fill={greenVoltColor}
+            />
 
-            {/* 's' - Refinado: A perna inferior termina alinhada horizontalmente com a entrada da letra 'o' */}
-            <g transform="translate(39, 17)">
-              <path
-                d="M 27 12 C 27 5 17 3 11 7 C 3 13 5 25 15 29 C 25 33 27 45 19 50 C 13 54 4 52 2 44"
-                fill="none"
-                stroke="url(#esolRefinedWaveGrad)"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
+            {/* Letra 's' - Vetor Fotônico cuja perna inferior flui perfeitamente para o 'o' */}
+            <path
+              d="M 64 22 C 64 16 54 14 48 18 C 40 24 42 36 52 40 C 62 44 64 56 56 60 C 48 64 38 60 36 52 M 56 60 C 62 61 68 60 74 57"
+              fill="none"
+              stroke="url(#esolUnifiedGrad)"
+              strokeWidth="7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
 
-            {/* 'o' */}
-            <text x="74" y="68" fill={mainTextColor} className="esol-text-main">
-              o
-            </text>
+            {/* Letra 'o' - Vetor Círculo Fotônico perfeitamente conectado com a linha do 's' */}
+            <path
+              d="M 94 20 C 82 20 74 30 74 42 C 74 54 82 64 94 64 C 106 64 114 54 114 42 C 114 30 106 20 94 20 Z M 94 30 C 100 30 104 35 104 42 C 104 49 100 54 94 54 C 88 54 84 49 84 42 C 84 35 88 30 94 30 Z"
+              fill={mainTextColor}
+            />
 
-            {/* 'l' */}
-            <text x="118" y="68" fill={mainTextColor} className="esol-text-main">
-              l
-            </text>
+            {/* Letra 'l' - Haste Vetorial de Precisão */}
+            <path
+              d="M 124 12 C 124 9 127 6 130 6 L 130 6 C 133 6 136 9 136 12 L 136 60 C 136 63 133 66 130 66 L 130 66 C 127 66 124 63 124 60 Z"
+              fill={mainTextColor}
+            />
 
-            {/* Ponto Fotônico Solar em Harmonia com o 'l' */}
-            <circle cx="140" cy="62" r="4.5" fill={solarGoldColor} />
+            {/* Ponto Fotônico Solar em Harmonia */}
+            <circle cx="146" cy="60" r="4.5" fill={solarGoldColor} />
           </g>
 
-          {/* Palavra 'energy' Minúscula com Espaçamento de Alta Precisão */}
-          <text x="156" y="100" fill={energyTextColor} className="esol-text-sub">
+          {/* Palavra 'energy' Minúscula com Alinhamento Perfeito */}
+          <text x="156" y="92" fill={energyTextColor} className="esol-text-sub">
             energy
           </text>
         </g>
