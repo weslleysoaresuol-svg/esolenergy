@@ -8,10 +8,10 @@ export interface EsolOfficialBrandSymbolProps {
 }
 
 /**
- * `<EsolOfficialBrandSymbol />` — Componente 100% VETORIAL SVG NATIVO da eSOL energy.
+ * `<EsolOfficialBrandSymbol />` — Assinatura Vetorial Nativa 100% SVG em React.
  *
- * Utiliza o arquivo vetorial puro extraído via ImageTracer (caminhos Bezier <path d="..." /> puros),
- * garantindo nitidez matemática absoluta, zero pixels bitmap e fundo 100% transparente.
+ * Renderiza a marca eSOL energy em SVG puro com tipografia vetorial de altíssima fidelidade.
+ * Elimina 100% qualquer ruído, bloco, fundo ou pixelização bitmap.
  */
 export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = ({
   width = 220,
@@ -19,20 +19,22 @@ export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = (
   variant = 'auto',
   className = '',
 }) => {
-  const getSvgSrc = () => {
+  const getEnergyColor = () => {
     switch (variant) {
       case 'dark':
-        return '/esol-logo-dark-2026.svg';
       case 'mono-white':
-        return '/esol-logo-dark-2026.svg';
+        return '#FFFFFF'; // Branco Puríssimo para fundo escuro
       case 'mono-dark':
-        return '/esol-logo-official-2026.svg';
       case 'light':
       case 'auto':
       default:
-        return '/esol-logo-official-2026.svg';
+        return '#1E293B'; // Dark Navy para fundo claro
     }
   };
+
+  const energyColor = getEnergyColor();
+  const greenColor  = variant === 'mono-white' ? '#FFFFFF' : (variant === 'mono-dark' ? '#1E293B' : '#22C55E');
+  const amberColor  = variant === 'mono-white' ? '#FFFFFF' : (variant === 'mono-dark' ? '#1E293B' : '#F59E0B');
 
   return (
     <div
@@ -42,16 +44,55 @@ export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = (
         height: height ? (typeof height === 'number' ? `${height}px` : height) : 'auto',
       }}
     >
-      <img
-        src={getSvgSrc()}
-        alt="eSOL energy Logo Vetorial Puro"
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-        }}
-        className="transition-opacity duration-300 hover:opacity-95"
-      />
+      <svg
+        viewBox="0 0 320 136"
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        shapeRendering="geometricPrecision"
+        textRendering="geometricPrecision"
+        className="w-full h-auto drop-shadow-sm"
+      >
+        <defs>
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@800;900&family=Plus+Jakarta+Sans:wght@800;900&display=swap');
+            .esol-font-e {
+              font-family: 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif;
+              font-weight: 800;
+              font-size: 88px;
+            }
+            .esol-font-sol {
+              font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+              font-weight: 900;
+              font-size: 88px;
+              letter-spacing: -2px;
+            }
+            .esol-font-energy {
+              font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+              font-weight: 800;
+              font-size: 40px;
+              letter-spacing: -1px;
+            }
+          `}</style>
+        </defs>
+        
+        <g transform="translate(4, 0)">
+          {/* Letra 'e' (Verde Esmeralda #22C55E) */}
+          <text x="8" y="82" fill={greenColor} className="esol-font-e">
+            e
+          </text>
+          
+          {/* Palavra 'SOL' (Amarelo Dourado Solar #F59E0B) */}
+          <text x="68" y="82" fill={amberColor} className="esol-font-sol">
+            SOL
+          </text>
+          
+          {/* Palavra 'energy' (Branco no topo escuro / Dark Navy no topo claro) */}
+          <text x="134" y="122" fill={energyColor} className="esol-font-energy">
+            energy
+          </text>
+        </g>
+      </svg>
     </div>
   );
 };
