@@ -18,7 +18,7 @@ export const EsolPublicFooter: React.FC<EsolPublicFooterProps> = ({ className = 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Coluna 1 & 2: Branding & Sede */}
           <div className="lg:col-span-2 space-y-4">
-            <EsolLogoPrimary size="lg" showTagline={true} />
+            <EsolLogoPrimary width={220} variant="dark" />
             <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
               Soluções inteligentes em engenharia solar fotovoltaica, geração distribuída por assinatura e Mercado Livre de Energia ANEEL.
             </p>

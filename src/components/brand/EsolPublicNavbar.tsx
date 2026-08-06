@@ -27,7 +27,7 @@ export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = 
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo eSOL energy com contraste reluzente */}
         <Link to="/" className="flex items-center gap-2 group">
-          <EsolLogoPrimary width={210} showTagline={false} />
+          <EsolLogoPrimary width={210} variant="dark" showTagline={false} />
         </Link>
 
         {/* Links de Navegação Desktop */}
