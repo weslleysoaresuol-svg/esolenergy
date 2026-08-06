@@ -2,13 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { EsolPublicNavbar } from "@/components/brand/EsolPublicNavbar";
 import { EsolTeslaHero } from "@/components/landing/EsolTeslaHero";
+import { EsolTier1Partners } from "@/components/landing/EsolTier1Partners";
 import { EsolHomeEnergyFlow } from "@/components/landing/EsolHomeEnergyFlow";
 import { EsolGuidedConfigurator } from "@/components/landing/EsolGuidedConfigurator";
 import { EsolComparisonCards } from "@/components/brand/EsolComparisonCards";
-import { EsolTier1Partners } from "@/components/landing/EsolTier1Partners";
-import { EsolArchitecturalGallery } from "@/components/landing/EsolArchitecturalGallery";
+import { EsolEcosystemSection } from "@/components/landing/EsolEcosystemSection";
 import { EsolAppPreviewSection } from "@/components/landing/EsolAppPreviewSection";
-import { EsolSocialProofSection } from "@/components/landing/EsolSocialProofSection";
 import { EsolHowItWorks } from "@/components/brand/EsolHowItWorks";
 import { EsolFAQSection } from "@/components/brand/EsolFAQSection";
 import { EsolProjectStatusTracker } from "@/components/brand/EsolProjectStatusTracker";
@@ -21,33 +20,30 @@ export const Route = createFileRoute("/")({
 function IndexLandingPage() {
   return (
     <div className="relative min-h-screen bg-[#0F172A] text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950 overflow-x-hidden">
-      {/* 1. Header Tesla Tier Glassmorphism com Marca Oficial esol energy. */}
+      {/* 1. Header Translúcido Sticky com Títulos de 1 Palavra */}
       <EsolPublicNavbar />
 
       <main className="space-y-0 pb-20">
-        {/* 2. Hero Section Cinematográfico Full-Bleed Padrão Tesla Solar (Foto limpa e nítida à direita) */}
+        {/* 2. Hero Section Cinematográfico Full-Bleed (Foto nítida à direita) */}
         <EsolTeslaHero />
 
-        {/* 3. Faixa de Fabricantes Globais Tier-1 (Homologação & Confiança) */}
+        {/* 3. Faixa de Fabricantes Globais Tier-1 */}
         <EsolTier1Partners />
 
-        {/* 4. Diagrama Interativo do Fluxo de Energia Padrão Enphase (Home Energy Flow) */}
+        {/* 4. Diagrama Interativo do Fluxo de Energia 3D (Home Energy Flow) */}
         <EsolHomeEnergyFlow />
 
-        {/* 5. Simulador Solar Guiado em 3 Passos (Com digitação direta e escolha entre as 3 modalidades) */}
+        {/* 5. Simulador Solar Guiado em 3 Passos (Com digitação em R$ e 3 modalidades) */}
         <EsolGuidedConfigurator />
 
-        {/* 6. Comparativo Antes vs Depois (Concessionária vs Esol Energy) */}
+        {/* 6. Comparativo Antes vs Depois (Concessionária vs Esol) */}
         <EsolComparisonCards />
 
-        {/* 7. Galeria Arquitetônica de Projetos Reais Entregues */}
-        <EsolArchitecturalGallery />
+        {/* 7. Ecossistema Integrado Esol */}
+        <EsolEcosystemSection />
 
-        {/* 8. Maquete 3D do App Esol com Telemetria em Tempo Real */}
+        {/* 8. Maquete 3D do App Esol com Telemetria */}
         <EsolAppPreviewSection />
-
-        {/* 9. Métricas de Impacto, Prova Social & Selos de Engenharia CREA/ANEEL */}
-        <EsolSocialProofSection />
 
         {/* Container Central para Seções Institucionais */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-24 pt-20">
@@ -58,11 +54,13 @@ function IndexLandingPage() {
           <EsolProjectStatusTracker />
 
           {/* Perguntas Frequentes (FAQ) */}
-          <EsolFAQSection />
+          <div id="faq">
+            <EsolFAQSection />
+          </div>
         </div>
       </main>
 
-      {/* Rodapé Corporativo com Selo 100% Energia Limpa */}
+      {/* Rodapé Corporativo com Novo Selo Oficial */}
       <EsolPublicFooter />
     </div>
   );

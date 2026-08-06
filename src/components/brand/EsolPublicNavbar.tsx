@@ -16,10 +16,11 @@ export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = 
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   const navLinks = [
-    { label: 'Simulador 3-em-1', href: '#simulador' },
-    { label: 'Ecossistema Esol', href: '#ecossistema' },
-    { label: 'App & Monitoramento', href: '#app-preview' },
-    { label: 'Prova Social & Usinas', href: '#prova-social' },
+    { label: 'Simulador', href: '#configurador' },
+    { label: 'Fluxo', href: '#fluxo-energetico' },
+    { label: 'Ecossistema', href: '#ecossistema' },
+    { label: 'App', href: '#app-preview' },
+    { label: 'FAQ', href: '#faq' },
   ];
 
   const toggleTheme = () => {
@@ -28,7 +29,7 @@ export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = 
   };
 
   return (
-    <header className={`sticky top-0 z-[40] bg-[#0F172A]/90 backdrop-blur-2xl border-b border-slate-800/80 shadow-2xl ${className}`}>
+    <header className={`sticky top-0 z-[50] bg-[#0F172A]/70 backdrop-blur-xl border-b border-slate-800/50 shadow-2xl transition-all ${className}`}>
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo mestre esol energy. */}
         <Link to="/" className="flex items-center gap-2 group">

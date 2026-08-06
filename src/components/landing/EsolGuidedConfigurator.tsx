@@ -15,9 +15,12 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
 
   const handleInputChange = (val: string) => {
     setContaMensalInput(val);
-    const num = parseFloat(val.replace(/\D/g, ''));
-    if (!isNaN(num) && num > 0) {
-      setContaMensal(num);
+    const cleaned = val.replace(/\D/g, '');
+    if (cleaned.length > 0) {
+      const num = parseInt(cleaned, 10);
+      if (!isNaN(num) && num > 0) {
+        setContaMensal(Math.min(num, 1000000));
+      }
     }
   };
 
