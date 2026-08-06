@@ -50,10 +50,10 @@ const BRAND_PALETTE = [
 ];
 
 const BRAND_ASSETS = [
-  // ─── GRUPO 1: ASSINATURA OFICIAL HORIZONTAL ──────────────────────────────
+  // ─── GRUPO 1: ASSINATURAS HORIZONTAIS OFICIAIS ──────────────────────────────
   {
-    group: "Assinaturas Oficiais",
-    title: "Marca Oficial — Dark Mode (Negativa)",
+    group: "Assinaturas Horizontais",
+    title: "1. Marca Oficial — Dark Mode (Negativa)",
     badge: "Principal / Topo Site",
     badgeColor: "bg-emerald-500 text-slate-950 font-bold",
     uses: "Cabeçalho de site, hero escuro, apresentações corporativas, fundos navy.",
@@ -62,8 +62,8 @@ const BRAND_ASSETS = [
     bgDark: true
   },
   {
-    group: "Assinaturas Oficiais",
-    title: "Marca Oficial — Light Mode (Positiva)",
+    group: "Assinaturas Horizontais",
+    title: "2. Marca Oficial — Light Mode (Positiva)",
     badge: "Documentos / Impressos",
     badgeColor: "bg-blue-600 text-white font-bold",
     uses: "Documentos oficiais, contratos ANEEL, papel timbrado, propostas PDF.",
@@ -72,8 +72,8 @@ const BRAND_ASSETS = [
     bgDark: false
   },
   {
-    group: "Assinaturas Oficiais",
-    title: "Marca Oficial — Monocromática Branca",
+    group: "Assinaturas Horizontais",
+    title: "3. Monocromática Branca (Mono White)",
     badge: "Marca d'água / Fotos",
     badgeColor: "bg-white/20 text-white font-bold",
     uses: "Sobreposição em fotos de usinas solares, vídeos promocionais, camisetas.",
@@ -82,8 +82,8 @@ const BRAND_ASSETS = [
     bgDark: true
   },
   {
-    group: "Assinaturas Oficiais",
-    title: "Marca Oficial — Monocromática Preta",
+    group: "Assinaturas Horizontais",
+    title: "4. Monocromática Preta (Mono Black)",
     badge: "P&B / Carimbos",
     badgeColor: "bg-slate-200 text-slate-900 font-bold",
     uses: "Impressos monocromáticos, carimbos de engenharia, notas fiscais.",
@@ -92,8 +92,8 @@ const BRAND_ASSETS = [
     bgDark: false
   },
   {
-    group: "Assinaturas Oficiais",
-    title: "Marca Oficial — Ouro Solar Premium",
+    group: "Assinaturas Horizontais",
+    title: "5. Ouro Solar Premium",
     badge: "Prêmios & Troféus",
     badgeColor: "bg-amber-400 text-slate-950 font-bold",
     uses: "Certificados de sustentabilidade, selos de premiação, crachás VIP.",
@@ -102,15 +102,57 @@ const BRAND_ASSETS = [
     bgDark: true
   },
 
-  // ─── GRUPO 2: FAVICON & APPS ──────────────────────────────────────────────
+  // ─── GRUPO 2: FAVICONS & ÍCONES ──────────────────────────────────────────────
   {
     group: "Ícone & Favicon",
-    title: "Monograma Favicon — Laço Infinito s+o",
-    badge: "App Icon",
+    title: "6. Favicon Modo Claro (Navy + Ponto Verde)",
+    badge: "Favicon Ativo",
     badgeColor: "bg-emerald-500 text-slate-950 font-bold",
-    uses: "Favicon do navegador, ícone do app móvel, avatar de redes sociais.",
+    uses: "Favicon oficial do navegador em abas claras, atalhos de navegação.",
     svgPath: "/favicon.svg",
-    pngPath: "/favicon.png",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-favicon-light.png",
+    bgDark: false
+  },
+  {
+    group: "Ícone & Favicon",
+    title: "7. Favicon Modo Escuro (Branco + Ponto Verde)",
+    badge: "Favicon Dark",
+    badgeColor: "bg-white/20 text-white font-bold",
+    uses: "Favicon dinâmico para abas escuras e temas de sistema dark mode.",
+    svgPath: "/favicon-dark.png",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-favicon-dark.png",
+    bgDark: true
+  },
+
+  // ─── GRUPO 3: APLICAÇÕES ESPECIAIS & SELOS ─────────────────────────────────
+  {
+    group: "Aplicações Especiais",
+    title: "8. Versão Vertical / Empilhada (Stacked)",
+    badge: "Avatares & Tótens",
+    badgeColor: "bg-indigo-500 text-white font-bold",
+    uses: "Perfil do Instagram, LinkedIn, crachás verticais, sacolas e tótens de fachadas.",
+    svgPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-dark.png",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-logo-stacked-dark.png",
+    bgDark: true
+  },
+  {
+    group: "Aplicações Especiais",
+    title: "9. Ícone de App PWA / iOS Badge",
+    badge: "App Icon",
+    badgeColor: "bg-cyan-500 text-slate-950 font-bold",
+    uses: "Ícone oficial para instalação de aplicativo PWA no iOS, Android e desktop.",
+    svgPath: "/brand-kit/2. Imagens-PNG/esol-app-icon-ios.png",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-app-icon-ios.png",
+    bgDark: true
+  },
+  {
+    group: "Aplicações Especiais",
+    title: "10. Selo de Certificação Solar 100%",
+    badge: "Selo de Garantia",
+    badgeColor: "bg-emerald-400 text-slate-950 font-bold",
+    uses: "Inserção em propostas comerciais, contratos de usinas, faturas e rodapé.",
+    svgPath: "/brand-kit/2. Imagens-PNG/esol-seal-clean-energy.png",
+    pngPath: "/brand-kit/2. Imagens-PNG/esol-seal-clean-energy.png",
     bgDark: true
   }
 ];
