@@ -8,10 +8,10 @@ export interface EsolOfficialBrandSymbolProps {
 }
 
 /**
- * `<EsolOfficialBrandSymbol />` — Componente Oficial da eSOL energy.
+ * `<EsolOfficialBrandSymbol />` — Componente 100% VETORIAL SVG NATIVO da eSOL energy.
  *
- * Utiliza a matriz vetorial mestre (1216x532 HD) com a geometria 100% IDÊNTICA
- * fornecida pelo usuário no arquivo de referência neutro.
+ * Utiliza o arquivo vetorial puro extraído via ImageTracer (caminhos Bezier <path d="..." /> puros),
+ * garantindo nitidez matemática absoluta, zero pixels bitmap e fundo 100% transparente.
  */
 export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = ({
   width = 220,
@@ -19,18 +19,18 @@ export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = (
   variant = 'auto',
   className = '',
 }) => {
-  const getImageSrc = () => {
+  const getSvgSrc = () => {
     switch (variant) {
       case 'dark':
-        return '/esol-logo-dark-2026.png';
+        return '/esol-logo-dark-2026.svg';
       case 'mono-white':
-        return '/esol-logo-mono-white-2026.png';
+        return '/esol-logo-dark-2026.svg';
       case 'mono-dark':
-        return '/esol-logo-mono-dark-2026.png';
+        return '/esol-logo-official-2026.svg';
       case 'light':
       case 'auto':
       default:
-        return '/esol-logo-official-2026.png';
+        return '/esol-logo-official-2026.svg';
     }
   };
 
@@ -43,8 +43,8 @@ export const EsolOfficialBrandSymbol: React.FC<EsolOfficialBrandSymbolProps> = (
       }}
     >
       <img
-        src={getImageSrc()}
-        alt="eSOL energy Logo Oficial Mestre"
+        src={getSvgSrc()}
+        alt="eSOL energy Logo Vetorial Puro"
         style={{
           width: '100%',
           height: '100%',
