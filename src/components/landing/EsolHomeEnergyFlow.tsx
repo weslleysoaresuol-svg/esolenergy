@@ -84,15 +84,15 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
           </p>
         </div>
 
-        {/* MAQUETE 3D ISOMÉTRICA PERFEITA COM LINHAS SEQUENCIAIS 1->2->3->4 E CELULAR DEDICADO */}
+        {/* MAQUETE 3D ISOMÉTRICA DA CASA RESIDENCIAL SIMPLES COM BALÕES EXPLICATIVOS E CELULAR REPOSICIONADO */}
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Isométrico de Casa Solar com Todos os Componentes Visíveis */}
+            {/* Render 3D Isométrico de Casa Solar Residencial Simples */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_perfect_isometric_3d_solar_home.png"
-                alt="Maquete 3D Isométrica Perfeita da Casa Solar esol energy."
+                src="/images/esol_simple_residential_3d_house_clean.png"
+                alt="Maquete 3D Residencial Simples da Casa Solar esol energy."
                 className="w-full h-[460px] md:h-[620px] object-cover object-center filter brightness-105 contrast-105"
               />
 
@@ -117,14 +117,14 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                   </linearGradient>
                 </defs>
                 
-                {/* Trecho 1: Telhado (Item 01) -> Inversor (Item 02) */}
-                <line x1="48%" y1="20%" x2="32%" y2="44%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
+                {/* Trecho 1: Placas Solares (Item 01) -> Inversor Parede (Item 02) */}
+                <line x1="46%" y1="20%" x2="30%" y2="46%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
                 
-                {/* Trecho 2: Inversor (Item 02) -> Garagem VE (Item 03) */}
-                <line x1="32%" y1="44%" x2="76%" y2="64%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
+                {/* Trecho 2: Inversor Parede (Item 02) -> Garagem VE (Item 03) */}
+                <line x1="30%" y1="46%" x2="74%" y2="64%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
 
                 {/* Trecho 3: Garagem VE (Item 03) -> Smartphone IoT (Item 04) */}
-                <line x1="76%" y1="64%" x2="46%" y2="78%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="74%" y1="64%" x2="48%" y2="78%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
               </svg>
 
               {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
@@ -151,15 +151,95 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                       {/* Halo Anel Pulsante */}
                       <span className={`absolute inset-0 rounded-full border-2 border-emerald-400 ${isActive ? 'animate-ping' : 'opacity-0'}`} />
                     </button>
+
+                    {/* BALÃO EXPLICATIVO FLUTUANTE (SPEECH BUBBLE POPUP DO PIN CLICADO) */}
+                    <AnimatePresence>
+                      {isActive && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                          animate={{ opacity: 1, scale: 1, y: -15 }}
+                          exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 sm:w-72 p-3.5 rounded-2xl bg-slate-950/95 border-2 border-emerald-400 shadow-[0_15px_40px_rgba(0,0,0,0.9)] backdrop-blur-xl z-40 text-left space-y-2 pointer-events-auto"
+                        >
+                          {/* Seta do Balão */}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-emerald-400" />
+                          
+                          <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                            <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded bg-emerald-500 text-slate-950">
+                              ITEM {item.stepNumber}
+                            </span>
+                            <span className="text-[10px] font-mono font-bold text-emerald-400">
+                              {item.telemetry}
+                            </span>
+                          </div>
+
+                          <h4 className="text-xs font-bold text-white leading-snug">{item.title}</h4>
+                          <p className="text-[11px] text-slate-300 leading-tight">{item.description}</p>
+                          
+                          <div className="text-[9px] text-emerald-400 font-mono font-semibold pt-1 border-t border-slate-900 flex items-center gap-1">
+                            <CheckCircle2 className="size-3 text-emerald-400" />
+                            <span>{item.specs[0]}</span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 );
               })}
 
-              {/* Badge de Legenda no Topo Direito */}
-              <div className="absolute top-6 right-6 z-20 hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono font-bold text-emerald-400 shadow-xl backdrop-blur-md">
-                <Sparkles className="size-4 text-emerald-400 animate-pulse" />
-                <span>Caminho do Projeto: Telhado (1) ➔ Inversor (2) ➔ Garagem (3) ➔ App (4)</span>
+              {/* CELULAR AMPLIADO OFICIAL REPOSICIONADO NO CANTO SUPERIOR DIREITO DA IMAGEM (SEM ATAPALHAR NADA) */}
+              <div className="absolute top-16 right-6 z-20 hidden md:block w-60 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/80 shadow-[0_15px_40px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+                {/* Specular Glass Overlay */}
+                <div 
+                  className="absolute inset-0 pointer-events-none z-30 opacity-20"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%)'
+                  }}
+                />
+
+                {/* Notch do Smartphone */}
+                <div className="w-20 h-3 bg-slate-900 mx-auto rounded-b-lg mb-2 flex items-center justify-center">
+                  <div className="size-1 rounded-full bg-slate-800" />
+                </div>
+
+                {/* Tela do App Oficial */}
+                <div className="bg-[#0F172A] rounded-[20px] p-3 space-y-2.5 text-white border border-slate-800 font-sans text-left">
+                  <div className="flex items-center justify-between">
+                    <EsolOfficialBrandSymbol width={95} />
+                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[8px] font-mono font-bold flex items-center gap-1">
+                      <span className="size-1 rounded-full bg-emerald-400 animate-ping" /> ONLINE
+                    </span>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-slate-900 to-slate-950 border border-emerald-500/30 space-y-0.5">
+                    <span className="text-[7.5px] text-slate-400 font-bold uppercase tracking-wider">Geração de Hoje</span>
+                    <div className="text-lg font-black text-emerald-400 font-mono">42.8 kWh</div>
+                    <div className="text-[8.5px] text-slate-400 flex items-center gap-1">
+                      <Zap className="size-2.5 text-amber-400" />
+                      <span>Economia: <strong className="text-white">R$ 41,20/dia</strong></span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1">
+                    <div className="p-1.5 rounded bg-slate-900 border border-slate-800 space-y-0.5">
+                      <div className="text-[7px] text-slate-400 uppercase font-bold">Economia Mês</div>
+                      <div className="text-[10px] font-black text-amber-400 font-mono">R$ 1.280,00</div>
+                    </div>
+                    <div className="p-1.5 rounded bg-slate-900 border border-slate-800 space-y-0.5">
+                      <div className="text-[7px] text-slate-400 uppercase font-bold">Eficiência</div>
+                      <div className="text-[10px] font-black text-emerald-400 font-mono">98.4%</div>
+                    </div>
+                  </div>
+
+                  <div className="p-1.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-[8.5px] font-semibold text-emerald-400 flex items-center justify-between">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle className="size-3" /> System Healthy
+                    </span>
+                    <span className="font-mono text-[7.5px] text-slate-400">12 Módulos</span>
+                  </div>
+                </div>
               </div>
+
             </div>
 
             {/* SEÇÃO INTEGRADA DEDICADA PARA O CELULAR AMPLIADO (SEM OBSTRUIR A CASA) */}
