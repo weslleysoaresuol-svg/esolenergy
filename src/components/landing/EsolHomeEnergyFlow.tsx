@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Zap, Cpu, Car, Smartphone, CheckCircle2, Sparkles, Box, Activity, ArrowRight, ShieldCheck, CheckCircle, TrendingUp } from 'lucide-react';
+import { Sun, Zap, Cpu, Car, Smartphone, CheckCircle2, Sparkles, Box, Activity, ArrowRight, ShieldCheck, CheckCircle } from 'lucide-react';
 import { EsolOfficialBrandSymbol } from '@/components/brand/EsolOfficialBrandSymbol';
 
 export interface EsolHomeEnergyFlowProps {
@@ -84,7 +84,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
           </p>
         </div>
 
-        {/* MAQUETE 3D DIURNA DA CASA SIMPLES COM MARCA OFICIAL E MORADOR */}
+        {/* MAQUETE 3D DIURNA DA CASA COM MARCA OFICIAL E CELULAR AMPLIADO FIXO */}
         <div className="max-w-5xl mx-auto">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
@@ -107,8 +107,8 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </span>
               </div>
 
-              {/* LINHAS DE LASER DE CONEXÃO DO PROJETO (SVG BLUEPRINT LASER OVERLAY) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-80">
+              {/* LINHAS DE LASER DE CONEXÃO DO PROJETO FIXAS (SVG BLUEPRINT LASER OVERLAY) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-90">
                 <defs>
                   <linearGradient id="blueprintLaser" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#f59e0b" />
@@ -117,11 +117,11 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                   </linearGradient>
                 </defs>
                 {/* Linha 01 -> 02 */}
-                <line x1="46%" y1="22%" x2="30%" y2="46%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="46%" y1="22%" x2="30%" y2="46%" stroke="url(#blueprintLaser)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
                 {/* Linha 02 -> 03 */}
-                <line x1="30%" y1="46%" x2="74%" y2="64%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="30%" y1="46%" x2="74%" y2="64%" stroke="url(#blueprintLaser)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
                 {/* Linha 02 -> 04 */}
-                <line x1="30%" y1="46%" x2="48%" y2="78%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="30%" y1="46%" x2="48%" y2="78%" stroke="url(#blueprintLaser)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
               </svg>
 
               {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
@@ -152,77 +152,71 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 );
               })}
 
-              {/* AMPLIÇÃO DO CELULAR OFICIAL COM O APLICATIVO ESOL ENERGY (MESMO CELULAR DA SEÇÃO DE TECNOLOGIA) */}
-              <AnimatePresence>
-                {activeStepId === 'telemetria' && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8, y: 15 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, y: 15 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                    className="absolute top-[42%] left-[20%] sm:left-[30%] -translate-y-1/2 z-30 w-72 sm:w-80 rounded-[40px] bg-slate-950 p-3 border-4 border-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden"
-                  >
-                    {/* Specular Glass Overlay (Reflexo Especular Diagonal Idêntico) */}
-                    <div 
-                      className="absolute inset-0 pointer-events-none z-30 opacity-20"
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%)'
-                      }}
-                    />
+              {/* AMPLIÇÃO PERMANENTE DO CELULAR OFICIAL COM O APLICATIVO ESOL ENERGY (MESMO CELULAR DA SEÇÃO DE TECNOLOGIA) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 w-64 sm:w-72 rounded-[36px] bg-slate-950/95 p-3 border-2 border-emerald-500/80 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl"
+              >
+                {/* Specular Glass Overlay (Reflexo Especular Diagonal Idêntico) */}
+                <div 
+                  className="absolute inset-0 pointer-events-none z-30 opacity-20"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%)'
+                  }}
+                />
 
-                    {/* Notch do Smartphone */}
-                    <div className="w-28 h-4 bg-slate-900 mx-auto rounded-b-xl mb-3 flex items-center justify-center">
-                      <div className="size-1.5 rounded-full bg-slate-800" />
+                {/* Notch do Smartphone */}
+                <div className="w-24 h-3.5 bg-slate-900 mx-auto rounded-b-xl mb-2 flex items-center justify-center">
+                  <div className="size-1.5 rounded-full bg-slate-800" />
+                </div>
+
+                {/* Tela do Aplicativo Esol Mobile Idêntica à Seção de Tecnologia */}
+                <div className="bg-[#0F172A] rounded-[24px] p-3.5 space-y-3 text-white border border-slate-800 font-sans text-left">
+                  {/* Header do App */}
+                  <div className="flex items-center justify-between">
+                    <EsolOfficialBrandSymbol width={110} />
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[8px] font-mono font-bold flex items-center gap-1">
+                      <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" /> ONLINE
+                    </span>
+                  </div>
+
+                  {/* Card de Geração Atual */}
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-slate-900 to-slate-950 border border-emerald-500/30 space-y-0.5">
+                    <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Geração de Hoje</span>
+                    <div className="text-xl font-black text-emerald-400 font-mono">42.8 kWh</div>
+                    <div className="text-[9px] text-slate-400 flex items-center gap-1">
+                      <Zap className="size-3 text-amber-400" />
+                      <span>Economia: <strong className="text-white">R$ 41,20/dia</strong></span>
                     </div>
+                  </div>
 
-                    {/* Tela do Aplicativo Esol Mobile Idêntica à Seção de Tecnologia */}
-                    <div className="bg-[#0F172A] rounded-[28px] p-4 space-y-4 text-white border border-slate-800 font-sans text-left">
-                      {/* Header do App */}
-                      <div className="flex items-center justify-between">
-                        <EsolOfficialBrandSymbol width={120} />
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold flex items-center gap-1">
-                          <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" /> ONLINE
-                        </span>
-                      </div>
-
-                      {/* Card de Geração Atual */}
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-slate-900 to-slate-950 border border-emerald-500/30 space-y-1">
-                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Geração de Hoje</span>
-                        <div className="text-2xl font-black text-emerald-400 font-mono">42.8 kWh</div>
-                        <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                          <Zap className="size-3 text-amber-400" />
-                          <span>Economia estimada: <strong className="text-white">R$ 41,20/dia</strong></span>
-                        </div>
-                      </div>
-
-                      {/* Métricas Rápidas */}
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-0.5">
-                          <div className="text-[8px] text-slate-400 uppercase font-bold">Economia Mês</div>
-                          <div className="text-sm font-black text-amber-400 font-mono">R$ 1.280,00</div>
-                        </div>
-                        <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-0.5">
-                          <div className="text-[8px] text-slate-400 uppercase font-bold">Eficiência</div>
-                          <div className="text-sm font-black text-emerald-400 font-mono">98.4%</div>
-                        </div>
-                      </div>
-
-                      {/* Status da Usina */}
-                      <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-semibold text-emerald-400 flex items-center justify-between">
-                        <span className="flex items-center gap-1.5">
-                          <CheckCircle className="size-3.5" /> System Healthy
-                        </span>
-                        <span className="font-mono text-[9px] text-slate-400">12 Módulos Ativos</span>
-                      </div>
+                  {/* Métricas Rápidas */}
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 space-y-0.5">
+                      <div className="text-[7.5px] text-slate-400 uppercase font-bold">Economia Mês</div>
+                      <div className="text-xs font-black text-amber-400 font-mono">R$ 1.280,00</div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 space-y-0.5">
+                      <div className="text-[7.5px] text-slate-400 uppercase font-bold">Eficiência</div>
+                      <div className="text-xs font-black text-emerald-400 font-mono">98.4%</div>
+                    </div>
+                  </div>
+
+                  {/* Status da Usina */}
+                  <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[9px] font-semibold text-emerald-400 flex items-center justify-between">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle className="size-3" /> System Healthy
+                    </span>
+                    <span className="font-mono text-[8px] text-slate-400">12 Módulos Ativos</span>
+                  </div>
+                </div>
+              </motion.div>
 
               {/* Badge de Legenda no Rodapé da Imagem */}
-              <div className="absolute bottom-6 left-6 z-10 hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono font-bold text-emerald-400 shadow-xl backdrop-blur-md">
+              <div className="absolute top-6 right-6 z-20 hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono font-bold text-emerald-400 shadow-xl backdrop-blur-md">
                 <Sparkles className="size-4 text-emerald-400 animate-pulse" />
-                <span>Morador com o aplicativo esol energy. em tempo real</span>
+                <span>Fluxo fotônico e celular ampliado integrados na maquete 3D</span>
               </div>
             </div>
 
@@ -303,7 +297,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 <div className="md:col-span-4 flex justify-center">
                   <div className="p-6 rounded-3xl bg-slate-950 border border-slate-800 text-center space-y-4 w-full relative overflow-hidden shadow-2xl">
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-amber-500" />
-                    
+
                     <div className="size-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_30px_-5px_rgba(16,185,129,0.3)]">
                       <activeStep.icon className="size-8" />
                     </div>
