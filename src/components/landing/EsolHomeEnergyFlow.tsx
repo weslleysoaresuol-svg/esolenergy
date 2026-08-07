@@ -84,15 +84,15 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
           </p>
         </div>
 
-        {/* MAQUETE 3D RICA COM URBANISMO, MORADOR NO CENTRO, CELULAR NA ESQUERDA E LOGO OFICIAL */}
+        {/* MAQUETE 3D ULTRA-SIMPLES DE CASA TÉRREA COM POSICIONAMENTO CIRÚRGICO DOS COMPONENTES E CELULAR LIMPO */}
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Isométrico de Casa Solar Ultra-Simples com BESS (Alimentando VE e Residência) */}
+            {/* Render 3D Isométrico de Casa Solar Térrea Ultra-Simples */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_ultra_simple_solar_home_bess.png"
-                alt="Maquete 3D Ultra-Simples da Casa Solar esol energy com sistema BESS."
+                src="/images/esol_ultra_simple_single_story_3d_house.png"
+                alt="Maquete 3D Ultra-Simples de Casa Térrea Solar esol energy."
                 className="w-full h-[460px] md:h-[620px] object-cover object-center filter brightness-105 contrast-105"
               />
 
@@ -108,7 +108,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </span>
               </div>
 
-              {/* LINHAS DE LASER DE CAMINHO DO PROJETO SEQUENCIAL (1 ➔ 2 ➔ 3 ➔ 4) - SEM LINHAS DE PING DO ITEM 4 */}
+              {/* LINHAS DE LASER DE CAMINHO DO PROJETO SEQUENCIAL (1 ➔ 2 ➔ 3 ➔ 4) */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-90">
                 <defs>
                   <linearGradient id="seqLaserGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -119,23 +119,31 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </defs>
                 
                 {/* Trecho 1: Placas Solares (Item 01) -> Inversor Parede (Item 02) */}
-                <line x1="46%" y1="18%" x2="30%" y2="46%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="42%" y1="22%" x2="26%" y2="44%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
                 
-                {/* Trecho 2: Inversor Parede (Item 02) -> Garagem VE (Item 03) */}
-                <line x1="30%" y1="46%" x2="76%" y2="64%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
+                {/* Trecho 2: Inversor Parede (Item 02) -> Garagem BESS (Item 03) */}
+                <line x1="26%" y1="44%" x2="76%" y2="60%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
 
-                {/* Trecho 3: Garagem VE (Item 03) -> Morador no Centro (Item 04) */}
-                <line x1="76%" y1="64%" x2="50%" y2="76%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
+                {/* Trecho 3: Garagem BESS (Item 03) -> Morador IoT (Item 04) */}
+                <line x1="76%" y1="60%" x2="54%" y2="76%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
               </svg>
 
-              {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
+              {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D COM POSICIONAMENTO CIRÚRGICO */}
               {PROJECT_STEPS.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.id === activeStepId;
+                
+                // Posições físicas cirúrgicas exatas sobre os componentes da imagem térrea
+                const exactPos = 
+                  item.id === 'telhado' ? { top: '22%', left: '42%' } :
+                  item.id === 'inversor' ? { top: '44%', left: '26%' } :
+                  item.id === 'garagem' ? { top: '60%', left: '76%' } :
+                  { top: '76%', left: '54%' };
+
                 return (
                   <div
                     key={item.id}
-                    style={{ top: item.pinPos.top, left: item.pinPos.left }}
+                    style={{ top: exactPos.top, left: exactPos.left }}
                     className="absolute -translate-x-1/2 -translate-y-1/2 z-20"
                   >
                     <button
@@ -178,8 +186,8 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 );
               })}
 
-              {/* CELULAR AMPLIADO SAINDO DO CELULAR DA PESSOA NO CENTRO E PROJETADO NO LADO ESQUERDO DA IMAGEM */}
-              <div className="absolute top-1/2 left-4 sm:left-6 -translate-y-1/2 z-30 w-56 sm:w-64 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/90 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
+              {/* CELULAR AMPLIADO SAINDO DO CELULAR DA PESSOA E REPOSICIONADO NO CANTO SUPERIOR DIREITO LIMPO (SEM OBSTRUIR A CASA) */}
+              <div className="absolute top-16 right-6 z-20 hidden md:block w-56 sm:w-60 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/90 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
                 {/* Specular Glass Overlay */}
                 <div 
                   className="absolute inset-0 pointer-events-none z-30 opacity-20"
