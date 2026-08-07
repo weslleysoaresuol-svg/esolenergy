@@ -83,47 +83,47 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
           </p>
         </div>
 
-        {/* MAQUETE DIURNA REALISTA DA CASA SOLAR COM MARCA OFICIAL */}
+        {/* MAQUETE 3D DIURNA HIPER-REALISTA COM LINHAS DE PROJETO E MARCA OFICIAL */}
         <div className="max-w-5xl mx-auto">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Foto Diurna Realista da Casa Solar ESOL Energy */}
+            {/* Render 3D Diurno em Maquete Arquitetônica com Componentes Visíveis */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_real_daytime_solar_house.png"
-                alt="Foto Diurna Realista da Casa Solar esol energy."
+                src="/images/esol_master_daylight_3d_blueprint_villa.png"
+                alt="Maquete 3D Diurna Hiper-Realista da Casa Solar esol energy."
                 className="w-full h-[420px] md:h-[580px] object-cover object-center filter brightness-105 contrast-105"
               />
 
-              {/* Overlay Gradient suave para contraste com os textos */}
+              {/* Overlay Gradient suave para contraste */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B132B] via-transparent to-transparent opacity-40 pointer-events-none" />
 
-              {/* MARCA OFICIAL ESOL ENERGY APLICADA NO PROJETO DIURNO */}
+              {/* MARCA OFICIAL ESOL ENERGY APLICADA NO PROJETO 3D DIURNO */}
               <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-emerald-500/40 shadow-2xl backdrop-blur-md">
                 <span className="text-sm font-black tracking-tighter text-white font-sans">esol energy<span className="text-emerald-400 font-serif font-black">.</span></span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono font-bold text-emerald-400 uppercase">
-                  PROJETO DIURNO 100% REALISTA
+                  MAQUETE 3D BLUEPRINT DIURNA
                 </span>
               </div>
 
-              {/* LINHAS DE LASER DE CONEXÃO DO PROJETO (SVG LASER OVERLAY) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-70">
+              {/* LINHAS DE LASER DE CONEXÃO DO PROJETO (SVG BLUEPRINT LASER OVERLAY) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-80">
                 <defs>
-                  <linearGradient id="laserLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="blueprintLaser" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#f59e0b" />
                     <stop offset="50%" stopColor="#10b981" />
                     <stop offset="100%" stopColor="#06b6d4" />
                   </linearGradient>
                 </defs>
                 {/* Linha 01 -> 02 */}
-                <line x1="46%" y1="20%" x2="30%" y2="48%" stroke="url(#laserLine)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pulse" />
+                <line x1="46%" y1="22%" x2="30%" y2="46%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
                 {/* Linha 02 -> 03 */}
-                <line x1="30%" y1="48%" x2="72%" y2="65%" stroke="url(#laserLine)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pulse" />
+                <line x1="30%" y1="46%" x2="74%" y2="64%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
                 {/* Linha 02 -> 04 */}
-                <line x1="30%" y1="48%" x2="50%" y2="80%" stroke="url(#laserLine)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pulse" />
+                <line x1="30%" y1="46%" x2="48%" y2="80%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
               </svg>
 
-              {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A CASA DIURNA */}
+              {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
               {PROJECT_STEPS.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.id === activeStepId;
@@ -154,7 +154,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
               {/* Badge de Legenda no Rodapé da Imagem */}
               <div className="absolute bottom-6 left-6 z-10 hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono font-bold text-emerald-400 shadow-xl backdrop-blur-md">
                 <Sparkles className="size-4 text-emerald-400 animate-pulse" />
-                <span>Casa Solar sob a luz do sol com fluxo fotônico esol energy.</span>
+                <span>Maquete 3D sob o sol com linhas sequenciais do projeto esol energy.</span>
               </div>
             </div>
 
