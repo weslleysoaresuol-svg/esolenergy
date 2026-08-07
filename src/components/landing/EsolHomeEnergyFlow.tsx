@@ -87,12 +87,12 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
         <div className="max-w-5xl mx-auto">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Diurno em Maquete Arquitetônica com Componentes Visíveis */}
+            {/* Render 3D Diurno em Maquete Arquitetônica com Morador e Smartphone */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_master_daylight_3d_blueprint_villa.png"
-                alt="Maquete 3D Diurna Hiper-Realista da Casa Solar esol energy."
-                className="w-full h-[420px] md:h-[580px] object-cover object-center filter brightness-105 contrast-105"
+                src="/images/esol_master_3d_villa_person_smartphone.png"
+                alt="Maquete 3D Diurna com Morador e Monitoramento via Smartphone esol energy."
+                className="w-full h-[440px] md:h-[600px] object-cover object-center filter brightness-105 contrast-105"
               />
 
               {/* Overlay Gradient suave para contraste */}
@@ -102,7 +102,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
               <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-emerald-500/40 shadow-2xl backdrop-blur-md">
                 <span className="text-sm font-black tracking-tighter text-white font-sans">esol energy<span className="text-emerald-400 font-serif font-black">.</span></span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono font-bold text-emerald-400 uppercase">
-                  MAQUETE 3D BLUEPRINT DIURNA
+                  MAQUETE 3D COM MONITORAMENTO REAL
                 </span>
               </div>
 
@@ -120,7 +120,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 {/* Linha 02 -> 03 */}
                 <line x1="30%" y1="46%" x2="74%" y2="64%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
                 {/* Linha 02 -> 04 */}
-                <line x1="30%" y1="46%" x2="48%" y2="80%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="30%" y1="46%" x2="48%" y2="78%" stroke="url(#blueprintLaser)" strokeWidth="3" strokeDasharray="8 4" className="animate-pulse" />
               </svg>
 
               {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
@@ -151,10 +151,56 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 );
               })}
 
+              {/* CARD DE AMPLIÇÃO & DESTAQUE DO SMARTPHONE E APLICATIVO ESOL (PASSO 04) */}
+              <AnimatePresence>
+                {activeStepId === 'telemetria' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                    className="absolute top-[48%] left-[22%] sm:left-[32%] -translate-y-1/2 z-30 w-72 sm:w-80 p-4 rounded-3xl bg-slate-950/95 border-2 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.5)] backdrop-blur-2xl space-y-3"
+                  >
+                    {/* Mockup do Topo do Smartphone */}
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <div className="flex items-center gap-2">
+                        <Smartphone className="size-4 text-emerald-400 animate-bounce" />
+                        <span className="text-xs font-black text-white font-mono">esol mobile app<span className="text-emerald-400">.</span></span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-[9px] font-mono font-bold text-emerald-400 border border-emerald-500/40">
+                        AO VIVO
+                      </span>
+                    </div>
+
+                    {/* Dashboard de Telemetria do App */}
+                    <div className="space-y-2 text-left bg-slate-900/80 p-3 rounded-2xl border border-slate-800 font-mono">
+                      <div className="flex justify-between items-center text-xs text-slate-300">
+                        <span>Geração Hoje:</span>
+                        <span className="font-black text-emerald-400 text-sm">48.2 kWh</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs text-slate-300">
+                        <span>Economia Acumulada:</span>
+                        <span className="font-black text-amber-400 text-sm">R$ 1.450,00</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 border-t border-slate-800 pt-1.5">
+                        <span>Status da Usina:</span>
+                        <span className="text-emerald-400 font-bold flex items-center gap-1">
+                          <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
+                          100% Operacional
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-[10px] text-slate-400 text-center">
+                      🔍 Morador acompanhando a telemetria em tempo real.
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* Badge de Legenda no Rodapé da Imagem */}
               <div className="absolute bottom-6 left-6 z-10 hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono font-bold text-emerald-400 shadow-xl backdrop-blur-md">
                 <Sparkles className="size-4 text-emerald-400 animate-pulse" />
-                <span>Maquete 3D sob o sol com linhas sequenciais do projeto esol energy.</span>
+                <span>Morador com smartphone monitorando a usina solar em tempo real</span>
               </div>
             </div>
 
