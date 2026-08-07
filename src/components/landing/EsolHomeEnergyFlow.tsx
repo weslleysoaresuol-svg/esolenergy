@@ -14,7 +14,7 @@ const PROJECT_STEPS = [
     title: 'Captação Fotovoltaica (Telhado Solar)',
     subtitle: 'Módulos N-Type Bifaciais',
     icon: Sun,
-    pinPos: { top: '18%', left: '46%' },
+    pinPos: { top: '20%', left: '46%' },
     badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
     description: 'Instalação da usina fotovoltaica no telhado com módulos monocristalinos bifaciais de alta eficiência (> 22.8%).',
     specs: ['Geração Direta + Albedo Refletido', 'Garantia de Desempenho de 25 Anos', 'Resistência Extrema a Vento e Granizo'],
@@ -26,7 +26,7 @@ const PROJECT_STEPS = [
     title: 'Conversão & Inteligência (Parede Técnica)',
     subtitle: 'Inversor Central Inteligente',
     icon: Cpu,
-    pinPos: { top: '46%', left: '30%' },
+    pinPos: { top: '46%', left: '28%' },
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
     description: 'O inversor inteligente fixado na parede técnica converte a energia contínua em corrente alternada sincronizada com a rede.',
     specs: ['Eficiência Máxima de 98.6%', 'Proteção AFCI Arc-Fault com IA', 'Grau de Proteção IP66 para Exterior'],
@@ -35,14 +35,14 @@ const PROJECT_STEPS = [
   {
     stepNumber: '03',
     id: 'garagem',
-    title: 'Sistema BESS & Mobilidade (Garagem & Residência)',
-    subtitle: 'Baterias de Lítio + Estação Esol Charge VE',
+    title: 'Sistema BESS & Esol Charge (Alimenta Casa & VE)',
+    subtitle: 'Armazenamento Residencial + Recarga VE',
     icon: Car,
-    pinPos: { top: '64%', left: '74%' },
+    pinPos: { top: '62%', left: '76%' },
     badgeColor: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
-    description: 'Além da recarga ultrarrápida do veículo elétrico, o sistema de armazenamento em baterias BESS alimenta toda a residência durante a noite ou falhas de energia da concessionária (Backup 24/7).',
+    description: 'O carregador Esol Charge e o banco de baterias BESS alimentam o veículo elétrico E fornecem energia limpa para toda a residência durante a noite ou falhas de rede (Grid-Backup 24/7).',
     specs: ['Nobreak Residencial Automático (Zero Grid)', 'Baterias LFP de Lítio (6.000+ Ciclos)', 'Estação Esol Charge VE 22 kW AC'],
-    telemetry: 'Backup 24/7 + VE 22 kW'
+    telemetry: 'Alimenta Casa & VE 24/7'
   },
   {
     stepNumber: '04',
@@ -50,7 +50,7 @@ const PROJECT_STEPS = [
     title: 'Monitoramento IoT (Central Mobile)',
     subtitle: 'Gestão Inteligente via App',
     icon: Smartphone,
-    pinPos: { top: '76%', left: '50%' },
+    pinPos: { top: '78%', left: '50%' },
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/30',
     description: 'Painel de controle na palma da sua mão com atualização a cada 60s, histórico de economia em R$ e laudos preditivos.',
     specs: ['Extratos Mensais em PDF', 'Notificações Preditivas de Manutenção', 'Certificado Verde da ANEEL'],
@@ -80,19 +80,19 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
             Projeto Integrado da Casa Solar 3D
           </h2>
           <p className="text-slate-400 text-sm md:text-base">
-            Acompanhe na maquete 3D da residência a sequência técnica do seu projeto, desde a captação no telhado até a recarga e telemetria.
+            Acompanhe na maquete 3D da residência a sequência técnica do seu projeto, desde a captação no telhado até a alimentação da casa, carregador e telemetria.
           </p>
         </div>
 
-        {/* MAQUETE 3D ULTRA-SIMPLES DE CASA TÉRREA COM POSICIONAMENTO CIRÚRGICO DOS COMPONENTES E CELULAR LIMPO */}
+        {/* MAQUETE 3D ULTRA-SIMPLES DE CASA TÉRREA COM POSICIONAMENTO INTELIGENTE E LINHAS DE ZOOM */}
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Isométrico de Casa Solar Térrea Ultra-Simples */}
+            {/* Render 3D Isométrico de Casa Solar Ultra-Simples */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_ultra_simple_single_story_3d_house.png"
-                alt="Maquete 3D Ultra-Simples de Casa Térrea Solar esol energy."
+                src="/images/esol_ultra_simple_solar_home_zoom.png"
+                alt="Maquete 3D Ultra-Simples da Casa Solar esol energy."
                 className="w-full h-[460px] md:h-[620px] object-cover object-center filter brightness-105 contrast-105"
               />
 
@@ -108,7 +108,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </span>
               </div>
 
-              {/* LINHAS DE LASER DE CAMINHO DO PROJETO SEQUENCIAL (1 ➔ 2 ➔ 3 ➔ 4) */}
+              {/* LINHAS DE LASER SEQUENCIAIS (1 ➔ 2 ➔ 3 ➔ 4) E LINHAS INDICADORAS DE ZOOM DO CELULAR */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-90">
                 <defs>
                   <linearGradient id="seqLaserGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -119,31 +119,28 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </defs>
                 
                 {/* Trecho 1: Placas Solares (Item 01) -> Inversor Parede (Item 02) */}
-                <line x1="42%" y1="22%" x2="26%" y2="44%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="46%" y1="20%" x2="28%" y2="46%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
                 
-                {/* Trecho 2: Inversor Parede (Item 02) -> Garagem BESS (Item 03) */}
-                <line x1="26%" y1="44%" x2="76%" y2="60%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
+                {/* Trecho 2: Inversor Parede (Item 02) -> Chargebox & BESS (Item 03) */}
+                <line x1="28%" y1="46%" x2="76%" y2="62%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
 
-                {/* Trecho 3: Garagem BESS (Item 03) -> Morador IoT (Item 04) */}
-                <line x1="76%" y1="60%" x2="54%" y2="76%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
+                {/* Trecho 3: Chargebox & BESS (Item 03) -> Morador IoT (Item 04) */}
+                <line x1="76%" y1="62%" x2="50%" y2="78%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
+
+                {/* LINHAS INDICADORAS DE ZOOM QUE LIGAM O CELULAR DO MORADOR (50%, 78%) AO CELULAR AMPLIADO (16%, 72%) */}
+                <line x1="50%" y1="78%" x2="22%" y2="68%" stroke="#10b981" strokeWidth="2" strokeDasharray="4 3" opacity="0.85" />
+                <line x1="50%" y1="78%" x2="22%" y2="88%" stroke="#10b981" strokeWidth="2" strokeDasharray="4 3" opacity="0.85" />
               </svg>
 
-              {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D COM POSICIONAMENTO CIRÚRGICO */}
+              {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE OS COMPONENTES EXATOS */}
               {PROJECT_STEPS.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.id === activeStepId;
-                
-                // Posições físicas cirúrgicas exatas sobre os componentes da imagem térrea
-                const exactPos = 
-                  item.id === 'telhado' ? { top: '22%', left: '42%' } :
-                  item.id === 'inversor' ? { top: '44%', left: '26%' } :
-                  item.id === 'garagem' ? { top: '60%', left: '76%' } :
-                  { top: '76%', left: '54%' };
 
                 return (
                   <div
                     key={item.id}
-                    style={{ top: exactPos.top, left: exactPos.left }}
+                    style={{ top: item.pinPos.top, left: item.pinPos.left }}
                     className="absolute -translate-x-1/2 -translate-y-1/2 z-20"
                   >
                     <button
@@ -186,8 +183,8 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 );
               })}
 
-              {/* CELULAR AMPLIADO SAINDO DO CELULAR DA PESSOA E REPOSICIONADO NO CANTO SUPERIOR DIREITO LIMPO (SEM OBSTRUIR A CASA) */}
-              <div className="absolute top-16 right-6 z-20 hidden md:block w-56 sm:w-60 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/90 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
+              {/* CELULAR AMPLIADO SAINDO DO CELULAR DA PESSOA COM LINHAS DE ZOOM (POSICIONADO NO CANTO INFERIOR ESQUERDO SEM ATAPALHAR A CASA OU OUTROS PINS) */}
+              <div className="absolute bottom-6 left-6 z-30 hidden md:block w-52 sm:w-56 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/90 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
                 {/* Specular Glass Overlay */}
                 <div 
                   className="absolute inset-0 pointer-events-none z-30 opacity-20"
@@ -204,7 +201,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 {/* Tela do App Oficial */}
                 <div className="bg-[#0F172A] rounded-[20px] p-3 space-y-2 text-white border border-slate-800 font-sans text-left">
                   <div className="flex items-center justify-between">
-                    <EsolOfficialBrandSymbol width={90} />
+                    <EsolOfficialBrandSymbol width={85} />
                     <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[8px] font-mono font-bold flex items-center gap-1">
                       <span className="size-1 rounded-full bg-emerald-400 animate-ping" /> ONLINE
                     </span>
@@ -241,7 +238,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
 
             </div>
 
-            {/* LINHA SEQUENCIAL DO PROJETO COM BOTÕES APENAS 01, 02 E 03 (ITEM 04 EXCLUÍDO DA SUBSEÇÃO CONFORME SOLICITADO) */}
+            {/* LINHA SEQUENCIAL DO PROJETO COM BOTÕES APENAS 01, 02 E 03 */}
             <div className="space-y-4 pt-2">
               <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
                 <ShieldCheck className="size-4 text-emerald-400" />
