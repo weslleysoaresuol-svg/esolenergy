@@ -12,14 +12,6 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
   const [contaMensal, setContaMensal] = useState<number>(1500);
   const [modalidade, setModalidade] = useState<'turnkey' | 'assinatura' | 'mle'>('turnkey');
 
-  const handleValueChange = (val: number) => {
-    if (isNaN(val)) {
-      setContaMensal(0);
-    } else {
-      setContaMensal(Math.min(Math.max(0, val), 1000000));
-    }
-  };
-
   // Cálculos financeiros de alta precisão baseados na modalidade escolhida
   const percEconomia = modalidade === 'turnkey' ? 0.92 : modalidade === 'assinatura' ? 0.18 : 0.32;
   const economiaMensal = contaMensal * percEconomia;
@@ -76,46 +68,35 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
         <div className="p-8 md:p-12 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-8">
           <AnimatePresence mode="wait">
             
-            {/* PASSO 1: DIGITAÇÃO DIRETA OU SLIDER DO VALOR MENSAL */}
+            {/* PASSO 1: SELEÇÃO EXCLUSIVA VIA SLIDER DESLIZANTE ULTRA-SUAVE */}
             {step === 1 && (
               <motion.div
                 key="step1"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="space-y-6 text-center"
+                className="space-y-8 text-center"
               >
                 <h3 className="text-xl md:text-2xl font-bold text-white">
-                  Digite ou selecione o valor médio da sua conta de luz mensal:
+                  Deslize o marcador para informar o valor médio da sua conta de luz mensal:
                 </h3>
 
-                {/* Campo de Digitação Direta R$ */}
+                {/* Exibição Destacada do Valor em R$ */}
                 <div className="py-2 max-w-md mx-auto">
-                  <div className="relative flex items-center justify-center">
-                    <span className="absolute left-6 text-2xl md:text-3xl font-black text-amber-400 font-mono pointer-events-none">R$</span>
-                    <input
-                      type="number"
-                      min="100"
-                      max="1000000"
-                      step="100"
-                      value={contaMensal || ''}
-                      onChange={(e) => handleValueChange(Number(e.target.value))}
-                      placeholder="1500"
-                      className="w-full text-center text-4xl md:text-5xl font-black text-amber-400 font-mono py-4 pl-16 pr-6 rounded-2xl bg-slate-950 border border-amber-500/40 focus:outline-none focus:border-amber-400 transition-all shadow-inner"
-                    />
+                  <div className="text-4xl md:text-5xl font-black text-amber-400 font-mono py-4 px-8 rounded-2xl bg-slate-950 border border-amber-500/40 inline-block shadow-inner">
+                    R$ {contaMensal.toLocaleString('pt-BR')}
                   </div>
-                  <span className="text-[11px] text-slate-400 block mt-2">Você pode digitar o valor no teclado ou usar a barra abaixo.</span>
                 </div>
 
-                {/* Range Slider de Apoio */}
-                <div className="max-w-md mx-auto space-y-2">
+                {/* Range Slider Deslizante Ultra-Fluido (100% Estável) */}
+                <div className="max-w-md mx-auto space-y-3">
                   <input
                     type="range"
                     min="300"
                     max="50000"
                     step="250"
                     value={contaMensal}
-                    onChange={(e) => handleValueChange(Number(e.target.value))}
+                    onChange={(e) => setContaMensal(Number(e.target.value))}
                     className="w-full h-3 rounded-xl appearance-none cursor-pointer bg-slate-950 accent-emerald-400 focus:outline-none"
                   />
                   <div className="flex justify-between text-xs text-slate-500 font-mono">

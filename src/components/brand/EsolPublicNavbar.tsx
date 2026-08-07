@@ -29,7 +29,7 @@ export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = 
   };
 
   return (
-    <header className={`sticky top-0 z-[50] bg-[#0F172A]/70 backdrop-blur-xl border-b border-slate-800/50 shadow-2xl transition-all ${className}`}>
+    <header className={`fixed top-0 left-0 right-0 z-[100] bg-[#0F172A]/60 backdrop-blur-xl border-b border-slate-800/40 shadow-2xl transition-all ${className}`}>
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo mestre esol energy. */}
         <Link to="/" className="flex items-center gap-2 group">

@@ -5,8 +5,6 @@ import { EsolTeslaHero } from "@/components/landing/EsolTeslaHero";
 import { EsolTier1Partners } from "@/components/landing/EsolTier1Partners";
 import { EsolHomeEnergyFlow } from "@/components/landing/EsolHomeEnergyFlow";
 import { EsolGuidedConfigurator } from "@/components/landing/EsolGuidedConfigurator";
-import { EsolComparisonCards } from "@/components/brand/EsolComparisonCards";
-import { EsolEcosystemSection } from "@/components/landing/EsolEcosystemSection";
 import { EsolAppPreviewSection } from "@/components/landing/EsolAppPreviewSection";
 import { EsolHowItWorks } from "@/components/brand/EsolHowItWorks";
 import { EsolFAQSection } from "@/components/brand/EsolFAQSection";
@@ -20,10 +18,10 @@ export const Route = createFileRoute("/")({
 function IndexLandingPage() {
   return (
     <div className="relative min-h-screen bg-[#0F172A] text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950 overflow-x-hidden">
-      {/* 1. Header Translúcido Sticky com Títulos de 1 Palavra */}
+      {/* 1. Header Translúcido Fixo (Fixed Top-0) com Títulos de 1 Palavra */}
       <EsolPublicNavbar />
 
-      <main className="space-y-0 pb-20">
+      <main className="space-y-0 pb-20 pt-20">
         {/* 2. Hero Section Cinematográfico Full-Bleed (Foto nítida à direita) */}
         <EsolTeslaHero />
 
@@ -33,16 +31,10 @@ function IndexLandingPage() {
         {/* 4. Diagrama Interativo do Fluxo de Energia 3D (Home Energy Flow) */}
         <EsolHomeEnergyFlow />
 
-        {/* 5. Simulador Solar Guiado em 3 Passos (Com digitação em R$ e 3 modalidades) */}
+        {/* 5. Simulador Solar Guiado em 3 Passos (Exclusivo via Slider Deslizante Ultra-Fluido) */}
         <EsolGuidedConfigurator />
 
-        {/* 6. Comparativo Antes vs Depois (Concessionária vs Esol) */}
-        <EsolComparisonCards />
-
-        {/* 7. Ecossistema Integrado Esol */}
-        <EsolEcosystemSection />
-
-        {/* 8. Maquete 3D do App Esol com Telemetria */}
+        {/* 6. Maquete 3D do App Esol com Telemetria */}
         <EsolAppPreviewSection />
 
         {/* Container Central para Seções Institucionais */}
