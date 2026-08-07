@@ -88,11 +88,11 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Isométrico de Casa Solar Ultra-Simples com Zero Urbanismo */}
+            {/* Render 3D Isométrico de Casa Solar Simples com Pouco Urbanismo */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_ultra_simple_zero_urbanism.png"
-                alt="Maquete 3D Ultra-Simples da Casa Solar esol energy com Zero Urbanismo."
+                src="/images/esol_simple_house_light_urbanism.png"
+                alt="Maquete 3D de Casa Solar Simples com Pouco Urbanismo esol energy."
                 className="w-full h-[460px] md:h-[620px] object-cover object-center filter brightness-105 contrast-105"
               />
 
