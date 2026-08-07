@@ -14,7 +14,7 @@ const PROJECT_STEPS = [
     title: 'Captação Fotovoltaica (Telhado Solar)',
     subtitle: 'Módulos N-Type Bifaciais',
     icon: Sun,
-    pinPos: { top: '22%', left: '46%' },
+    pinPos: { top: '20%', left: '46%' },
     badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
     description: 'Instalação da usina fotovoltaica no telhado com módulos monocristalinos bifaciais de alta eficiência (> 22.8%).',
     specs: ['Geração Direta + Albedo Refletido', 'Garantia de Desempenho de 25 Anos', 'Resistência Extrema a Vento e Granizo'],
@@ -50,7 +50,7 @@ const PROJECT_STEPS = [
     title: 'Monitoramento IoT (Central Mobile)',
     subtitle: 'Gestão Inteligente via App',
     icon: Smartphone,
-    pinPos: { top: '78%', left: '48%' },
+    pinPos: { top: '76%', left: '50%' },
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/30',
     description: 'Painel de controle na palma da sua mão com atualização a cada 60s, histórico de economia em R$ e laudos preditivos.',
     specs: ['Extratos Mensais em PDF', 'Notificações Preditivas de Manutenção', 'Certificado Verde da ANEEL'],
@@ -80,34 +80,35 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
             Projeto Integrado da Casa Solar 3D
           </h2>
           <p className="text-slate-400 text-sm md:text-base">
-            Acompanhe na maquete 3D da residência a sequência técnica do seu projeto, desde a captação no telhado até o monitoramento na palma da mão.
+            Acompanhe na maquete 3D da residência a sequência técnica do seu projeto, desde a captação no telhado até a recarga e telemetria.
           </p>
         </div>
 
-        {/* MAQUETE 3D MINIMALISTA ULTRA-LIMPA COM CELULAR EMERGINDO DO MORADOR E BALÕES ULTRA-CLEAN */}
+        {/* MAQUETE 3D RICA COM URBANISMO, MORADOR NO CENTRO, CELULAR NA ESQUERDA E LOGO OFICIAL */}
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Minimalista em Maquete Arquitetônica Focada 100% nos Componentes */}
+            {/* Render 3D Rico da Casa Solar com Urbanismo e Paisagismo */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_ultra_clean_minimalist_3d_house.png"
-                alt="Maquete 3D Minimalista Ultra-Limpa da Casa Solar esol energy."
+                src="/images/esol_rich_3d_solar_home_center_person.png"
+                alt="Maquete 3D Rica com Urbanismo da Casa Solar esol energy."
                 className="w-full h-[460px] md:h-[620px] object-cover object-center filter brightness-105 contrast-105"
               />
 
               {/* Overlay Gradient suave para contraste */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B132B] via-transparent to-transparent opacity-30 pointer-events-none" />
 
-              {/* MARCA OFICIAL ESOL ENERGY APLICADA NO PROJETO 3D */}
-              <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-emerald-500/40 shadow-2xl backdrop-blur-md">
-                <span className="text-sm font-black tracking-tighter text-white font-sans">esol energy<span className="text-emerald-400 font-serif font-black">.</span></span>
+              {/* MARCA OFICIAL ESOL ENERGY LOGO APLICADA NO TOPO DA IMAGEM */}
+              <div className="absolute top-6 left-6 z-20 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-950/95 border border-emerald-500/50 shadow-2xl backdrop-blur-md">
+                <EsolOfficialBrandSymbol width={130} />
+                <span className="h-4 w-px bg-slate-800" />
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono font-bold text-emerald-400 uppercase">
-                  FLUXO SEQUENCIAL 1 ➔ 2 ➔ 3 ➔ 4
+                  PROJETO 3D INTEGRADOR
                 </span>
               </div>
 
-              {/* LINHAS DE LASER DE CAMINHO DO PROJETO SEQUENCIAL (1 ➔ 2 ➔ 3 ➔ 4) */}
+              {/* LINHAS DE LASER DE CAMINHO DO PROJETO SEQUENCIAL E PROJEÇÃO DO CELULAR */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-95">
                 <defs>
                   <linearGradient id="seqLaserGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -123,11 +124,12 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 {/* Trecho 2: Inversor Parede (Item 02) -> Garagem VE (Item 03) */}
                 <line x1="30%" y1="46%" x2="74%" y2="64%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
 
-                {/* Trecho 3: Garagem VE (Item 03) -> Smartphone IoT (Item 04) */}
-                <line x1="74%" y1="64%" x2="48%" y2="78%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
+                {/* Trecho 3: Garagem VE (Item 03) -> Morador no Centro (Item 04) */}
+                <line x1="74%" y1="64%" x2="50%" y2="76%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
 
-                {/* Feixe Laser Conectando o Celular do Morador (48%, 78%) ao Celular Ampliado (70%, 55%) */}
-                <line x1="48%" y1="78%" x2="70%" y2="55%" stroke="#10b981" strokeWidth="2.5" strokeDasharray="4 2" className="animate-ping" />
+                {/* PROJEÇÃO LASER DO CELULAR DO MORADOR (50%, 76%) PARA O CELULAR AMPLIADO NA ESQUERDA (16%, 50%) */}
+                <line x1="50%" y1="76%" x2="18%" y2="52%" stroke="#10b981" strokeWidth="3" strokeDasharray="5 3" className="animate-ping" />
+                <line x1="50%" y1="76%" x2="18%" y2="52%" stroke="#10b981" strokeWidth="1.5" />
               </svg>
 
               {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
@@ -180,8 +182,8 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 );
               })}
 
-              {/* CELULAR AMPLIADO SAINDO DIRECTAMENTE DO CELULAR DA PESSOA (ITEM 04) */}
-              <div className="absolute bottom-12 right-6 sm:bottom-16 sm:right-12 z-30 w-56 sm:w-64 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/90 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
+              {/* CELULAR AMPLIADO SAINDO DO CELULAR DA PESSOA NO CENTRO E PROJETADO NO LADO ESQUERDO DA IMAGEM */}
+              <div className="absolute top-1/2 left-4 sm:left-6 -translate-y-1/2 z-30 w-56 sm:w-64 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/90 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
                 {/* Specular Glass Overlay */}
                 <div 
                   className="absolute inset-0 pointer-events-none z-30 opacity-20"
@@ -235,86 +237,15 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
 
             </div>
 
-            {/* SEÇÃO INTEGRADA DEDICADA PARA O CELULAR AMPLIADO (SEM OBSTRUIR A CASA) */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center pt-2">
-              <div className="md:col-span-7 space-y-4 text-left">
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
-                  <Smartphone className="size-4 text-emerald-400" />
-                  <span>Item 04 • Telemetria do Aplicativo Esol Mobile</span>
-                </div>
-                <h3 className="text-xl md:text-2xl font-black text-white">
-                  Monitoramento em Tempo Real na Palma da Mão
-                </h3>
-                <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
-                  O aplicativo oficial <strong className="text-white">esol energy.</strong> recebe os dados diretamente da usina a cada 60 segundos, exibindo os exatos valores em kWh gerados, a economia financeira mensal e o estado de saúde do sistema.
-                </p>
-              </div>
-
-              {/* CELULAR AMPLIADO OFICIAL POSICIONADO DE FORMA LIMPA E SEM COBRIR A CASA */}
-              <div className="md:col-span-5 flex justify-center md:justify-end">
-                <div className="relative w-full max-w-[280px] rounded-[36px] bg-slate-950 p-3 border-4 border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.9)] overflow-hidden">
-                  {/* Specular Glass Overlay */}
-                  <div 
-                    className="absolute inset-0 pointer-events-none z-30 opacity-20"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%)'
-                    }}
-                  />
-
-                  {/* Notch do Smartphone */}
-                  <div className="w-24 h-3.5 bg-slate-900 mx-auto rounded-b-xl mb-2 flex items-center justify-center">
-                    <div className="size-1.5 rounded-full bg-slate-800" />
-                  </div>
-
-                  {/* Tela do App Oficial */}
-                  <div className="bg-[#0F172A] rounded-[24px] p-3.5 space-y-3 text-white border border-slate-800 font-sans text-left">
-                    <div className="flex items-center justify-between">
-                      <EsolOfficialBrandSymbol width={110} />
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[8px] font-mono font-bold flex items-center gap-1">
-                        <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" /> ONLINE
-                      </span>
-                    </div>
-
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-slate-900 to-slate-950 border border-emerald-500/30 space-y-0.5">
-                      <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Geração de Hoje</span>
-                      <div className="text-xl font-black text-emerald-400 font-mono">42.8 kWh</div>
-                      <div className="text-[9px] text-slate-400 flex items-center gap-1">
-                        <Zap className="size-3 text-amber-400" />
-                        <span>Economia: <strong className="text-white">R$ 41,20/dia</strong></span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-1.5">
-                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 space-y-0.5">
-                        <div className="text-[7.5px] text-slate-400 uppercase font-bold">Economia Mês</div>
-                        <div className="text-xs font-black text-amber-400 font-mono">R$ 1.280,00</div>
-                      </div>
-                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 space-y-0.5">
-                        <div className="text-[7.5px] text-slate-400 uppercase font-bold">Eficiência</div>
-                        <div className="text-xs font-black text-emerald-400 font-mono">98.4%</div>
-                      </div>
-                    </div>
-
-                    <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[9px] font-semibold text-emerald-400 flex items-center justify-between">
-                      <span className="flex items-center gap-1">
-                        <CheckCircle className="size-3" /> System Healthy
-                      </span>
-                      <span className="font-mono text-[8px] text-slate-400">12 Módulos Ativos</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* LINHA SEQUENCIAL DO PROJETO (TIMELINE CONTINUA 01 ➔ 02 ➔ 03 ➔ 04) */}
+            {/* LINHA SEQUENCIAL DO PROJETO COM BOTÕES APENAS 01, 02 E 03 (ITEM 04 EXCLUÍDO DA SUBSEÇÃO CONFORME SOLICITADO) */}
             <div className="space-y-4 pt-2">
               <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest text-center sm:text-left flex items-center justify-center sm:justify-start gap-2">
                 <ShieldCheck className="size-4 text-emerald-400" />
                 <span>Sequência de Execução do Projeto Engenharia ESOL</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                {PROJECT_STEPS.map((item) => {
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {PROJECT_STEPS.slice(0, 3).map((item) => {
                   const Icon = item.icon;
                   const isActive = item.id === activeStepId;
                   return (
