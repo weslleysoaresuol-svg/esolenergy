@@ -35,14 +35,14 @@ const PROJECT_STEPS = [
   {
     stepNumber: '03',
     id: 'garagem',
-    title: 'Alimentação VE (Garagem Iluminada)',
-    subtitle: 'Estação Esol Charge VE',
+    title: 'Sistema BESS & Mobilidade (Garagem & Residência)',
+    subtitle: 'Baterias de Lítio + Estação Esol Charge VE',
     icon: Car,
     pinPos: { top: '64%', left: '74%' },
     badgeColor: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
-    description: 'Na garagem, o carregador inteligente utiliza a energia gerada no telhado para recarregar veículos elétricos de forma ultrarrápida.',
-    specs: ['Potência de 22 kW AC Ultrarrápido', 'Plugue Universal Tipo 2 IEC 62196', 'Balanceamento Dinâmico de Carga'],
-    telemetry: 'Recarga VE 22 kW'
+    description: 'Além da recarga ultrarrápida do veículo elétrico, o sistema de armazenamento em baterias BESS alimenta toda a residência durante a noite ou falhas de energia da concessionária (Backup 24/7).',
+    specs: ['Nobreak Residencial Automático (Zero Grid)', 'Baterias LFP de Lítio (6.000+ Ciclos)', 'Estação Esol Charge VE 22 kW AC'],
+    telemetry: 'Backup 24/7 + VE 22 kW'
   },
   {
     stepNumber: '04',
@@ -88,11 +88,11 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Isométrico de Casa Solar Ultra-Simples com Posicionamento Inteligente e Urbanismo Minimalista */}
+            {/* Render 3D Isométrico de Casa Solar Ultra-Simples com BESS (Alimentando VE e Residência) */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_smart_simple_3d_house_minimal_urbanism.png"
-                alt="Maquete 3D Ultra-Simples da Casa Solar esol energy."
+                src="/images/esol_ultra_simple_solar_home_bess.png"
+                alt="Maquete 3D Ultra-Simples da Casa Solar esol energy com sistema BESS."
                 className="w-full h-[460px] md:h-[620px] object-cover object-center filter brightness-105 contrast-105"
               />
 
