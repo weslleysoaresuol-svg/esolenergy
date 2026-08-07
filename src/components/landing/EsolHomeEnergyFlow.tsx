@@ -14,7 +14,7 @@ const PROJECT_STEPS = [
     title: 'Captação Fotovoltaica (Telhado Solar)',
     subtitle: 'Módulos N-Type Bifaciais',
     icon: Sun,
-    pinPos: { top: '20%', left: '46%' },
+    pinPos: { top: '18%', left: '46%' },
     badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
     description: 'Instalação da usina fotovoltaica no telhado com módulos monocristalinos bifaciais de alta eficiência (> 22.8%).',
     specs: ['Geração Direta + Albedo Refletido', 'Garantia de Desempenho de 25 Anos', 'Resistência Extrema a Vento e Granizo'],
@@ -108,8 +108,8 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </span>
               </div>
 
-              {/* LINHAS DE LASER DE CAMINHO DO PROJETO SEQUENCIAL E PROJEÇÃO DO CELULAR */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-95">
+              {/* LINHAS DE LASER DE CAMINHO DO PROJETO SEQUENCIAL (1 ➔ 2 ➔ 3 ➔ 4) - SEM LINHAS DE PING DO ITEM 4 */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-90">
                 <defs>
                   <linearGradient id="seqLaserGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#f59e0b" />
@@ -119,17 +119,13 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </defs>
                 
                 {/* Trecho 1: Placas Solares (Item 01) -> Inversor Parede (Item 02) */}
-                <line x1="46%" y1="20%" x2="30%" y2="46%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="46%" y1="18%" x2="30%" y2="46%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
                 
                 {/* Trecho 2: Inversor Parede (Item 02) -> Garagem VE (Item 03) */}
-                <line x1="30%" y1="46%" x2="74%" y2="64%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
+                <line x1="30%" y1="46%" x2="76%" y2="64%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
 
                 {/* Trecho 3: Garagem VE (Item 03) -> Morador no Centro (Item 04) */}
-                <line x1="74%" y1="64%" x2="50%" y2="76%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
-
-                {/* PROJEÇÃO LASER DO CELULAR DO MORADOR (50%, 76%) PARA O CELULAR AMPLIADO NA ESQUERDA (16%, 50%) */}
-                <line x1="50%" y1="76%" x2="18%" y2="52%" stroke="#10b981" strokeWidth="3" strokeDasharray="5 3" className="animate-ping" />
-                <line x1="50%" y1="76%" x2="18%" y2="52%" stroke="#10b981" strokeWidth="1.5" />
+                <line x1="76%" y1="64%" x2="50%" y2="76%" stroke="url(#seqLaserGrad)" strokeWidth="3.5" strokeDasharray="8 4" className="animate-pulse" />
               </svg>
 
               {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
