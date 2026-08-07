@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Zap, Cpu, Car, Smartphone, CheckCircle2, Sparkles, Box, Activity, RotateCw, Eye } from 'lucide-react';
+import { Sun, Zap, Cpu, Car, Smartphone, CheckCircle2, Sparkles, Box, Activity, RotateCw, Eye, ShieldCheck } from 'lucide-react';
 import { EsolProduct3DViewer } from './EsolProduct3DViewer';
 
 export interface EsolHomeEnergyFlowProps {
@@ -10,53 +10,58 @@ export interface EsolHomeEnergyFlowProps {
 const FLOW_NODES = [
   {
     id: 'sol',
-    title: '1. Captação Fotônica Solar',
-    subtitle: 'Radiação Infinita do Sol',
+    title: '1. Radiação Solar Fotônica',
+    subtitle: 'Energia Limpa e Abundante',
     icon: Sun,
+    pinPos: { top: '12%', left: '22%' },
     badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
-    description: 'A luz solar é captada pelos módulos fotovoltaicos de última geração instalados no seu telhado ou terreno.',
-    specs: ['Eficiência da Célula > 22.8%', 'Resistência a Granizo e Vento', 'Tecnologia N-Type Bifacial'],
-    powerFlow: '98.4 kW/h'
+    description: 'A iluminação solar banha o telhado do imóvel com radiação de alta frequência, fornecendo os fótons necessários para a geração contínua.',
+    specs: ['Irradiância Solar Global: 5.6 kWh/m²/dia', 'Emissão Zero Carbono na Fonte', 'Energia 100% Renovável e Gratuita'],
+    powerFlow: '5.6 kWh/m²'
   },
   {
     id: 'modulos',
-    title: '2. Módulos Fotovoltaicos Tier-1',
-    subtitle: 'Conversão CC de Alta Precisão',
+    title: '2. Módulos Fotovoltaicos N-Type (Telhado)',
+    subtitle: 'Captação no Telhado Solar',
     icon: Zap,
+    pinPos: { top: '26%', left: '48%' },
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
-    description: 'Os semicondutores de silício puro transformam os fótons em corrente contínua (CC) com perda zero de energia.',
-    specs: ['Garantia de Desempenho 25 Anos', 'Degradação Menor que 0.4%/ano', 'Vidro Duplo de Safira Anti-Reflexo'],
-    powerFlow: '750V DC'
+    description: 'Módulos bifaciais de safira instalados no telhado transformam a luz em eletricidade de corrente contínua com máxima eficiência.',
+    specs: ['Eficiência da Célula > 22.8%', 'Resistência a Granizo e Carga de Vento', 'Tecnologia N-Type Bifacial Tier-1'],
+    powerFlow: '600W+ por Módulo'
   },
   {
     id: 'inversor',
-    title: '3. Inversor Inteligente Esol',
-    subtitle: 'Conversão CA & Sincronia ANEEL',
+    title: '3. Inversor Central Esol (Parede Técnica)',
+    subtitle: 'Gerenciamento com IA na Parede',
     icon: Cpu,
+    pinPos: { top: '48%', left: '28%' },
     badgeColor: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
-    description: 'Converte a corrente contínua em corrente alternada (CA) idêntica à da rede elétrica, gerenciando o fluxo inteligente.',
-    specs: ['Eficiência Máxima de 98.6%', 'Proteção AFCI Arc-Fault com IA', 'Conectividade Wi-Fi/4G Integrada'],
+    description: 'Instalado na parede técnica da casa, o inversor converte a energia para corrente alternada pronta para consumo no imóvel e rede.',
+    specs: ['Eficiência Máxima de 98.6%', 'Proteção AFCI Arc-Fault com IA', 'Sincronia Automática com Concessionária'],
     powerFlow: '220V/380V AC'
   },
   {
     id: 'bateria',
-    title: '4. Esol Charge & Autoconsumo',
-    subtitle: 'Alimentação VE & Imóvel',
+    title: '4. Esol Charge VE (Garagem Iluminada)',
+    subtitle: 'Estação de Recarga na Garagem',
     icon: Car,
+    pinPos: { top: '64%', left: '72%' },
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/30',
-    description: 'A energia limpa alimenta instantaneamente as luzes, eletrodomésticos e os veículos elétricos da sua propriedade.',
-    specs: ['Carregamento VE Ultrarrápido', 'Redução Imediata na Fatura', 'Créditos Injetados na Concessionária'],
-    powerFlow: '22 kW Ultrarrápido'
+    description: 'Na garagem iluminada, a estação de recarga alimenta o seu veículo elétrico utilizando diretamente a energia vinda do telhado.',
+    specs: ['Carregamento VE 22 kW Ultrarrápido', 'Plugue Universal Tipo 2 IEC', 'Gestão Inteligente de Sobrecarga'],
+    powerFlow: '22 kW Recarga'
   },
   {
     id: 'app',
-    title: '5. Telemetria App Esol Mobile',
+    title: '5. Telemetria Mobile (Monitoramento IoT)',
     subtitle: 'Gestão Inteligente na Palma da Mão',
     icon: Smartphone,
+    pinPos: { top: '78%', left: '46%' },
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
-    description: 'Você visualiza exatamente quantos kWh sua usina está gerando em tempo real e o montante em R$ economizado.',
-    specs: ['Atualização a Cada 60 Segundos', 'Extratos Mensais em PDF', 'Alertas Preditivos de Manutenção'],
-    powerFlow: 'IoT Sincronizado'
+    description: 'Controle total da usina através do aplicativo Esol Energy, exibindo a economia acumulada em tempo real e o status dos equipamentos.',
+    specs: ['Telemetria via Satélite a cada 60s', 'Extratos Mensais em PDF', 'Alertas Preditivos de Limpeza'],
+    powerFlow: 'Sincronizado IoT'
   }
 ];
 
@@ -68,94 +73,112 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
 
   return (
     <section className={`py-24 bg-[#0B132B] text-white relative overflow-hidden ${className}`} id="fluxo-energetico">
-      {/* Luz de Fundo Fotônica 3D */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+      {/* Glow de Fundo Ambient */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[700px] bg-emerald-500/10 rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10 space-y-16">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 space-y-12">
         
         {/* Header da Seção */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">
             <Box className="size-4 text-emerald-400" />
-            <span>Imersão em Realidade 3D WebGL</span>
+            <span>Palco 3D Arquitetônico Hiper-Realista</span>
           </span>
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">
-            Palco 3D do Fluxo Energético Fotônico
+            Casa Solar Inteligente em Realidade 3D
           </h2>
           <p className="text-slate-400 text-sm md:text-base">
-            Clique em qualquer item para explorar seu modelo tridimensional em 360° com raytracing simulado e controle de órbita.
+            Clique nos pontos pulsantes na casa, no telhado solar e na garagem para explorar o funcionamento e abrir a imersão 3D de cada item.
           </p>
         </div>
 
-        {/* PALCO 3D INTERATIVO */}
-        <div className="perspective-1000 max-w-5xl mx-auto">
-          <div className="p-8 md:p-12 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-12 relative overflow-hidden">
+        {/* NAVEGAÇÃO SUPERIOR DE ITENS */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {FLOW_NODES.map((node) => {
+            const Icon = node.icon;
+            const isActive = node.id === activeNodeId;
+            return (
+              <button
+                key={node.id}
+                onClick={() => setActiveNodeId(node.id)}
+                className={`px-4 py-2.5 rounded-2xl border text-xs font-bold font-mono transition-all cursor-pointer inline-flex items-center gap-2 ${
+                  isActive
+                    ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-[0_0_20px_-3px_rgba(16,185,129,0.6)] scale-105'
+                    : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white'
+                }`}
+              >
+                <Icon className="size-4" />
+                <span>{node.title.split('.')[1]}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* PALCO 3D HIPER-REALISTA COM PINS INTERATIVOS */}
+        <div className="max-w-5xl mx-auto">
+          <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Diagrama 3D dos Nós Conectados com Lasers Fotônicos */}
-            <div className="relative py-8">
-              {/* Linha de Conexão Tridimensional */}
-              <div className="absolute top-1/2 left-4 right-4 h-1 bg-gradient-to-r from-amber-500 via-emerald-400 to-purple-500 -translate-y-1/2 rounded-full opacity-40 z-0" />
-              
-              {/* Partícula Laser Fotônica Animada (Pulse Loop) */}
-              <motion.div
-                animate={{ x: ['0%', '100%'] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                className="absolute top-1/2 left-4 w-12 h-2 bg-emerald-400 rounded-full blur-[4px] -translate-y-1/2 shadow-[0_0_20px_#10b981] z-0 pointer-events-none"
+            {/* Render 3D da Casa Solar com Garagem e Pins */}
+            <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
+              <img
+                src="/images/esol_3d_real_solar_house_garage.png"
+                alt="Casa Solar 3D com Garagem e Carro Elétrico Esol Energy"
+                className="w-full h-[400px] md:h-[550px] object-cover object-center filter brightness-105 contrast-105"
               />
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 relative z-10">
-                {FLOW_NODES.map((node) => {
-                  const Icon = node.icon;
-                  const isActive = node.id === activeNodeId;
-                  return (
-                    <motion.button
-                      key={node.id}
-                      whileHover={{ scale: 1.08, rotateX: 10, rotateY: -10 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setActiveNodeId(node.id);
-                      }}
-                      className={`p-5 rounded-2xl border transition-all text-center space-y-3 cursor-pointer relative ${
+              {/* Overlay Gradient suave */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B132B] via-transparent to-transparent opacity-60 pointer-events-none" />
+
+              {/* PINS INTERATIVOS NA CASA 3D */}
+              {FLOW_NODES.map((node) => {
+                const Icon = node.icon;
+                const isActive = node.id === activeNodeId;
+                return (
+                  <div
+                    key={node.id}
+                    style={{ top: node.pinPos.top, left: node.pinPos.left }}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 z-20"
+                  >
+                    <button
+                      onClick={() => setActiveNodeId(node.id)}
+                      className={`relative flex items-center justify-center p-3 rounded-full border transition-all cursor-pointer group/pin ${
                         isActive
-                          ? 'bg-slate-950 border-emerald-500 shadow-[0_0_35px_-5px_rgba(16,185,129,0.5)] scale-105'
-                          : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                          ? 'bg-emerald-500 text-slate-950 border-white shadow-[0_0_30px_#10b981] scale-125'
+                          : 'bg-slate-950/80 text-emerald-400 border-emerald-500/50 hover:scale-110 hover:bg-emerald-500 hover:text-slate-950'
                       }`}
-                      style={{ transformStyle: 'preserve-3d' }}
                     >
-                      <div className={`size-12 mx-auto rounded-xl flex items-center justify-center transition-all ${
-                        isActive ? 'bg-emerald-500 text-slate-950 shadow-lg' : 'bg-slate-900 text-slate-400'
-                      }`}>
-                        <Icon className="size-6" />
-                      </div>
+                      <Icon className="size-5" />
 
-                      <div className="text-xs font-black text-white truncate font-mono">
-                        {node.title.split('.')[1]}
-                      </div>
+                      {/* Anel Pulsante */}
+                      <span className={`absolute inset-0 rounded-full border-2 border-emerald-400 ${isActive ? 'animate-ping' : 'opacity-0'}`} />
 
-                      <div className="text-[10px] text-emerald-400 font-mono font-bold">
-                        {node.powerFlow}
+                      {/* Tooltip com Nome ao Passar o Mouse */}
+                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-[11px] font-mono font-bold text-white opacity-0 group-hover/pin:opacity-100 transition-opacity shadow-xl pointer-events-none">
+                        {node.title}
                       </div>
+                    </button>
+                  </div>
+                );
+              })}
 
-                      {isActive && (
-                        <div className="absolute -top-2 -right-2 size-4 rounded-full bg-emerald-400 border-2 border-slate-900 animate-ping" />
-                      )}
-                    </motion.button>
-                  );
-                })}
+              {/* Badge Flutuante de Instrução */}
+              <div className="absolute bottom-6 left-6 z-10 hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono font-bold text-emerald-400 shadow-xl backdrop-blur-md">
+                <Sparkles className="size-4 text-emerald-400 animate-pulse" />
+                <span>Clique nos marcadores na casa para destacar os equipamentos</span>
               </div>
             </div>
 
-            {/* Painel Detalhado 3D com Botão de Abrir Imersão Three.js */}
+            {/* PAINEL DETALHADO DE DESTAQUE DO ITEM SELECIONADO */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeNode.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center pt-4 border-t border-slate-800/80"
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+                className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center pt-2"
               >
-                <div className="md:col-span-7 space-y-4">
+                <div className="md:col-span-8 space-y-4">
                   <span className={`inline-block px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${activeNode.badgeColor}`}>
                     {activeNode.subtitle}
                   </span>
@@ -165,7 +188,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                   <p className="text-slate-300 text-sm leading-relaxed">{activeNode.description}</p>
 
                   <div className="space-y-2 pt-2">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block font-mono">Especificações do Nó:</span>
+                    <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block">Especificações Técnicas:</span>
                     {activeNode.specs.map((spec, i) => (
                       <div key={i} className="flex items-center gap-2.5 text-xs text-slate-200 font-medium">
                         <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
@@ -180,13 +203,13 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                       className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)] cursor-pointer inline-flex items-center gap-2"
                     >
                       <RotateCw className="size-4" />
-                      <span>Abrir Imersão 3D Interativa (Three.js WebGL)</span>
+                      <span>Abrir Imersão 3D Interativa em Three.js WebGL</span>
                     </button>
                   </div>
                 </div>
 
-                {/* HUD Card Holográfico 3D */}
-                <div className="md:col-span-5 flex justify-center">
+                {/* Card de Métricas do Nó */}
+                <div className="md:col-span-4 flex justify-center">
                   <div
                     onClick={() => setIs3DModalOpen(true)}
                     className="p-6 rounded-3xl bg-slate-950 border border-slate-800 text-center space-y-4 w-full relative overflow-hidden shadow-2xl cursor-pointer group hover:border-emerald-500/50 transition-all"
@@ -200,9 +223,9 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                     <div className="space-y-1">
                       <div className="text-xs font-mono font-bold text-emerald-400 flex items-center justify-center gap-1.5">
                         <Activity className="size-3.5 text-emerald-400 animate-pulse" />
-                        <span>Clique para Ver em 3D</span>
+                        <span>{activeNode.powerFlow}</span>
                       </div>
-                      <div className="text-[11px] text-slate-400">Renderização WebGL com rotação 360° e Raytracing.</div>
+                      <div className="text-[11px] text-slate-400">Clique para inspecionar em Three.js 3D com rotação 360°.</div>
                     </div>
                   </div>
                 </div>
