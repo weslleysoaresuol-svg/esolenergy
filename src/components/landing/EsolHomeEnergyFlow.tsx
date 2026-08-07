@@ -25,7 +25,7 @@ const PROJECT_STEPS = [
     title: 'Conversão & Inteligência (Parede Técnica)',
     subtitle: 'Inversor Central Inteligente',
     icon: Cpu,
-    pinPos: { top: '38%', left: '34%' },
+    pinPos: { top: '46%', left: '50%' },
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
     description: 'O inversor inteligente fixado na parede técnica converte a energia contínua em corrente alternada sincronizada com a rede.',
     specs: ['Eficiência Máxima de 98.6%', 'Proteção AFCI Arc-Fault com IA', 'Grau de Proteção IP66 para Exterior'],
