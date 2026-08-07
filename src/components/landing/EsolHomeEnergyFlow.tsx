@@ -84,15 +84,15 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
           </p>
         </div>
 
-        {/* MAQUETE 3D ISOMÉTRICA DA CASA RESIDENCIAL SIMPLES COM BALÕES EXPLICATIVOS E CELULAR REPOSICIONADO */}
+        {/* MAQUETE 3D MINIMALISTA ULTRA-LIMPA COM CELULAR EMERGINDO DO MORADOR E BALÕES ULTRA-CLEAN */}
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Isométrico de Casa Solar Residencial Simples */}
+            {/* Render 3D Minimalista em Maquete Arquitetônica Focada 100% nos Componentes */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_simple_residential_3d_house_clean.png"
-                alt="Maquete 3D Residencial Simples da Casa Solar esol energy."
+                src="/images/esol_ultra_clean_minimalist_3d_house.png"
+                alt="Maquete 3D Minimalista Ultra-Limpa da Casa Solar esol energy."
                 className="w-full h-[460px] md:h-[620px] object-cover object-center filter brightness-105 contrast-105"
               />
 
@@ -125,6 +125,9 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
 
                 {/* Trecho 3: Garagem VE (Item 03) -> Smartphone IoT (Item 04) */}
                 <line x1="74%" y1="64%" x2="48%" y2="78%" stroke="url(#seqLaserGrad)" strokeWidth="4" strokeDasharray="8 4" className="animate-pulse" />
+
+                {/* Feixe Laser Conectando o Celular do Morador (48%, 78%) ao Celular Ampliado (70%, 55%) */}
+                <line x1="48%" y1="78%" x2="70%" y2="55%" stroke="#10b981" strokeWidth="2.5" strokeDasharray="4 2" className="animate-ping" />
               </svg>
 
               {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A MAQUETE 3D */}
@@ -152,33 +155,23 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                       <span className={`absolute inset-0 rounded-full border-2 border-emerald-400 ${isActive ? 'animate-ping' : 'opacity-0'}`} />
                     </button>
 
-                    {/* BALÃO EXPLICATIVO FLUTUANTE (SPEECH BUBBLE POPUP DO PIN CLICADO) */}
+                    {/* BALÃO EXPLICATIVO MINIMALISTA ULTRA-CLEAN (APENAS O TÍTULO) */}
                     <AnimatePresence>
                       {isActive && (
                         <motion.div
                           initial={{ opacity: 0, scale: 0.8, y: -10 }}
-                          animate={{ opacity: 1, scale: 1, y: -15 }}
+                          animate={{ opacity: 1, scale: 1, y: -12 }}
                           exit={{ opacity: 0, scale: 0.8, y: -10 }}
-                          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 sm:w-72 p-3.5 rounded-2xl bg-slate-950/95 border-2 border-emerald-400 shadow-[0_15px_40px_rgba(0,0,0,0.9)] backdrop-blur-xl z-40 text-left space-y-2 pointer-events-auto"
+                          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap px-3 py-1.5 rounded-xl bg-slate-950/95 border-2 border-emerald-400 shadow-2xl backdrop-blur-xl z-40 text-center pointer-events-auto"
                         >
                           {/* Seta do Balão */}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-emerald-400" />
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-6 border-transparent border-t-emerald-400" />
                           
-                          <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                            <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded bg-emerald-500 text-slate-950">
-                              ITEM {item.stepNumber}
+                          <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                            <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950">
+                              {item.stepNumber}
                             </span>
-                            <span className="text-[10px] font-mono font-bold text-emerald-400">
-                              {item.telemetry}
-                            </span>
-                          </div>
-
-                          <h4 className="text-xs font-bold text-white leading-snug">{item.title}</h4>
-                          <p className="text-[11px] text-slate-300 leading-tight">{item.description}</p>
-                          
-                          <div className="text-[9px] text-emerald-400 font-mono font-semibold pt-1 border-t border-slate-900 flex items-center gap-1">
-                            <CheckCircle2 className="size-3 text-emerald-400" />
-                            <span>{item.specs[0]}</span>
+                            <span>{item.title}</span>
                           </div>
                         </motion.div>
                       )}
@@ -187,8 +180,8 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 );
               })}
 
-              {/* CELULAR AMPLIADO OFICIAL REPOSICIONADO NO CANTO SUPERIOR DIREITO DA IMAGEM (SEM ATAPALHAR NADA) */}
-              <div className="absolute top-16 right-6 z-20 hidden md:block w-60 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/80 shadow-[0_15px_40px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+              {/* CELULAR AMPLIADO SAINDO DIRECTAMENTE DO CELULAR DA PESSOA (ITEM 04) */}
+              <div className="absolute bottom-12 right-6 sm:bottom-16 sm:right-12 z-30 w-56 sm:w-64 rounded-[32px] bg-slate-950/95 p-2.5 border-2 border-emerald-500/90 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
                 {/* Specular Glass Overlay */}
                 <div 
                   className="absolute inset-0 pointer-events-none z-30 opacity-20"
@@ -203,9 +196,9 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                 </div>
 
                 {/* Tela do App Oficial */}
-                <div className="bg-[#0F172A] rounded-[20px] p-3 space-y-2.5 text-white border border-slate-800 font-sans text-left">
+                <div className="bg-[#0F172A] rounded-[20px] p-3 space-y-2 text-white border border-slate-800 font-sans text-left">
                   <div className="flex items-center justify-between">
-                    <EsolOfficialBrandSymbol width={95} />
+                    <EsolOfficialBrandSymbol width={90} />
                     <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[8px] font-mono font-bold flex items-center gap-1">
                       <span className="size-1 rounded-full bg-emerald-400 animate-ping" /> ONLINE
                     </span>
