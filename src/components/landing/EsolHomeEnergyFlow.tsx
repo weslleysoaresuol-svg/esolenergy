@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Zap, Cpu, Car, Smartphone, CheckCircle2, Sparkles, Box, Activity, ShieldCheck } from 'lucide-react';
+import { Sun, Zap, Cpu, Car, Smartphone, CheckCircle2, Sparkles, Box, Activity, RotateCw, Eye } from 'lucide-react';
+import { EsolProduct3DViewer } from './EsolProduct3DViewer';
 
 export interface EsolHomeEnergyFlowProps {
   className?: string;
@@ -61,6 +62,7 @@ const FLOW_NODES = [
 
 export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ className = '' }) => {
   const [activeNodeId, setActiveNodeId] = useState<string>('modulos');
+  const [is3DModalOpen, setIs3DModalOpen] = useState<boolean>(false);
 
   const activeNode = FLOW_NODES.find((node) => node.id === activeNodeId) || FLOW_NODES[1];
 
@@ -75,13 +77,13 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">
             <Box className="size-4 text-emerald-400" />
-            <span>Estágio Tridimensional Interativo 3D</span>
+            <span>Imersão em Realidade 3D WebGL</span>
           </span>
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">
             Palco 3D do Fluxo Energético Fotônico
           </h2>
           <p className="text-slate-400 text-sm md:text-base">
-            Explore interativamente cada nó do ecossistema tridimensional e acompanhe o transporte em tempo real dos fótons solares.
+            Clique em qualquer item para explorar seu modelo tridimensional em 360° com raytracing simulado e controle de órbita.
           </p>
         </div>
 
@@ -110,7 +112,9 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                       key={node.id}
                       whileHover={{ scale: 1.08, rotateX: 10, rotateY: -10 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setActiveNodeId(node.id)}
+                      onClick={() => {
+                        setActiveNodeId(node.id);
+                      }}
                       className={`p-5 rounded-2xl border transition-all text-center space-y-3 cursor-pointer relative ${
                         isActive
                           ? 'bg-slate-950 border-emerald-500 shadow-[0_0_35px_-5px_rgba(16,185,129,0.5)] scale-105'
@@ -141,7 +145,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
               </div>
             </div>
 
-            {/* Painel Detalhado 3D com Métricas de Telemetria */}
+            {/* Painel Detalhado 3D com Botão de Abrir Imersão Three.js */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeNode.id}
@@ -169,23 +173,36 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                       </div>
                     ))}
                   </div>
+
+                  <div className="pt-2">
+                    <button
+                      onClick={() => setIs3DModalOpen(true)}
+                      className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)] cursor-pointer inline-flex items-center gap-2"
+                    >
+                      <RotateCw className="size-4" />
+                      <span>Abrir Imersão 3D Interativa (Three.js WebGL)</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* HUD Card Holográfico 3D */}
                 <div className="md:col-span-5 flex justify-center">
-                  <div className="p-6 rounded-3xl bg-slate-950 border border-slate-800 text-center space-y-4 w-full relative overflow-hidden shadow-2xl">
+                  <div
+                    onClick={() => setIs3DModalOpen(true)}
+                    className="p-6 rounded-3xl bg-slate-950 border border-slate-800 text-center space-y-4 w-full relative overflow-hidden shadow-2xl cursor-pointer group hover:border-emerald-500/50 transition-all"
+                  >
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-amber-500" />
                     
-                    <div className="size-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_30px_-5px_rgba(16,185,129,0.3)]">
+                    <div className="size-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_30px_-5px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-all">
                       <activeNode.icon className="size-8" />
                     </div>
 
                     <div className="space-y-1">
                       <div className="text-xs font-mono font-bold text-emerald-400 flex items-center justify-center gap-1.5">
                         <Activity className="size-3.5 text-emerald-400 animate-pulse" />
-                        <span>3D HUD • {activeNode.powerFlow}</span>
+                        <span>Clique para Ver em 3D</span>
                       </div>
-                      <div className="text-[11px] text-slate-400">Homologado e Certificado conforme as normas da ANEEL e do CREA.</div>
+                      <div className="text-[11px] text-slate-400">Renderização WebGL com rotação 360° e Raytracing.</div>
                     </div>
                   </div>
                 </div>
@@ -196,6 +213,16 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
         </div>
 
       </div>
+
+      {/* Modal Canvas Three.js WebGL para Imersão 3D Completa */}
+      <AnimatePresence>
+        {is3DModalOpen && (
+          <EsolProduct3DViewer
+            productId={activeNodeId as any}
+            onClose={() => setIs3DModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };
