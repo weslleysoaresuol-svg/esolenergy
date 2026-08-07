@@ -83,20 +83,45 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
           </p>
         </div>
 
-        {/* MESTRE 3D VILLA COM PINS SEQUENCIAIS DO PROJETO */}
+        {/* MESTRE 3D VILLA EXCLUSIVA ESOL COM LINHAS DE PROJETO E MARCA OFICIAL */}
         <div className="max-w-5xl mx-auto">
           <div className="p-4 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-2xl shadow-2xl space-y-8 relative overflow-hidden">
             
-            {/* Render 3D Unificado da Casa com Garagem */}
+            {/* Render 3D Exclusivo da Casa Solar ESOL Energy com Marca e Garagem */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
               <img
-                src="/images/esol_3d_master_solar_villa_project.png"
-                alt="Projeto 3D Unificado Casa Solar e Garagem Esol Energy"
+                src="/images/esol_exclusive_3d_solar_villa_branded.png"
+                alt="Projeto 3D Exclusivo Casa Solar e Garagem esol energy."
                 className="w-full h-[420px] md:h-[580px] object-cover object-center filter brightness-105 contrast-105"
               />
 
-              {/* Gradient Overlay de Proteção Visual */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0B132B] via-transparent to-transparent opacity-60 pointer-events-none" />
+              {/* Overlay Gradient de Proteção Visual */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B132B] via-transparent to-transparent opacity-50 pointer-events-none" />
+
+              {/* MARCA OFICIAL ESOL ENERGY APLICADA NO PROJETO 3D */}
+              <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-emerald-500/40 shadow-2xl backdrop-blur-md">
+                <span className="text-sm font-black tracking-tighter text-white font-sans">esol energy<span className="text-emerald-400 font-serif font-black">.</span></span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono font-bold text-emerald-400 uppercase">
+                  PROJETO AUTORAL 3D
+                </span>
+              </div>
+
+              {/* LINHAS DE LASER DE CONEXÃO DO PROJETO (SVG LASER OVERLAY) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-70">
+                <defs>
+                  <linearGradient id="laserLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#f59e0b" />
+                    <stop offset="50%" stopColor="#10b981" />
+                    <stop offset="100%" stopColor="#06b6d4" />
+                  </linearGradient>
+                </defs>
+                {/* Linha 01 -> 02 */}
+                <line x1="46%" y1="22%" x2="50%" y2="46%" stroke="url(#laserLine)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pulse" />
+                {/* Linha 02 -> 03 */}
+                <line x1="50%" y1="46%" x2="76%" y2="64%" stroke="url(#laserLine)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pulse" />
+                {/* Linha 02 -> 04 */}
+                <line x1="50%" y1="46%" x2="48%" y2="80%" stroke="url(#laserLine)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pulse" />
+              </svg>
 
               {/* PINS SEQUENCIAIS 01 - 02 - 03 - 04 SOBRE A CASA 3D */}
               {PROJECT_STEPS.map((item) => {
@@ -110,10 +135,10 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                   >
                     <button
                       onClick={() => setActiveStepId(item.id)}
-                      className={`relative flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all cursor-pointer shadow-2xl ${
+                      className={`relative flex items-center gap-2 px-3.5 py-1.5 rounded-full border transition-all cursor-pointer shadow-2xl ${
                         isActive
                           ? 'bg-emerald-500 text-slate-950 border-white shadow-[0_0_30px_#10b981] scale-110'
-                          : 'bg-slate-950/80 text-emerald-400 border-emerald-500/50 hover:scale-105 hover:bg-emerald-500 hover:text-slate-950'
+                          : 'bg-slate-950/90 text-emerald-400 border-emerald-500/60 hover:scale-105 hover:bg-emerald-500 hover:text-slate-950'
                       }`}
                     >
                       <span className="text-xs font-black font-mono">{item.stepNumber}</span>
@@ -129,7 +154,7 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
               {/* Badge de Legenda no Rodapé da Imagem */}
               <div className="absolute bottom-6 left-6 z-10 hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono font-bold text-emerald-400 shadow-xl backdrop-blur-md">
                 <Sparkles className="size-4 text-emerald-400 animate-pulse" />
-                <span>Clique nos pontos 01, 02, 03 e 04 no 3D para acompanhar o projeto</span>
+                <span>Linhas de fluxo fotônico esol energy. interligando o projeto</span>
               </div>
             </div>
 
