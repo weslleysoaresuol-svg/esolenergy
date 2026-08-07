@@ -9,24 +9,15 @@ export interface EsolGuidedConfiguratorProps {
 
 export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ className = '' }) => {
   const [step, setStep] = useState<number>(1);
-  const [contaMensalInput, setContaMensalInput] = useState<string>('1500');
   const [contaMensal, setContaMensal] = useState<number>(1500);
   const [modalidade, setModalidade] = useState<'turnkey' | 'assinatura' | 'mle'>('turnkey');
 
-  const handleInputChange = (val: string) => {
-    setContaMensalInput(val);
-    const cleaned = val.replace(/\D/g, '');
-    if (cleaned.length > 0) {
-      const num = parseInt(cleaned, 10);
-      if (!isNaN(num) && num > 0) {
-        setContaMensal(Math.min(num, 1000000));
-      }
+  const handleValueChange = (val: number) => {
+    if (isNaN(val)) {
+      setContaMensal(0);
+    } else {
+      setContaMensal(Math.min(Math.max(0, val), 1000000));
     }
-  };
-
-  const handleSliderChange = (num: number) => {
-    setContaMensal(num);
-    setContaMensalInput(num.toString());
   };
 
   // Cálculos financeiros de alta precisão baseados na modalidade escolhida
@@ -101,16 +92,19 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                 {/* Campo de Digitação Direta R$ */}
                 <div className="py-2 max-w-md mx-auto">
                   <div className="relative flex items-center justify-center">
-                    <span className="absolute left-6 text-2xl md:text-3xl font-black text-amber-400 font-mono">R$</span>
+                    <span className="absolute left-6 text-2xl md:text-3xl font-black text-amber-400 font-mono pointer-events-none">R$</span>
                     <input
-                      type="text"
-                      value={contaMensalInput}
-                      onChange={(e) => handleInputChange(e.target.value)}
+                      type="number"
+                      min="100"
+                      max="1000000"
+                      step="100"
+                      value={contaMensal || ''}
+                      onChange={(e) => handleValueChange(Number(e.target.value))}
                       placeholder="1500"
                       className="w-full text-center text-4xl md:text-5xl font-black text-amber-400 font-mono py-4 pl-16 pr-6 rounded-2xl bg-slate-950 border border-amber-500/40 focus:outline-none focus:border-amber-400 transition-all shadow-inner"
                     />
                   </div>
-                  <span className="text-[11px] text-slate-400 block mt-2">Você pode digitar o valor exato no campo acima.</span>
+                  <span className="text-[11px] text-slate-400 block mt-2">Você pode digitar o valor no teclado ou usar a barra abaixo.</span>
                 </div>
 
                 {/* Range Slider de Apoio */}
@@ -121,7 +115,7 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
                     max="50000"
                     step="250"
                     value={contaMensal}
-                    onChange={(e) => handleSliderChange(Number(e.target.value))}
+                    onChange={(e) => handleValueChange(Number(e.target.value))}
                     className="w-full h-3 rounded-xl appearance-none cursor-pointer bg-slate-950 accent-emerald-400 focus:outline-none"
                   />
                   <div className="flex justify-between text-xs text-slate-500 font-mono">
