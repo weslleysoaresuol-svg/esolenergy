@@ -38,7 +38,7 @@ const PROJECT_STEPS = [
     title: 'Conversão & Inteligência (Parede Técnica)',
     subtitle: 'Inversor Híbrido com IA e Proteção AFCI',
     icon: Cpu,
-    pinPos: { top: '68%', left: '34%' },
+    pinPos: { top: '60%', left: '34%' },
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
     description: 'O inversor inteligente fixado na parede técnica sincroniza e converte a corrente contínua em corrente alternada pura (220V/380V) para alimentar toda a residência e a garagem.',
     specs: ['Eficiência Máxima de Conversão de 98.6%', 'Proteção AFCI Arc-Fault com Inteligência Artificial', 'Grau de Proteção IP66 para Área Externa'],
@@ -145,22 +145,22 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                   </linearGradient>
                 </defs>
                 
-                {/* Trecho 1: Telhado Solar (46%, 32%) -> Inversor Parede (34%, 68%) */}
+                {/* Trecho 1: Telhado Solar (46%, 32%) -> Inversor Parede (34%, 60%) */}
                 <line 
                   x1="46%" 
                   y1="32%" 
                   x2="34%" 
-                  y2="68%" 
+                  y2="60%" 
                   stroke="url(#flowGrad)" 
                   strokeWidth="3.5" 
                   strokeDasharray="8 4" 
                   className="animate-pulse" 
                 />
                 
-                {/* Trecho 2: Inversor Parede (34%, 68%) -> Alimentação Residencial (60%, 56%) */}
+                {/* Trecho 2: Inversor Parede (34%, 60%) -> Alimentação Residencial (60%, 56%) */}
                 <line 
                   x1="34%" 
-                  y1="68%" 
+                  y1="60%" 
                   x2="60%" 
                   y2="56%" 
                   stroke="url(#flowGrad)" 
@@ -169,10 +169,10 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                   className="animate-pulse" 
                 />
 
-                {/* Trecho 3: Inversor Parede (34%, 68%) -> Estação Esol Charge Garagem (16%, 69%) */}
+                {/* Trecho 3: Inversor Parede (34%, 60%) -> Estação Esol Charge Garagem (16%, 69%) */}
                 <line 
                   x1="34%" 
-                  y1="68%" 
+                  y1="60%" 
                   x2="16%" 
                   y2="69%" 
                   stroke="url(#flowGrad)" 
