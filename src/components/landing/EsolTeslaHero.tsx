@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Zap, ChevronDown, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Zap, ChevronDown, Play, X, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export interface EsolTeslaHeroProps {
   onSimulateClick?: () => void;
@@ -15,9 +15,9 @@ const TYPEWRITER_PHRASES = [
 ];
 
 /**
- * `<EsolTeslaHero />` — Hero Section Padrão Enphase / Tesla Solar
- * Tipografia autêntica com efeito de digitação dinâmico (Typewriter),
- * fotografia arquitetônica de alta resolução e zero badges artificiais de IA.
+ * `<EsolTeslaHero />` — Hero Section Padrão Enphase Energy & Sunrun
+ * Tipografia autêntica com efeito Typewriter dinâmico, fotografia arquitetônica real,
+ * modal de vídeo 4K de instalações reais e zero badges artificiais.
  */
 export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
   onSimulateClick,
@@ -26,19 +26,18 @@ export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   useEffect(() => {
     const currentPhrase = TYPEWRITER_PHRASES[currentPhraseIndex];
     let typingSpeed = isDeleting ? 40 : 80;
 
     if (!isDeleting && displayedText === currentPhrase) {
-      // Pausa quando completa a digitação
       const timeout = setTimeout(() => setIsDeleting(true), 2400);
       return () => clearTimeout(timeout);
     }
 
     if (isDeleting && displayedText === '') {
-      // Passa para a próxima frase
       setIsDeleting(false);
       setCurrentPhraseIndex((prev) => (prev + 1) % TYPEWRITER_PHRASES.length);
       return;
@@ -75,23 +74,15 @@ export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
       {/* Imagem Arquitetônica Real de Fundo sob Luz Natural */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/assets/hero-solar-premium-DbbfHtsS.png"
-          alt="Usina Solar Residencial de Alto Padrão sob Luz Natural"
-          className="w-full h-full object-cover object-right opacity-85 brightness-105 contrast-105 transform transition-transform duration-10000 hover:scale-105"
+          src="/images/esol_real_drone_rooftop_installation.jpg"
+          alt="Usina Solar Residencial Real em Telhado sob Luz Natural"
+          className="w-full h-full object-cover object-center opacity-80 brightness-100 contrast-105 transform transition-transform duration-10000 hover:scale-105"
         />
         {/* Degradê Concentrado para legibilidade perfeita do texto */}
-        <div className="absolute inset-y-0 left-0 w-full lg:w-3/5 bg-gradient-to-r from-[#080E21] via-[#080E21]/90 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#080E21] to-transparent" />
-        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#080E21]/80 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-full lg:w-3/5 bg-gradient-to-r from-[#080E21] via-[#080E21]/95 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#080E21] to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#080E21]/90 to-transparent" />
       </div>
-
-      {/* Camada de Granulação Sutil */}
-      <div 
-        className="absolute inset-0 opacity-[0.025] pointer-events-none z-5" 
-        style={{ 
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` 
-        }} 
-      />
 
       {/* Conteúdo Principal do Hero */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-16 relative z-10 w-full my-auto space-y-8">
@@ -104,10 +95,10 @@ export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
           className="flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          <span>Engenharia Solar & Baterias BESS • Padrão Internacional</span>
+          <span>Engenharia Solar & Baterias BESS • Padrão Enphase</span>
         </motion.div>
 
-        {/* Título Principal com Efeito de Digitação (Typewriter) */}
+        {/* Título Principal com Efeito Typewriter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,11 +114,11 @@ export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
           </h1>
 
           <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl font-normal leading-relaxed">
-            Elimine até 95% da sua fatura de luz com usinas fotovoltaicas de alta eficiência, armazenamento residencial BESS e garantia linear de 25 anos.
+            Elimine até 95% da sua fatura de luz com usinas fotovoltaicas de alta eficiência, baterias de lítio e garantia de 25 anos.
           </p>
         </motion.div>
 
-        {/* Botões de Conversão Rápidos */}
+        {/* Botões de Ação Rápidos com Botão de Vídeo 4K */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,15 +134,17 @@ export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
           </button>
 
           <button
-            onClick={scrollToFlow}
-            className="px-8 py-4 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-white font-bold text-sm backdrop-blur-xl transition-all flex items-center justify-center gap-2 cursor-pointer hover:border-emerald-500/40"
+            onClick={() => setIsVideoModalOpen(true)}
+            className="px-6 py-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 text-white font-bold text-sm backdrop-blur-xl transition-all flex items-center justify-center gap-2.5 cursor-pointer hover:border-emerald-500/50"
           >
-            <Zap className="size-4 text-emerald-400" />
-            <span>Ver Ecossistema 3D</span>
+            <div className="size-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <Play className="size-3.5 fill-emerald-400 translate-x-0.5" />
+            </div>
+            <span>Assistir Vídeo Real 4K</span>
           </button>
         </motion.div>
 
-        {/* Barra de Métricas Limpa (Estilo Enphase / Tesla Spec Strip) */}
+        {/* Barra de Métricas Limpa (Estilo Enphase / Sunrun Spec Strip) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -191,6 +184,42 @@ export const EsolTeslaHero: React.FC<EsolTeslaHeroProps> = ({
           <ChevronDown className="size-4 animate-bounce text-emerald-400" />
         </button>
       </div>
+
+      {/* Modal de Vídeo Real 4K */}
+      <AnimatePresence>
+        {isVideoModalOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-xl">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-4 p-4"
+            >
+              <div className="flex items-center justify-between px-2">
+                <div className="text-sm font-bold text-white flex items-center gap-2">
+                  <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Instalação Solar Real • Tour em 4K</span>
+                </div>
+                <button
+                  onClick={() => setIsVideoModalOpen(false)}
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white cursor-pointer transition-all"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+
+              <div className="aspect-video rounded-2xl overflow-hidden bg-black">
+                <video
+                  src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-solar-panels-on-a-roof-42456-large.mp4"
+                  controls
+                  autoPlay
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </section>
   );
