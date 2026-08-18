@@ -181,10 +181,10 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
                   className="animate-pulse" 
                 />
 
-                {/* Trecho 4: Alimentação Residencial (60%, 56%) -> Morador IoT (72%, 73%) */}
+                {/* Trecho 4: Inversor Central IoT & Datalogger (34%, 60%) -> Telemetria Smartphone Morador (72%, 73%) */}
                 <line 
-                  x1="60%" 
-                  y1="56%" 
+                  x1="34%" 
+                  y1="60%" 
                   x2="72%" 
                   y2="73%" 
                   stroke="url(#flowGrad)" 
