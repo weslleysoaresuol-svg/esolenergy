@@ -31,14 +31,15 @@ export const EsolProjectStatusTracker: React.FC<EsolProjectStatusTrackerProps> =
     <div className={`p-8 rounded-3xl bg-slate-950 border border-slate-800 text-white space-y-8 shadow-2xl ${className}`} id="rastreamento">
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-          <Sparkles className="size-3.5" /> Portal de Transparência
-        </span>
+        <div className="flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          <span>Rastreamento em Tempo Real</span>
+        </div>
         <h2 className="text-2xl md:text-4xl font-black tracking-tight text-white">
           Acompanhe o Status do Seu Projeto
         </h2>
-        <p className="text-xs sm:text-sm text-slate-400">
-          Digite seu CPF, CNPJ ou o número da sua proposta para ver a fase de instalação da sua usina solar.
+        <p className="text-xs sm:text-sm text-slate-300">
+          Digite seu CPF, CNPJ ou código da proposta para consultar a fase de homologação e instalação.
         </p>
       </div>
 

@@ -95,11 +95,11 @@ export const EsolHomeEnergyFlow: React.FC<EsolHomeEnergyFlowProps> = ({ classNam
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-10">
         
-        {/* Header da Seção */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-widest font-mono shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-            <Sparkles className="size-4 text-emerald-400 animate-pulse" />
-            <span>Engenharia Unificada • Casa Solar Residencial 3D</span>
+        {/* Header da Seção Limpo e Autêntico */}
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div className="flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span>Ecossistema Residencial Integrado</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">

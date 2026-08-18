@@ -33,17 +33,17 @@ export const EsolGuidedConfigurator: React.FC<EsolGuidedConfiguratorProps> = ({ 
     <section className={`py-24 bg-[#0B132B] text-white relative overflow-hidden ${className}`} id="configurador">
       <div className="max-w-4xl mx-auto px-6 relative z-10 space-y-12">
         
-        {/* Header da Seção */}
+        {/* Header da Seção Limpo */}
         <div className="text-center space-y-3">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">
-            <Calculator className="size-4 text-emerald-400" />
-            <span>Simulador Solar Guiado em 3 Passos</span>
-          </span>
+          <div className="flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span>Simulador de Economia Residencial & Empresarial</span>
+          </div>
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">
             Calcule o Retorno do Seu Investimento
           </h2>
-          <p className="text-slate-400 text-sm md:text-base">
-            Digite o valor da sua conta de luz ou arraste a barra para comparar instantaneamente as 3 modalidades ESOL.
+          <p className="text-slate-300 text-sm md:text-base">
+            Descubra quanto você economiza por mês e em 25 anos com energia solar própria.
           </p>
         </div>
 

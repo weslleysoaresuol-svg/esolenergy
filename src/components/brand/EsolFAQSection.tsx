@@ -48,14 +48,15 @@ export const EsolFAQSection: React.FC<EsolFAQSectionProps> = ({ className = '' }
     <section className={`p-8 md:p-12 rounded-3xl bg-slate-950 border border-slate-800 text-white space-y-10 shadow-2xl ${className}`}>
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
-        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-widest">
-          <HelpCircle className="size-3.5" /> TIRE SUAS DÚVIDAS
-        </span>
+        <div className="flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          <span>Esclarecimentos & Segurança Jurídica</span>
+        </div>
         <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
           Perguntas Frequentes
         </h2>
-        <p className="font-body text-sm sm:text-base text-slate-400 font-normal">
-          Respostas claras e sem letras miúdas para você tomar a melhor decisão.
+        <p className="font-body text-sm sm:text-base text-slate-300 font-normal">
+          Respostas claras e técnicas sobre homologação, garantia e economia real.
         </p>
       </div>
 

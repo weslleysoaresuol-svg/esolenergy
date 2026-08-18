@@ -47,14 +47,15 @@ export const EsolHowItWorks: React.FC<EsolHowItWorksProps> = ({ className = '' }
       <div className="max-w-7xl mx-auto px-6 space-y-12">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">
-            TRANSPARÊNCIA TOTAL
-          </span>
+          <div className="flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span>Processo de Engenharia & Homologação</span>
+          </div>
           <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
             Como Funciona em 4 Passos Simples
           </h2>
-          <p className="font-body text-sm sm:text-base text-slate-400 font-normal">
-            Sem burocracia. Nós fazemos todo o trabalho duro de engenharia por você.
+          <p className="font-body text-sm sm:text-base text-slate-300 font-normal">
+            Sem burocracia. Do estudo de viabilidade à ligação definitiva na concessionária.
           </p>
         </div>
 

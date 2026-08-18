@@ -7,28 +7,23 @@ export interface EsolPublicFooterProps {
 }
 
 /**
- * `<EsolPublicFooter />` — Rodapé Ultra-Enxuto & Justo Estilo Startup Tech 2026
+ * `<EsolPublicFooter />` — Rodapé Ultra-Enxuto & Perfeitamente Alinhado Estilo Startup Tech 2026
  */
 export const EsolPublicFooter: React.FC<EsolPublicFooterProps> = ({ className = '' }) => {
   return (
     <footer className={`bg-[#080E21] text-white border-t border-slate-800/80 py-8 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
         
-        {/* Linha Principal: Branding, Status e Links Justos */}
+        {/* Linha Principal: Branding e Links Justos Alinhados */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-5">
           
-          {/* Logo Oficial + Live Status Pill */}
+          {/* Logo Oficial Limpo */}
           <div className="flex items-center gap-3">
-            <EsolOfficialBrandSymbol width={135} />
-            <span className="h-4 w-px bg-slate-800 hidden sm:block" />
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono text-emerald-400 font-medium">
-              <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
-              <span>Sistemas 100% Online</span>
-            </div>
+            <EsolOfficialBrandSymbol width={140} />
           </div>
 
           {/* Links Essenciais Justos */}
-          <nav className="flex flex-wrap items-center justify-center gap-5 text-xs text-slate-400 font-medium">
+          <nav className="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 font-medium">
             <a href="#simulador" className="hover:text-emerald-400 transition-colors">
               Simulador
             </a>
@@ -49,9 +44,9 @@ export const EsolPublicFooter: React.FC<EsolPublicFooterProps> = ({ className = 
               href="https://wa.me/5531999999999?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20a%20ESOL%20Energy."
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-slate-950 transition-all text-xs font-semibold"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 transition-all text-xs font-semibold"
             >
-              <MessageCircle className="size-3" />
+              <MessageCircle className="size-3.5 text-emerald-400" />
               <span>WhatsApp</span>
             </a>
           </nav>

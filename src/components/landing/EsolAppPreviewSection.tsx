@@ -18,10 +18,10 @@ export const EsolAppPreviewSection: React.FC<EsolAppPreviewSectionProps> = ({ cl
           
           {/* Esquerda: Texto de Apresentação do App */}
           <div className="lg:col-span-6 space-y-6">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">
-              <Smartphone className="size-4 text-emerald-400" />
-              <span>Tecnologia de Monitoramento Esol Mobile</span>
-            </span>
+            <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span>Aplicativo de Monitoramento & Telemetria</span>
+            </div>
 
             <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight text-white">
               Sua Usina Solar na Palma da Mão em Tempo Real.
