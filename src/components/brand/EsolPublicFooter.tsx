@@ -1,84 +1,72 @@
 import React from 'react';
 import { EsolOfficialBrandSymbol } from '@/components/brand/EsolOfficialBrandSymbol';
-import { SeloVerdeEsol } from '@/components/brand/SeloVerdeEsol';
-import { ShieldCheck, Mail, Phone, MapPin, Lock, FileText } from 'lucide-react';
+import { ShieldCheck, Lock, ArrowUpRight, MessageCircle, Mail } from 'lucide-react';
 
 export interface EsolPublicFooterProps {
   className?: string;
 }
 
 /**
- * `<EsolPublicFooter />` — Rodapé Corporativo de Alto Padrão (V15.0)
+ * `<EsolPublicFooter />` — Rodapé Minimalista & Sofisticado Estilo Startup Tech 2026
  */
 export const EsolPublicFooter: React.FC<EsolPublicFooterProps> = ({ className = '' }) => {
   return (
-    <footer className={`bg-[#0F172A] text-white border-t border-slate-800 pt-16 pb-12 ${className}`}>
-      <div className="max-w-7xl mx-auto px-6 space-y-12">
-        {/* Grid Principal */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Coluna 1 & 2: Branding & Sede */}
-          <div className="lg:col-span-2 space-y-4">
-            <EsolOfficialBrandSymbol width={220} />
-            <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
-              Soluções inteligentes em engenharia solar fotovoltaica, geração distribuída por assinatura e Mercado Livre de Energia ANEEL.
-            </p>
-            <div className="pt-2">
-              <SeloVerdeEsol size="md" />
+    <footer className={`bg-[#080E21] text-white border-t border-slate-800/80 py-10 sm:py-12 ${className}`}>
+      <div className="max-w-7xl mx-auto px-6 space-y-8">
+        
+        {/* Linha Principal: Branding, Status e Navegação Rápida */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          
+          {/* Logo Oficial + Badge de Status de Startup Tech */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <EsolOfficialBrandSymbol width={160} />
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-mono text-emerald-400 font-medium">
+              <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
+              <span>Sistemas 100% Operacionais</span>
             </div>
           </div>
 
-          {/* Coluna 3: Soluções */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Soluções Solares</h4>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li><a href="#simulador" className="hover:text-white transition-colors">Usina Própria Turnkey</a></li>
-              <li><a href="#simulador" className="hover:text-white transition-colors">Energia por Assinatura (GD)</a></li>
-              <li><a href="#simulador" className="hover:text-white transition-colors">Mercado Livre (MLE ANEEL)</a></li>
-              <li><a href="#produtos" className="hover:text-white transition-colors">Hardware Tier-1 & BESS</a></li>
-              <li><a href="#rastreamento" className="hover:text-white transition-colors">Rastreamento por CPF/CNPJ</a></li>
-            </ul>
-          </div>
+          {/* Links Essenciais da Startup */}
+          <nav className="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 font-medium">
+            <a href="#simulador" className="hover:text-emerald-400 transition-colors">
+              Simulador
+            </a>
+            <a href="#fluxo-energetico" className="hover:text-emerald-400 transition-colors">
+              Ecossistema 3D
+            </a>
+            <a href="#diferenciais" className="hover:text-emerald-400 transition-colors">
+              Tecnologia
+            </a>
+            <a href="/auth" className="flex items-center gap-1 hover:text-white transition-colors">
+              <span>Área do Consultor</span>
+              <ArrowUpRight className="size-3 text-slate-500" />
+            </a>
+            <a
+              href="https://wa.me/5511999999999"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-slate-950 transition-all font-semibold"
+            >
+              <MessageCircle className="size-3.5" />
+              <span>WhatsApp Oficial</span>
+            </a>
+          </nav>
+        </div>
 
-          {/* Coluna 4: Institucional & Legal */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Governança & Legal</h4>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li><a href="/auth" className="hover:text-white transition-colors">Área do Cliente & Consultor</a></li>
-              <li><a href="#diferenciais" className="hover:text-white transition-colors">Selo Verde ESOL Lei 14.300</a></li>
-              <li><span className="opacity-70">Política de Privacidade LGPD</span></li>
-              <li><span className="opacity-70">Termos de Uso & Contratos</span></li>
-              <li><span className="opacity-70">Auditoria Cibernética SOC 2</span></li>
-            </ul>
-          </div>
-
-          {/* Coluna 5: Contato Corporativo */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Atendimento Oficial</h4>
-            <div className="space-y-2 text-xs text-slate-400">
-              <div className="flex items-center gap-2">
-                <Phone className="size-4 text-emerald-400 shrink-0" />
-                <span>0800 591 8000</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="size-4 text-cyan-400 shrink-0" />
-                <span>contato@esolenergy.com.br</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <MapPin className="size-4 text-amber-400 shrink-0 mt-0.5" />
-                <span>Av. Paulista, 1000 • São Paulo, SP</span>
-              </div>
-            </div>
+        {/* Linha Inferior: Copyright e Compliance Tech */}
+        <div className="pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono text-center sm:text-left">
+          <p>© 2026 esol energy. Todos os direitos reservados.</p>
+          
+          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-400 text-[10px]">
+            <span className="flex items-center gap-1">
+              <ShieldCheck className="size-3 text-emerald-400" /> Padrão ANEEL & CREA
+            </span>
+            <span className="flex items-center gap-1">
+              <Lock className="size-3 text-cyan-400" /> Criptografia 256-bit
+            </span>
           </div>
         </div>
 
-        {/* Rodapé Bottom (Copyright & CNPJ) */}
-        <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono">
-          <p>© 2026 ESOL Energy do Brasil S.A. • CNPJ: 45.890.123/0001-99 • Todos os direitos reservados.</p>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span className="flex items-center gap-1"><ShieldCheck className="size-3.5 text-emerald-400" /> ISO 9001</span>
-            <span className="flex items-center gap-1"><Lock className="size-3.5 text-cyan-400" /> SSL 256-bit</span>
-          </div>
-        </div>
       </div>
     </footer>
   );
