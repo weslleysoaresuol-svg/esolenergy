@@ -1,124 +1,107 @@
 import React, { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { EsolOfficialBrandSymbol } from '@/components/brand/EsolOfficialBrandSymbol';
-import { User, Menu, X, Sun, Moon, Sparkles, Palette } from 'lucide-react';
+import { User, Menu, X, ArrowUpRight, Zap } from 'lucide-react';
 
 export interface EsolPublicNavbarProps {
   className?: string;
 }
 
 /**
- * `<EsolPublicNavbar />` — Navbar Energitech do Site Institucional Público (V15.0)
- * Design Glassmorphism de alta tecnologia com o logotipo oficial esol energy. reluzente.
+ * `<EsolPublicNavbar />` — Navbar Ultra-Compacta & Tecnológica Estilo Startup Tech 2026
  */
 export const EsolPublicNavbar: React.FC<EsolPublicNavbarProps> = ({ className = '' }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
 
   const navLinks = [
-    { label: 'Simulador', href: '#configurador' },
-    { label: 'Fluxo', href: '#fluxo-energetico' },
-    { label: 'Ecossistema', href: '#ecossistema' },
-    { label: 'App', href: '#app-preview' },
+    { label: 'Simulador', href: '#simulador' },
+    { label: 'Ecossistema 3D', href: '#fluxo-energetico' },
+    { label: 'Tecnologia', href: '#diferenciais' },
+    { label: 'Como Funciona', href: '#como-funciona' },
     { label: 'FAQ', href: '#faq' },
   ];
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
-
   return (
-    <header className={`fixed top-0 left-0 right-0 z-[100] bg-[#0F172A]/60 backdrop-blur-xl border-b border-slate-800/40 shadow-2xl transition-all ${className}`}>
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        {/* Logo mestre esol energy. */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <EsolOfficialBrandSymbol width={220} />
+    <header className={`fixed top-0 left-0 right-0 z-[100] bg-[#080E21]/80 backdrop-blur-xl border-b border-slate-800/60 shadow-xl transition-all ${className}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        
+        {/* Logo mestre esol energy. em escala precisa */}
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <EsolOfficialBrandSymbol width={140} />
         </Link>
 
-        {/* Links de Navegação Desktop */}
-        <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-300">
+        {/* Links de Navegação Desktop Minimalistas */}
+        <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-slate-300">
           {navLinks.map((lnk, idx) => (
             <a
               key={idx}
               href={lnk.href}
-              className="hover:text-emerald-400 transition-colors tracking-wide py-2"
+              className="hover:text-emerald-400 transition-colors py-1"
             >
               {lnk.label}
             </a>
           ))}
         </nav>
 
-        {/* CTAs & Switcher de Tema */}
-        <div className="hidden sm:flex items-center gap-3">
-          {/* Theme Toggle Switcher */}
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-amber-400 hover:border-slate-700 transition-all cursor-pointer"
-            title="Alternar Tema (Dark / Light)"
-          >
-            {isDarkMode ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-indigo-400" />}
-          </button>
-
+        {/* CTAs Diretos de Startup */}
+        <div className="hidden sm:flex items-center gap-2.5">
           <Link
             to="/auth"
-            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-200 transition-all duration-300 flex items-center gap-2 cursor-pointer hover:border-emerald-500/40"
+            className="px-3.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-700 text-xs font-semibold text-slate-300 transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <User className="size-3.5 text-emerald-400" />
             <span>Área do Cliente</span>
           </Link>
 
           <a
-            href="https://wa.me/5531999999999?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20um%20especialista%20da%20ESOL%20Energy."
-            target="_blank"
-            rel="noreferrer"
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black text-xs transition-all duration-300 shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)] cursor-pointer"
+            href="#simulador"
+            className="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-[0_0_20px_-3px_rgba(16,185,129,0.5)] flex items-center gap-1.5 cursor-pointer"
           >
-            Estudo Gratuito CREA
+            <Zap className="size-3.5 fill-slate-950" />
+            <span>Simular Agora</span>
           </a>
         </div>
 
-        {/* Menu Hambúrguer Mobile */}
+        {/* Botão Mobile */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
+          className="md:hidden p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
         >
-          {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
 
       {/* Menu Mobile Dropdown */}
       {mobileOpen && (
-        <div className="lg:hidden p-6 bg-[#0F172A] border-b border-slate-800 space-y-4 animate-in slide-in-from-top-4 duration-200">
-          <div className="flex flex-col space-y-3 text-sm font-semibold text-slate-300">
+        <div className="md:hidden p-5 bg-[#080E21] border-b border-slate-800 space-y-4 animate-in slide-in-from-top-2 duration-150">
+          <div className="flex flex-col space-y-2.5 text-xs font-semibold text-slate-300">
             {navLinks.map((lnk, idx) => (
               <a
                 key={idx}
                 href={lnk.href}
                 onClick={() => setMobileOpen(false)}
-                className="py-2 border-b border-slate-900 hover:text-emerald-400"
+                className="py-1.5 hover:text-emerald-400"
               >
                 {lnk.label}
               </a>
             ))}
           </div>
 
-          <div className="flex flex-col gap-2 pt-2">
+          <div className="flex flex-col gap-2 pt-2 border-t border-slate-900">
             <Link
               to="/auth"
               onClick={() => setMobileOpen(false)}
-              className="w-full py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 font-bold text-xs text-center"
+              className="w-full py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 font-bold text-xs text-center"
             >
               Área do Cliente / Entrar
             </Link>
 
             <a
-              href="https://wa.me/5531999999999?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20um%20especialista%20da%20ESOL%20Energy."
-              target="_blank"
-              rel="noreferrer"
-              className="w-full py-3 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs text-center block"
+              href="#simulador"
+              onClick={() => setMobileOpen(false)}
+              className="w-full py-2 rounded-lg bg-emerald-500 text-slate-950 font-black text-xs text-center block"
             >
-              Estudo Gratuito CREA
+              Simular Agora
             </a>
           </div>
         </div>
