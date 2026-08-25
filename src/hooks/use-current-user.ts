@@ -96,7 +96,13 @@ export function useCurrentUser(): CurrentUser {
   useEffect(() => {
     load();
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
+      if (
+        event === "SIGNED_IN" || 
+        event === "SIGNED_OUT" || 
+        event === "USER_UPDATED" || 
+        event === "INITIAL_SESSION" || 
+        event === "TOKEN_REFRESHED"
+      ) {
         load();
       }
     });

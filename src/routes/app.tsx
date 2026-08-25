@@ -216,7 +216,14 @@ function AppShell() {
   }, [user, loading, refresh]);
 
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/auth" });
+    const hasAuthHash = typeof window !== "undefined" && (
+      window.location.hash.includes("access_token") || 
+      window.location.search.includes("code=") ||
+      window.location.hash.includes("refresh_token")
+    );
+    if (!loading && !user && !hasAuthHash) {
+      navigate({ to: "/auth" });
+    }
   }, [loading, user, navigate]);
 
   useEffect(() => {

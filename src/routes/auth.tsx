@@ -37,13 +37,23 @@ function AuthPage() {
   const [rememberMe, setRememberMe] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data?.user) {
+    // 1. Checa sessão existente imediatamente
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
         navigate({ to: "/app" });
       }
-    }).catch(() => {
-      // Estado esperado para visitante não autenticado
+    }).catch(() => {});
+
+    // 2. Escuta eventos de autenticação em tempo real (incluindo retorno de OAuth)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
+        navigate({ to: "/app" });
+      }
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const handleGoogle = async () => {
