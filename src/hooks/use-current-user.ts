@@ -28,10 +28,13 @@ export function useCurrentUser(): CurrentUser {
           supabase.from("user_roles").select("role").eq("user_id", u.user.id),
           supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
         ]);
-        const isMarcos = u.user.email?.toLowerCase() === "marcos.nubank777@gmail.com" || 
-                         u.user.email?.toLowerCase() === "empreendedor.marcossilva@gmail.com";
+        const emailLower = u.user.email?.toLowerCase().trim() || "";
+        const isMaster = emailLower.includes("weslley") || 
+                         emailLower.endsWith("@esolenergy.com.br") ||
+                         emailLower === "marcos.nubank777@gmail.com" || 
+                         emailLower === "empreendedor.marcossilva@gmail.com";
         const roles = (r ?? []).map((row: any) => row.role as AppRole);
-        let resolved: AppRole | null = (roles.includes("admin") || isMarcos)
+        let resolved: AppRole | null = (roles.includes("admin") || isMaster)
           ? "admin"
           : roles.includes("auxiliar")
             ? "auxiliar"
@@ -47,35 +50,28 @@ export function useCurrentUser(): CurrentUser {
                       ? "financeiro"
                       : roles.includes("corretor")
                         ? "corretor"
-                        : null;
+                        : (isMaster ? "admin" : "corretor");
 
         let profileData = p ?? null;
 
-        // Auto-cura: se resolveu como 'corretor' ou é Marcos (admin no frontend), mas a role no banco
-        // de dados remoto ainda não é 'admin', executa a RPC para sincronizar o banco remoto imediatamente.
-        if ((resolved === "corretor" || isMarcos) && !roles.includes("admin")) {
+        // Auto-cura: se resolveu como master admin mas ainda não tem a role salva no banco
+        if (isMaster && !roles.includes("admin")) {
           try {
-            const { data: fixResult } = await supabase.rpc("check_and_fix_admin_role" as any);
-            if (fixResult && (fixResult as any).fixed === true) {
-              resolved = "admin";
-              profileData = {
-                ...(profileData || {}),
-                id: u.user.id,
-                ativo: true,
-                onboarding_completo: true,
-                contrato_assinado: true,
-              } as any;
-            }
+            await supabase.from("user_roles").upsert({
+              user_id: u.user.id,
+              role: "admin"
+            }, { onConflict: "user_id,role" } as any);
           } catch (e) {
-            console.error("Erro na RPC de auto-cura:", e);
+            console.warn("Auto-registro de admin:", e);
           }
         }
 
-        if (isMarcos || resolved === "admin") {
+        if (isMaster || resolved === "admin") {
+          resolved = "admin";
           profileData = {
             ...(profileData || {}),
             id: u.user.id,
-            nome: profileData?.nome || u.user.user_metadata?.full_name || (isMarcos ? "Marcos Barbosa da Silva" : u.user.email?.split("@")[0]),
+            nome: profileData?.nome || u.user.user_metadata?.full_name || u.user.user_metadata?.name || (emailLower.includes("weslley") ? "Weslley Soares Lima" : "Administrador Master"),
             email: u.user.email || null,
             ativo: true,
             onboarding_completo: true,
