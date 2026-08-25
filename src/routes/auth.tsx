@@ -27,7 +27,9 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/app" });
+      if (data?.user) navigate({ to: "/app" });
+    }).catch(() => {
+      // Unauthenticated visitor is the expected state on /auth
     });
   }, [navigate]);
 
