@@ -191,29 +191,20 @@ function AppShell() {
     localStorage.removeItem("esol_panel_theme");
   }, []);
 
-  // Consome convite pendente pós-login social (Google Auth) se houver token salvo
+  // Trata erros de retorno do OAuth caso o Google ou Supabase retornem erro na URL
   useEffect(() => {
-    (async () => {
-      if (user && !loading) {
-        try {
-          const token = localStorage.getItem("pending_invite_token");
-          if (token) {
-            console.log("Detectado convite pendente pós-login. Consumindo token:", token);
-            const { error } = await supabase.rpc("consume_invite", { _token: token });
-            if (error) {
-              console.warn("Falha ao consumir convite via RPC pós-login:", error.message);
-            } else {
-              toast.success("Acesso do convite ativado com sucesso!");
-            }
-            localStorage.removeItem("pending_invite_token");
-            if (refresh) await refresh();
-          }
-        } catch (e) {
-          console.error("Erro ao consumir convite pendente pós-login:", e);
-        }
+    if (typeof window !== "undefined") {
+      const search = window.location.search;
+      const hash = window.location.hash;
+      if (search.includes("error=") || hash.includes("error=")) {
+        const urlParams = new URLSearchParams(search.startsWith("?") ? search : hash.substring(hash.indexOf("?")));
+        const errorDesc = urlParams.get("error_description") || "Falha na troca de código do Google.";
+        console.error("OAuth Error detectado:", errorDesc);
+        toast.error(`Erro no Login Google: ${decodeURIComponent(errorDesc.replace(/\+/g, " "))}`);
+        navigate({ to: "/auth" });
       }
-    })();
-  }, [user, loading, refresh]);
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const hasAuthHash = typeof window !== "undefined" && (
